@@ -28,6 +28,7 @@
   </prerequisites>
 
   <modules>
+    <module>direct-unit</module>
     <module>xr-6-interface-unit</module>
     <module>xr-6-network-instance-unit</module>
     <module>features</module>

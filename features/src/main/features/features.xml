@@ -35,8 +35,8 @@
     </feature>
 
     <feature name='unified-topology-all-units' version='${project.version}'>
-        <feature version='${project.version}'>unified-topology-unit-direct/{{VERSION}}</feature>
-        <feature version='${project.version}'>unified-topology-unit-xr-6/{{VERSION}}</feature>
+        <feature version='${project.version}'>unified-topology-unit-direct</feature>
+        <feature version='${project.version}'>unified-topology-unit-xr-6</feature>
     </feature>
 
 </features>
