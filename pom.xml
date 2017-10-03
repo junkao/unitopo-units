@@ -33,6 +33,7 @@
     <module>xr-6-network-instance-unit</module>
     <module>xr-6-bgp-unit</module>
     <module>xr-6-ospf-unit</module>
+    <module>xr-6-lr-unit</module>
     <module>features</module>
   </modules>
 
