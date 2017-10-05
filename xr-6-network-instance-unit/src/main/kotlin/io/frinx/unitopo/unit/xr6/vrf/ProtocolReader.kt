@@ -12,7 +12,11 @@ import io.fd.honeycomb.translate.spi.read.ListReaderCustomizer
 import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.read.ReadFailedException
 import io.frinx.unitopo.registry.spi.UnderlayAccess
+<<<<<<< HEAD
 import io.frinx.unitopo.unit.xr6.bgp.handler.BgpProtocolReader
+=======
+import io.frinx.unitopo.unit.xr6.ospf.handler.OspfProtocolReader
+>>>>>>> MU-35/36/37 : ospf unit
 import org.opendaylight.yangtools.yang.binding.DataObject
 import java.util.ArrayList
 import org.opendaylight.yangtools.concepts.Builder
@@ -31,6 +35,7 @@ class ProtocolReader(access: UnderlayAccess) : ListReaderCustomizer<Protocol, Pr
         specificReaders = object : ArrayList<ListReaderCustomizer<Protocol, ProtocolKey, ProtocolBuilder>>() {
             init {
                 add(BgpProtocolReader(access))
+                add(OspfProtocolReader(access))
             }
         }
     }
