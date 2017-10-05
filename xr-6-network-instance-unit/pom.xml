@@ -132,6 +132,11 @@
             <artifactId>xr-6-interface-unit</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>xr-6-bgp-unit</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <!-- Models unified -->
         <dependency>

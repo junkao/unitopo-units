@@ -178,5 +178,10 @@
       <artifactId>xr-6-network-instance-unit</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>io.frinx.unitopo</groupId>
+      <artifactId>xr-6-bgp-unit</artifactId>
+      <version>${project.version}</version>
+    </dependency>
   </dependencies>
 </project>

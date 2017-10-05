@@ -32,6 +32,7 @@
         <bundle>mvn:org.jetbrains.kotlin/kotlin-osgi-bundle/{{VERSION}}</bundle>
         <bundle>mvn:io.frinx.unitopo/xr-6-interface-unit/{{VERSION}}</bundle>
         <bundle>mvn:io.frinx.unitopo/xr-6-network-instance-unit/{{VERSION}}</bundle>
+        <bundle>mvn:io.frinx.unitopo/xr-6-bgp-unit/{{VERSION}}</bundle>
     </feature>
 
     <feature name='unified-topology-all-units' version='${project.version}'>

@@ -12,6 +12,7 @@ import io.fd.honeycomb.translate.spi.read.ListReaderCustomizer
 import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.read.ReadFailedException
 import io.frinx.unitopo.registry.spi.UnderlayAccess
+import io.frinx.unitopo.unit.xr6.bgp.handler.BgpProtocolReader
 import org.opendaylight.yangtools.yang.binding.DataObject
 import java.util.ArrayList
 import org.opendaylight.yangtools.concepts.Builder
@@ -29,7 +30,7 @@ class ProtocolReader(access: UnderlayAccess) : ListReaderCustomizer<Protocol, Pr
     init {
         specificReaders = object : ArrayList<ListReaderCustomizer<Protocol, ProtocolKey, ProtocolBuilder>>() {
             init {
-                //add(BgpProtocolReader(access))
+                add(BgpProtocolReader(access))
             }
         }
     }

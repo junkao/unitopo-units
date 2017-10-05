@@ -13,8 +13,7 @@ module Cisco-IOS-XR-infra-rsi-cfg {
 
   import Cisco-IOS-XR-ifmgr-cfg { prefix "a1"; }
 
-  //  Disable snmp augmentation
-  // import Cisco-IOS-XR-snmp-agent-cfg { prefix "a2"; }
+  import Cisco-IOS-XR-snmp-agent-cfg { prefix "a2"; }
 
   /*** META INFORMATION ***/
 
@@ -542,7 +541,6 @@ module Cisco-IOS-XR-infra-rsi-cfg {
       'Cisco-IOS-XR-ifmgr-cfg'";
   }
 
-/*
   augment "/a2:snmp/a2:notification" {
 
     container selective-vrf-download {
@@ -560,6 +558,4 @@ module Cisco-IOS-XR-infra-rsi-cfg {
       "This augment extends the configuration data of
       'Cisco-IOS-XR-snmp-agent-cfg'";
   }
- */
-
 }
