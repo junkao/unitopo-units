@@ -48,12 +48,14 @@ public class Unit implements TranslateUnit {
 
     private static final Set<YangModuleInfo> ALL_OPENCONFIGS = Sets.newHashSet(
             $YangModuleInfoImpl.getInstance(),
-            org.opendaylight.yang.gen.v1.http.openconfig.net.yang.interfaces.ip.rev161222.$YangModuleInfoImpl.getInstance());
+            org.opendaylight.yang.gen.v1.http.openconfig.net.yang.interfaces.ip.rev161222.$YangModuleInfoImpl.getInstance(),
+            org.opendaylight.yang.gen.v1.http.openconfig.net.yang.network.instance.rev170228.$YangModuleInfoImpl.getInstance(),
+            org.opendaylight.yang.gen.v1.http.openconfig.net.yang.local.routing.rev170515.$YangModuleInfoImpl.getInstance());
 
     // This is a list of supported top level nodes by the direct unit
     // which requires manual modification when another subtree should be supported
     // TODO extract configuration (list of root nodes that are supported)
-    private static final Set<String> SUPPORTED_TOP_LEVEL_NODES = Sets.newHashSet("interfaces");
+    private static final Set<String> SUPPORTED_TOP_LEVEL_NODES = Sets.newHashSet("interfaces", "network-instances");
 
     private static final SchemaContext SCHEMA_CONTEXT;
     private static final BindingToNormalizedNodeCodec CODEC;
