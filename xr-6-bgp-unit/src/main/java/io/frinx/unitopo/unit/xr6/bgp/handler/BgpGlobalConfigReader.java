@@ -51,6 +51,9 @@ public class BgpGlobalConfigReader implements ReaderCustomizer<Config, ConfigBui
     @Override
     public void readCurrentAttributes(@Nonnull InstanceIdentifier<Config> id, @Nonnull ConfigBuilder builder, @Nonnull ReadContext ctx) throws ReadFailedException {
         ProtocolKey protKey = id.firstKeyOf(Protocol.class);
+        if (!protKey.getIdentifier().equals(BgpProtocolReader.TYPE)) {
+            return;
+        }
         final String vrfName = id.firstKeyOf(NetworkInstance.class).getName();
         try {
             Bgp bgp = access.read(IID).checkedGet().orNull();

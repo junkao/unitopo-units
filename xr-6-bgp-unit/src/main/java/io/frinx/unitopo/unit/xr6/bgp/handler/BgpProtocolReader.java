@@ -31,7 +31,7 @@ public class BgpProtocolReader implements ListReaderCustomizer<Protocol, Protoco
     private UnderlayAccess access;
 
     private static final InstanceIdentifier<Bgp> IID = InstanceIdentifier.create(Bgp.class);
-    private static final Class<BGP> TYPE = BGP.class;
+    public static final Class<BGP> TYPE = BGP.class;
 
     public BgpProtocolReader(UnderlayAccess access) {
         this.access = access;
@@ -41,6 +41,10 @@ public class BgpProtocolReader implements ListReaderCustomizer<Protocol, Protoco
     @Override
     public List<ProtocolKey> getAllIds(@Nonnull InstanceIdentifier<Protocol> id, @Nonnull ReadContext context) throws ReadFailedException {
         List<ProtocolKey> keys = new ArrayList<>();
+        ProtocolKey protKey = id.firstKeyOf(Protocol.class);
+        if (!protKey.getIdentifier().equals(BgpProtocolReader.TYPE)) {
+            return keys;
+        }
         try {
             Bgp bgp = access.read(IID).checkedGet().orNull();
             bgp.getInstance().stream().forEach(ins -> keys.add(new ProtocolKey(TYPE, ins.getInstanceName().getValue())));

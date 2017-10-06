@@ -32,7 +32,7 @@ public class OspfProtocolReader implements ListReaderCustomizer<Protocol, Protoc
     private UnderlayAccess access;
 
     private static final InstanceIdentifier<Processes> IID = InstanceIdentifier.create(Ospf.class).child(Processes.class);
-    private static final Class<OSPF> TYPE = OSPF.class;
+    public static final Class<OSPF> TYPE = OSPF.class;
 
     public OspfProtocolReader(UnderlayAccess access) {
         this.access = access;
@@ -42,6 +42,10 @@ public class OspfProtocolReader implements ListReaderCustomizer<Protocol, Protoc
     @Override
     public List<ProtocolKey> getAllIds(@Nonnull InstanceIdentifier<Protocol> id, @Nonnull ReadContext context) throws ReadFailedException {
         List<ProtocolKey> keys = new ArrayList<>();
+        ProtocolKey protKey = id.firstKeyOf(Protocol.class);
+        if (!protKey.getIdentifier().equals(OspfProtocolReader.TYPE)) {
+            return keys;
+        }
         try {
             Processes bgp = access.read(IID).checkedGet().orNull();
             bgp.getProcess().stream().forEach(ins -> keys.add(new ProtocolKey(TYPE, ins.getProcessName().getValue())));

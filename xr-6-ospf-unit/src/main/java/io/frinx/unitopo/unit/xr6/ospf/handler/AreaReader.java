@@ -17,6 +17,8 @@ import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.osp
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev151109.ospf.processes.Process;
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance;
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstanceKey;
+import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.Protocol;
+import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.ProtocolKey;
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.ospf.types.rev170228.OspfAreaIdentifier;
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.ospfv2.rev170228.ospfv2.area.structure.ConfigBuilder;
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.ospfv2.rev170228.ospfv2.area.structure.StateBuilder;
@@ -43,8 +45,12 @@ public class AreaReader implements ListReaderCustomizer<Area, AreaKey, AreaBuild
     @Nonnull
     @Override
     public List<AreaKey> getAllIds(@Nonnull InstanceIdentifier<Area> id, @Nonnull ReadContext context) throws ReadFailedException {
-        AreaAddresses adr = getAreas(id, access);
         List<AreaKey> keys = new ArrayList<>();
+        ProtocolKey protKey = id.firstKeyOf(Protocol.class);
+        if (!protKey.getIdentifier().equals(OspfProtocolReader.TYPE)) {
+            return keys;
+        }
+        AreaAddresses adr = getAreas(id, access);
         adr.getAreaAreaId().stream().forEach(a -> keys.add(new AreaKey(new OspfAreaIdentifier(Long.valueOf(a.getAreaId())))));
         return keys;
     }
@@ -74,6 +80,10 @@ public class AreaReader implements ListReaderCustomizer<Area, AreaKey, AreaBuild
 
     @Override
     public void readCurrentAttributes(@Nonnull InstanceIdentifier<Area> id, @Nonnull AreaBuilder builder, @Nonnull ReadContext ctx) throws ReadFailedException {
+        ProtocolKey protKey = id.firstKeyOf(Protocol.class);
+        if (!protKey.getIdentifier().equals(OspfProtocolReader.TYPE)) {
+            return;
+        }
         AreaKey key = id.firstKeyOf(Area.class);
         builder.setIdentifier(key.getIdentifier());
         builder.setConfig(new ConfigBuilder().setIdentifier(key.getIdentifier()).build());

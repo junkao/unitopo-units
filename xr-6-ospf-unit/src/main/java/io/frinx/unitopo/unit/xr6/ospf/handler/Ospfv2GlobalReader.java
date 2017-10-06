@@ -51,6 +51,10 @@ public class Ospfv2GlobalReader implements ReaderCustomizer<Global, GlobalBuilde
 
     @Override
     public void readCurrentAttributes(@Nonnull InstanceIdentifier<Global> id, @Nonnull GlobalBuilder builder, @Nonnull ReadContext ctx) {
+        ProtocolKey protKey = id.firstKeyOf(Protocol.class);
+        if (!protKey.getIdentifier().equals(OspfProtocolReader.TYPE)) {
+            return;
+        }
         NetworkInstanceKey vrfName = id.firstKeyOf(NetworkInstance.class);
         Process p = getProcess(id, access);
         String routerId = "";
@@ -82,10 +86,5 @@ public class Ospfv2GlobalReader implements ReaderCustomizer<Global, GlobalBuilde
     @Override
     public void merge(@Nonnull Builder<? extends DataObject> parentBuilder, @Nonnull Global readValue) {
         ((Ospfv2Builder) parentBuilder).setGlobal(readValue);
-    }
-
-    @Override
-    public boolean isPresent(InstanceIdentifier<Global> id, Global built, ReadContext ctx) throws ReadFailedException {
-        return false;
     }
 }

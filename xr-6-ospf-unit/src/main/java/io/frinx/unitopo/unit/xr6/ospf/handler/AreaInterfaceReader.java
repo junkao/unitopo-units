@@ -15,6 +15,8 @@ import io.fd.honeycomb.translate.spi.read.ListReaderCustomizer;
 import io.frinx.unitopo.registry.spi.UnderlayAccess;
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev151109.area.table.AreaAddresses;
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev151109.area.table.area.addresses.area.content.NameScopes;
+import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.Protocol;
+import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.ProtocolKey;
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.ospfv2.rev170228.ospfv2.area.interfaces.structure.InterfacesBuilder;
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.ospfv2.rev170228.ospfv2.area.interfaces.structure.interfaces.Interface;
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.ospfv2.rev170228.ospfv2.area.interfaces.structure.interfaces.InterfaceBuilder;
@@ -45,6 +47,10 @@ public class AreaInterfaceReader implements ListReaderCustomizer<Interface, Inte
         AreaAddresses adr = AreaReader.getAreas(id, access);
         AreaKey key = id.firstKeyOf(Area.class);
         List<InterfaceKey> keys = new ArrayList<>();
+        ProtocolKey protKey = id.firstKeyOf(Protocol.class);
+        if (!protKey.getIdentifier().equals(OspfProtocolReader.TYPE)) {
+            return keys;
+        }
         NameScopes scopes = adr.getAreaAreaId().stream().filter(a -> Long.valueOf(a.getAreaId().longValue()).equals(key.getIdentifier().getUint32())).findFirst().get().getNameScopes();
         scopes.getNameScope().stream().forEach(i -> keys.add(new InterfaceKey(i.getInterfaceName().getValue())));
         return keys;
@@ -63,6 +69,10 @@ public class AreaInterfaceReader implements ListReaderCustomizer<Interface, Inte
 
     @Override
     public void readCurrentAttributes(@Nonnull InstanceIdentifier<Interface> id, @Nonnull InterfaceBuilder builder, @Nonnull ReadContext ctx) throws ReadFailedException {
+        ProtocolKey protKey = id.firstKeyOf(Protocol.class);
+        if (!protKey.getIdentifier().equals(OspfProtocolReader.TYPE)) {
+            return;
+        }
         InterfaceKey key = id.firstKeyOf(Interface.class);
         builder.setId(key.getId());
         builder.setConfig(new ConfigBuilder().setId(key.getId()).build());
