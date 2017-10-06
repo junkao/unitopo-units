@@ -19,11 +19,9 @@ import io.frinx.unitopo.registry.spi.UnderlayAccess
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.network.instance.rev170228.network.instance.top.NetworkInstances
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.network.instance.rev170228.network.instance.top.NetworkInstancesBuilder
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
-import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.Config
-import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.ConfigBuilder
-import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.Interfaces
-import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.InterfacesBuilder
+import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.*
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.interfaces.Interface
+import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.Protocol
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev150730.`$YangModuleInfoImpl` as UnderlayInterfacesYangInfo
@@ -69,6 +67,11 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
 
         rRegistry.addStructuralReader(NIFCS_ID, InterfacesBuilder::class.java)
         rRegistry.add(GenericListReader(NIFC_ID, InterfaceReader(underlayAccess)))
+
+        rRegistry.addStructuralReader(PROTOCOLS_ID, ProtocolsBuilder::class.java)
+        rRegistry.add(GenericListReader(PROTOCOL_ID, ProtocolReader(underlayAccess)))
+        rRegistry.add(GenericReader(PROTOCOL_CFG_ID, ProtocolConfigReader()))
+        rRegistry.add(GenericReader(PROTOCOL_STATE_ID, ProtocolStateReader()))
     }
 
     override fun toString(): String = "XR 6 (2015-07-30) network-instance translate unit"
@@ -79,6 +82,16 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
         private val NIC_ID = NI_ID.child(Config::class.java)
         private val NIFCS_ID = NI_ID.child(Interfaces::class.java)
         private val NIFC_ID = NIFCS_ID.child(Interface::class.java)
+
+        private val PROTOCOLS_ID = NI_ID
+                .child(Protocols::class.java)
+        private val PROTOCOL_ID = PROTOCOLS_ID
+                .child(Protocol::class.java)
+        private val PROTOCOL_CFG_ID = PROTOCOL_ID
+                .child(org.opendaylight.yang.gen.v1.http.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.protocol.Config::class.java)
+        private val PROTOCOL_STATE_ID = PROTOCOL_ID
+                .child(org.opendaylight.yang.gen.v1.http.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.protocol.State::class.java)
+
     }
 }
 
