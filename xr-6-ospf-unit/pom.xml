@@ -11,7 +11,7 @@
     <parent>
         <groupId>org.opendaylight.controller</groupId>
         <artifactId>config-parent</artifactId>
-	<version>0.6.1-Carbon-SR1.3_1_0_rc2-frinxodl-SNAPSHOT</version>
+	<version>0.6.1-Carbon-SR1.3_1_0_rc3-frinxodl-SNAPSHOT</version>
         <relativePath/>
     </parent>
 
@@ -24,9 +24,9 @@
 
 
     <properties>
-        <cli.version>3.1.0.rc2-frinx-SNAPSHOT</cli.version>
-        <openconfig.version>3.1.0.rc2-frinx-SNAPSHOT</openconfig.version>
-        <hc.version>1.17.10-Carbon-SR1.3_1_0_rc2-frinxodl-SNAPSHOT</hc.version>
+        <cli.version>3.1.0.rc3-frinx-SNAPSHOT</cli.version>
+        <openconfig.version>3.1.0.rc3-frinx-SNAPSHOT</openconfig.version>
+        <hc.version>1.17.10-Carbon-SR1.3_1_0_rc3-frinxodl-SNAPSHOT</hc.version>
     </properties>
 
     <dependencies>
