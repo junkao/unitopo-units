@@ -40,7 +40,7 @@ public class StaticProtocolReader implements ListReaderCustomizer<Protocol, Prot
     @Nonnull
     @Override
     public List<ProtocolKey> getAllIds(@Nonnull InstanceIdentifier<Protocol> id, @Nonnull ReadContext context) throws ReadFailedException {
-        return Lists.newArrayList( new ProtocolKey(TYPE, "static"));
+        return Lists.newArrayList( new ProtocolKey(TYPE, "default"));
     }
 
     @Override
