@@ -19,13 +19,13 @@
     <groupId>io.frinx.unitopo</groupId>
     <artifactId>xr-6-lr-unit</artifactId>
     <name>xr-6-lr-unit-</name>
-    <version>3.1.0.rc3-frinx-SNAPSHOT</version>
+    <version>3.1.0.frinx</version>
     <packaging>bundle</packaging>
 
 
     <properties>
-        <cli.version>3.1.0.rc3-frinx-SNAPSHOT</cli.version>
-        <openconfig.version>3.1.0.rc3-frinx-SNAPSHOT</openconfig.version>
+        <cli.version>3.1.0.frinx</cli.version>
+        <openconfig.version>3.1.0.frinx</openconfig.version>
         <hc.version>1.17.10-Carbon-SR1.3_1_0-frinxodl</hc.version>
     </properties>
 
