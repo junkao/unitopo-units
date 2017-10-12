@@ -15,6 +15,7 @@ import io.fd.honeycomb.translate.impl.write.GenericListWriter
 import io.fd.honeycomb.translate.impl.write.GenericWriter
 import io.fd.honeycomb.translate.read.registry.ModifiableReaderRegistryBuilder
 import io.fd.honeycomb.translate.write.registry.ModifiableWriterRegistryBuilder
+import io.frinx.openconfig.openconfig.interfaces.IIDs
 import io.frinx.unitopo.registry.api.TranslationUnitCollector
 import io.frinx.unitopo.registry.spi.TranslateUnit
 import io.frinx.unitopo.registry.spi.UnderlayAccess
@@ -30,15 +31,8 @@ import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.interfaces.ip.rev16
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.interfaces.ip.rev161222.ipv4.top.ipv4.addresses.Address
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.interfaces.ip.rev161222.ipv6.top.Ipv6
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.interfaces.ip.rev161222.ipv6.top.Ipv6Builder
-import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.interfaces.rev161222.interfaces.top.Interfaces
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.interfaces.rev161222.interfaces.top.InterfacesBuilder
-import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.Interface
-import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces._interface.Config
-import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces._interface.State
-import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.Subinterfaces
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.SubinterfacesBuilder
-import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.subinterfaces.Subinterface
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev150730.`$YangModuleInfoImpl` as UnderlayInterfacesYangInfo
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.oper.rev150730.`$YangModuleInfoImpl` as UnderlayInterfacesOperYangInfo
@@ -86,18 +80,18 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
 
     private fun provideWriters(wRegistry: ModifiableWriterRegistryBuilder, underlayAccess: UnderlayAccess) {
         // TODO extract noop writer and use that, then delete empty InterfaceWriter
-        wRegistry.add(GenericListWriter(IFC_ID, InterfaceWriter()))
-        wRegistry.add(GenericWriter(IFC_CONFIG_ID, InterfaceConfigWriter(underlayAccess)))
+        wRegistry.add(GenericListWriter(IIDs.IN_INTERFACE, InterfaceWriter()))
+        wRegistry.add(GenericWriter(IIDs.IN_IN_CONFIG, InterfaceConfigWriter(underlayAccess)))
     }
 
     private fun provideReaders(rRegistry: ModifiableReaderRegistryBuilder, underlayAccess: UnderlayAccess) {
-        rRegistry.addStructuralReader(IFCS_ID, InterfacesBuilder::class.java)
-        rRegistry.add(GenericListReader(IFC_ID, InterfaceReader(underlayAccess)))
-        rRegistry.add(GenericReader(IFC_STATE_ID, InterfaceStateReader(underlayAccess)))
-        rRegistry.add(GenericReader(IFC_CONFIG_ID, InterfaceConfigReader(underlayAccess)))
+        rRegistry.addStructuralReader(IIDs.INTERFACES, InterfacesBuilder::class.java)
+        rRegistry.add(GenericListReader(IIDs.IN_INTERFACE, InterfaceReader(underlayAccess)))
+        rRegistry.add(GenericReader(IIDs.IN_IN_STATE, InterfaceStateReader(underlayAccess)))
+        rRegistry.add(GenericReader(IIDs.IN_IN_CONFIG, InterfaceConfigReader(underlayAccess)))
 
-        rRegistry.addStructuralReader(SUBIFCS_ID, SubinterfacesBuilder::class.java)
-        rRegistry.add(GenericListReader(SUBIFC_ID, SubinterfaceReader(underlayAccess)))
+        rRegistry.addStructuralReader(IIDs.IN_IN_SUBINTERFACES, SubinterfacesBuilder::class.java)
+        rRegistry.add(GenericListReader(IIDs.IN_IN_SU_SUBINTERFACE, SubinterfaceReader(underlayAccess)))
 
         rRegistry.addStructuralReader(SUBIFC_IPV4_AUG_ID, Subinterface1Builder::class.java)
         rRegistry.addStructuralReader(SUBIFC_IPV4_ID, Ipv4Builder::class.java)
@@ -115,17 +109,8 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
     override fun toString(): String = "XR 6 (2015-07-30) interface translate unit"
 
     companion object {
-        // FIXME duplicate with ios-ifc-unit - move to openconfig models
-        private val IFCS_ID = InstanceIdentifier.create(Interfaces::class.java)
-        private val IFC_ID = IFCS_ID.child(Interface::class.java)
-        private val IFC_STATE_ID = IFC_ID.child(State::class.java)
-        private val IFC_CONFIG_ID = IFC_ID.child(Config::class.java)
-
-        private val SUBIFCS_ID = IFC_ID.child(Subinterfaces::class.java)
-        private val SUBIFC_ID = SUBIFCS_ID.child(Subinterface::class.java)
-
-        private val SUBIFC_IPV4_AUG_ID = SUBIFC_ID.augmentation(Subinterface1::class.java)
-        private val SUBIFC_IPV6_AUG_ID = SUBIFC_ID.augmentation(Subinterface2::class.java)
+        private val SUBIFC_IPV4_AUG_ID = IIDs.IN_IN_SU_SUBINTERFACE.augmentation(Subinterface1::class.java)
+        private val SUBIFC_IPV6_AUG_ID = IIDs.IN_IN_SU_SUBINTERFACE.augmentation(Subinterface2::class.java)
 
         private val SUBIFC_IPV4_ID = SUBIFC_IPV4_AUG_ID.child(Ipv4::class.java)
         private val SUBIFC_IPV4_ADDRESSES_ID = SUBIFC_IPV4_ID.child(Addresses::class.java)

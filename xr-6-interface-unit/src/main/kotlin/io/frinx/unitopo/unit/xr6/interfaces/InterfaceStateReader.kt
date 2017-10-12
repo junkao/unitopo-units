@@ -15,9 +15,6 @@ import io.frinx.unitopo.registry.spi.UnderlayAccess
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev150730._interface.configurations.InterfaceConfiguration
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.oper.rev150730.ImStateEnum
-import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.oper.rev150730.InterfaceProperties
-import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.oper.rev150730._interface.properties.DataNodes
-import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.oper.rev150730._interface.properties.DataNodesBuilder
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.interfaces.rev161222.InterfaceCommonState
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.Interface
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.InterfaceBuilder
@@ -42,30 +39,10 @@ class InterfaceStateReader(private val underlayAccess: UnderlayAccess) : ReaderC
         if (underlayAccess.currentOperationType == LogicalDatastoreType.CONFIGURATION) return
 
         try {
+            // Using InterfaceConfiguration and also InterfaceProperties to collect all necessary information
             val name = instanceIdentifier.firstKeyOf(Interface::class.java).name
-
-            // Aggregate system wide interface properties and map them by ifc-name
-            val ifcPropertiesMapped = underlayAccess.read(DATA_NODES_ID)
-                    .checkedGet()
-                    .or(EMPTY_DATA_NODES)
-                    .dataNode
-                    ?.flatMap { it.systemView.interfaces.`interface`.orEmpty() }
-                    ?.map { Pair(it.interfaceName, it) }
-                    ?.toMap()
-                    .orEmpty()
-
-            // Getting all configurations and filtering here due to:
-            //  - interfaces in underlay are keyed by: name + state compared to only ifc name in openconfig models
-            //  - the read is performed in multiple places and with caching its for free
-            underlayAccess.read(InterfaceReader.IFC_CFGS)
-                    .checkedGet()
-                    .orNull()
-                    ?.let {
-                        it.`interfaceConfiguration`
-                                ?.filter { it.interfaceName.value == name }
-                                ?.first()
-                                ?.let { stateBuilder.fromUnderlay(it, ifcPropertiesMapped[it.interfaceName]) }
-                    }
+            InterfaceReader.readInterfaceCfg(underlayAccess, name, { stateBuilder.fromUnderlay(it) })
+            InterfaceReader.readInterfaceProps(underlayAccess, name, { stateBuilder.fromUnderlayProps(it) })
         } catch (e: MDSalReadFailed) {
             throw ReadFailedException(instanceIdentifier, e)
         }
@@ -75,36 +52,31 @@ class InterfaceStateReader(private val underlayAccess: UnderlayAccess) : ReaderC
     override fun merge(builder: Builder<out DataObject>, state: State) {
         (builder as InterfaceBuilder).state = state
     }
-
-    companion object {
-        val DATA_NODES_ID = InstanceIdentifier.create(InterfaceProperties::class.java).child(DataNodes::class.java)!!
-        val EMPTY_DATA_NODES = DataNodesBuilder().build()!!
-    }
 }
 
-fun StateBuilder.fromUnderlay(underlay: InterfaceConfiguration, underlayOper: OperInterface?) {
-    type = parseIfcType(underlay.interfaceName.value)
+fun StateBuilder.fromUnderlay(underlay: InterfaceConfiguration) {
     name = underlay.interfaceName.value
     description = underlay.description
-    isEnabled =  underlay.isShutdown == null
+    isEnabled = underlay.isShutdown == null
+}
 
-    underlayOper?.let {
-        mtu = underlayOper.mtu.toInt()
-        ifindex = 0
-        lastChange = Timeticks(0)
-        adminStatus = when {
-            underlayOper.actualState == ImStateEnum.ImStateUp -> InterfaceCommonState.AdminStatus.UP
-            underlayOper.actualState == ImStateEnum.ImStateOperational -> InterfaceCommonState.AdminStatus.UP
-            else -> InterfaceCommonState.AdminStatus.DOWN
-        }
-        operStatus = when {
-            underlayOper.actualState == ImStateEnum.ImStateUp -> InterfaceCommonState.OperStatus.UP
-            underlayOper.actualState == ImStateEnum.ImStateOperational -> InterfaceCommonState.OperStatus.UP
-            underlayOper.actualState == ImStateEnum.ImStateDown -> InterfaceCommonState.OperStatus.DOWN
-            underlayOper.actualState == ImStateEnum.ImStateAdminDown -> InterfaceCommonState.OperStatus.DOWN
-            underlayOper.actualState == ImStateEnum.ImStateNotOperational -> InterfaceCommonState.OperStatus.DOWN
-            underlayOper.actualState == ImStateEnum.ImStateNotReady -> InterfaceCommonState.OperStatus.DORMANT
-            else -> InterfaceCommonState.OperStatus.UNKNOWN
-        }
+fun StateBuilder.fromUnderlayProps(underlay: OperInterface) {
+    type = parseIfcType(underlay.interfaceName.value)
+    mtu = underlay.mtu.toInt()
+    ifindex = 0
+    lastChange = Timeticks(0)
+    adminStatus = when {
+        underlay.actualState == ImStateEnum.ImStateUp -> InterfaceCommonState.AdminStatus.UP
+        underlay.actualState == ImStateEnum.ImStateOperational -> InterfaceCommonState.AdminStatus.UP
+        else -> InterfaceCommonState.AdminStatus.DOWN
+    }
+    operStatus = when {
+        underlay.actualState == ImStateEnum.ImStateUp -> InterfaceCommonState.OperStatus.UP
+        underlay.actualState == ImStateEnum.ImStateOperational -> InterfaceCommonState.OperStatus.UP
+        underlay.actualState == ImStateEnum.ImStateDown -> InterfaceCommonState.OperStatus.DOWN
+        underlay.actualState == ImStateEnum.ImStateAdminDown -> InterfaceCommonState.OperStatus.DOWN
+        underlay.actualState == ImStateEnum.ImStateNotOperational -> InterfaceCommonState.OperStatus.DOWN
+        underlay.actualState == ImStateEnum.ImStateNotReady -> InterfaceCommonState.OperStatus.DORMANT
+        else -> InterfaceCommonState.OperStatus.UNKNOWN
     }
 }

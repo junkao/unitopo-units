@@ -17,13 +17,10 @@ import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.interfaces.rev16122
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.InterfaceBuilder
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces._interface.Config
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces._interface.ConfigBuilder
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.iana._if.type.rev140508.EthernetCsmacd
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.iana._if.type.rev140508.Other
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.iana._if.type.rev140508.SoftwareLoopback
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.interfaces.rev140508.InterfaceType
 import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.controller.md.sal.common.api.data.ReadFailedException as MDSalReadFailed
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.oper.rev150730._interface.table.interfaces.Interface as OperInterface
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
 class InterfaceConfigReader(private val underlayAccess: UnderlayAccess) : ReaderCustomizer<Config, ConfigBuilder> {
@@ -38,11 +35,8 @@ class InterfaceConfigReader(private val underlayAccess: UnderlayAccess) : Reader
                                        readContext: ReadContext) {
         try {
             val name = instanceIdentifier.firstKeyOf(Interface::class.java).name
-
-            // Getting all configurations and filtering here due to:
-            //  - interfaces in underlay are keyed by: name + state compared to only ifc name in openconfig models
-            //  - the read is performed in multiple places and with caching its for free
-            InterfaceReader.readInterface(underlayAccess, name, handler = { configBuilder.fromUnderlay(it) })
+            InterfaceReader.readInterfaceCfg(underlayAccess, name, { configBuilder.fromUnderlay(it) })
+            InterfaceReader.readInterfaceProps(underlayAccess, name, { configBuilder.fromUnderlay(it) })
         } catch (e: MDSalReadFailed) {
             throw ReadFailedException(instanceIdentifier, e)
         }
@@ -54,20 +48,12 @@ class InterfaceConfigReader(private val underlayAccess: UnderlayAccess) : Reader
 }
 
 fun ConfigBuilder.fromUnderlay(underlay: InterfaceConfiguration) {
-    type = parseIfcType(underlay.interfaceName.value)
     name = underlay.interfaceName.value
     description = underlay.description
     isEnabled = underlay.isShutdown == null
-    // FIXME MTU
 }
 
-internal fun parseIfcType(name: String): Class<out InterfaceType> {
-    // FIXME duplicate with ios-interface-unit
-    return when {
-        name.startsWith("MgmtEth") -> EthernetCsmacd::class.java
-        name.startsWith("FastEther") -> EthernetCsmacd::class.java
-        name.startsWith("GigabitEthernet") -> EthernetCsmacd::class.java
-        name.startsWith("Loopback") -> SoftwareLoopback::class.java
-        else -> Other::class.java
-    }
+fun ConfigBuilder.fromUnderlay(underlay: OperInterface) {
+    type = parseIfcType(underlay.interfaceName.value)
+    mtu = underlay.mtu.toInt()
 }

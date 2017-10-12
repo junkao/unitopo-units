@@ -34,7 +34,7 @@ class Ipv6AddressReader(private val underlayAccess: UnderlayAccess) : ListReader
         //  - interfaces in underlay are keyed by: name + state compared to only ifc name in openconfig models
         //  - the read is performed in multiple places and with caching its for free
         val keys = mutableListOf<AddressKey>()
-        InterfaceReader.readInterface(underlayAccess, name, { extractAddresses(it, keys) })
+        InterfaceReader.readInterfaceCfg(underlayAccess, name, { extractAddresses(it, keys) })
         return keys
     }
 

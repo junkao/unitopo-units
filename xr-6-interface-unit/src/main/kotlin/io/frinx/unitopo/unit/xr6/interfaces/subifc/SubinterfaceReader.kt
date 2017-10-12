@@ -10,6 +10,7 @@ package io.frinx.unitopo.unit.xr6.interfaces.subifc
 import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.spi.read.ListReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess
+import io.frinx.unitopo.unit.xr6.interfaces.InterfaceReader
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.SubinterfacesBuilder
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.subinterfaces.Subinterface
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.subinterfaces.SubinterfaceBuilder
@@ -21,10 +22,14 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 class SubinterfaceReader(private val underlayAccess: UnderlayAccess) : ListReaderCustomizer<Subinterface, SubinterfaceKey, SubinterfaceBuilder> {
 
     override fun getAllIds(id: InstanceIdentifier<Subinterface>, context: ReadContext): MutableList<SubinterfaceKey> {
-        // Add the 0 subinterface for IP addresses
-        return listOf(0L)
-                .map { SubinterfaceKey(it) }
-                .toMutableList()
+        return if (InterfaceReader.interfaceExists(underlayAccess, id)) {
+            // Add the 0 subinterface for IP addresses if there is such interface
+            listOf(0L)
+                    .map { SubinterfaceKey(it) }
+                    .toMutableList()
+        } else {
+            emptyList<SubinterfaceKey>().toMutableList()
+        }
     }
 
     override fun readCurrentAttributes(id: InstanceIdentifier<Subinterface>, builder: SubinterfaceBuilder, ctx: ReadContext) {

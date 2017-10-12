@@ -23,7 +23,7 @@ class Ipv4ConfigReader(private val underlayAccess: UnderlayAccess) : ReaderCusto
     override fun readCurrentAttributes(id: InstanceIdentifier<Config>, builder: ConfigBuilder, ctx: ReadContext) {
         val name = id.firstKeyOf(Interface::class.java).name
         builder.ip = id.firstKeyOf(Address::class.java).ip
-        InterfaceReader.readInterface(underlayAccess, name, { extractAddress(it, builder) })
+        InterfaceReader.readInterfaceCfg(underlayAccess, name, { extractAddress(it, builder) })
     }
 
     override fun merge(builder: Builder<out DataObject>, readValue: Config) {
