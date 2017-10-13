@@ -33,6 +33,7 @@ class BgpProtocolReader(private val access: UnderlayAccess) : ListReaderCustomiz
                     ?.let {
                         it.instance
                                 .orEmpty()
+                                // FIXME filter only per VRF
                                 .map { ProtocolKey(TYPE, it.instanceName.value) }
                     }.orEmpty()
         } catch (e: MdSalReadFailedEx) {
