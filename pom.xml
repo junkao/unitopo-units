@@ -28,6 +28,7 @@
   </prerequisites>
 
   <modules>
+    <module>kotlin-unit-parent</module>
     <module>direct-unit</module>
     <module>xr-6-interface-unit</module>
     <module>xr-6-network-instance-unit</module>

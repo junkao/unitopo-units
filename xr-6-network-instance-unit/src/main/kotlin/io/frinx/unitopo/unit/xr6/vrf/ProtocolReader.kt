@@ -8,21 +8,21 @@
 
 package io.frinx.unitopo.unit.xr6.vrf
 
-import io.fd.honeycomb.translate.spi.read.ListReaderCustomizer
+import io.frinx.unitopo.unit.xr6.bgp.handler.BgpProtocolReader
 import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.read.ReadFailedException
+import io.fd.honeycomb.translate.spi.read.ListReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr6.lr.handler.StaticProtocolReader
-import io.frinx.unitopo.unit.xr6.bgp.handler.BgpProtocolReader
 import io.frinx.unitopo.unit.xr6.ospf.handler.OspfProtocolReader
-import org.opendaylight.yangtools.yang.binding.DataObject
-import java.util.ArrayList
-import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.ProtocolsBuilder
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.Protocol
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.ProtocolBuilder
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.ProtocolKey
+import org.opendaylight.yangtools.concepts.Builder
+import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
+import java.util.*
 
 
 class ProtocolReader(access: UnderlayAccess) : ListReaderCustomizer<Protocol, ProtocolKey, ProtocolBuilder> {
