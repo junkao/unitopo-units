@@ -12,9 +12,11 @@ import io.fd.honeycomb.translate.read.ReadContext;
 import io.fd.honeycomb.translate.read.ReadFailedException;
 import io.fd.honeycomb.translate.spi.read.ListReaderCustomizer;
 import io.frinx.unitopo.registry.spi.UnderlayAccess;
+import java.util.ArrayList;
+import java.util.List;
+import javax.annotation.Nonnull;
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev151109.Ospf;
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev151109.ospf.Processes;
-import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.ProtocolsBuilder;
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.Protocol;
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.ProtocolBuilder;
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.ProtocolKey;
@@ -22,10 +24,6 @@ import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.policy.types.rev160
 import org.opendaylight.yangtools.concepts.Builder;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
-
-import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
 
 public class OspfProtocolReader implements ListReaderCustomizer<Protocol, ProtocolKey, ProtocolBuilder> {
 
@@ -42,13 +40,9 @@ public class OspfProtocolReader implements ListReaderCustomizer<Protocol, Protoc
     @Override
     public List<ProtocolKey> getAllIds(@Nonnull InstanceIdentifier<Protocol> id, @Nonnull ReadContext context) throws ReadFailedException {
         List<ProtocolKey> keys = new ArrayList<>();
-        ProtocolKey protKey = id.firstKeyOf(Protocol.class);
-        if (!protKey.getIdentifier().equals(OspfProtocolReader.TYPE)) {
-            return keys;
-        }
         try {
-            Processes bgp = access.read(IID).checkedGet().orNull();
-            bgp.getProcess().stream().forEach(ins -> keys.add(new ProtocolKey(TYPE, ins.getProcessName().getValue())));
+            Processes ospf = access.read(IID).checkedGet().orNull();
+            ospf.getProcess().stream().forEach(ins -> keys.add(new ProtocolKey(TYPE, ins.getProcessName().getValue())));
         } catch (org.opendaylight.controller.md.sal.common.api.data.ReadFailedException e) {
             e.printStackTrace();
         }
@@ -57,7 +51,6 @@ public class OspfProtocolReader implements ListReaderCustomizer<Protocol, Protoc
 
     @Override
     public void merge(@Nonnull Builder<? extends DataObject> builder, @Nonnull List<Protocol> readData) {
-        ((ProtocolsBuilder) builder).setProtocol(readData);
     }
 
     @Nonnull
