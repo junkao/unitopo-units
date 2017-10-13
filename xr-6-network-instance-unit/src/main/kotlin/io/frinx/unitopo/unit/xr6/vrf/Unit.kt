@@ -71,7 +71,7 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
         rRegistry.addStructuralReader(PROTOCOLS_ID, ProtocolsBuilder::class.java)
         rRegistry.add(GenericListReader(PROTOCOL_ID, ProtocolReader(underlayAccess)))
         rRegistry.add(GenericReader(PROTOCOL_CFG_ID, ProtocolConfigReader()))
-        rRegistry.add(GenericReader(PROTOCOL_STATE_ID, ProtocolStateReader()))
+        rRegistry.add(GenericReader(PROTOCOL_STATE_ID, ProtocolStateReader(underlayAccess)))
     }
 
     override fun toString(): String = "XR 6 (2015-07-30) network-instance translate unit"
