@@ -13,6 +13,7 @@ import io.fd.honeycomb.translate.read.ReadFailedException
 import io.fd.honeycomb.translate.spi.read.ListReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr6.bgp.handler.BgpProtocolReader
+import io.frinx.unitopo.unit.xr6.lr.handler.StaticProtocolReader
 import io.frinx.unitopo.unit.xr6.ospf.handler.OspfProtocolReader
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.ProtocolsBuilder
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.Protocol
@@ -33,7 +34,7 @@ class ProtocolReader(access: UnderlayAccess) : ListReaderCustomizer<Protocol, Pr
             init {
                 add(BgpProtocolReader(access))
                 add(OspfProtocolReader(access))
-//                add(StaticProtocolReader(access))
+                add(StaticProtocolReader(access))
             }
         }
     }
