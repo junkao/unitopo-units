@@ -8,6 +8,7 @@
 
 package io.frinx.unitopo.unit.xr6.interfaces
 
+import com.google.common.annotations.VisibleForTesting
 import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.read.ReadFailedException
 import io.fd.honeycomb.translate.spi.read.ListReaderCustomizer
@@ -127,13 +128,16 @@ class InterfaceReader(private val underlayAccess: UnderlayAccess) : ListReaderCu
             return underlayAccess.read(DATA_NODES_ID, LogicalDatastoreType.OPERATIONAL)
                     .checkedGet()
                     .orNull()
-                    ?.let {
-                        it.dataNode.orEmpty()
-                                .flatMap { it.systemView?.interfaces?.`interface`.orEmpty() }
-                                .map { it.key }
-                                .map { InterfaceKey(it.interfaceName.value) }
-                                .toList()
-                    }.orEmpty()
+                    ?.let { parseInterfaceIds(it) }.orEmpty()
+        }
+
+        @VisibleForTesting
+        fun parseInterfaceIds(it: DataNodes): List<InterfaceKey> {
+            return it.dataNode.orEmpty()
+                    .flatMap { it.systemView?.interfaces?.`interface`.orEmpty() }
+                    .map { it.key }
+                    .map { InterfaceKey(it.interfaceName.value) }
+                    .toList()
         }
     }
 }

@@ -30,6 +30,7 @@
         <openconfig.version>3.1.1.rc1-frinx-SNAPSHOT</openconfig.version>
         <hc.version>1.17.10-Carbon-SR1.3_1_1_rc1-frinxodl-SNAPSHOT</hc.version>
         <kotlin.version>1.1.4</kotlin.version>
+        <netconf.version>1.5.1-Carbon-SR1.3_1_1_rc1-frinxodl-SNAPSHOT</netconf.version>
         <!--<kotlin.compiler.incremental>true</kotlin.compiler.incremental>-->
     </properties>
 
@@ -48,6 +49,7 @@
                                 <goal>compile</goal>
                             </goals>
                             <configuration>
+                                <jvmTarget>1.8</jvmTarget>
                                 <sourceDirs>
                                     <sourceDir>${salGeneratorPath}</sourceDir>
                                     <sourceDir>${project.basedir}/src/main/java</sourceDir>
@@ -61,6 +63,7 @@
                                 <goal>test-compile</goal>
                             </goals>
                             <configuration>
+                                <jvmTarget>1.8</jvmTarget>
                                 <sourceDirs>
                                     <sourceDir>${project.basedir}/src/test/java</sourceDir>
                                     <sourceDir>${project.basedir}/src/test/kotlin</sourceDir>
