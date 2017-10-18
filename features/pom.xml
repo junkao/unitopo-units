@@ -175,6 +175,11 @@
     </dependency>
     <dependency>
       <groupId>io.frinx.unitopo</groupId>
+      <artifactId>xr-6-ip6-unit</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.frinx.unitopo</groupId>
       <artifactId>xr-6-network-instance-unit</artifactId>
       <version>${project.version}</version>
     </dependency>
