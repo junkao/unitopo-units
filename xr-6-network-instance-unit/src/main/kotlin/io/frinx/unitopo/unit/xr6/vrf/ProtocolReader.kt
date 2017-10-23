@@ -8,9 +8,8 @@
 
 package io.frinx.unitopo.unit.xr6.vrf
 
-import io.fd.honeycomb.translate.read.ReadContext
-import io.fd.honeycomb.translate.read.ReadFailedException
 import io.fd.honeycomb.translate.spi.read.ListReaderCustomizer
+import io.frinx.cli.registry.common.CompositeReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr6.bgp.handler.BgpProtocolReader
 import io.frinx.unitopo.unit.xr6.lr.handler.StaticProtocolReader
@@ -22,31 +21,9 @@ import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.network.instance.re
 import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
-import java.util.*
 
-
-class ProtocolReader(access: UnderlayAccess) : ListReaderCustomizer<Protocol, ProtocolKey, ProtocolBuilder> {
-
-    private val specificReaders: List<ListReaderCustomizer<Protocol, ProtocolKey, ProtocolBuilder>>
-
-    init {
-        specificReaders = object : ArrayList<ListReaderCustomizer<Protocol, ProtocolKey, ProtocolBuilder>>() {
-            init {
-                add(BgpProtocolReader(access))
-                add(OspfProtocolReader(access))
-                add(StaticProtocolReader(access))
-            }
-        }
-    }
-
-    @Throws(ReadFailedException::class)
-    override fun getAllIds(id: InstanceIdentifier<Protocol>, context: ReadContext): List<ProtocolKey> {
-        val allIds = ArrayList<ProtocolKey>()
-        for (specificReader in specificReaders) {
-            allIds.addAll(specificReader.getAllIds(id, context))
-        }
-        return allIds
-    }
+class ProtocolReader(underlayAccess: UnderlayAccess) :
+        CompositeReader<Protocol, ProtocolKey, ProtocolBuilder>(getChildren(underlayAccess)) {
 
     override fun merge(builder: Builder<out DataObject>, list: List<Protocol>) {
         (builder as ProtocolsBuilder).`protocol` = list
@@ -55,13 +32,7 @@ class ProtocolReader(access: UnderlayAccess) : ListReaderCustomizer<Protocol, Pr
     override fun getBuilder(instanceIdentifier: InstanceIdentifier<Protocol>): ProtocolBuilder {
         return ProtocolBuilder()
     }
-
-    @Throws(ReadFailedException::class)
-    override fun readCurrentAttributes(id: InstanceIdentifier<Protocol>, builder: ProtocolBuilder, ctx: ReadContext) {
-        // Invoking all specific readers here, each reader is responsible to check whether it is its type of
-        // protocol and if so, set the values
-        for (specificReader in specificReaders) {
-            specificReader.readCurrentAttributes(id, builder, ctx)
-        }
-    }
 }
+
+private fun getChildren(underlayAccess: UnderlayAccess): List<ListReaderCustomizer<Protocol, ProtocolKey, ProtocolBuilder>> =
+        listOf(BgpProtocolReader(underlayAccess), OspfProtocolReader(underlayAccess), StaticProtocolReader())
