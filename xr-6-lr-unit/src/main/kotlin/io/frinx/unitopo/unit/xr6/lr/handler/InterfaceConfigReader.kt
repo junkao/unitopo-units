@@ -9,24 +9,19 @@
 package io.frinx.unitopo.unit.xr6.lr.handler
 
 import io.fd.honeycomb.translate.read.ReadContext
-import io.fd.honeycomb.translate.spi.read.ReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess
+import io.frinx.unitopo.unit.xr6.lr.common.LrReader
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.interfaces.rev161222._interface.ref.InterfaceRefBuilder
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.interfaces.rev161222._interface.ref._interface.ref.Config
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.interfaces.rev161222._interface.ref._interface.ref.ConfigBuilder
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.local.routing.rev170515.local._static.top._static.routes._static.next.hops.NextHop
-import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.Protocol
 import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class InterfaceConfigReader(private val access: UnderlayAccess) : ReaderCustomizer<Config, ConfigBuilder> {
+class InterfaceConfigReader(private val access: UnderlayAccess) : LrReader<Config, ConfigBuilder> {
 
-    override fun readCurrentAttributes(id: InstanceIdentifier<Config>, builder: ConfigBuilder, ctx: ReadContext) {
-        val protKey = id.firstKeyOf(Protocol::class.java)
-        if (protKey.identifier != StaticProtocolReader.TYPE) {
-            return
-        }
+    override fun readCurrentAttributesForType(id: InstanceIdentifier<Config>, builder: ConfigBuilder, ctx: ReadContext) {
         val key = id.firstKeyOf(NextHop::class.java)
 
         val table = NextHopReader.parseNextHopTable(access, id.firstIdentifierOf(NextHop::class.java))

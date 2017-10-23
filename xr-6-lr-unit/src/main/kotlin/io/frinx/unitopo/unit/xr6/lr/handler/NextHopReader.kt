@@ -10,8 +10,8 @@ package io.frinx.unitopo.unit.xr6.lr.handler
 
 import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.read.ReadFailedException
-import io.fd.honeycomb.translate.spi.read.ListReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess
+import io.frinx.unitopo.unit.xr6.lr.common.LrListReader
 import org.opendaylight.controller.md.sal.binding.impl.BindingDOMMountPointServiceAdapter.LOG
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ip._static.cfg.rev150910.vrf.next.hop.VRFNEXTHOPCONTENT
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ip._static.cfg.rev150910.vrf.route.vrf.route.VrfNextHopTable
@@ -23,7 +23,6 @@ import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.local.routing.rev17
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.local.routing.rev170515.local._static.top._static.routes._static.next.hops.next.hop.ConfigBuilder
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.local.routing.rev170515.local._static.top._static.routes._static.next.hops.next.hop.StateBuilder
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
-import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.Protocol
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.types.inet.rev170403.IpAddress
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.types.inet.rev170403.Ipv4Address
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.types.inet.rev170403.Ipv6Address
@@ -31,17 +30,13 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.
 import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
-import java.util.ArrayList
+import java.util.*
 
-class NextHopReader(private val access: UnderlayAccess) : ListReaderCustomizer<NextHop, NextHopKey, NextHopBuilder> {
+class NextHopReader(private val access: UnderlayAccess) : LrListReader<NextHop, NextHopKey, NextHopBuilder> {
 
     override fun getBuilder(id: InstanceIdentifier<NextHop>): NextHopBuilder = NextHopBuilder()
 
-    override fun readCurrentAttributes(id: InstanceIdentifier<NextHop>, builder: NextHopBuilder, ctx: ReadContext) {
-        val protKey = id.firstKeyOf(Protocol::class.java)
-        if (protKey.identifier != StaticProtocolReader.TYPE) {
-            return
-        }
+    override fun readCurrentAttributesForType(id: InstanceIdentifier<NextHop>, builder: NextHopBuilder, ctx: ReadContext) {
         val key = id.firstKeyOf(NextHop::class.java)
         builder.index = key.index
 
@@ -89,14 +84,10 @@ class NextHopReader(private val access: UnderlayAccess) : ListReaderCustomizer<N
     }
 
     @Throws(ReadFailedException::class)
-    override fun getAllIds(id: InstanceIdentifier<NextHop>, context: ReadContext): List<NextHopKey> {
+    override fun getAllIdsForType(id: InstanceIdentifier<NextHop>, context: ReadContext): List<NextHopKey> {
         val table = parseNextHopTable(access, id)
 
         val keys = ArrayList<NextHopKey>()
-        val protKey = id.firstKeyOf(Protocol::class.java)
-        if (protKey.identifier != StaticProtocolReader.TYPE) {
-            return keys
-        }
         // only interface
         table?.vrfNextHopInterfaceName?.stream()?.forEach { name -> keys.add(NextHopKey(name.interfaceName.value)) }
 

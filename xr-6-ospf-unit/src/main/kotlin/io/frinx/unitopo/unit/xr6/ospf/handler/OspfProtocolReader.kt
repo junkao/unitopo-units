@@ -12,6 +12,7 @@ import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.read.ReadFailedException
 import io.fd.honeycomb.translate.spi.read.ListReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess
+import io.frinx.unitopo.unit.xr6.ospf.common.OspfReader
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev151109.Ospf
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev151109.ospf.Processes
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.Protocol
@@ -23,7 +24,8 @@ import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.controller.md.sal.common.api.data.ReadFailedException as MdSalReadFailedException
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
-class OspfProtocolReader(private val access: UnderlayAccess) : ListReaderCustomizer<Protocol, ProtocolKey, ProtocolBuilder> {
+class OspfProtocolReader(private val access: UnderlayAccess) : ListReaderCustomizer<Protocol, ProtocolKey, ProtocolBuilder>,
+        OspfReader<Protocol, ProtocolBuilder> {
 
     @Throws(ReadFailedException::class)
     override fun getAllIds(id: IID<Protocol>, context: ReadContext): List<ProtocolKey> {
@@ -46,12 +48,10 @@ class OspfProtocolReader(private val access: UnderlayAccess) : ListReaderCustomi
     override fun getBuilder(id: IID<Protocol>) = ProtocolBuilder()
 
     @Throws(ReadFailedException::class)
-    override fun readCurrentAttributes(id: IID<Protocol>, builder: ProtocolBuilder, ctx: ReadContext) {
+    override fun readCurrentAttributesForType(id: IID<Protocol>, builder: ProtocolBuilder, ctx: ReadContext) {
         val key = id.firstKeyOf(Protocol::class.java)
-        if (key.identifier == TYPE) {
-            builder.name = key.name
-            builder.identifier = key.identifier
-        }
+        builder.name = key.name
+        builder.identifier = key.identifier
     }
 
     companion object {

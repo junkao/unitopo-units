@@ -9,10 +9,9 @@
 package io.frinx.unitopo.unit.xr6.lr.handler
 
 import io.fd.honeycomb.translate.read.ReadContext
-import io.fd.honeycomb.translate.spi.read.ListReaderCustomizer
 import io.frinx.openconfig.network.instance.NetworInstance
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import java.util.ArrayList
+import io.frinx.unitopo.unit.xr6.lr.common.LrListReader
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ip._static.cfg.rev150910.RouterStatic
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ip._static.cfg.rev150910.address.family.AddressFamily
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ip._static.cfg.rev150910.vrf.prefix.table.VrfPrefixes
@@ -32,15 +31,12 @@ import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.types.inet.rev17040
 import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
+import java.util.*
 
-class StaticRouteReader(private val access: UnderlayAccess) : ListReaderCustomizer<Static, StaticKey, StaticBuilder> {
+class StaticRouteReader(private val access: UnderlayAccess) : LrListReader<Static, StaticKey, StaticBuilder> {
 
-    override fun getAllIds(id: InstanceIdentifier<Static>, context: ReadContext): List<StaticKey> {
+    override fun getAllIdsForType(id: InstanceIdentifier<Static>, context: ReadContext): List<StaticKey> {
         val keys = ArrayList<StaticKey>()
-        val protKey = id.firstKeyOf(Protocol::class.java)
-        if (protKey.identifier != StaticProtocolReader.TYPE) {
-            return keys
-        }
         val vrfName = id.firstKeyOf<NetworkInstance, NetworkInstanceKey>(NetworkInstance::class.java).`name`
         getAddressFamily(access, vrfName)?.let {
             findKeys(keys, it.vrfipv4?.vrfUnicast?.vrfPrefixes)
@@ -64,11 +60,8 @@ class StaticRouteReader(private val access: UnderlayAccess) : ListReaderCustomiz
 
     override fun getBuilder(id: InstanceIdentifier<Static>): StaticBuilder = StaticBuilder()
 
-    override fun readCurrentAttributes(id: InstanceIdentifier<Static>, builder: StaticBuilder, ctx: ReadContext) {
+    override fun readCurrentAttributesForType(id: InstanceIdentifier<Static>, builder: StaticBuilder, ctx: ReadContext) {
         val protKey = id.firstKeyOf(Protocol::class.java)
-        if (protKey.identifier != StaticProtocolReader.TYPE) {
-            return
-        }
         val prefix = id.firstKeyOf(Static::class.java).prefix
         builder.prefix = prefix
         builder.config = ConfigBuilder().setPrefix(prefix).build()

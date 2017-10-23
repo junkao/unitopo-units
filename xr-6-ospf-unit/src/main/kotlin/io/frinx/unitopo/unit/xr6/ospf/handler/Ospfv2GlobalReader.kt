@@ -10,9 +10,9 @@ package io.frinx.unitopo.unit.xr6.ospf.handler
 
 import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.read.ReadFailedException
-import io.fd.honeycomb.translate.spi.read.ReaderCustomizer
 import io.frinx.openconfig.network.instance.NetworInstance
 import io.frinx.unitopo.registry.spi.UnderlayAccess
+import io.frinx.unitopo.unit.xr6.ospf.common.OspfReader
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev151109.Ospf
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev151109.ospf.Processes
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev151109.ospf.processes.Process
@@ -30,16 +30,13 @@ import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.controller.md.sal.common.api.data.ReadFailedException as MdSalReadFailedException
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
-class Ospfv2GlobalReader(private val access: UnderlayAccess) : ReaderCustomizer<Global, GlobalBuilder> {
+class Ospfv2GlobalReader(private val access: UnderlayAccess) : OspfReader<Global, GlobalBuilder> {
 
     override fun getBuilder(id: IID<Global>) = GlobalBuilder()
 
-    override fun readCurrentAttributes(id: IID<Global>, builder: GlobalBuilder, ctx: ReadContext) {
+    override fun readCurrentAttributesForType(id: IID<Global>, builder: GlobalBuilder, ctx: ReadContext) {
         val vrfName = id.firstKeyOf(NetworkInstance::class.java)
         val protKey = id.firstKeyOf(Protocol::class.java)
-        if (protKey.identifier != OspfProtocolReader.TYPE) {
-            return
-        }
 
         try {
             readProcess(access, protKey, { builder.fromUnderlay(it, vrfName.name) })

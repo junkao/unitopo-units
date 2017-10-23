@@ -12,6 +12,7 @@ import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.read.ReadFailedException
 import io.fd.honeycomb.translate.spi.read.ListReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess
+import io.frinx.unitopo.unit.xr6.bgp.common.BgpReader
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.Bgp
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.Protocol
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.ProtocolBuilder
@@ -22,7 +23,8 @@ import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.controller.md.sal.common.api.data.ReadFailedException as MdSalReadFailedEx
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
-class BgpProtocolReader(private val access: UnderlayAccess) : ListReaderCustomizer<Protocol, ProtocolKey, ProtocolBuilder> {
+class BgpProtocolReader(private val access: UnderlayAccess) : ListReaderCustomizer<Protocol, ProtocolKey, ProtocolBuilder>,
+        BgpReader<Protocol, ProtocolBuilder> {
 
     @Throws(ReadFailedException::class)
     override fun getAllIds(id: IID<Protocol>, context: ReadContext): List<ProtocolKey> {
@@ -49,16 +51,14 @@ class BgpProtocolReader(private val access: UnderlayAccess) : ListReaderCustomiz
     override fun getBuilder(id: IID<Protocol>) = ProtocolBuilder()
 
     @Throws(ReadFailedException::class)
-    override fun readCurrentAttributes(id: IID<Protocol>, builder: ProtocolBuilder, ctx: ReadContext) {
+    override fun readCurrentAttributesForType(id: IID<Protocol>, builder: ProtocolBuilder, ctx: ReadContext) {
         val key = id.firstKeyOf(Protocol::class.java)
-        if (key.identifier == TYPE) {
-            builder.name = key.name
-            builder.identifier = key.identifier
-        }
+        builder.name = key.name
+        builder.identifier = key.identifier
     }
 
     companion object {
-        val UNDERLAY_BGP = IID.create(Bgp::class.java)
+        val UNDERLAY_BGP = IID.create(Bgp::class.java)!!
         val TYPE: Class<BGP> = BGP::class.java
     }
 }

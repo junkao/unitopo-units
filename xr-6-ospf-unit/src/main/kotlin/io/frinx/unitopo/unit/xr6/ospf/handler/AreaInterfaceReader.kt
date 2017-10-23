@@ -11,8 +11,8 @@ package io.frinx.unitopo.unit.xr6.ospf.handler
 
 import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.read.ReadFailedException
-import io.fd.honeycomb.translate.spi.read.ListReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess
+import io.frinx.unitopo.unit.xr6.ospf.common.OspfListReader
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.Protocol
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.ospfv2.rev170228.ospfv2.area.interfaces.structure.InterfacesBuilder
@@ -26,16 +26,13 @@ import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class AreaInterfaceReader(private val access: UnderlayAccess) : ListReaderCustomizer<Interface, InterfaceKey, InterfaceBuilder> {
+class AreaInterfaceReader(private val access: UnderlayAccess) : OspfListReader<Interface, InterfaceKey, InterfaceBuilder> {
 
     @Throws(ReadFailedException::class)
-    override fun getAllIds(id: InstanceIdentifier<Interface>, context: ReadContext): List<InterfaceKey> {
+    override fun getAllIdsForType(id: InstanceIdentifier<Interface>, context: ReadContext): List<InterfaceKey> {
         val vrfKey = id.firstKeyOf(NetworkInstance::class.java)
         val protKey = id.firstKeyOf(Protocol::class.java)
         val areaKey = id.firstKeyOf(Area::class.java)
-        if (protKey.identifier != OspfProtocolReader.TYPE) {
-            return emptyList()
-        }
 
         return AreaReader.getAreas(access, protKey, vrfKey.name)
                 ?.areaAreaId.orEmpty()
@@ -55,12 +52,8 @@ class AreaInterfaceReader(private val access: UnderlayAccess) : ListReaderCustom
     }
 
     @Throws(ReadFailedException::class)
-    override fun readCurrentAttributes(id: InstanceIdentifier<Interface>, builder: InterfaceBuilder, ctx: ReadContext) {
-        val protKey = id.firstKeyOf(Protocol::class.java)
+    override fun readCurrentAttributesForType(id: InstanceIdentifier<Interface>, builder: InterfaceBuilder, ctx: ReadContext) {
         val interfaceKey = id.firstKeyOf(Interface::class.java)
-        if (protKey.identifier != OspfProtocolReader.TYPE) {
-            return
-        }
 
         builder.id = interfaceKey.id
         builder.config = ConfigBuilder().setId(interfaceKey.id).build()

@@ -10,9 +10,9 @@ package io.frinx.unitopo.unit.xr6.bgp.handler
 
 import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.read.ReadFailedException
-import io.fd.honeycomb.translate.spi.read.ReaderCustomizer
 import io.frinx.openconfig.network.instance.NetworInstance
 import io.frinx.unitopo.registry.spi.UnderlayAccess
+import io.frinx.unitopo.unit.xr6.bgp.common.BgpReader
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.Instance
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.bgp.rev170202.bgp.global.base.Config
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.bgp.rev170202.bgp.global.base.ConfigBuilder
@@ -27,18 +27,13 @@ import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 import org.opendaylight.controller.md.sal.common.api.data.ReadFailedException as MdSalReadFailedException
 
-class BgpGlobalConfigReader(private val access: UnderlayAccess) : ReaderCustomizer<Config, ConfigBuilder> {
+class BgpGlobalConfigReader(private val access: UnderlayAccess) : BgpReader<Config, ConfigBuilder> {
 
     override fun getBuilder(id: InstanceIdentifier<Config>) = ConfigBuilder()
 
     @Throws(ReadFailedException::class)
-    override fun readCurrentAttributes(id: InstanceIdentifier<Config>, builder: ConfigBuilder, ctx: ReadContext) {
-        // TODO Protocol(TYPED) reader
+    override fun readCurrentAttributesForType(id: InstanceIdentifier<Config>, builder: ConfigBuilder, ctx: ReadContext) {
         val protKey = id.firstKeyOf<Protocol, ProtocolKey>(Protocol::class.java)
-        if (protKey.identifier != BgpProtocolReader.TYPE) {
-            return
-        }
-
         val vrfName = id.firstKeyOf(NetworkInstance::class.java).name
         try {
             access.read(BgpProtocolReader.UNDERLAY_BGP)
