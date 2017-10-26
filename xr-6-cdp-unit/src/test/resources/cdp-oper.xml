@@ -1,0 +1,643 @@
+<!--<rpc message-id="m-0" xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">-->
+<!--<get>-->
+<!--<filter xmlns:ns0="urn:ietf:params:xml:ns:netconf:base:1.0" ns0:type="subtree">-->
+<!--<cdp xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-cdp-oper"/>-->
+<!--</filter>-->
+<!--</get>-->
+<!--</rpc>-->
+<rpc-reply xmlns="urn:ietf:params:xml:ns:netconf:base:1.0" message-id="m-0">
+    <data>
+        <cdp xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-cdp-oper">
+            <nodes>
+                <node>
+                    <node-name>0/0/CPU0</node-name>
+                    <neighbors>
+                        <details>
+                            <detail>
+                                <interface-name>MgmtEth0/0/CPU0/0</interface-name>
+                                <device-id>PE2.demo.frinx.io</device-id>
+                                <cdp-neighbor>
+                                    <receiving-interface-name>MgmtEth0/0/CPU0/0</receiving-interface-name>
+                                    <device-id>PE2.demo.frinx.io</device-id>
+                                    <port-id>MgmtEth0/0/CPU0/0</port-id>
+                                    <header-version>2</header-version>
+                                    <hold-time>133</hold-time>
+                                    <capabilities>R</capabilities>
+                                    <platform>cisco IOS XRv Series</platform>
+                                    <detail>
+                                        <network-addresses>
+                                            <cdp-addr-entry>
+                                                <address>
+                                                    <address-type>ipv4</address-type>
+                                                    <ipv4-address>192.168.1.212</ipv4-address>
+                                                </address>
+                                            </cdp-addr-entry>
+                                        </network-addresses>
+                                        <version>Cisco IOS XR Software, Version 6.1.2[Default]
+                                            Copyright (c) 2016 by Cisco Systems, Inc.
+                                        </version>
+                                        <vtp-domain/>
+                                        <native-vlan>0</native-vlan>
+                                        <duplex>cdp-dplx-none</duplex>
+                                        <system-name>PE2.demo.frinx.io</system-name>
+                                    </detail>
+                                </cdp-neighbor>
+                            </detail>
+                            <detail>
+                                <interface-name>MgmtEth0/0/CPU0/0</interface-name>
+                                <device-id>XE1.FRINX</device-id>
+                                <cdp-neighbor>
+                                    <receiving-interface-name>MgmtEth0/0/CPU0/0</receiving-interface-name>
+                                    <device-id>XE1.FRINX</device-id>
+                                    <port-id>GigabitEthernet1</port-id>
+                                    <header-version>2</header-version>
+                                    <hold-time>127</hold-time>
+                                    <capabilities>R</capabilities>
+                                    <platform>cisco CSR1000V</platform>
+                                    <detail>
+                                        <network-addresses>
+                                            <cdp-addr-entry>
+                                                <address>
+                                                    <address-type>ipv4</address-type>
+                                                    <ipv4-address>192.168.1.252</ipv4-address>
+                                                </address>
+                                            </cdp-addr-entry>
+                                            <cdp-addr-entry>
+                                                <address>
+                                                    <address-type>ipv6</address-type>
+                                                    <ipv6-address>2001:db8:0:1::</ipv6-address>
+                                                </address>
+                                            </cdp-addr-entry>
+                                            <cdp-addr-entry>
+                                                <address>
+                                                    <address-type>ipv6</address-type>
+                                                    <ipv6-address>fe80::260:3eff:fe11:6770</ipv6-address>
+                                                </address>
+                                            </cdp-addr-entry>
+                                        </network-addresses>
+                                        <version>Cisco IOS Software, CSR1000V Software
+                                            (X86_64_LINUX_IOSD-UNIVERSALK9-M), Version 15.4(2)S, RELEASE SOFTWARE (fc2)
+                                            Technical Support: http://www.cisco.com/techsupport
+                                            Copyright (c) 1986-2014 by Cisco Systems, Inc.
+                                            Compiled Wed 26-Mar-14 21:09 by mcpre
+                                        </version>
+                                        <vtp-domain/>
+                                        <native-vlan>0</native-vlan>
+                                        <duplex>cdp-dplx-none</duplex>
+                                        <system-name/>
+                                    </detail>
+                                </cdp-neighbor>
+                            </detail>
+                            <detail>
+                                <interface-name>MgmtEth0/0/CPU0/0</interface-name>
+                                <device-id>R121.FRINX.LOCAL</device-id>
+                                <cdp-neighbor>
+                                    <receiving-interface-name>MgmtEth0/0/CPU0/0</receiving-interface-name>
+                                    <device-id>R121.FRINX.LOCAL</device-id>
+                                    <port-id>FastEthernet0/0</port-id>
+                                    <header-version>2</header-version>
+                                    <hold-time>130</hold-time>
+                                    <capabilities>R</capabilities>
+                                    <platform>Cisco 7206VXR</platform>
+                                    <detail>
+                                        <network-addresses>
+                                            <cdp-addr-entry>
+                                                <address>
+                                                    <address-type>ipv4</address-type>
+                                                    <ipv4-address>192.168.1.230</ipv4-address>
+                                                </address>
+                                            </cdp-addr-entry>
+                                            <cdp-addr-entry>
+                                                <address>
+                                                    <address-type>ipv6</address-type>
+                                                    <ipv6-address>fe80::c803:10ff:fefb:0</ipv6-address>
+                                                </address>
+                                            </cdp-addr-entry>
+                                        </network-addresses>
+                                        <version>Cisco IOS Software, 7200 Software (C7200-ADVIPSERVICESK9-M), Version
+                                            15.2(4)S5, RELEASE SOFTWARE (fc1)
+                                            Technical Support: http://www.cisco.com/techsupport
+                                            Copyright (c) 1986-2014 by Cisco Systems, Inc.
+                                            Compiled Thu 20-Feb-14 06:51 by prod_rel_team
+                                        </version>
+                                        <vtp-domain/>
+                                        <native-vlan>0</native-vlan>
+                                        <duplex>cdp-dplx-full</duplex>
+                                        <system-name/>
+                                    </detail>
+                                </cdp-neighbor>
+                            </detail>
+                            <detail>
+                                <interface-name>MgmtEth0/0/CPU0/0</interface-name>
+                                <device-id>XE2.FRINX</device-id>
+                                <cdp-neighbor>
+                                    <receiving-interface-name>MgmtEth0/0/CPU0/0</receiving-interface-name>
+                                    <device-id>XE2.FRINX</device-id>
+                                    <port-id>GigabitEthernet1</port-id>
+                                    <header-version>2</header-version>
+                                    <hold-time>134</hold-time>
+                                    <capabilities>R</capabilities>
+                                    <platform>cisco CSR1000V</platform>
+                                    <detail>
+                                        <network-addresses>
+                                            <cdp-addr-entry>
+                                                <address>
+                                                    <address-type>ipv4</address-type>
+                                                    <ipv4-address>192.168.1.251</ipv4-address>
+                                                </address>
+                                            </cdp-addr-entry>
+                                            <cdp-addr-entry>
+                                                <address>
+                                                    <address-type>ipv6</address-type>
+                                                    <ipv6-address>2001:db8:0:1::</ipv6-address>
+                                                </address>
+                                            </cdp-addr-entry>
+                                            <cdp-addr-entry>
+                                                <address>
+                                                    <address-type>ipv6</address-type>
+                                                    <ipv6-address>fe80::260:3eff:fe11:6770</ipv6-address>
+                                                </address>
+                                            </cdp-addr-entry>
+                                        </network-addresses>
+                                        <version>Cisco IOS Software, CSR1000V Software
+                                            (X86_64_LINUX_IOSD-UNIVERSALK9-M), Version 15.4(2)S, RELEASE SOFTWARE (fc2)
+                                            Technical Support: http://www.cisco.com/techsupport
+                                            Copyright (c) 1986-2014 by Cisco Systems, Inc.
+                                            Compiled Wed 26-Mar-14 21:09 by mcpre
+                                        </version>
+                                        <vtp-domain/>
+                                        <native-vlan>0</native-vlan>
+                                        <duplex>cdp-dplx-none</duplex>
+                                        <system-name/>
+                                    </detail>
+                                </cdp-neighbor>
+                            </detail>
+                            <detail>
+                                <interface-name>MgmtEth0/0/CPU0/0</interface-name>
+                                <device-id>R2.FRINX.LOCAL</device-id>
+                                <cdp-neighbor>
+                                    <receiving-interface-name>MgmtEth0/0/CPU0/0</receiving-interface-name>
+                                    <device-id>R2.FRINX.LOCAL</device-id>
+                                    <port-id>FastEthernet0/0</port-id>
+                                    <header-version>2</header-version>
+                                    <hold-time>173</hold-time>
+                                    <capabilities>R</capabilities>
+                                    <platform>Cisco 7206VXR</platform>
+                                    <detail>
+                                        <network-addresses>
+                                            <cdp-addr-entry>
+                                                <address>
+                                                    <address-type>ipv4</address-type>
+                                                    <ipv4-address>192.168.1.221</ipv4-address>
+                                                </address>
+                                            </cdp-addr-entry>
+                                        </network-addresses>
+                                        <version>Cisco IOS Software, 7200 Software (C7200-ADVIPSERVICESK9-M), Version
+                                            15.2(4)S5, RELEASE SOFTWARE (fc1)
+                                            Technical Support: http://www.cisco.com/techsupport
+                                            Copyright (c) 1986-2014 by Cisco Systems, Inc.
+                                            Compiled Thu 20-Feb-14 06:51 by prod_rel_team
+                                        </version>
+                                        <vtp-domain/>
+                                        <native-vlan>0</native-vlan>
+                                        <duplex>cdp-dplx-full</duplex>
+                                        <system-name/>
+                                    </detail>
+                                </cdp-neighbor>
+                            </detail>
+                            <detail>
+                                <interface-name>MgmtEth0/0/CPU0/0</interface-name>
+                                <device-id>TELNET</device-id>
+                                <cdp-neighbor>
+                                    <receiving-interface-name>MgmtEth0/0/CPU0/0</receiving-interface-name>
+                                    <device-id>TELNET</device-id>
+                                    <port-id>FastEthernet0/0</port-id>
+                                    <header-version>2</header-version>
+                                    <hold-time>175</hold-time>
+                                    <capabilities>R</capabilities>
+                                    <platform>Cisco 7206VXR</platform>
+                                    <detail>
+                                        <network-addresses>
+                                            <cdp-addr-entry>
+                                                <address>
+                                                    <address-type>ipv4</address-type>
+                                                    <ipv4-address>192.168.1.222</ipv4-address>
+                                                </address>
+                                            </cdp-addr-entry>
+                                        </network-addresses>
+                                        <version>Cisco IOS Software, 7200 Software (C7200-ADVIPSERVICESK9-M), Version
+                                            15.2(4)S5, RELEASE SOFTWARE (fc1)
+                                            Technical Support: http://www.cisco.com/techsupport
+                                            Copyright (c) 1986-2014 by Cisco Systems, Inc.
+                                            Compiled Thu 20-Feb-14 06:51 by prod_rel_team
+                                        </version>
+                                        <vtp-domain/>
+                                        <native-vlan>0</native-vlan>
+                                        <duplex>cdp-dplx-full</duplex>
+                                        <system-name/>
+                                    </detail>
+                                </cdp-neighbor>
+                            </detail>
+                            <detail>
+                                <interface-name>GigabitEthernet0/0/0/3</interface-name>
+                                <device-id>PE2.demo.frinx.io</device-id>
+                                <cdp-neighbor>
+                                    <receiving-interface-name>GigabitEthernet0/0/0/3</receiving-interface-name>
+                                    <device-id>PE2.demo.frinx.io</device-id>
+                                    <port-id>GigabitEthernet0/0/0/3</port-id>
+                                    <header-version>2</header-version>
+                                    <hold-time>140</hold-time>
+                                    <capabilities>R</capabilities>
+                                    <platform>cisco IOS XRv Series</platform>
+                                    <detail>
+                                        <version>Cisco IOS XR Software, Version 6.1.2[Default]
+                                            Copyright (c) 2016 by Cisco Systems, Inc.
+                                        </version>
+                                        <vtp-domain/>
+                                        <native-vlan>0</native-vlan>
+                                        <duplex>cdp-dplx-full</duplex>
+                                        <system-name>PE2.demo.frinx.io</system-name>
+                                    </detail>
+                                </cdp-neighbor>
+                            </detail>
+                        </details>
+                        <devices>
+                            <device>
+                                <device-id>PE2.demo.frinx.io</device-id>
+                                <cdp-neighbor>
+                                    <receiving-interface-name>MgmtEth0/0/CPU0/0</receiving-interface-name>
+                                    <device-id>PE2.demo.frinx.io</device-id>
+                                    <port-id>MgmtEth0/0/CPU0/0</port-id>
+                                    <header-version>2</header-version>
+                                    <hold-time>133</hold-time>
+                                    <capabilities>R</capabilities>
+                                    <platform>cisco IOS XRv Series</platform>
+                                    <detail>
+                                        <network-addresses>
+                                            <cdp-addr-entry>
+                                                <address>
+                                                    <address-type>ipv4</address-type>
+                                                    <ipv4-address>192.168.1.212</ipv4-address>
+                                                </address>
+                                            </cdp-addr-entry>
+                                        </network-addresses>
+                                        <version>Cisco IOS XR Software, Version 6.1.2[Default]
+                                            Copyright (c) 2016 by Cisco Systems, Inc.
+                                        </version>
+                                        <vtp-domain/>
+                                        <native-vlan>0</native-vlan>
+                                        <duplex>cdp-dplx-none</duplex>
+                                        <system-name>PE2.demo.frinx.io</system-name>
+                                    </detail>
+                                </cdp-neighbor>
+                            </device>
+                            <device>
+                                <device-id>XE1.FRINX</device-id>
+                                <cdp-neighbor>
+                                    <receiving-interface-name>MgmtEth0/0/CPU0/0</receiving-interface-name>
+                                    <device-id>XE1.FRINX</device-id>
+                                    <port-id>GigabitEthernet1</port-id>
+                                    <header-version>2</header-version>
+                                    <hold-time>127</hold-time>
+                                    <capabilities>R</capabilities>
+                                    <platform>cisco CSR1000V</platform>
+                                    <detail>
+                                        <network-addresses>
+                                            <cdp-addr-entry>
+                                                <address>
+                                                    <address-type>ipv4</address-type>
+                                                    <ipv4-address>192.168.1.252</ipv4-address>
+                                                </address>
+                                            </cdp-addr-entry>
+                                            <cdp-addr-entry>
+                                                <address>
+                                                    <address-type>ipv6</address-type>
+                                                    <ipv6-address>2001:db8:0:1::</ipv6-address>
+                                                </address>
+                                            </cdp-addr-entry>
+                                            <cdp-addr-entry>
+                                                <address>
+                                                    <address-type>ipv6</address-type>
+                                                    <ipv6-address>fe80::260:3eff:fe11:6770</ipv6-address>
+                                                </address>
+                                            </cdp-addr-entry>
+                                        </network-addresses>
+                                        <version>Cisco IOS Software, CSR1000V Software
+                                            (X86_64_LINUX_IOSD-UNIVERSALK9-M), Version 15.4(2)S, RELEASE SOFTWARE (fc2)
+                                            Technical Support: http://www.cisco.com/techsupport
+                                            Copyright (c) 1986-2014 by Cisco Systems, Inc.
+                                            Compiled Wed 26-Mar-14 21:09 by mcpre
+                                        </version>
+                                        <vtp-domain/>
+                                        <native-vlan>0</native-vlan>
+                                        <duplex>cdp-dplx-none</duplex>
+                                        <system-name/>
+                                    </detail>
+                                </cdp-neighbor>
+                            </device>
+                            <device>
+                                <device-id>R121.FRINX.LOCAL</device-id>
+                                <cdp-neighbor>
+                                    <receiving-interface-name>MgmtEth0/0/CPU0/0</receiving-interface-name>
+                                    <device-id>R121.FRINX.LOCAL</device-id>
+                                    <port-id>FastEthernet0/0</port-id>
+                                    <header-version>2</header-version>
+                                    <hold-time>130</hold-time>
+                                    <capabilities>R</capabilities>
+                                    <platform>Cisco 7206VXR</platform>
+                                    <detail>
+                                        <network-addresses>
+                                            <cdp-addr-entry>
+                                                <address>
+                                                    <address-type>ipv4</address-type>
+                                                    <ipv4-address>192.168.1.230</ipv4-address>
+                                                </address>
+                                            </cdp-addr-entry>
+                                            <cdp-addr-entry>
+                                                <address>
+                                                    <address-type>ipv6</address-type>
+                                                    <ipv6-address>fe80::c803:10ff:fefb:0</ipv6-address>
+                                                </address>
+                                            </cdp-addr-entry>
+                                        </network-addresses>
+                                        <version>Cisco IOS Software, 7200 Software (C7200-ADVIPSERVICESK9-M), Version
+                                            15.2(4)S5, RELEASE SOFTWARE (fc1)
+                                            Technical Support: http://www.cisco.com/techsupport
+                                            Copyright (c) 1986-2014 by Cisco Systems, Inc.
+                                            Compiled Thu 20-Feb-14 06:51 by prod_rel_team
+                                        </version>
+                                        <vtp-domain/>
+                                        <native-vlan>0</native-vlan>
+                                        <duplex>cdp-dplx-full</duplex>
+                                        <system-name/>
+                                    </detail>
+                                </cdp-neighbor>
+                            </device>
+                            <device>
+                                <device-id>XE2.FRINX</device-id>
+                                <cdp-neighbor>
+                                    <receiving-interface-name>MgmtEth0/0/CPU0/0</receiving-interface-name>
+                                    <device-id>XE2.FRINX</device-id>
+                                    <port-id>GigabitEthernet1</port-id>
+                                    <header-version>2</header-version>
+                                    <hold-time>134</hold-time>
+                                    <capabilities>R</capabilities>
+                                    <platform>cisco CSR1000V</platform>
+                                    <detail>
+                                        <network-addresses>
+                                            <cdp-addr-entry>
+                                                <address>
+                                                    <address-type>ipv4</address-type>
+                                                    <ipv4-address>192.168.1.251</ipv4-address>
+                                                </address>
+                                            </cdp-addr-entry>
+                                            <cdp-addr-entry>
+                                                <address>
+                                                    <address-type>ipv6</address-type>
+                                                    <ipv6-address>2001:db8:0:1::</ipv6-address>
+                                                </address>
+                                            </cdp-addr-entry>
+                                            <cdp-addr-entry>
+                                                <address>
+                                                    <address-type>ipv6</address-type>
+                                                    <ipv6-address>fe80::260:3eff:fe11:6770</ipv6-address>
+                                                </address>
+                                            </cdp-addr-entry>
+                                        </network-addresses>
+                                        <version>Cisco IOS Software, CSR1000V Software
+                                            (X86_64_LINUX_IOSD-UNIVERSALK9-M), Version 15.4(2)S, RELEASE SOFTWARE (fc2)
+                                            Technical Support: http://www.cisco.com/techsupport
+                                            Copyright (c) 1986-2014 by Cisco Systems, Inc.
+                                            Compiled Wed 26-Mar-14 21:09 by mcpre
+                                        </version>
+                                        <vtp-domain/>
+                                        <native-vlan>0</native-vlan>
+                                        <duplex>cdp-dplx-none</duplex>
+                                        <system-name/>
+                                    </detail>
+                                </cdp-neighbor>
+                            </device>
+                            <device>
+                                <device-id>R2.FRINX.LOCAL</device-id>
+                                <cdp-neighbor>
+                                    <receiving-interface-name>MgmtEth0/0/CPU0/0</receiving-interface-name>
+                                    <device-id>R2.FRINX.LOCAL</device-id>
+                                    <port-id>FastEthernet0/0</port-id>
+                                    <header-version>2</header-version>
+                                    <hold-time>173</hold-time>
+                                    <capabilities>R</capabilities>
+                                    <platform>Cisco 7206VXR</platform>
+                                    <detail>
+                                        <network-addresses>
+                                            <cdp-addr-entry>
+                                                <address>
+                                                    <address-type>ipv4</address-type>
+                                                    <ipv4-address>192.168.1.221</ipv4-address>
+                                                </address>
+                                            </cdp-addr-entry>
+                                        </network-addresses>
+                                        <version>Cisco IOS Software, 7200 Software (C7200-ADVIPSERVICESK9-M), Version
+                                            15.2(4)S5, RELEASE SOFTWARE (fc1)
+                                            Technical Support: http://www.cisco.com/techsupport
+                                            Copyright (c) 1986-2014 by Cisco Systems, Inc.
+                                            Compiled Thu 20-Feb-14 06:51 by prod_rel_team
+                                        </version>
+                                        <vtp-domain/>
+                                        <native-vlan>0</native-vlan>
+                                        <duplex>cdp-dplx-full</duplex>
+                                        <system-name/>
+                                    </detail>
+                                </cdp-neighbor>
+                            </device>
+                            <device>
+                                <device-id>TELNET</device-id>
+                                <cdp-neighbor>
+                                    <receiving-interface-name>MgmtEth0/0/CPU0/0</receiving-interface-name>
+                                    <device-id>TELNET</device-id>
+                                    <port-id>FastEthernet0/0</port-id>
+                                    <header-version>2</header-version>
+                                    <hold-time>175</hold-time>
+                                    <capabilities>R</capabilities>
+                                    <platform>Cisco 7206VXR</platform>
+                                    <detail>
+                                        <network-addresses>
+                                            <cdp-addr-entry>
+                                                <address>
+                                                    <address-type>ipv4</address-type>
+                                                    <ipv4-address>192.168.1.222</ipv4-address>
+                                                </address>
+                                            </cdp-addr-entry>
+                                        </network-addresses>
+                                        <version>Cisco IOS Software, 7200 Software (C7200-ADVIPSERVICESK9-M), Version
+                                            15.2(4)S5, RELEASE SOFTWARE (fc1)
+                                            Technical Support: http://www.cisco.com/techsupport
+                                            Copyright (c) 1986-2014 by Cisco Systems, Inc.
+                                            Compiled Thu 20-Feb-14 06:51 by prod_rel_team
+                                        </version>
+                                        <vtp-domain/>
+                                        <native-vlan>0</native-vlan>
+                                        <duplex>cdp-dplx-full</duplex>
+                                        <system-name/>
+                                    </detail>
+                                </cdp-neighbor>
+                            </device>
+                            <device>
+                                <device-id>PE2.demo.frinx.io</device-id>
+                                <cdp-neighbor>
+                                    <receiving-interface-name>GigabitEthernet0/0/0/3</receiving-interface-name>
+                                    <device-id>PE2.demo.frinx.io</device-id>
+                                    <port-id>GigabitEthernet0/0/0/3</port-id>
+                                    <header-version>2</header-version>
+                                    <hold-time>140</hold-time>
+                                    <capabilities>R</capabilities>
+                                    <platform>cisco IOS XRv Series</platform>
+                                    <detail>
+                                        <version>Cisco IOS XR Software, Version 6.1.2[Default]
+                                            Copyright (c) 2016 by Cisco Systems, Inc.
+                                        </version>
+                                        <vtp-domain/>
+                                        <native-vlan>0</native-vlan>
+                                        <duplex>cdp-dplx-full</duplex>
+                                        <system-name>PE2.demo.frinx.io</system-name>
+                                    </detail>
+                                </cdp-neighbor>
+                            </device>
+                        </devices>
+                        <summaries>
+                            <summary>
+                                <interface-name>MgmtEth0/0/CPU0/0</interface-name>
+                                <device-id>PE2.demo.frinx.io</device-id>
+                                <cdp-neighbor>
+                                    <receiving-interface-name>MgmtEth0/0/CPU0/0</receiving-interface-name>
+                                    <device-id>PE2.demo.frinx.io</device-id>
+                                    <port-id>MgmtEth0/0/CPU0/0</port-id>
+                                    <header-version>2</header-version>
+                                    <hold-time>133</hold-time>
+                                    <capabilities>R</capabilities>
+                                    <platform>cisco IOS XRv Series</platform>
+                                </cdp-neighbor>
+                            </summary>
+                            <summary>
+                                <interface-name>MgmtEth0/0/CPU0/0</interface-name>
+                                <device-id>XE1.FRINX</device-id>
+                                <cdp-neighbor>
+                                    <receiving-interface-name>MgmtEth0/0/CPU0/0</receiving-interface-name>
+                                    <device-id>XE1.FRINX</device-id>
+                                    <port-id>GigabitEthernet1</port-id>
+                                    <header-version>2</header-version>
+                                    <hold-time>127</hold-time>
+                                    <capabilities>R</capabilities>
+                                    <platform>cisco CSR1000V</platform>
+                                </cdp-neighbor>
+                            </summary>
+                            <summary>
+                                <interface-name>MgmtEth0/0/CPU0/0</interface-name>
+                                <device-id>R121.FRINX.LOCAL</device-id>
+                                <cdp-neighbor>
+                                    <receiving-interface-name>MgmtEth0/0/CPU0/0</receiving-interface-name>
+                                    <device-id>R121.FRINX.LOCAL</device-id>
+                                    <port-id>FastEthernet0/0</port-id>
+                                    <header-version>2</header-version>
+                                    <hold-time>130</hold-time>
+                                    <capabilities>R</capabilities>
+                                    <platform>Cisco 7206VXR</platform>
+                                </cdp-neighbor>
+                            </summary>
+                            <summary>
+                                <interface-name>MgmtEth0/0/CPU0/0</interface-name>
+                                <device-id>XE2.FRINX</device-id>
+                                <cdp-neighbor>
+                                    <receiving-interface-name>MgmtEth0/0/CPU0/0</receiving-interface-name>
+                                    <device-id>XE2.FRINX</device-id>
+                                    <port-id>GigabitEthernet1</port-id>
+                                    <header-version>2</header-version>
+                                    <hold-time>134</hold-time>
+                                    <capabilities>R</capabilities>
+                                    <platform>cisco CSR1000V</platform>
+                                </cdp-neighbor>
+                            </summary>
+                            <summary>
+                                <interface-name>MgmtEth0/0/CPU0/0</interface-name>
+                                <device-id>R2.FRINX.LOCAL</device-id>
+                                <cdp-neighbor>
+                                    <receiving-interface-name>MgmtEth0/0/CPU0/0</receiving-interface-name>
+                                    <device-id>R2.FRINX.LOCAL</device-id>
+                                    <port-id>FastEthernet0/0</port-id>
+                                    <header-version>2</header-version>
+                                    <hold-time>173</hold-time>
+                                    <capabilities>R</capabilities>
+                                    <platform>Cisco 7206VXR</platform>
+                                </cdp-neighbor>
+                            </summary>
+                            <summary>
+                                <interface-name>MgmtEth0/0/CPU0/0</interface-name>
+                                <device-id>TELNET</device-id>
+                                <cdp-neighbor>
+                                    <receiving-interface-name>MgmtEth0/0/CPU0/0</receiving-interface-name>
+                                    <device-id>TELNET</device-id>
+                                    <port-id>FastEthernet0/0</port-id>
+                                    <header-version>2</header-version>
+                                    <hold-time>175</hold-time>
+                                    <capabilities>R</capabilities>
+                                    <platform>Cisco 7206VXR</platform>
+                                </cdp-neighbor>
+                            </summary>
+                            <summary>
+                                <interface-name>GigabitEthernet0/0/0/3</interface-name>
+                                <device-id>PE2.demo.frinx.io</device-id>
+                                <cdp-neighbor>
+                                    <receiving-interface-name>GigabitEthernet0/0/0/3</receiving-interface-name>
+                                    <device-id>PE2.demo.frinx.io</device-id>
+                                    <port-id>GigabitEthernet0/0/0/3</port-id>
+                                    <header-version>2</header-version>
+                                    <hold-time>140</hold-time>
+                                    <capabilities>R</capabilities>
+                                    <platform>cisco IOS XRv Series</platform>
+                                </cdp-neighbor>
+                            </summary>
+                        </summaries>
+                    </neighbors>
+                    <statistics>
+                        <received-packets>1408</received-packets>
+                        <received-packets-v1>0</received-packets-v1>
+                        <received-packets-v2>1408</received-packets-v2>
+                        <transmitted-packets>564</transmitted-packets>
+                        <transmitted-packets-v1>0</transmitted-packets-v1>
+                        <transmitted-packets-v2>564</transmitted-packets-v2>
+                        <header-errors>0</header-errors>
+                        <checksum-errors>0</checksum-errors>
+                        <encapsulation-errors>0</encapsulation-errors>
+                        <bad-packet-errors>0</bad-packet-errors>
+                        <out-of-memory-errors>0</out-of-memory-errors>
+                        <truncated-packet-errors>0</truncated-packet-errors>
+                        <header-version-errors>0</header-version-errors>
+                        <open-file-errors>0</open-file-errors>
+                    </statistics>
+                    <interfaces>
+                        <interface>
+                            <interface-name>MgmtEth0/0/CPU0/0</interface-name>
+                            <interface-name-xr>MgmtEth0/0/CPU0/0</interface-name-xr>
+                            <basecaps-state>3</basecaps-state>
+                            <cdp-protocol-state>3</cdp-protocol-state>
+                            <interface-encaps>ether</interface-encaps>
+                        </interface>
+                        <interface>
+                            <interface-name>GigabitEthernet0/0/0/2</interface-name>
+                            <interface-name-xr>GigabitEthernet0/0/0/2</interface-name-xr>
+                            <basecaps-state>3</basecaps-state>
+                            <cdp-protocol-state>3</cdp-protocol-state>
+                            <interface-encaps>ether</interface-encaps>
+                        </interface>
+                        <interface>
+                            <interface-name>GigabitEthernet0/0/0/3</interface-name>
+                            <interface-name-xr>GigabitEthernet0/0/0/3</interface-name-xr>
+                            <basecaps-state>3</basecaps-state>
+                            <cdp-protocol-state>3</cdp-protocol-state>
+                            <interface-encaps>ether</interface-encaps>
+                        </interface>
+                    </interfaces>
+                </node>
+            </nodes>
+        </cdp>
+    </data>
+</rpc-reply>

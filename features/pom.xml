@@ -203,5 +203,10 @@
       <artifactId>xr-6-platform-unit</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>io.frinx.unitopo</groupId>
+      <artifactId>xr-6-cdp-unit</artifactId>
+      <version>${project.version}</version>
+    </dependency>
   </dependencies>
 </project>
