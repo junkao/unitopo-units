@@ -8,7 +8,6 @@
 
 package io.frinx.unitopo.unit.xr6.lr
 
-import com.google.common.collect.Sets
 import io.fd.honeycomb.rpc.RpcService
 import io.fd.honeycomb.translate.impl .read.GenericListReader
 import io.fd.honeycomb.translate.impl.read.GenericReader
@@ -34,7 +33,6 @@ import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.local.routing.rev17
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.local.routing.rev170515.local._static.top._static.routes._static.next.hops.next.hop.State
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
-import org.opendaylight.yangtools.yang.binding.YangModuleInfo
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.local.routing.rev170515.`$YangModuleInfoImpl` as OpenconfigLocalRoutingYangModule
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ip._static.cfg.rev150910.`$YangModuleInfoImpl` as UnderlayLocalRoutingYangModule
 
@@ -52,9 +50,9 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
         }
     }
 
-    override fun getYangSchemas(): Set<YangModuleInfo> = setOf(OpenconfigLocalRoutingYangModule.getInstance())
+    override fun getYangSchemas() = setOf(OpenconfigLocalRoutingYangModule.getInstance())
 
-    override fun getUnderlayYangSchemas(): Set<YangModuleInfo> = setOf(UnderlayLocalRoutingYangModule.getInstance())
+    override fun getUnderlayYangSchemas() = setOf(UnderlayLocalRoutingYangModule.getInstance())
 
     override fun getRpcs(context: UnderlayAccess) = emptySet<RpcService<out DataObject, out DataObject>>()
 
@@ -70,12 +68,12 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
 
     private fun provideReaders(rRegistry: ModifiableReaderRegistryBuilder, access: UnderlayAccess) {
         rRegistry.addStructuralReader(IIDs.NE_NE_PR_PR_STATICROUTES, StaticRoutesBuilder::class.java)
-        rRegistry.subtreeAdd(Sets.newHashSet(
+        rRegistry.subtreeAdd(setOf(
                 InstanceIdentifier.create(Static::class.java).child(org.opendaylight.yang.gen.v1.http.openconfig.net.yang.local.routing.rev170515.local._static.top._static.routes._static.Config::class.java)
                 , InstanceIdentifier.create(Static::class.java).child(org.opendaylight.yang.gen.v1.http.openconfig.net.yang.local.routing.rev170515.local._static.top._static.routes._static.State::class.java)),
                 GenericListReader<Static, StaticKey, StaticBuilder>(IIDs.NE_NE_PR_PR_ST_STATIC, StaticRouteReader(access)))
         rRegistry.addStructuralReader(IIDs.NE_NE_PR_PR_ST_ST_NEXTHOPS, NextHopsBuilder::class.java)
-        rRegistry.subtreeAdd(Sets.newHashSet(
+        rRegistry.subtreeAdd(setOf(
                 InstanceIdentifier.create(NextHop::class.java).child(Config::class.java),
                 InstanceIdentifier.create(NextHop::class.java).child(State::class.java)),
                 GenericListReader<NextHop, NextHopKey, NextHopBuilder>(IIDs.NE_NE_PR_PR_ST_ST_NE_NEXTHOP, NextHopReader(access)))

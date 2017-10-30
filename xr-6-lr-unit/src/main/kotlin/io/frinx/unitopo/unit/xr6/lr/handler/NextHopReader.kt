@@ -8,11 +8,13 @@
 
 package io.frinx.unitopo.unit.xr6.lr.handler
 
+import com.google.common.annotations.VisibleForTesting
+import com.sun.xml.internal.fastinfoset.alphabet.BuiltInRestrictedAlphabets.table
 import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.read.ReadFailedException
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr6.lr.common.LrListReader
-import org.opendaylight.controller.md.sal.binding.impl.BindingDOMMountPointServiceAdapter.LOG
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ip._static.cfg.rev150910.address.family.AddressFamily
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ip._static.cfg.rev150910.vrf.next.hop.VRFNEXTHOPCONTENT
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ip._static.cfg.rev150910.vrf.route.vrf.route.VrfNextHopTable
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.local.routing.rev170515.local._static.top._static.routes.Static
@@ -23,6 +25,7 @@ import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.local.routing.rev17
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.local.routing.rev170515.local._static.top._static.routes._static.next.hops.next.hop.ConfigBuilder
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.local.routing.rev170515.local._static.top._static.routes._static.next.hops.next.hop.StateBuilder
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
+import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.local.routing.rev170515.LocalStaticNexthopConfig.NextHop as BASE_NEXTHOP_CONFIG
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.types.inet.rev170403.IpAddress
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.types.inet.rev170403.Ipv4Address
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.types.inet.rev170403.Ipv6Address
@@ -30,73 +33,27 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.
 import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
-import java.util.*
+import java.util.ArrayList
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ip._static.cfg.rev150910.vrf.prefix.table.VrfPrefixes
+import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.local.routing.rev170515.local._static.top._static.routes.StaticKey
 
 class NextHopReader(private val access: UnderlayAccess) : LrListReader<NextHop, NextHopKey, NextHopBuilder> {
 
-    override fun getBuilder(id: InstanceIdentifier<NextHop>): NextHopBuilder = NextHopBuilder()
+    override fun getBuilder(id: InstanceIdentifier<NextHop>) = NextHopBuilder()
 
     override fun readCurrentAttributesForType(id: InstanceIdentifier<NextHop>, builder: NextHopBuilder, ctx: ReadContext) {
         val key = id.firstKeyOf(NextHop::class.java)
         builder.index = key.index
-
-        val table = parseNextHopTable(access, id)
-
-        val cBuilder = ConfigBuilder()
-        val sBuilder = StateBuilder()
-        cBuilder.index = key.index
-        sBuilder.index = key.index
-
-        var sureContent : VRFNEXTHOPCONTENT? = null
-        val maybeContent1 = table?.vrfNextHopNextHopAddress.orEmpty().stream()
-                .filter { f -> createComplexKey(null, f.nextHopAddress) == key }.findFirst()
-        if (maybeContent1.isPresent) {
-            sureContent = maybeContent1.get()
-            cBuilder.nextHop = org.opendaylight.yang.gen.v1.http.openconfig.net.yang.local.routing.rev170515.LocalStaticNexthopConfig.NextHop(ipFromIpAddressNoZone(maybeContent1.get().nextHopAddress))
-            sBuilder.nextHop = org.opendaylight.yang.gen.v1.http.openconfig.net.yang.local.routing.rev170515.LocalStaticNexthopConfig.NextHop(ipFromIpAddressNoZone(maybeContent1.get().nextHopAddress))
-        } else {
-            val maybeContent2 = table?.vrfNextHopInterfaceName.orEmpty().stream().filter { f -> f.interfaceName.value == key.toString() }.findFirst()
-            if (maybeContent2.isPresent) {
-                sureContent = maybeContent2.get()
-            } else {
-                val maybeContent3 = table?.vrfNextHopInterfaceNameNextHopAddress.orEmpty().stream()
-                        .filter { f -> createComplexKey(f.interfaceName.value, f.nextHopAddress) == key }.findFirst()
-                if (maybeContent3.isPresent) {
-                    sureContent = maybeContent3.get()
-                    cBuilder.nextHop = org.opendaylight.yang.gen.v1.http.openconfig.net.yang.local.routing.rev170515.LocalStaticNexthopConfig.NextHop(ipFromIpAddressNoZone(maybeContent3.get().nextHopAddress))
-                    sBuilder.nextHop = org.opendaylight.yang.gen.v1.http.openconfig.net.yang.local.routing.rev170515.LocalStaticNexthopConfig.NextHop(ipFromIpAddressNoZone(maybeContent3.get().nextHopAddress))
-                }
-            }
-        }
-        cBuilder.metric = sureContent?.loadMetric
-        sBuilder.metric = sureContent?.loadMetric
-
-        builder.config = cBuilder.build()
-        builder.state = sBuilder.build()
-    }
-
-    private fun ipFromIpAddressNoZone(ipNoZone : IpAddressNoZone) : IpAddress {
-        return if (ipNoZone.ipv4AddressNoZone != null) {
-            IpAddress(Ipv4Address(ipNoZone.ipv4AddressNoZone.value))
-        } else {
-            IpAddress(Ipv6Address(ipNoZone.ipv6AddressNoZone.value))
+        parseNextHopTable(access, id)?.let {
+            parseNextHopContent(key, builder, it)
         }
     }
 
-    @Throws(ReadFailedException::class)
     override fun getAllIdsForType(id: InstanceIdentifier<NextHop>, context: ReadContext): List<NextHopKey> {
-        val table = parseNextHopTable(access, id)
-
-        val keys = ArrayList<NextHopKey>()
-        // only interface
-        table?.vrfNextHopInterfaceName?.stream()?.forEach { name -> keys.add(NextHopKey(name.interfaceName.value)) }
-
-        // interface + nexthop
-        table?.vrfNextHopInterfaceNameNextHopAddress?.stream()?.forEach { name -> keys.add(createComplexKey(name.interfaceName.value, name.nextHopAddress)) }
-
-        // only next hop
-        table?.vrfNextHopNextHopAddress?.stream()?.forEach { name -> keys.add(createComplexKey(null, name.nextHopAddress)) }
-        return keys
+        parseNextHopTable(access, id)?.let {
+            return getKeys(it)
+        }
+        return emptyList()
     }
 
     override fun merge(builder: Builder<out DataObject>, readData: List<NextHop>) {
@@ -105,47 +62,108 @@ class NextHopReader(private val access: UnderlayAccess) : LrListReader<NextHop, 
 
     companion object {
 
-        fun createComplexKey(interfaceName: String?, nextHop: IpAddressNoZone): NextHopKey {
-            val builder = StringBuilder()
-            builder.append(nextHop.ipv4AddressNoZone?.value ?: nextHop.ipv6AddressNoZone?.value)
-            if (interfaceName != null) {
-                builder.append(" ").append(interfaceName)
-            } else {
-                builder.append("")
-            }
-            return NextHopKey(builder.toString())
-        }
-
-        fun parseNextHopTable(access: UnderlayAccess, id: InstanceIdentifier<NextHop>): VrfNextHopTable? {
+        private fun parseNextHopTable(access: UnderlayAccess, id: InstanceIdentifier<NextHop>): VrfNextHopTable? {
             val routeKey = id.firstKeyOf(Static::class.java)
             val vrfName = id.firstKeyOf(NetworkInstance::class.java).name
             val af = StaticRouteReader.getAddressFamily(access, vrfName)
-            af?: return null
-
-            if (routeKey.prefix?.ipv4Prefix?.value != null) {
-                LOG.debug("ipv4: {}", routeKey.prefix.ipv4Prefix.value)
-                // prefix can't be in unicast at the same time as in multicast, so if we didn't find it in unicast, let's check multicast
-                var maybePref = af.vrfipv4!!.vrfUnicast?.vrfPrefixes?.vrfPrefix?.stream()
-                        ?.filter { vrf -> StaticRouteReader.ipAddressToPrefix(vrf).ipv4Prefix == routeKey.prefix.ipv4Prefix }?.findFirst()!!
-                if (!maybePref.isPresent) {
-                    maybePref = af.vrfipv4!!.vrfMulticast?.vrfPrefixes?.vrfPrefix?.stream()
-                            ?.filter { vrf ->  StaticRouteReader.ipAddressToPrefix(vrf).ipv4Prefix == routeKey.prefix.ipv4Prefix }?.findFirst()!!
-                }
-                return maybePref.get().vrfRoute.vrfNextHopTable
-            }
-
-            if (routeKey.prefix?.ipv6Prefix?.value != null) {
-                LOG.debug("ipv6: {}", routeKey.prefix.ipv6Prefix.value)
-                // prefix can't be in unicast at the same time as in multicast, so if we didn't find it in unicast, let's check multicast
-                var maybePref = af.vrfipv6?.vrfUnicast?.vrfPrefixes?.vrfPrefix?.stream()
-                        ?.filter { vrf -> StaticRouteReader.ipAddressToPrefix(vrf).ipv6Prefix == routeKey.prefix.ipv6Prefix }?.findFirst()!!
-                if (!maybePref.isPresent) {
-                    maybePref = af.vrfipv6?.vrfMulticast?.vrfPrefixes?.vrfPrefix?.stream()
-                            ?.filter { vrf -> StaticRouteReader.ipAddressToPrefix(vrf).ipv6Prefix == routeKey.prefix.ipv6Prefix }?.findFirst()!!
-                }
-                return maybePref.get().vrfRoute.vrfNextHopTable
+            af?.let {
+                return parseNextHopTable(af, routeKey)
             }
             return null
         }
+
+        @VisibleForTesting
+        fun parseNextHopTable(af: AddressFamily, routeKey: StaticKey): VrfNextHopTable? {
+
+            // prefix can't be in unicast at the same time as in multicast, so if we didn't find it in unicast, let's check multicast
+            routeKey.prefix?.ipv4Prefix?.value?.let {
+                af.vrfipv4!!.vrfUnicast?.vrfPrefixes?.findPrefix(routeKey)?.let {
+                    return it.vrfRoute?.vrfNextHopTable
+                }
+                af.vrfipv4!!.vrfMulticast?.vrfPrefixes?.findPrefix(routeKey)?.let {
+                    return it.vrfRoute?.vrfNextHopTable
+                }
+            }
+
+            routeKey.prefix?.ipv6Prefix?.value?.let {
+                af.vrfipv6!!.vrfUnicast?.vrfPrefixes?.findPrefix(routeKey)?.let {
+                    return it.vrfRoute?.vrfNextHopTable
+                }
+                af.vrfipv6!!.vrfMulticast?.vrfPrefixes?.findPrefix(routeKey)?.let {
+                    return it.vrfRoute?.vrfNextHopTable
+                }
+            }
+            return null
+        }
+
+        @VisibleForTesting
+        fun getKeys(table: VrfNextHopTable) : List<NextHopKey> {
+            val keys = ArrayList<NextHopKey>()
+            // only interface
+            table.vrfNextHopInterfaceName.orEmpty().forEach { keys.add(NextHopKey(it.interfaceName.value)) }
+
+            // interface + nexthop
+            table.vrfNextHopInterfaceNameNextHopAddress.orEmpty().forEach { keys.add(it.nextHopAddress.createComplexKey(it.interfaceName.value)) }
+
+            // only next hop
+            table.vrfNextHopNextHopAddress.orEmpty().forEach { keys.add(it.nextHopAddress.createComplexKey(null)) }
+            return keys
+        }
+
+        @VisibleForTesting
+        fun parseNextHopContent(key: NextHopKey, builder: NextHopBuilder, table: VrfNextHopTable) {
+            val cBuilder = ConfigBuilder()
+            val sBuilder = StateBuilder()
+            // only next hop
+            table.vrfNextHopNextHopAddress.orEmpty()
+                    .firstOrNull { it.nextHopAddress.createComplexKey(null) == key }?.let {
+                cBuilder.nextHop = BASE_NEXTHOP_CONFIG(ipFromIpAddressNoZone(it.nextHopAddress))
+                sBuilder.nextHop = BASE_NEXTHOP_CONFIG(ipFromIpAddressNoZone(it.nextHopAddress))
+                setMetric(cBuilder, sBuilder, it)
+            }
+
+            // only interface
+            table.vrfNextHopInterfaceName.orEmpty()
+                    .firstOrNull { it.interfaceName.value == key.toString() }?.let {
+                setMetric(cBuilder, sBuilder, it)
+            }
+
+            // interface + nexthop
+            table.vrfNextHopInterfaceNameNextHopAddress.orEmpty()
+                    .firstOrNull { it.nextHopAddress.createComplexKey(it.interfaceName.value) == key }?.let {
+                cBuilder.nextHop = BASE_NEXTHOP_CONFIG(ipFromIpAddressNoZone(it.nextHopAddress))
+                sBuilder.nextHop = BASE_NEXTHOP_CONFIG(ipFromIpAddressNoZone(it.nextHopAddress))
+                setMetric(cBuilder, sBuilder, it)
+            }
+            cBuilder.index = key.index
+            sBuilder.index = key.index
+
+            builder.config = cBuilder.build()
+            builder.state = sBuilder.build()
+        }
+
+
+        private fun setMetric(cBuilder : ConfigBuilder, sBuilder : StateBuilder, content : VRFNEXTHOPCONTENT) {
+            cBuilder.metric = content.loadMetric
+            sBuilder.metric = content.loadMetric
+        }
+
+        private fun VrfPrefixes.findPrefix(routeKey: StaticKey) = vrfPrefix.orEmpty().firstOrNull { it.ipAddressToPrefix().ipv4Prefix == routeKey.prefix.ipv4Prefix }
+
+        private fun ipFromIpAddressNoZone(ipNoZone : IpAddressNoZone) : IpAddress {
+            ipNoZone.ipv4AddressNoZone?.let {
+                return IpAddress(Ipv4Address(ipNoZone.ipv4AddressNoZone.value))
+            }
+            return IpAddress(Ipv6Address(ipNoZone.ipv6AddressNoZone.value))
+        }
     }
+}
+
+fun IpAddressNoZone.createComplexKey(interfaceName: String?): NextHopKey {
+    val builder = StringBuilder()
+    builder.append(ipv4AddressNoZone?.value ?: ipv6AddressNoZone?.value)
+    interfaceName?.let {
+        builder.append(" ").append(interfaceName)
+    }
+    return NextHopKey(builder.toString())
 }

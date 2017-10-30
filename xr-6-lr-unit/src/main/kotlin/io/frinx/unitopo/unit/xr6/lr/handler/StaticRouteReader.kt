@@ -8,6 +8,7 @@
 
 package io.frinx.unitopo.unit.xr6.lr.handler
 
+import com.google.common.annotations.VisibleForTesting
 import io.fd.honeycomb.translate.read.ReadContext
 import io.frinx.openconfig.network.instance.NetworInstance
 import io.frinx.unitopo.registry.spi.UnderlayAccess
@@ -31,28 +32,13 @@ import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.types.inet.rev17040
 import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
-import java.util.*
 
 class StaticRouteReader(private val access: UnderlayAccess) : LrListReader<Static, StaticKey, StaticBuilder> {
 
     override fun getAllIdsForType(id: InstanceIdentifier<Static>, context: ReadContext): List<StaticKey> {
-        val keys = ArrayList<StaticKey>()
         val vrfName = id.firstKeyOf<NetworkInstance, NetworkInstanceKey>(NetworkInstance::class.java).`name`
-        getAddressFamily(access, vrfName)?.let {
-            findKeys(keys, it.vrfipv4?.vrfUnicast?.vrfPrefixes)
-            findKeys(keys, it.vrfipv4?.vrfMulticast?.vrfPrefixes)
-            findKeys(keys, it.vrfipv6?.vrfUnicast?.vrfPrefixes)
-            findKeys(keys, it.vrfipv6?.vrfMulticast?.vrfPrefixes)
-        }
-        return keys
+        return getStaticKeys(getAddressFamily(access, vrfName))
     }
-
-    private fun findKeys(keys: MutableList<StaticKey>, prefixes: VrfPrefixes?) {
-        keys.addAll(prefixes?.vrfPrefix?.map(this::convertVrfKeyToStaticKey).orEmpty())
-    }
-
-    private fun convertVrfKeyToStaticKey(prefix: VrfPrefix): StaticKey =
-            StaticKey(ipAddressToPrefix(prefix))
 
     override fun merge(builder: Builder<out DataObject>, readData: List<Static>) {
         (builder as StaticRoutesBuilder).static = readData
@@ -70,7 +56,8 @@ class StaticRouteReader(private val access: UnderlayAccess) : LrListReader<Stati
 
     companion object {
 
-        private val ROUTE_STATIC_IID = InstanceIdentifier.create(RouterStatic::class.java)!!
+        @VisibleForTesting
+        val ROUTE_STATIC_IID = InstanceIdentifier.create(RouterStatic::class.java)!!
 
         fun getAddressFamily(access: UnderlayAccess, vrfName: String): AddressFamily? {
             return access.read(ROUTE_STATIC_IID).checkedGet().orNull()?.let {
@@ -84,12 +71,30 @@ class StaticRouteReader(private val access: UnderlayAccess) : LrListReader<Stati
             }
         }
 
-        fun ipAddressToPrefix(prefix: VrfPrefix) : IpPrefix {
-            return if (prefix.prefix?.ipv4AddressNoZone != null) {
-                IpPrefix(Ipv4Prefix(StringBuilder(prefix.prefix.ipv4AddressNoZone.value).append("/").append(prefix.prefixLength).toString()))
-            } else {
-                IpPrefix(Ipv6Prefix(StringBuilder(prefix.prefix.ipv6AddressNoZone.value).append("/").append(prefix.prefixLength).toString()))
+        @VisibleForTesting
+        fun getStaticKeys(family: AddressFamily?) : List<StaticKey> {
+           val keys = ArrayList<StaticKey>()
+           family?.let {
+                findKeys(keys, it.vrfipv4?.vrfUnicast?.vrfPrefixes)
+                findKeys(keys, it.vrfipv4?.vrfMulticast?.vrfPrefixes)
+                findKeys(keys, it.vrfipv6?.vrfUnicast?.vrfPrefixes)
+                findKeys(keys, it.vrfipv6?.vrfMulticast?.vrfPrefixes)
             }
+            return keys
         }
+
+        private fun findKeys(keys: MutableList<StaticKey>, prefixes: VrfPrefixes?) {
+            keys.addAll(prefixes?.vrfPrefix.orEmpty().map(this::convertVrfKeyToStaticKey))
+        }
+
+        private fun convertVrfKeyToStaticKey(prefix: VrfPrefix) = StaticKey(prefix.ipAddressToPrefix())
     }
+}
+
+
+fun VrfPrefix.ipAddressToPrefix() : IpPrefix {
+    prefix.ipv4AddressNoZone?.let {
+        return IpPrefix(Ipv4Prefix(StringBuilder(prefix.ipv4AddressNoZone.value).append("/").append(prefixLength).toString()))
+    }
+    return IpPrefix(Ipv6Prefix(StringBuilder(prefix.ipv6AddressNoZone.value).append("/").append(prefixLength).toString()))
 }
