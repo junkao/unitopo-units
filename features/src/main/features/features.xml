@@ -38,6 +38,7 @@
         <bundle>mvn:io.frinx.unitopo/xr-6-lr-unit/{{VERSION}}</bundle>
         <bundle>mvn:io.frinx.unitopo/xr-6-platform-unit/{{VERSION}}</bundle>
         <bundle>mvn:io.frinx.unitopo/xr-6-cdp-unit/{{VERSION}}</bundle>
+        <bundle>mvn:io.frinx.unitopo/xr-6-lldp-unit/{{VERSION}}</bundle>
     </feature>
 
     <feature name='unified-topology-all-units' version='${project.version}'>

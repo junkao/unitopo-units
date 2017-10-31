@@ -39,6 +39,7 @@
     <module>xr-6-lr-unit</module>
     <module>xr-6-platform-unit</module>
     <module>xr-6-cdp-unit</module>
+    <module>xr-6-lldp-unit</module>
     <module>features</module>
   </modules>
 
