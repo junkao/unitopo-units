@@ -57,7 +57,7 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
     }
 
     private fun provideReaders(rRegistry: ModifiableReaderRegistryBuilder, access: UnderlayAccess) {
-        rRegistry.addStructuralReader(IIDs.NE_NE_PR_PR_OSPFV, Ospfv2Builder::class.java)
+        rRegistry.addStructuralReader(IIDs.NE_NE_PR_PR_OSPFV2, Ospfv2Builder::class.java)
 
         rRegistry.subtreeAdd(
                 setOf(
