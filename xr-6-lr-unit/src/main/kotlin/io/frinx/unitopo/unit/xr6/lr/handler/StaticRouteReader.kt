@@ -21,8 +21,6 @@ import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.local.routing.rev17
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.local.routing.rev170515.local._static.top._static.routes.Static
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.local.routing.rev170515.local._static.top._static.routes.StaticBuilder
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.local.routing.rev170515.local._static.top._static.routes.StaticKey
-import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.local.routing.rev170515.local._static.top._static.routes._static.ConfigBuilder
-import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.local.routing.rev170515.local._static.top._static.routes._static.StateBuilder
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstanceKey
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.Protocol
@@ -33,7 +31,7 @@ import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class StaticRouteReader(private val access: UnderlayAccess) : LrListReader<Static, StaticKey, StaticBuilder> {
+class StaticRouteReader(private val access: UnderlayAccess) : LrListReader.LrConfigListReader<Static, StaticKey, StaticBuilder> {
 
     override fun getAllIdsForType(id: InstanceIdentifier<Static>, context: ReadContext): List<StaticKey> {
         val vrfName = id.firstKeyOf<NetworkInstance, NetworkInstanceKey>(NetworkInstance::class.java).`name`
@@ -50,8 +48,6 @@ class StaticRouteReader(private val access: UnderlayAccess) : LrListReader<Stati
         val protKey = id.firstKeyOf(Protocol::class.java)
         val prefix = id.firstKeyOf(Static::class.java).prefix
         builder.prefix = prefix
-        builder.config = ConfigBuilder().setPrefix(prefix).build()
-        builder.state = StateBuilder().setPrefix(prefix).build()
     }
 
     companion object {

@@ -1,7 +1,7 @@
 package io.frinx.unitopo.unit.xr6.interfaces.subifc
 
 import io.fd.honeycomb.translate.read.ReadContext
-import io.fd.honeycomb.translate.spi.read.ListReaderCustomizer
+import io.fd.honeycomb.translate.spi.read.ConfigListReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr6.interfaces.InterfaceReader
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev150730._interface.configurations.InterfaceConfiguration
@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.io.cfg.rev150730.InterfaceConfiguration1 as Ipv4IfcAugment
 
-class Ipv4AddressReader(private val underlayAccess: UnderlayAccess) : ListReaderCustomizer<Address, AddressKey, AddressBuilder> {
+class Ipv4AddressReader(private val underlayAccess: UnderlayAccess) : ConfigListReaderCustomizer<Address, AddressKey, AddressBuilder> {
 
     override fun merge(builder: Builder<out DataObject>, readData: MutableList<Address>) {
         (builder as AddressesBuilder).address = readData

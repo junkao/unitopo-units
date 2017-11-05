@@ -19,7 +19,7 @@ import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.network.instance.re
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
 class StaticProtocolReader :
-        LrReader<Protocol, ProtocolBuilder>,
+        LrReader.LrConfigReader<Protocol, ProtocolBuilder>,
         CompositeReader.Child<Protocol, ProtocolKey, ProtocolBuilder> {
 
     @Throws(ReadFailedException::class)

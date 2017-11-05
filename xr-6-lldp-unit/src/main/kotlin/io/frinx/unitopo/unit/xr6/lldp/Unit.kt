@@ -9,8 +9,7 @@
 package io.frinx.unitopo.unit.xr6.lldp
 
 import io.fd.honeycomb.rpc.RpcService
-import io.fd.honeycomb.translate.impl.read.GenericListReader
-import io.fd.honeycomb.translate.impl.read.GenericReader
+import io.fd.honeycomb.translate.impl.read.*
 import io.fd.honeycomb.translate.read.registry.ModifiableReaderRegistryBuilder
 import io.fd.honeycomb.translate.write.registry.ModifiableWriterRegistryBuilder
 import io.frinx.openconfig.openconfig.lldp.IIDs
@@ -57,12 +56,12 @@ class Unit (private val registry: TranslationUnitCollector) : TranslateUnit {
     private fun provideReaders(rRegistry: ModifiableReaderRegistryBuilder, underlayAccess: UnderlayAccess) {
         rRegistry.addStructuralReader(IIDs.LLDP, LldpBuilder::class.java)
         rRegistry.addStructuralReader(IIDs.LL_INTERFACES, InterfacesBuilder::class.java)
-        rRegistry.add(GenericListReader(IIDs.LL_IN_INTERFACE, InterfaceReader(underlayAccess)))
-        rRegistry.add(GenericReader(IIDs.LL_IN_IN_CONFIG, InterfaceConfigReader()))
-        rRegistry.add(GenericReader(IIDs.LL_IN_IN_STATE, InterfaceStateReader(underlayAccess)))
+        rRegistry.add(GenericConfigListReader(IIDs.LL_IN_INTERFACE, InterfaceReader(underlayAccess)))
+        rRegistry.add(GenericConfigReader(IIDs.LL_IN_IN_CONFIG, InterfaceConfigReader()))
+        rRegistry.add(GenericOperReader(IIDs.LL_IN_IN_STATE, InterfaceStateReader(underlayAccess)))
         rRegistry.addStructuralReader(IIDs.LL_IN_IN_NEIGHBORS, NeighborsBuilder::class.java)
-        rRegistry.add(GenericListReader(IIDs.LL_IN_IN_NE_NEIGHBOR,  NeighborReader(underlayAccess)))
-        rRegistry.add(GenericReader(IIDs.LL_IN_IN_NE_NE_STATE,  NeighborStateReader(underlayAccess)))
+        rRegistry.add(GenericOperListReader(IIDs.LL_IN_IN_NE_NEIGHBOR,  NeighborReader(underlayAccess)))
+        rRegistry.add(GenericOperReader(IIDs.LL_IN_IN_NE_NE_STATE,  NeighborStateReader(underlayAccess)))
     }
 
     override fun toString(): String = "XR 6 (2015-11-09) LLDP translate unit"

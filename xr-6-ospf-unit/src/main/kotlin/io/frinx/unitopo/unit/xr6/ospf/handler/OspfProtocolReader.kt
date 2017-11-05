@@ -22,7 +22,7 @@ import org.opendaylight.controller.md.sal.common.api.data.ReadFailedException as
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
 class OspfProtocolReader(private val access: UnderlayAccess) :
-        OspfReader<Protocol, ProtocolBuilder>,
+        OspfReader.OspfConfigReader<Protocol, ProtocolBuilder>,
         CompositeReader.Child<Protocol, ProtocolKey, ProtocolBuilder> {
 
     @Throws(ReadFailedException::class)

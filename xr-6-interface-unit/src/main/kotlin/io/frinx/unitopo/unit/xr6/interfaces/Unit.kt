@@ -9,8 +9,9 @@
 package io.frinx.unitopo.unit.xr6.interfaces
 
 import io.fd.honeycomb.rpc.RpcService
-import io.fd.honeycomb.translate.impl.read.GenericListReader
-import io.fd.honeycomb.translate.impl.read.GenericReader
+import io.fd.honeycomb.translate.impl.read.GenericConfigListReader
+import io.fd.honeycomb.translate.impl.read.GenericConfigReader
+import io.fd.honeycomb.translate.impl.read.GenericOperReader
 import io.fd.honeycomb.translate.impl.write.GenericListWriter
 import io.fd.honeycomb.translate.impl.write.GenericWriter
 import io.fd.honeycomb.translate.read.registry.ModifiableReaderRegistryBuilder
@@ -81,18 +82,18 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
 
     private fun provideReaders(rRegistry: ModifiableReaderRegistryBuilder, underlayAccess: UnderlayAccess) {
         rRegistry.addStructuralReader(IIDs.INTERFACES, InterfacesBuilder::class.java)
-        rRegistry.add(GenericListReader(IIDs.IN_INTERFACE, InterfaceReader(underlayAccess)))
-        rRegistry.add(GenericReader(IIDs.IN_IN_STATE, InterfaceStateReader(underlayAccess)))
-        rRegistry.add(GenericReader(IIDs.IN_IN_CONFIG, InterfaceConfigReader(underlayAccess)))
+        rRegistry.add(GenericConfigListReader(IIDs.IN_INTERFACE, InterfaceReader(underlayAccess)))
+        rRegistry.add(GenericOperReader(IIDs.IN_IN_STATE, InterfaceStateReader(underlayAccess)))
+        rRegistry.add(GenericConfigReader(IIDs.IN_IN_CONFIG, InterfaceConfigReader(underlayAccess)))
 
         rRegistry.addStructuralReader(IIDs.IN_IN_SUBINTERFACES, SubinterfacesBuilder::class.java)
-        rRegistry.add(GenericListReader(IIDs.IN_IN_SU_SUBINTERFACE, SubinterfaceReader(underlayAccess)))
+        rRegistry.add(GenericConfigListReader(IIDs.IN_IN_SU_SUBINTERFACE, SubinterfaceReader(underlayAccess)))
 
         rRegistry.addStructuralReader(SUBIFC_IPV4_AUG_ID, Subinterface1Builder::class.java)
         rRegistry.addStructuralReader(SUBIFC_IPV4_ID, Ipv4Builder::class.java)
         rRegistry.addStructuralReader(SUBIFC_IPV4_ADDRESSES_ID, AddressesBuilder::class.java)
-        rRegistry.add(GenericListReader(SUBIFC_IPV4_ADDRESS_ID, Ipv4AddressReader(underlayAccess)))
-        rRegistry.add(GenericReader(SUBIFC_IPV4_CFG_ID, Ipv4ConfigReader(underlayAccess)))
+        rRegistry.add(GenericConfigListReader(SUBIFC_IPV4_ADDRESS_ID, Ipv4AddressReader(underlayAccess)))
+        rRegistry.add(GenericConfigReader(SUBIFC_IPV4_CFG_ID, Ipv4ConfigReader(underlayAccess)))
     }
 
     override fun toString(): String = "XR 6 (2015-07-30) interface translate unit"

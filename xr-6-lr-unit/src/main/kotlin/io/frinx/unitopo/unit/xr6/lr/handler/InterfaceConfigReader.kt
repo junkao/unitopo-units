@@ -24,7 +24,7 @@ import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class InterfaceConfigReader(private val access: UnderlayAccess) : LrReader<Config, ConfigBuilder> {
+class InterfaceConfigReader(private val access: UnderlayAccess) : LrReader.LrOperReader<Config, ConfigBuilder> {
 
     override fun readCurrentAttributesForType(id: InstanceIdentifier<Config>, builder: ConfigBuilder, ctx: ReadContext) {
         val key = id.firstKeyOf(NextHop::class.java)

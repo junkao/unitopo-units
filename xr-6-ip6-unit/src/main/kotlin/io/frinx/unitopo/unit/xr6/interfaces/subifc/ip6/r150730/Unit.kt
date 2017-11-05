@@ -1,6 +1,8 @@
 package io.frinx.unitopo.unit.xr6.interfaces.subifc.ip6.r150730
 
 import io.fd.honeycomb.rpc.RpcService
+import io.fd.honeycomb.translate.impl.read.GenericConfigListReader
+import io.fd.honeycomb.translate.impl.read.GenericConfigReader
 import io.fd.honeycomb.translate.impl.read.GenericListReader
 import io.fd.honeycomb.translate.impl.read.GenericReader
 import io.fd.honeycomb.translate.read.registry.ModifiableReaderRegistryBuilder
@@ -53,8 +55,8 @@ open class Unit(private val registry: TranslationUnitCollector) : TranslateUnit 
         rRegistry.addStructuralReader(SUBIFC_IPV6_AUG_ID, Subinterface2Builder::class.java)
         rRegistry.addStructuralReader(SUBIFC_IPV6_ID, Ipv6Builder::class.java)
         rRegistry.addStructuralReader(SUBIFC_IPV6_ADDRESSES_ID, AddressesBuilder::class.java)
-        rRegistry.add(GenericListReader(SUBIFC_IPV6_ADDRESS_ID, Ipv6AddressReader(underlayAccess)))
-        rRegistry.add(GenericReader(SUBIFC_IPV6_CFG_ID, Ipv6ConfigReader(underlayAccess)))
+        rRegistry.add(GenericConfigListReader(SUBIFC_IPV6_ADDRESS_ID, Ipv6AddressReader(underlayAccess)))
+        rRegistry.add(GenericConfigReader(SUBIFC_IPV6_CFG_ID, Ipv6ConfigReader(underlayAccess)))
     }
 
     override fun toString(): String = "XR 6 (2015-07-30) IPv6 translate unit"

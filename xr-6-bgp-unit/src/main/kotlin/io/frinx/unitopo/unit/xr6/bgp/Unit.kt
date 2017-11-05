@@ -9,7 +9,7 @@
 package io.frinx.unitopo.unit.xr6.bgp
 
 import io.fd.honeycomb.rpc.RpcService
-import io.fd.honeycomb.translate.impl.read.GenericReader
+import io.fd.honeycomb.translate.impl.read.GenericConfigReader
 import io.fd.honeycomb.translate.read.registry.ModifiableReaderRegistryBuilder
 import io.fd.honeycomb.translate.write.registry.ModifiableWriterRegistryBuilder
 import io.frinx.openconfig.openconfig.network.instance.IIDs
@@ -57,7 +57,7 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
     private fun provideReaders(rRegistry: ModifiableReaderRegistryBuilder, access: UnderlayAccess) {
         rRegistry.addStructuralReader(IIDs.NE_NE_PR_PR_BGP, BgpBuilder::class.java)
         rRegistry.addStructuralReader(IIDs.NE_NE_PR_PR_BG_GLOBAL, GlobalBuilder::class.java)
-        rRegistry.add(GenericReader(IIDs.NE_NE_PR_PR_BG_GL_CONFIG, BgpGlobalConfigReader(access)))
+        rRegistry.add(GenericConfigReader(IIDs.NE_NE_PR_PR_BG_GL_CONFIG, BgpGlobalConfigReader(access)))
         // TODO: state reader?
     }
 

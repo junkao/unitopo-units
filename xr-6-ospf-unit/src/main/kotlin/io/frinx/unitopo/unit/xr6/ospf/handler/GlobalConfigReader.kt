@@ -19,22 +19,20 @@ import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.osp
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.Protocol
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.ProtocolKey
-import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.ospfv2.rev170228.ospfv2.global.structural.Global
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.ospfv2.rev170228.ospfv2.global.structural.GlobalBuilder
+import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.ospfv2.rev170228.ospfv2.global.structural.global.Config
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.ospfv2.rev170228.ospfv2.global.structural.global.ConfigBuilder
-import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.ospfv2.rev170228.ospfv2.global.structural.global.StateBuilder
-import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.ospfv2.rev170228.ospfv2.top.Ospfv2Builder
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.yang.types.rev130715.DottedQuad
 import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.controller.md.sal.common.api.data.ReadFailedException as MdSalReadFailedException
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
-class Ospfv2GlobalReader(private val access: UnderlayAccess) : OspfReader<Global, GlobalBuilder> {
+class GlobalConfigReader(private val access: UnderlayAccess) : OspfReader.OspfConfigReader<Config, ConfigBuilder> {
 
-    override fun getBuilder(id: IID<Global>) = GlobalBuilder()
+    override fun getBuilder(id: IID<Config>) = ConfigBuilder()
 
-    override fun readCurrentAttributesForType(id: IID<Global>, builder: GlobalBuilder, ctx: ReadContext) {
+    override fun readCurrentAttributesForType(id: IID<Config>, builder: ConfigBuilder, ctx: ReadContext) {
         val vrfName = id.firstKeyOf(NetworkInstance::class.java)
         val protKey = id.firstKeyOf(Protocol::class.java)
 
@@ -45,9 +43,8 @@ class Ospfv2GlobalReader(private val access: UnderlayAccess) : OspfReader<Global
         }
     }
 
-
-    override fun merge(parentBuilder: Builder<out DataObject>, readValue: Global) {
-        (parentBuilder as Ospfv2Builder).global = readValue
+    override fun merge(parentBuilder: Builder<out DataObject>, readValue: Config) {
+        (parentBuilder as GlobalBuilder).config = readValue
     }
 
     companion object {
@@ -65,24 +62,25 @@ class Ospfv2GlobalReader(private val access: UnderlayAccess) : OspfReader<Global
                     ?.process.orEmpty()
                     .find { it.processName.value == protKey.name }
         }
+
+        fun getRouterId(vrfName: String, p: Process): DottedQuad? {
+            // Set router ID for appropriate VRF
+            var routerId: DottedQuad? = null
+            if (NetworInstance.DEFAULT_NETWORK_NAME == vrfName) {
+                p.defaultVrf?.routerId?.value?.let { routerId = DottedQuad(it) }
+            } else {
+                p.vrfs?.vrf.orEmpty()
+                        .find { it.vrfName.value == vrfName }
+                        ?.let { routerId = DottedQuad(it.routerId.value) }
+            }
+            return routerId
+        }
     }
 }
 
-private fun GlobalBuilder.fromUnderlay(p: Process, vrfName: String) {
-    // Set router ID for appropriate VRF
-    var routerId: DottedQuad? = null
-    if (NetworInstance.DEFAULT_NETWORK_NAME == vrfName) {
-        p.defaultVrf?.routerId?.value?.let { routerId = DottedQuad(it) }
-    } else {
-        p.vrfs?.vrf.orEmpty()
-                .find { it.vrfName.value == vrfName }
-                ?.let { routerId = DottedQuad(it.routerId.value) }
-    }
-
-    // Set child readers
-    // TODO split into dedicated readers
-    if (routerId != null) {
-        config = ConfigBuilder().setRouterId(DottedQuad(routerId)).build()
-        state = StateBuilder().setRouterId(DottedQuad(routerId)).build()
+private fun ConfigBuilder.fromUnderlay(p: Process, vrfName: String) {
+    GlobalConfigReader.getRouterId(vrfName, p)?.let {
+        routerId = it
     }
 }
+

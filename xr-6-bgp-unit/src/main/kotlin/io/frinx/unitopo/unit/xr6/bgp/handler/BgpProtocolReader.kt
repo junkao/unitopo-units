@@ -21,7 +21,7 @@ import org.opendaylight.controller.md.sal.common.api.data.ReadFailedException as
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
 class BgpProtocolReader(private val access: UnderlayAccess) :
-        BgpReader<Protocol, ProtocolBuilder>,
+        BgpReader.BgpConfigReader<Protocol, ProtocolBuilder>,
         CompositeReader.Child<Protocol, ProtocolKey, ProtocolBuilder> {
 
     @Throws(ReadFailedException::class)

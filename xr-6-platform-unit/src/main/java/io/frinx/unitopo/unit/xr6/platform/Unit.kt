@@ -9,6 +9,8 @@ package io.frinx.unitopo.unit.xr6.platform
 
 import io.fd.honeycomb.rpc.RpcService
 import io.fd.honeycomb.translate.impl.read.GenericListReader
+import io.fd.honeycomb.translate.impl.read.GenericOperListReader
+import io.fd.honeycomb.translate.impl.read.GenericOperReader
 import io.fd.honeycomb.translate.impl.read.GenericReader
 import io.fd.honeycomb.translate.read.registry.ModifiableReaderRegistryBuilder
 import io.fd.honeycomb.translate.write.registry.ModifiableWriterRegistryBuilder
@@ -59,9 +61,9 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
 
     private fun provideReaders(rRegistry: ModifiableReaderRegistryBuilder, access: UnderlayAccess) {
         rRegistry.addStructuralReader(IIDs.COMPONENTS, ComponentsBuilder::class.java)
-        rRegistry.add(GenericListReader(IIDs.CO_COMPONENT, ComponentReader(access)))
-        rRegistry.add(GenericReader(IIDs.CO_CO_CONFIG, ComponentConfigReader()))
-        rRegistry.add(GenericReader(IIDs.CO_CO_STATE, ComponentStateReader(access)))
+        rRegistry.add(GenericOperListReader(IIDs.CO_COMPONENT, ComponentReader(access)))
+        rRegistry.add(GenericOperReader(IIDs.CO_CO_CONFIG, ComponentConfigReader()))
+        rRegistry.add(GenericOperReader(IIDs.CO_CO_STATE, ComponentStateReader(access)))
     }
 
     override fun toString() = "xr6-platform-unit"

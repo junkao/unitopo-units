@@ -8,7 +8,7 @@
 package io.frinx.unitopo.unit.xr6.platform.handler
 
 import io.fd.honeycomb.translate.read.ReadContext
-import io.fd.honeycomb.translate.spi.read.ReaderCustomizer
+import io.fd.honeycomb.translate.spi.read.OperReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.asr9k.sc.invmgr.admin.oper.rev151109.Inventory
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.asr9k.sc.invmgr.admin.oper.rev151109.basic.attributes.basic.attributes.BasicInfo
@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class ComponentStateReader(private val access: UnderlayAccess) : ReaderCustomizer<State, StateBuilder> {
+class ComponentStateReader(private val access: UnderlayAccess) : OperReaderCustomizer<State, StateBuilder> {
 
     override fun getBuilder(id: InstanceIdentifier<State>) = StateBuilder()
 

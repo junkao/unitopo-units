@@ -10,9 +10,8 @@ package io.frinx.unitopo.unit.xr6.interfaces
 
 import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.read.ReadFailedException
-import io.fd.honeycomb.translate.spi.read.ReaderCustomizer
+import io.fd.honeycomb.translate.spi.read.OperReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev150730._interface.configurations.InterfaceConfiguration
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.oper.rev150730.ImStateEnum
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.interfaces.rev161222.InterfaceCommonState
@@ -27,7 +26,7 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 import org.opendaylight.controller.md.sal.common.api.data.ReadFailedException as MDSalReadFailed
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.oper.rev150730._interface.table.interfaces.Interface as OperInterface
 
-class InterfaceStateReader(private val underlayAccess: UnderlayAccess) : ReaderCustomizer<State, StateBuilder> {
+class InterfaceStateReader(private val underlayAccess: UnderlayAccess) : OperReaderCustomizer<State, StateBuilder> {
 
     override fun getBuilder(instanceIdentifier: InstanceIdentifier<State>): StateBuilder = StateBuilder()
 
@@ -35,9 +34,6 @@ class InterfaceStateReader(private val underlayAccess: UnderlayAccess) : ReaderC
     override fun readCurrentAttributes(instanceIdentifier: InstanceIdentifier<State>,
                                        stateBuilder: StateBuilder,
                                        readContext: ReadContext) {
-        // FIXME move this check into interface with default method
-        if (underlayAccess.currentOperationType == LogicalDatastoreType.CONFIGURATION) return
-
         try {
             // Using InterfaceConfiguration and also InterfaceProperties to collect all necessary information
             val name = instanceIdentifier.firstKeyOf(Interface::class.java).name

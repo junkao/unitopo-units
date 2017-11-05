@@ -9,15 +9,16 @@
 package io.frinx.unitopo.unit.xr6.lr.handler
 
 import com.google.common.annotations.VisibleForTesting
-import com.sun.xml.internal.fastinfoset.alphabet.BuiltInRestrictedAlphabets.table
 import io.fd.honeycomb.translate.read.ReadContext
-import io.fd.honeycomb.translate.read.ReadFailedException
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr6.lr.common.LrListReader
+import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ip._static.cfg.rev150910.address.family.AddressFamily
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ip._static.cfg.rev150910.vrf.next.hop.VRFNEXTHOPCONTENT
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ip._static.cfg.rev150910.vrf.prefix.table.VrfPrefixes
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ip._static.cfg.rev150910.vrf.route.vrf.route.VrfNextHopTable
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.local.routing.rev170515.local._static.top._static.routes.Static
+import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.local.routing.rev170515.local._static.top._static.routes.StaticKey
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.local.routing.rev170515.local._static.top._static.routes._static.NextHopsBuilder
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.local.routing.rev170515.local._static.top._static.routes._static.next.hops.NextHop
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.local.routing.rev170515.local._static.top._static.routes._static.next.hops.NextHopBuilder
@@ -25,7 +26,6 @@ import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.local.routing.rev17
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.local.routing.rev170515.local._static.top._static.routes._static.next.hops.next.hop.ConfigBuilder
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.local.routing.rev170515.local._static.top._static.routes._static.next.hops.next.hop.StateBuilder
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
-import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.local.routing.rev170515.LocalStaticNexthopConfig.NextHop as BASE_NEXTHOP_CONFIG
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.types.inet.rev170403.IpAddress
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.types.inet.rev170403.Ipv4Address
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.types.inet.rev170403.Ipv6Address
@@ -33,15 +33,19 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.
 import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
-import java.util.ArrayList
-import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ip._static.cfg.rev150910.vrf.prefix.table.VrfPrefixes
-import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.local.routing.rev170515.local._static.top._static.routes.StaticKey
+import java.util.*
+import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.local.routing.rev170515.LocalStaticNexthopConfig.NextHop as BASE_NEXTHOP_CONFIG
 
 class NextHopReader(private val access: UnderlayAccess) : LrListReader<NextHop, NextHopKey, NextHopBuilder> {
 
     override fun getBuilder(id: InstanceIdentifier<NextHop>) = NextHopBuilder()
 
     override fun readCurrentAttributesForType(id: InstanceIdentifier<NextHop>, builder: NextHopBuilder, ctx: ReadContext) {
+        if (access.currentOperationType == LogicalDatastoreType.CONFIGURATION) {
+            // FIXME Since this mixes config and oper data, it can only work in oper reads
+            return
+        }
+
         val key = id.firstKeyOf(NextHop::class.java)
         builder.index = key.index
         parseNextHopTable(access, id)?.let {
@@ -50,6 +54,11 @@ class NextHopReader(private val access: UnderlayAccess) : LrListReader<NextHop, 
     }
 
     override fun getAllIdsForType(id: InstanceIdentifier<NextHop>, context: ReadContext): List<NextHopKey> {
+        if (access.currentOperationType == LogicalDatastoreType.CONFIGURATION) {
+            // FIXME Since this mixes config and oper data, it can only work in oper reads
+            return emptyList()
+        }
+
         parseNextHopTable(access, id)?.let {
             return getKeys(it)
         }
@@ -97,7 +106,7 @@ class NextHopReader(private val access: UnderlayAccess) : LrListReader<NextHop, 
         }
 
         @VisibleForTesting
-        fun getKeys(table: VrfNextHopTable) : List<NextHopKey> {
+        fun getKeys(table: VrfNextHopTable): List<NextHopKey> {
             val keys = ArrayList<NextHopKey>()
             // only interface
             table.vrfNextHopInterfaceName.orEmpty().forEach { keys.add(NextHopKey(it.interfaceName.value)) }
@@ -143,14 +152,14 @@ class NextHopReader(private val access: UnderlayAccess) : LrListReader<NextHop, 
         }
 
 
-        private fun setMetric(cBuilder : ConfigBuilder, sBuilder : StateBuilder, content : VRFNEXTHOPCONTENT) {
+        private fun setMetric(cBuilder: ConfigBuilder, sBuilder: StateBuilder, content: VRFNEXTHOPCONTENT) {
             cBuilder.metric = content.loadMetric
             sBuilder.metric = content.loadMetric
         }
 
         private fun VrfPrefixes.findPrefix(routeKey: StaticKey) = vrfPrefix.orEmpty().firstOrNull { it.ipAddressToPrefix().ipv4Prefix == routeKey.prefix.ipv4Prefix }
 
-        private fun ipFromIpAddressNoZone(ipNoZone : IpAddressNoZone) : IpAddress {
+        private fun ipFromIpAddressNoZone(ipNoZone: IpAddressNoZone): IpAddress {
             ipNoZone.ipv4AddressNoZone?.let {
                 return IpAddress(Ipv4Address(ipNoZone.ipv4AddressNoZone.value))
             }

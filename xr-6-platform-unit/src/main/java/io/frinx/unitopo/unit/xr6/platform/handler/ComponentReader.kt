@@ -8,7 +8,7 @@
 package io.frinx.unitopo.unit.xr6.platform.handler
 
 import io.fd.honeycomb.translate.read.ReadContext
-import io.fd.honeycomb.translate.spi.read.ListReaderCustomizer
+import io.fd.honeycomb.translate.spi.read.OperListReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.asr9k.sc.invmgr.admin.oper.rev151109.Inventory
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.asr9k.sc.invmgr.admin.oper.rev151109.inventory.Racks
@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 import java.util.regex.Pattern
 
 
-class ComponentReader(private val access: UnderlayAccess) : ListReaderCustomizer<Component, ComponentKey, ComponentBuilder> {
+class ComponentReader(private val access: UnderlayAccess) : OperListReaderCustomizer<Component, ComponentKey, ComponentBuilder> {
 
     override fun getAllIds(instanceIdentifier: InstanceIdentifier<Component>,
                            readContext: ReadContext): List<ComponentKey> {

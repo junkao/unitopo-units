@@ -19,8 +19,6 @@ import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.network.instance.re
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.Protocol
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.ProtocolKey
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.ospf.types.rev170228.OspfAreaIdentifier
-import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.ospfv2.rev170228.ospfv2.area.structure.ConfigBuilder
-import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.ospfv2.rev170228.ospfv2.area.structure.StateBuilder
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.ospfv2.rev170228.ospfv2.top.ospfv2.AreasBuilder
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.ospfv2.rev170228.ospfv2.top.ospfv2.areas.Area
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.ospfv2.rev170228.ospfv2.top.ospfv2.areas.AreaBuilder
@@ -30,7 +28,7 @@ import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.controller.md.sal.common.api.data.ReadFailedException as MdSalReadFailedException
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
-class AreaReader(private val access: UnderlayAccess) : OspfListReader<Area, AreaKey, AreaBuilder> {
+class OspfAreaReader(private val access: UnderlayAccess) : OspfListReader.OspfConfigListReader<Area, AreaKey, AreaBuilder> {
 
     @Throws(ReadFailedException::class)
     override fun getAllIdsForType(id: IID<Area>, context: ReadContext): List<AreaKey> {
@@ -61,14 +59,12 @@ class AreaReader(private val access: UnderlayAccess) : OspfListReader<Area, Area
         val key = id.firstKeyOf(Area::class.java)
 
         builder.identifier = key.identifier
-        builder.config = ConfigBuilder().setIdentifier(key.identifier).build()
-        builder.state = StateBuilder().setIdentifier(key.identifier).build()
     }
 
     companion object {
 
         fun getAreas(access: UnderlayAccess, protoKey: ProtocolKey, vrfName: String): AreaAddresses? {
-            return Ospfv2GlobalReader.getProcess(access, protoKey)
+            return GlobalConfigReader.getProcess(access, protoKey)
                     ?.let {
                         if (NetworInstance.DEFAULT_NETWORK_NAME == vrfName) {
                             it.defaultVrf?.areaAddresses

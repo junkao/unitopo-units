@@ -9,7 +9,7 @@
 package io.frinx.unitopo.unit.xr6.lldp
 
 import io.fd.honeycomb.translate.read.ReadContext
-import io.fd.honeycomb.translate.spi.read.ReaderCustomizer
+import io.fd.honeycomb.translate.spi.read.OperReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ethernet.lldp.oper.rev151109.lldp.nodes.node.neighbors.summaries.Summary
@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class NeighborStateReader(private val underlayAccess: UnderlayAccess) : ReaderCustomizer<State, StateBuilder> {
+class NeighborStateReader(private val underlayAccess: UnderlayAccess) : OperReaderCustomizer<State, StateBuilder> {
 
     override fun getBuilder(id: InstanceIdentifier<State>) = StateBuilder()
 

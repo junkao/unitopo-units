@@ -9,22 +9,19 @@
 package io.frinx.unitopo.unit.xr6.lr
 
 import io.fd.honeycomb.rpc.RpcService
-import io.fd.honeycomb.translate.impl .read.GenericListReader
-import io.fd.honeycomb.translate.impl.read.GenericReader
+import io.fd.honeycomb.translate.impl.read.GenericConfigListReader
+import io.fd.honeycomb.translate.impl.read.GenericConfigReader
+import io.fd.honeycomb.translate.impl.read.GenericListReader
+import io.fd.honeycomb.translate.impl.read.GenericOperReader
 import io.fd.honeycomb.translate.read.registry.ModifiableReaderRegistryBuilder
 import io.fd.honeycomb.translate.write.registry.ModifiableWriterRegistryBuilder
 import io.frinx.openconfig.openconfig.network.instance.IIDs
 import io.frinx.unitopo.registry.api.TranslationUnitCollector
 import io.frinx.unitopo.registry.spi.TranslateUnit
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.xr6.lr.handler.InterfaceConfigReader
-import io.frinx.unitopo.unit.xr6.lr.handler.StaticRouteReader
-import io.frinx.unitopo.unit.xr6.lr.handler.NextHopReader
+import io.frinx.unitopo.unit.xr6.lr.handler.*
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.interfaces.rev161222._interface.ref.InterfaceRefBuilder
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.local.routing.rev170515.local._static.top.StaticRoutesBuilder
-import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.local.routing.rev170515.local._static.top._static.routes.Static
-import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.local.routing.rev170515.local._static.top._static.routes.StaticBuilder
-import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.local.routing.rev170515.local._static.top._static.routes.StaticKey
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.local.routing.rev170515.local._static.top._static.routes._static.NextHopsBuilder
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.local.routing.rev170515.local._static.top._static.routes._static.next.hops.NextHop
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.local.routing.rev170515.local._static.top._static.routes._static.next.hops.NextHopBuilder
@@ -33,8 +30,8 @@ import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.local.routing.rev17
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.local.routing.rev170515.local._static.top._static.routes._static.next.hops.next.hop.State
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
-import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.local.routing.rev170515.`$YangModuleInfoImpl` as OpenconfigLocalRoutingYangModule
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ip._static.cfg.rev150910.`$YangModuleInfoImpl` as UnderlayLocalRoutingYangModule
+import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.local.routing.rev170515.`$YangModuleInfoImpl` as OpenconfigLocalRoutingYangModule
 
 
 class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
@@ -68,17 +65,19 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
 
     private fun provideReaders(rRegistry: ModifiableReaderRegistryBuilder, access: UnderlayAccess) {
         rRegistry.addStructuralReader(IIDs.NE_NE_PR_PR_STATICROUTES, StaticRoutesBuilder::class.java)
-        rRegistry.subtreeAdd(setOf(
-                InstanceIdentifier.create(Static::class.java).child(org.opendaylight.yang.gen.v1.http.openconfig.net.yang.local.routing.rev170515.local._static.top._static.routes._static.Config::class.java)
-                , InstanceIdentifier.create(Static::class.java).child(org.opendaylight.yang.gen.v1.http.openconfig.net.yang.local.routing.rev170515.local._static.top._static.routes._static.State::class.java)),
-                GenericListReader<Static, StaticKey, StaticBuilder>(IIDs.NE_NE_PR_PR_ST_STATIC, StaticRouteReader(access)))
+        rRegistry.add(GenericConfigListReader(IIDs.NE_NE_PR_PR_ST_STATIC, StaticRouteReader(access)))
+        rRegistry.add(GenericOperReader(IIDs.NE_NE_PR_PR_ST_ST_STATE, StaticStateReader()))
+        rRegistry.add(GenericConfigReader(IIDs.NE_NE_PR_PR_ST_ST_CONFIG, StaticConfigReader()))
         rRegistry.addStructuralReader(IIDs.NE_NE_PR_PR_ST_ST_NEXTHOPS, NextHopsBuilder::class.java)
+        // FIXME split the next hop reader
+        // this way it mixes config and oper data
         rRegistry.subtreeAdd(setOf(
                 InstanceIdentifier.create(NextHop::class.java).child(Config::class.java),
                 InstanceIdentifier.create(NextHop::class.java).child(State::class.java)),
                 GenericListReader<NextHop, NextHopKey, NextHopBuilder>(IIDs.NE_NE_PR_PR_ST_ST_NE_NEXTHOP, NextHopReader(access)))
         rRegistry.addStructuralReader(IIDs.NE_NE_PR_PR_ST_ST_NE_NE_INTERFACEREF, InterfaceRefBuilder::class.java)
-        rRegistry.add(GenericReader(IIDs.NE_NE_PR_PR_ST_ST_NE_NE_IN_CONFIG, InterfaceConfigReader(access)))
+        // FIXME after next hop reader is split, mark this config instead of oper
+        rRegistry.add(GenericOperReader(IIDs.NE_NE_PR_PR_ST_ST_NE_NE_IN_CONFIG, InterfaceConfigReader(access)))
     }
 
     override fun toString() = "XR 6 (2015-07-30) Local Routes translate unit"
