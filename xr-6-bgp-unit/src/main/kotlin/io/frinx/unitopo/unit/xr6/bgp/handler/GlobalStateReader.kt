@@ -8,14 +8,15 @@
 
 package io.frinx.unitopo.unit.xr6.bgp.handler
 
+import com.google.common.annotations.VisibleForTesting
 import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.read.ReadFailedException
 import io.frinx.openconfig.network.instance.NetworInstance
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr6.bgp.common.BgpReader
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.Instance
-import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.bgp.rev170202.bgp.global.base.Config
-import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.bgp.rev170202.bgp.global.base.ConfigBuilder
+import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.bgp.rev170202.bgp.global.base.State
+import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.bgp.rev170202.bgp.global.base.StateBuilder
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.bgp.rev170202.bgp.top.bgp.GlobalBuilder
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.Protocol
@@ -27,12 +28,11 @@ import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 import org.opendaylight.controller.md.sal.common.api.data.ReadFailedException as MdSalReadFailedException
 
-class BgpGlobalConfigReader(private val access: UnderlayAccess) : BgpReader.BgpConfigReader<Config, ConfigBuilder> {
+class GlobalStateReader(private val access: UnderlayAccess) : BgpReader.BgpOperReader<State, StateBuilder> {
 
-    override fun getBuilder(id: InstanceIdentifier<Config>) = ConfigBuilder()
+    override fun getBuilder(id: InstanceIdentifier<State>) = StateBuilder()
 
-    @Throws(ReadFailedException::class)
-    override fun readCurrentAttributesForType(id: InstanceIdentifier<Config>, builder: ConfigBuilder, ctx: ReadContext) {
+    override fun readCurrentAttributesForType(id: InstanceIdentifier<State>, builder: StateBuilder, ctx: ReadContext) {
         val protKey = id.firstKeyOf<Protocol, ProtocolKey>(Protocol::class.java)
         val vrfName = id.firstKeyOf(NetworkInstance::class.java).name
         try {
@@ -49,12 +49,13 @@ class BgpGlobalConfigReader(private val access: UnderlayAccess) : BgpReader.BgpC
         }
     }
 
-    override fun merge(parentBuilder: Builder<out DataObject>, readValue: Config) {
-        (parentBuilder as GlobalBuilder).config = readValue
+    override fun merge(parentBuilder: Builder<out DataObject>, readValue: State) {
+        (parentBuilder as GlobalBuilder).state = readValue
     }
 }
 
-private fun ConfigBuilder.fromUnderlay(underlayInstance: Instance, vrfName: String) {
+@VisibleForTesting
+public fun StateBuilder.fromUnderlay(underlayInstance: Instance, vrfName: String) {
     // each instance can only have one AS despite there is a list in cisco yang
     underlayInstance.instanceAs.orEmpty().firstOrNull()
             ?.fourByteAs.orEmpty().firstOrNull()

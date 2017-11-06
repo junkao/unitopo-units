@@ -10,13 +10,15 @@ package io.frinx.unitopo.unit.xr6.bgp
 
 import io.fd.honeycomb.rpc.RpcService
 import io.fd.honeycomb.translate.impl.read.GenericConfigReader
+import io.fd.honeycomb.translate.impl.read.GenericOperReader
 import io.fd.honeycomb.translate.read.registry.ModifiableReaderRegistryBuilder
 import io.fd.honeycomb.translate.write.registry.ModifiableWriterRegistryBuilder
 import io.frinx.openconfig.openconfig.network.instance.IIDs
 import io.frinx.unitopo.registry.api.TranslationUnitCollector
 import io.frinx.unitopo.registry.spi.TranslateUnit
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.xr6.bgp.handler.BgpGlobalConfigReader
+import io.frinx.unitopo.unit.xr6.bgp.handler.GlobalConfigReader
+import io.frinx.unitopo.unit.xr6.bgp.handler.GlobalStateReader
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.bgp.rev170202.bgp.top.BgpBuilder
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.bgp.rev170202.bgp.top.bgp.GlobalBuilder
 import org.opendaylight.yangtools.yang.binding.DataObject
@@ -57,10 +59,9 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
     private fun provideReaders(rRegistry: ModifiableReaderRegistryBuilder, access: UnderlayAccess) {
         rRegistry.addStructuralReader(IIDs.NE_NE_PR_PR_BGP, BgpBuilder::class.java)
         rRegistry.addStructuralReader(IIDs.NE_NE_PR_PR_BG_GLOBAL, GlobalBuilder::class.java)
-        rRegistry.add(GenericConfigReader(IIDs.NE_NE_PR_PR_BG_GL_CONFIG, BgpGlobalConfigReader(access)))
-        // TODO: state reader?
+        rRegistry.add(GenericConfigReader(IIDs.NE_NE_PR_PR_BG_GL_CONFIG, GlobalConfigReader(access)))
+        rRegistry.add(GenericOperReader(IIDs.NE_NE_PR_PR_BG_GL_STATE, GlobalStateReader(access)))
     }
-
 
     override fun toString() = "XR 6 (2015-07-30) BGP translate unit"
 }
