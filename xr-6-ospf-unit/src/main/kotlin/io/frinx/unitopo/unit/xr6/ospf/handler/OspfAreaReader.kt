@@ -23,6 +23,7 @@ import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.ospfv2.rev170228.os
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.ospfv2.rev170228.ospfv2.top.ospfv2.areas.Area
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.ospfv2.rev170228.ospfv2.top.ospfv2.areas.AreaBuilder
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.ospfv2.rev170228.ospfv2.top.ospfv2.areas.AreaKey
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.yang.types.rev130715.DottedQuad
 import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.controller.md.sal.common.api.data.ReadFailedException as MdSalReadFailedException
@@ -38,9 +39,14 @@ class OspfAreaReader(private val access: UnderlayAccess) : OspfListReader.OspfCo
         try {
             return getAreas(access, protKey, vrfName.name)
                     ?.let {
-                        it.areaAreaId.orEmpty()
+                        val simpleAreaIds = it.areaAreaId.orEmpty()
                                 .map { AreaKey(OspfAreaIdentifier(it.areaId.toLong())) }
                                 .toList()
+                        val dottedQuadQreaIds = it.areaAddress.orEmpty()
+                                .map { AreaKey(OspfAreaIdentifier(DottedQuad(it.address.value))) }
+                                .toList()
+
+                        simpleAreaIds + dottedQuadQreaIds
                     }.orEmpty()
         } catch (e: MdSalReadFailedException) {
             throw ReadFailedException(id, e)
