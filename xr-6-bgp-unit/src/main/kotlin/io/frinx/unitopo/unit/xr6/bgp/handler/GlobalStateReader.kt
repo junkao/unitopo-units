@@ -55,20 +55,21 @@ class GlobalStateReader(private val access: UnderlayAccess) : BgpReader.BgpOperR
 }
 
 @VisibleForTesting
-public fun StateBuilder.fromUnderlay(underlayInstance: Instance, vrfName: String) {
+fun StateBuilder.fromUnderlay(underlayInstance: Instance, vrfName: String) {
     // each instance can only have one AS despite there is a list in cisco yang
     underlayInstance.instanceAs.orEmpty().firstOrNull()
             ?.fourByteAs.orEmpty().firstOrNull()
             ?.let {
                 `as` = AsNumber(it.`as`.value)
 
+                // FIXME Duplicate code
                 // Set router ID for appropriate VRF
                 if (NetworInstance.DEFAULT_NETWORK_NAME == vrfName) {
-                    it.defaultVrf?.global?.routerId?.value.let { routerId = DottedQuad(it) }
+                    it.defaultVrf?.global?.routerId?.value?.let { routerId = DottedQuad(it) }
                 } else {
                     it.vrfs?.vrf.orEmpty()
                             .find { it.vrfName.value == vrfName }
-                            ?.let { routerId = DottedQuad(it.vrfGlobal.routerId.value) }
+                            ?.let { it.vrfGlobal?.routerId?.value?.let { routerId = DottedQuad(it) } }
                 }
             }
 }

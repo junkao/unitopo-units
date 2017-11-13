@@ -55,7 +55,7 @@ class GlobalConfigReader(private val access: UnderlayAccess) : BgpReader.BgpConf
 }
 
 @VisibleForTesting
-public fun ConfigBuilder.fromUnderlay(underlayInstance: Instance, vrfName: String) {
+fun ConfigBuilder.fromUnderlay(underlayInstance: Instance, vrfName: String) {
     // each instance can only have one AS despite there is a list in cisco yang
     underlayInstance.instanceAs.orEmpty().firstOrNull()
             ?.fourByteAs.orEmpty().firstOrNull()
@@ -64,11 +64,11 @@ public fun ConfigBuilder.fromUnderlay(underlayInstance: Instance, vrfName: Strin
 
                 // Set router ID for appropriate VRF
                 if (NetworInstance.DEFAULT_NETWORK_NAME == vrfName) {
-                    it.defaultVrf?.global?.routerId?.value.let { routerId = DottedQuad(it) }
+                    it.defaultVrf?.global?.routerId?.value?.let { routerId = DottedQuad(it) }
                 } else {
                     it.vrfs?.vrf.orEmpty()
                             .find { it.vrfName.value == vrfName }
-                            ?.let { routerId = DottedQuad(it.vrfGlobal.routerId.value) }
+                            ?.let { it.vrfGlobal?.routerId?.value?.let { routerId = DottedQuad(it) } }
                 }
             }
 }
