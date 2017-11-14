@@ -6,7 +6,7 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 
-package io.frinx.unitopo.unit.xr6.interfaces
+package io.frinx.unitopo.unit.xr6.interfaces.handler
 
 import io.fd.honeycomb.translate.spi.write.ListWriterCustomizer
 import io.fd.honeycomb.translate.write.WriteContext

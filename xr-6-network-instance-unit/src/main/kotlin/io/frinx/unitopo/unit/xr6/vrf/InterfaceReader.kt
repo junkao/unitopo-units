@@ -3,7 +3,7 @@ package io.frinx.unitopo.unit.xr6.vrf
 import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.spi.read.ListReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.xr6.interfaces.InterfaceReader
+import io.frinx.unitopo.unit.xr6.interfaces.handler.InterfaceReader
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev150730._interface.configurations.InterfaceConfiguration
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.infra.rsi.cfg.rev150730.InterfaceConfiguration1
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance

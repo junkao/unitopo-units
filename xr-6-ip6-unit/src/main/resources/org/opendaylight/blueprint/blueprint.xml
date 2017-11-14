@@ -17,13 +17,13 @@
     interface="io.frinx.unitopo.registry.api.TranslationUnitCollector"/>
 
   <bean id="xrIP6Unit-150730"
-    class="io.frinx.unitopo.unit.xr6.interfaces.subifc.ip6.r150730.Unit"
+    class="io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.ip6.r150730.Unit"
     init-method="init" destroy-method="close">
     <argument ref="unifiedTranslationRegistry" />
   </bean>
 
   <bean id="xrIP6Unit-170303"
-    class="io.frinx.unitopo.unit.xr6.interfaces.subifc.ip6.r170303.Unit"
+    class="io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.ip6.r170303.Unit"
     init-method="init" destroy-method="close">
     <argument ref="unifiedTranslationRegistry" />
   </bean>

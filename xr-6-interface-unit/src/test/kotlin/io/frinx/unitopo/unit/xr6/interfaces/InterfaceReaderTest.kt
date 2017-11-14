@@ -1,6 +1,7 @@
 package io.frinx.unitopo.unit.xr6.interfaces
 
 import io.frinx.unitopo.unit.utils.AbstractNetconfHandlerTest
+import io.frinx.unitopo.unit.xr6.interfaces.handler.InterfaceReader
 import org.junit.Assert
 import org.junit.Ignore
 import org.junit.Test

@@ -5,12 +5,12 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package io.frinx.unitopo.unit.xr6.interfaces.subifc
+package io.frinx.unitopo.unit.xr6.interfaces.handler.subifc
 
 import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.spi.read.ConfigListReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.xr6.interfaces.InterfaceReader
+import io.frinx.unitopo.unit.xr6.interfaces.handler.InterfaceReader
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.SubinterfacesBuilder
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.subinterfaces.Subinterface
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.subinterfaces.SubinterfaceBuilder

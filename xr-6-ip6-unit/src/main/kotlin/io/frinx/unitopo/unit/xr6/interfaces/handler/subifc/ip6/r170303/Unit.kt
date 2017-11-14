@@ -1,11 +1,11 @@
-package io.frinx.unitopo.unit.xr6.interfaces.subifc.ip6.r170303
+package io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.ip6.r170303
 
 import io.fd.honeycomb.translate.impl.read.GenericConfigListReader
 import io.fd.honeycomb.translate.impl.read.GenericConfigReader
 import io.fd.honeycomb.translate.read.registry.ModifiableReaderRegistryBuilder
 import io.frinx.unitopo.registry.api.TranslationUnitCollector
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.xr6.interfaces.subifc.ip6.r150730.Unit
+import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.ip6.r150730.Unit
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.interfaces.ip.rev161222.Subinterface2Builder
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.interfaces.ip.rev161222.ipv6.top.Ipv6Builder
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.interfaces.ip.rev161222.ipv6.top.ipv6.AddressesBuilder

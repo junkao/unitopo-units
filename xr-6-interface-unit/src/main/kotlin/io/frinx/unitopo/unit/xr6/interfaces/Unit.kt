@@ -20,9 +20,14 @@ import io.frinx.openconfig.openconfig.interfaces.IIDs
 import io.frinx.unitopo.registry.api.TranslationUnitCollector
 import io.frinx.unitopo.registry.spi.TranslateUnit
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.xr6.interfaces.subifc.Ipv4AddressReader
-import io.frinx.unitopo.unit.xr6.interfaces.subifc.Ipv4ConfigReader
-import io.frinx.unitopo.unit.xr6.interfaces.subifc.SubinterfaceReader
+import io.frinx.unitopo.unit.xr6.interfaces.handler.InterfaceConfigReader
+import io.frinx.unitopo.unit.xr6.interfaces.handler.InterfaceConfigWriter
+import io.frinx.unitopo.unit.xr6.interfaces.handler.InterfaceReader
+import io.frinx.unitopo.unit.xr6.interfaces.handler.InterfaceStateReader
+import io.frinx.unitopo.unit.xr6.interfaces.handler.InterfaceWriter
+import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.Ipv4AddressReader
+import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.Ipv4ConfigReader
+import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.SubinterfaceReader
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.interfaces.ip.rev161222.Subinterface1
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.interfaces.ip.rev161222.Subinterface1Builder
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.interfaces.ip.rev161222.ipv4.top.Ipv4
