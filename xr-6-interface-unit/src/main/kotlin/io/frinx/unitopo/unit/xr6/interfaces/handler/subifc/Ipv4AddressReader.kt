@@ -10,6 +10,7 @@ import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.interfaces.ip.rev16
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.interfaces.ip.rev161222.ipv4.top.ipv4.addresses.AddressBuilder
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.interfaces.ip.rev161222.ipv4.top.ipv4.addresses.AddressKey
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.Interface
+import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.subinterfaces.Subinterface
 import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
@@ -24,6 +25,11 @@ class Ipv4AddressReader(private val underlayAccess: UnderlayAccess) : ConfigList
     override fun getBuilder(id: InstanceIdentifier<Address>): AddressBuilder = AddressBuilder()
 
     override fun readCurrentAttributes(id: InstanceIdentifier<Address>, builder: AddressBuilder, ctx: ReadContext) {
+        // For now, only subinterface with ID ZERO_SUBINTERFACE_ID can have IP
+        if (id.firstKeyOf(Subinterface::class.java).index != 0L) {
+            return
+        }
+
         builder.ip = id.firstKeyOf(Address::class.java).ip
     }
 

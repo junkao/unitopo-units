@@ -11,6 +11,7 @@ import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.spi.read.ConfigListReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr6.interfaces.handler.InterfaceReader
+import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.Interface
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.SubinterfacesBuilder
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.subinterfaces.Subinterface
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.subinterfaces.SubinterfaceBuilder
@@ -22,11 +23,22 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 class SubinterfaceReader(private val underlayAccess: UnderlayAccess) : ConfigListReaderCustomizer<Subinterface, SubinterfaceKey, SubinterfaceBuilder> {
 
     override fun getAllIds(id: InstanceIdentifier<Subinterface>, context: ReadContext): MutableList<SubinterfaceKey> {
+        val ifcName = id.firstKeyOf(Interface::class.java).name
+
         return if (InterfaceReader.interfaceExists(underlayAccess, id)) {
+
+            // TODO We are misusing the InterfaceReader.getInterfaceIds
+            // function. We should create own getSubinterfaceIds function
+            // so we can write UT and filter subinterfaces already out of
+            // underlay ifc list.
+            val subIfcKeys = InterfaceReader.getInterfaceIds(underlayAccess)
+                    .filter { InterfaceReader.isSubinterface(it.name) }
+                    .filter { it.name.startsWith(ifcName)}
+                    .map { InterfaceReader.getSubinterfaceKey(it.name) }
+
             // Add the 0 subinterface for IP addresses if there is such interface
-            listOf(0L)
-                    .map { SubinterfaceKey(it) }
-                    .toMutableList()
+            subIfcKeys.plus(SubinterfaceKey(0L)).toMutableList()
+
         } else {
             emptyList<SubinterfaceKey>().toMutableList()
         }

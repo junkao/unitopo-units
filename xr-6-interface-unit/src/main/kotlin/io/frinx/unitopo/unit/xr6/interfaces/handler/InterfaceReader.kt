@@ -17,6 +17,7 @@
 package io.frinx.unitopo.unit.xr6.interfaces.handler
 
 import com.google.common.annotations.VisibleForTesting
+import com.google.common.base.Preconditions
 import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.read.ReadFailedException
 import io.fd.honeycomb.translate.spi.read.ConfigListReaderCustomizer
@@ -32,12 +33,14 @@ import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.interfaces.rev16122
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.Interface
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.InterfaceBuilder
 import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.InterfaceKey
+import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.subinterfaces.SubinterfaceKey
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.iana._if.type.rev140508.EthernetCsmacd
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.iana._if.type.rev140508.Other
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.iana._if.type.rev140508.SoftwareLoopback
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.interfaces.rev140508.InterfaceType
 import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
+import java.util.regex.Pattern
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.oper.rev150730._interface.table.interfaces.Interface as UnderlayInterface
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
@@ -46,7 +49,7 @@ class InterfaceReader(private val underlayAccess: UnderlayAccess) : ConfigListRe
     @Throws(ReadFailedException::class)
     override fun getAllIds(instanceIdentifier: IID<Interface>, readContext: ReadContext): List<InterfaceKey> {
         try {
-            return getInterfaceIds(underlayAccess)
+            return getInterfaceIds(underlayAccess).filter { !isSubinterface(it.name) }
         } catch (e: org.opendaylight.controller.md.sal.common.api.data.ReadFailedException) {
             throw ReadFailedException(instanceIdentifier, e)
         }
@@ -75,6 +78,7 @@ class InterfaceReader(private val underlayAccess: UnderlayAccess) : ConfigListRe
     companion object {
         val IFC_CFGS = IID.create(InterfaceConfigurations::class.java)!!
         val DATA_NODES_ID = IID.create(InterfaceProperties::class.java).child(DataNodes::class.java)!!
+        private val SUBINTERFACE_NAME = Pattern.compile("(?<ifcId>.+)[.](?<subifcIndex>[0-9]+)")
 
         /**
          * Read interface configuration
@@ -146,6 +150,17 @@ class InterfaceReader(private val underlayAccess: UnderlayAccess) : ConfigListRe
                     .map { it.key }
                     .map { InterfaceKey(it.interfaceName.value) }
                     .toList()
+        }
+
+        fun isSubinterface(name: String): Boolean {
+            return SUBINTERFACE_NAME.matcher(name).matches()
+        }
+
+        fun getSubinterfaceKey(name: String): SubinterfaceKey {
+            val matcher = SUBINTERFACE_NAME.matcher(name)
+
+            Preconditions.checkState(matcher.matches())
+            return SubinterfaceKey(matcher.group("subifcIndex").toLong())
         }
     }
 }
