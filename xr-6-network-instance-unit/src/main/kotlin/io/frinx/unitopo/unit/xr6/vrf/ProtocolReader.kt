@@ -9,7 +9,7 @@
 package io.frinx.unitopo.unit.xr6.vrf
 
 import io.fd.honeycomb.translate.spi.read.ListReaderCustomizer
-import io.frinx.cli.registry.common.CompositeReader
+import io.frinx.cli.registry.common.CompositeListReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr6.bgp.handler.BgpProtocolReader
 import io.frinx.unitopo.unit.xr6.lr.handler.StaticProtocolReader
@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
 class ProtocolReader(underlayAccess: UnderlayAccess) :
-        CompositeReader<Protocol, ProtocolKey, ProtocolBuilder>(getChildren(underlayAccess)) {
+        CompositeListReader<Protocol, ProtocolKey, ProtocolBuilder>(getChildren(underlayAccess)) {
 
     override fun merge(builder: Builder<out DataObject>, list: List<Protocol>) {
         (builder as ProtocolsBuilder).`protocol` = list

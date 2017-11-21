@@ -10,7 +10,7 @@ package io.frinx.unitopo.unit.xr6.bgp.handler
 
 import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.read.ReadFailedException
-import io.frinx.cli.registry.common.CompositeReader
+import io.frinx.cli.registry.common.CompositeListReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr6.bgp.common.BgpReader
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.Bgp
@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
 class BgpProtocolReader(private val access: UnderlayAccess) :
         BgpReader.BgpConfigReader<Protocol, ProtocolBuilder>,
-        CompositeReader.Child<Protocol, ProtocolKey, ProtocolBuilder> {
+        CompositeListReader.Child<Protocol, ProtocolKey, ProtocolBuilder> {
 
     @Throws(ReadFailedException::class)
     override fun getAllIds(id: IID<Protocol>, context: ReadContext): List<ProtocolKey> {
