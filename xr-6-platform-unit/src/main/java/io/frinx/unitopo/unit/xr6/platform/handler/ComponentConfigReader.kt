@@ -9,10 +9,10 @@ package io.frinx.unitopo.unit.xr6.platform.handler
 
 import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.spi.read.OperReaderCustomizer
-import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.platform.rev161222.platform.component.top.components.Component
-import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.platform.rev161222.platform.component.top.components.ComponentBuilder
-import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.platform.rev161222.platform.component.top.components.component.Config
-import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.platform.rev161222.platform.component.top.components.component.ConfigBuilder
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.platform.rev161222.platform.component.top.components.Component
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.platform.rev161222.platform.component.top.components.ComponentBuilder
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.platform.rev161222.platform.component.top.components.component.Config
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.platform.rev161222.platform.component.top.components.component.ConfigBuilder
 import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier

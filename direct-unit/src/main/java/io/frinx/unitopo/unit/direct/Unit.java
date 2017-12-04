@@ -32,7 +32,7 @@ import javax.annotation.Nonnull;
 import org.opendaylight.controller.md.sal.binding.impl.BindingToNormalizedNodeCodec;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingCodecTree;
 import org.opendaylight.mdsal.binding.generator.impl.ModuleInfoBackedContext;
-import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.interfaces.rev161222.$YangModuleInfoImpl;
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.$YangModuleInfoImpl;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo;
@@ -48,9 +48,9 @@ public class Unit implements TranslateUnit {
 
     private static final Set<YangModuleInfo> ALL_OPENCONFIGS = Sets.newHashSet(
             $YangModuleInfoImpl.getInstance(),
-            org.opendaylight.yang.gen.v1.http.openconfig.net.yang.interfaces.ip.rev161222.$YangModuleInfoImpl.getInstance(),
-            org.opendaylight.yang.gen.v1.http.openconfig.net.yang.network.instance.rev170228.$YangModuleInfoImpl.getInstance(),
-            org.opendaylight.yang.gen.v1.http.openconfig.net.yang.local.routing.rev170515.$YangModuleInfoImpl.getInstance());
+            org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.$YangModuleInfoImpl.getInstance(),
+            org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.$YangModuleInfoImpl.getInstance(),
+            org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.local.routing.rev170515.$YangModuleInfoImpl.getInstance());
 
     // This is a list of supported top level nodes by the direct unit
     // which requires manual modification when another subtree should be supported

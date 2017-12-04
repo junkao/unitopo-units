@@ -10,8 +10,8 @@ package io.frinx.unitopo.unit.xr6.bgp
 
 import io.frinx.unitopo.unit.utils.AbstractNetconfHandlerTest
 import io.frinx.unitopo.unit.xr6.bgp.handler.BgpProtocolReader
-import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.bgp.rev170202.bgp.global.base.ConfigBuilder
-import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.bgp.rev170202.bgp.global.base.StateBuilder
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.global.base.ConfigBuilder
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.global.base.StateBuilder
 import io.frinx.unitopo.unit.xr6.bgp.handler.fromUnderlay
 import org.junit.Assert
 import org.junit.Test

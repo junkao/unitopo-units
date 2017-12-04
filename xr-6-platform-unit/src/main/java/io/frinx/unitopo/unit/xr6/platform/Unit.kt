@@ -22,9 +22,9 @@ import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr6.platform.handler.ComponentConfigReader
 import io.frinx.unitopo.unit.xr6.platform.handler.ComponentReader
 import io.frinx.unitopo.unit.xr6.platform.handler.ComponentStateReader
-import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.platform.rev161222.platform.component.top.ComponentsBuilder
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.platform.rev161222.platform.component.top.ComponentsBuilder
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.asr9k.sc.invmgr.admin.oper.rev151109.`$YangModuleInfoImpl` as UnderlayInventoryModule
-import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.platform.rev161222.`$YangModuleInfoImpl` as OpenconfigPlatformModule
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.platform.rev161222.`$YangModuleInfoImpl` as OpenconfigPlatformModule
 
 
 

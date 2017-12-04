@@ -12,10 +12,10 @@ import io.fd.honeycomb.translate.spi.read.OperListReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.asr9k.sc.invmgr.admin.oper.rev151109.Inventory
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.asr9k.sc.invmgr.admin.oper.rev151109.inventory.Racks
-import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.platform.rev161222.platform.component.top.ComponentsBuilder
-import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.platform.rev161222.platform.component.top.components.Component
-import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.platform.rev161222.platform.component.top.components.ComponentBuilder
-import org.opendaylight.yang.gen.v1.http.openconfig.net.yang.platform.rev161222.platform.component.top.components.ComponentKey
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.platform.rev161222.platform.component.top.ComponentsBuilder
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.platform.rev161222.platform.component.top.components.Component
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.platform.rev161222.platform.component.top.components.ComponentBuilder
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.platform.rev161222.platform.component.top.components.ComponentKey
 import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
