@@ -30,6 +30,7 @@
         <feature version='${unitopo.version}'>unified-topology</feature>
         <bundle>mvn:org.jetbrains.kotlin/kotlin-osgi-bundle/{{VERSION}}</bundle>
         <bundle>mvn:commons-net/commons-net/{{VERSION}}</bundle>
+        <bundle>mvn:io.frinx.unitopo/utils-unit/{{VERSION}}</bundle>
         <bundle>mvn:io.frinx.unitopo/xr-6-interface-unit/{{VERSION}}</bundle>
         <bundle>mvn:io.frinx.unitopo/xr-6-ip6-unit/{{VERSION}}</bundle>
         <bundle>mvn:io.frinx.unitopo/network-instance-unit/{{VERSION}}</bundle>

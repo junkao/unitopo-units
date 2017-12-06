@@ -13,9 +13,6 @@ import io.fd.honeycomb.translate.impl.read.GenericConfigReader
 import io.fd.honeycomb.translate.impl.read.GenericOperReader
 import io.fd.honeycomb.translate.impl.write.GenericWriter
 import io.fd.honeycomb.translate.read.registry.ModifiableReaderRegistryBuilder
-import io.fd.honeycomb.translate.spi.write.ListWriterCustomizer
-import io.fd.honeycomb.translate.spi.write.WriterCustomizer
-import io.fd.honeycomb.translate.write.WriteContext
 import io.fd.honeycomb.translate.write.registry.ModifiableWriterRegistryBuilder
 import io.frinx.openconfig.openconfig.network.instance.IIDs
 import io.frinx.unitopo.registry.spi.TranslateUnit
