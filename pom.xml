@@ -30,7 +30,6 @@
   <modules>
     <module>kotlin-unit-parent</module>
     <module>utils-unit</module>
-    <module>direct-unit</module>
     <module>xr-6-interface-unit</module>
     <module>xr-6-ip6-unit</module>
     <module>xr-6-network-instance-unit</module>

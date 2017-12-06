@@ -18,13 +18,12 @@
     <repository>mvn:io.frinx.openconfig/openconfig-features/{{VERSION}}/xml/features</repository>
     <repository>mvn:io.frinx.unitopo/unified-topology-features/{{VERSION}}/xml/features</repository>
 
-    <feature name='unified-topology-unit-direct' version='${project.version}'>
+    <feature name='unified-topology-unit-baswe' version='${project.version}'>
         <feature version='${unitopo.version}'>unified-topology</feature>
         <bundle>wrap:mvn:io.fd.honeycomb/translate-spi/${hc.version}</bundle>
         <bundle>mvn:org.jgrapht/jgrapht-core/{{VERSION}}</bundle>
         <bundle>wrap:mvn:io.fd.honeycomb/translate-utils/${hc.version}</bundle>
         <bundle>wrap:mvn:io.fd.honeycomb/translate-impl/${hc.version}</bundle>
-        <bundle>mvn:io.frinx.unitopo/direct-unit/{{VERSION}}</bundle>
     </feature>
 
     <feature name='unified-topology-unit-xr-6' version='${project.version}'>
@@ -42,7 +41,7 @@
     </feature>
 
     <feature name='unified-topology-all-units' version='${project.version}'>
-        <feature version='${project.version}'>unified-topology-unit-direct</feature>
+        <feature version='${project.version}'>unified-topology-unit-base</feature>
         <feature version='${project.version}'>unified-topology-unit-xr-6</feature>
     </feature>
 
