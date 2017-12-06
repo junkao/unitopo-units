@@ -18,7 +18,7 @@
     <repository>mvn:io.frinx.openconfig/openconfig-features/{{VERSION}}/xml/features</repository>
     <repository>mvn:io.frinx.unitopo/unified-topology-features/{{VERSION}}/xml/features</repository>
 
-    <feature name='unified-topology-unit-baswe' version='${project.version}'>
+    <feature name='unified-topology-unit-base' version='${project.version}'>
         <feature version='${unitopo.version}'>unified-topology</feature>
         <bundle>wrap:mvn:io.fd.honeycomb/translate-spi/${hc.version}</bundle>
         <bundle>mvn:org.jgrapht/jgrapht-core/{{VERSION}}</bundle>
