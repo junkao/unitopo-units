@@ -16,11 +16,11 @@ import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.getSubIfcName
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev150730._interface.configurations.InterfaceConfiguration
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.Interface
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.subinterfaces.Subinterface
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.vlan.rev160526.VlanLogicalConfig
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.vlan.rev160526.vlan.logical.top.VlanBuilder
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.vlan.rev160526.vlan.logical.top.vlan.Config
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.vlan.rev160526.vlan.logical.top.vlan.ConfigBuilder
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.vlan.types.rev160526.VlanId
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.vlan.rev170714.VlanLogicalConfig
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.vlan.rev170714.vlan.logical.top.VlanBuilder
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.vlan.rev170714.vlan.logical.top.vlan.Config
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.vlan.rev170714.vlan.logical.top.vlan.ConfigBuilder
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.vlan.types.rev170714.VlanId
 import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
