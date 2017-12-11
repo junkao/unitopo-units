@@ -6,13 +6,11 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 
-package io.frinx.unitopo.unit.xr6.vrf
+package io.frinx.unitopo.unit.xr6.network.instance.vrf.protocol
 
 import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.read.ReadFailedException
-import io.fd.honeycomb.translate.spi.read.ReaderCustomizer
-import io.frinx.unitopo.registry.spi.UnderlayAccess
-import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType
+import io.frinx.unitopo.unit.xr6.network.instance.common.L3VrfReader
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.Protocol
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.ProtocolBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.protocol.State
@@ -21,24 +19,22 @@ import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class ProtocolStateReader(private val underlayAccess: UnderlayAccess) : ReaderCustomizer<State, StateBuilder> {
+class ProtocolStateReader : L3VrfReader.L3VrfOperReader<State, StateBuilder> {
 
     override fun getBuilder(instanceIdentifier: InstanceIdentifier<State>): StateBuilder {
         return StateBuilder()
     }
 
     @Throws(ReadFailedException::class)
-    override fun readCurrentAttributes(instanceIdentifier: InstanceIdentifier<State>, configBuilder: StateBuilder, readContext: ReadContext) {
-        if (underlayAccess.currentOperationType == LogicalDatastoreType.CONFIGURATION) {
-            return
-        }
-        
+    override fun readCurrentAttributesForType(instanceIdentifier: InstanceIdentifier<State>,
+                                              StateBuilder: StateBuilder,
+                                              readContext: ReadContext) {
         val protocolKey = instanceIdentifier.firstKeyOf(Protocol::class.java)
-        configBuilder.`identifier` = protocolKey.identifier
-        configBuilder.`name` = protocolKey.name
+        StateBuilder.identifier = protocolKey.identifier
+        StateBuilder.name = protocolKey.name
     }
 
-    override fun merge(builder: Builder<out DataObject>, state: State) {
-        (builder as ProtocolBuilder).`state` = state
+    override fun merge(builder: Builder<out DataObject>, State: State) {
+        (builder as ProtocolBuilder).state = State
     }
 }

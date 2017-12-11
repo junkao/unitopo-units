@@ -6,7 +6,7 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 
-package io.frinx.unitopo.unit.xr6.vrf
+package io.frinx.unitopo.unit.xr6.network.instance
 
 import io.fd.honeycomb.translate.spi.read.ListReaderCustomizer
 import io.frinx.cli.registry.common.CompositeListReader
