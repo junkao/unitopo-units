@@ -9,8 +9,8 @@
 package io.frinx.unitopo.unit.xr6.network.instance.l2p2p
 
 import io.fd.honeycomb.translate.read.ReadContext
-import io.fd.honeycomb.translate.read.ReadFailedException
 import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
+import io.fd.honeycomb.translate.util.RWUtils
 import io.frinx.cli.registry.common.CompositeReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
@@ -23,11 +23,10 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 class L2P2PConfigReader(private val underlayAccess: UnderlayAccess) : ConfigReaderCustomizer<Config, ConfigBuilder>,
         CompositeReader.Child<Config, ConfigBuilder> {
 
-    @Throws(ReadFailedException::class)
     override fun readCurrentAttributes(instanceIdentifier: InstanceIdentifier<Config>,
                                        configBuilder: ConfigBuilder,
                                        readContext: ReadContext) {
-        if (isP2P(instanceIdentifier, readContext)) {
+        if (isP2P(instanceIdentifier)) {
             configBuilder.name = instanceIdentifier.firstKeyOf<NetworkInstance, NetworkInstanceKey>(NetworkInstance::class.java).name
             configBuilder.type = L2P2P::class.java
 
@@ -35,9 +34,7 @@ class L2P2PConfigReader(private val underlayAccess: UnderlayAccess) : ConfigRead
         }
     }
 
-    @Throws(ReadFailedException::class)
-    private fun isP2P(id: InstanceIdentifier<Config>, readContext: ReadContext): Boolean {
-        // FIXME
-        return false
+    private fun isP2P(id: InstanceIdentifier<Config>): Boolean {
+        return L2P2PReader.getAllIds(underlayAccess).contains(id.firstKeyOf(NetworkInstance::class.java))
     }
 }

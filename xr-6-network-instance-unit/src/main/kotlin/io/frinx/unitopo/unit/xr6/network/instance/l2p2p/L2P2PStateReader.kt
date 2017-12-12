@@ -9,7 +9,6 @@
 package io.frinx.unitopo.unit.xr6.network.instance.l2p2p
 
 import io.fd.honeycomb.translate.read.ReadContext
-import io.fd.honeycomb.translate.read.ReadFailedException
 import io.fd.honeycomb.translate.spi.read.OperReaderCustomizer
 import io.frinx.cli.registry.common.CompositeReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
@@ -22,7 +21,6 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
 class L2P2PStateReader(private val underlayAccess: UnderlayAccess) : OperReaderCustomizer<State, StateBuilder>, CompositeReader.Child<State, StateBuilder> {
 
-    @Throws(ReadFailedException::class)
     override fun readCurrentAttributes(instanceIdentifier: InstanceIdentifier<State>,
                                        configBuilder: StateBuilder,
                                        readContext: ReadContext) {
@@ -34,7 +32,6 @@ class L2P2PStateReader(private val underlayAccess: UnderlayAccess) : OperReaderC
         }
     }
 
-    @Throws(ReadFailedException::class)
     private fun isP2P(id: InstanceIdentifier<State>, readContext: ReadContext): Boolean {
         // FIXME
         return false
