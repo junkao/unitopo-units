@@ -5,7 +5,6 @@ import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr6.interfaces.handler.InterfaceReader
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev150730._interface.configurations.InterfaceConfiguration
-import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv6.ma.cfg.rev170303.InterfaceConfiguration1
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.ipv6.top.ipv6.addresses.Address
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.ipv6.top.ipv6.addresses.AddressBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.ipv6.top.ipv6.addresses.address.Config
@@ -43,7 +42,7 @@ open class Ipv6ConfigReader(private val underlayAccess: UnderlayAccess) : Config
         val LINK_LOCAL_PREFIX: Short = 64
 
         private fun extractAddress(ifcCfg: InterfaceConfiguration, builder: ConfigBuilder) {
-            ifcCfg.getAugmentation(InterfaceConfiguration1::class.java)
+            ifcCfg.getAugmentation(UnderlayIpv6Augment::class.java)
                     ?.ipv6Network
                     ?.addresses
                     ?.let {
