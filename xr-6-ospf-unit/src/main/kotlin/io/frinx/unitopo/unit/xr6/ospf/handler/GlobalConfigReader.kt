@@ -71,7 +71,7 @@ class GlobalConfigReader(private val access: UnderlayAccess) : OspfReader.OspfCo
             } else {
                 p.vrfs?.vrf.orEmpty()
                         .find { it.vrfName.value == vrfName }
-                        ?.let { routerId = DottedQuad(it.routerId.value) }
+                        ?.let { routerId = if (it.routerId != null) DottedQuad(it.routerId?.value) else null }
             }
             return routerId
         }
