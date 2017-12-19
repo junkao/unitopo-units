@@ -54,6 +54,7 @@ class SubinterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : Wri
                 .setInterfaceName(ifcName)
                 .setInterfaceModeNonPhysical(InterfaceModeEnum.Default)
                 .setActive(interfaceActive)
+                .setInterfaceVirtual(isInterfaceVirtual(ifcName))
                 .setDescription(dataAfter.description)
                 .build()
         return Pair(underlayId, underlayIfcCfg)
@@ -72,6 +73,11 @@ class SubinterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : Wri
                 InterfaceConfigurationKey(interfaceActive, underlaySubifcName))
 
         return Triple(interfaceActive, underlaySubifcName, underlayId)
+    }
+
+    companion object {
+        fun isInterfaceVirtual(ifcName : InterfaceName) : Boolean =
+            ifcName.value.startsWith("Loopback") || ifcName.value.startsWith("null")
     }
 }
 

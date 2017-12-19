@@ -3,6 +3,7 @@ package io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.ip6.r150730
 import io.fd.honeycomb.rpc.RpcService
 import io.fd.honeycomb.translate.impl.read.GenericConfigListReader
 import io.fd.honeycomb.translate.impl.read.GenericConfigReader
+import io.fd.honeycomb.translate.impl.write.GenericWriter
 import io.fd.honeycomb.translate.read.registry.ModifiableReaderRegistryBuilder
 import io.fd.honeycomb.translate.write.registry.ModifiableWriterRegistryBuilder
 import io.frinx.openconfig.openconfig.interfaces.IIDs
@@ -47,6 +48,8 @@ open class Unit(private val registry: TranslationUnitCollector) : TranslateUnit 
     }
 
     open fun provideWriters(wRegistry: ModifiableWriterRegistryBuilder, underlayAccess: UnderlayAccess) {
+        wRegistry.add(GenericWriter(SUBIFC_IPV6_ADDRESS_ID, Ipv6AddressWriter()))
+        wRegistry.add(GenericWriter(SUBIFC_IPV6_CFG_ID, Ipv6ConfigWriter(underlayAccess)))
     }
 
     open fun provideReaders(rRegistry: ModifiableReaderRegistryBuilder, underlayAccess: UnderlayAccess) {
