@@ -25,13 +25,7 @@ import io.frinx.unitopo.unit.xr6.interfaces.handler.InterfaceConfigWriter
 import io.frinx.unitopo.unit.xr6.interfaces.handler.InterfaceReader
 import io.frinx.unitopo.unit.xr6.interfaces.handler.InterfaceStateReader
 import io.frinx.unitopo.unit.xr6.interfaces.handler.InterfaceWriter
-import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.Ipv4AddressReader
-import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.Ipv4ConfigReader
-import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.SubinterfaceConfigReader
-import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.SubinterfaceConfigWriter
-import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.SubinterfaceReader
-import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.SubinterfaceStateReader
-import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.SubinterfaceWriter
+import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.*
 import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.vlan.SubinterfaceVlanConfigReader
 import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.vlan.SubinterfaceVlanConfigWriter
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.Subinterface1
@@ -100,6 +94,9 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
         wRegistry.add(GenericWriter(IIDs.IN_IN_SU_SU_CONFIG, SubinterfaceConfigWriter(underlayAccess)))
         wRegistry.addAfter(GenericWriter(SUBIFC_VLAN_CFG_ID, SubinterfaceVlanConfigWriter(underlayAccess)),
                 IIDs.IN_IN_SU_SU_CONFIG)
+
+        wRegistry.add(GenericWriter(SUBIFC_IPV4_ADDRESS_ID, Ipv4AddressWriter()))
+        wRegistry.add(GenericWriter(SUBIFC_IPV4_CFG_ID, Ipv4AddressConfigWriter(underlayAccess)))
     }
 
     private fun provideReaders(rRegistry: ModifiableReaderRegistryBuilder, underlayAccess: UnderlayAccess) {
