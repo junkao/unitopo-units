@@ -208,6 +208,5 @@
       <artifactId>xr-6-lldp-unit</artifactId>
       <version>${project.version}</version>
     </dependency>
-
   </dependencies>
 </project>

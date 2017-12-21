@@ -1,0 +1,165 @@
+/*
+ * Copyright © 2017 Frinx and others. All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ */
+
+package io.frinx.unitopo.unit.xr6.network.instance.l2vsi.cp
+
+import io.fd.honeycomb.translate.read.ReadContext
+import io.fd.honeycomb.translate.read.Reader
+import io.frinx.cli.registry.common.CompositeReader
+import io.frinx.unitopo.registry.spi.UnderlayAccess
+import io.frinx.unitopo.unit.xr6.network.instance.common.L2vsiReader
+import io.frinx.unitopo.unit.xr6.network.instance.l2vsi.L2VSIReader
+import io.frinx.unitopo.unit.xr6.network.instance.l2vsi.cp.L2VSIConnectionPointsReader.Companion.ENDPOINT_ID
+import io.frinx.unitopo.unit.xr6.network.instance.l2vsi.cp.L2VSIConnectionPointsReader.Companion.REMOTE_ID
+import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.l2vpn.cfg.rev151109.l2vpn.database.bridge.domain.groups.bridge.domain.group.bridge.domains.BridgeDomain
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.l2vpn.cfg.rev151109.l2vpn.database.bridge.domain.groups.bridge.domain.group.bridge.domains.bridge.domain.vfis.Vfi
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.ConnectionPoints
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.ConnectionPointsBuilder
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.connection.points.ConnectionPoint
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.connection.points.ConnectionPointBuilder
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.connection.points.ConnectionPointKey
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.connection.points.connection.point.EndpointsBuilder
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.connection.points.connection.point.endpoints.EndpointBuilder
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.connection.points.connection.point.endpoints.endpoint.LocalBuilder
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.connection.points.connection.point.endpoints.endpoint.RemoteBuilder
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.types.rev170228.LOCAL
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.types.rev170228.REMOTE
+import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.connection.points.connection.point.ConfigBuilder as CpConfigBuilder
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.connection.points.connection.point.StateBuilder as CpStateBuilder
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.connection.points.connection.point.endpoints.endpoint.ConfigBuilder as EpConfigBuilder
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.connection.points.connection.point.endpoints.endpoint.StateBuilder as EpStateBuilder
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.connection.points.connection.point.endpoints.endpoint.local.ConfigBuilder as LocalConfigBuilder
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.connection.points.connection.point.endpoints.endpoint.remote.ConfigBuilder as RemoteConfigBuilder
+
+class L2VSIConnectionPointsReader(private val underlayAccess: UnderlayAccess) : L2vsiReader.L2vsiConfigReader<ConnectionPoints, ConnectionPointsBuilder>,
+        CompositeReader.Child<ConnectionPoints, ConnectionPointsBuilder> {
+
+    override fun readCurrentAttributesForType(id: InstanceIdentifier<ConnectionPoints>,
+                                              builder: ConnectionPointsBuilder,
+                                              ctx: ReadContext) {
+        val l2vsiName = id.firstKeyOf(NetworkInstance::class.java).name
+        val isOper = isOper(ctx)
+
+        val bd = L2VSIReader.getAllBridgeDomains(underlayAccess)
+                .firstOrNull { bd -> bd.name.value == l2vsiName }
+
+        if (bd == null) return
+
+        bd.vfis?.vfi.orEmpty()
+                .firstOrNull { vfi -> vfi.name.value == l2vsiName }
+                ?.let { vfi -> builder.fromUnderlay(bd, vfi, isOper) }
+
+    }
+
+    private fun isOper(ctx: ReadContext): Boolean {
+        val flag = ctx.modificationCache.get(Reader.DS_TYPE_FLAG)
+        return flag != null && flag === LogicalDatastoreType.OPERATIONAL
+    }
+
+    companion object {
+        val REMOTE_ID = "remote"
+        val ENDPOINT_ID = "default"
+        val VE_ID = 1L
+    }
+}
+
+private fun ConnectionPointsBuilder.fromUnderlay(bd: BridgeDomain, vfi: Vfi, isOper: Boolean) {
+
+    val vccId = vfi.vpnid?.value
+    val routeTarget = vfi.bgpAutoDiscovery?.routeTargets?.routeTarget.orEmpty().first()?.twoByteAsOrFourByteAs.orEmpty().first()
+
+    // Looking for vpn with vccId == routeTarget.asIndex.
+    if (vccId == null) return
+    if (routeTarget == null) return
+    if (routeTarget.`as` == null) return
+    if (routeTarget.`asIndex` == null) return
+    if (routeTarget.asIndex.value != vccId) return
+
+    val connectionPoints = mutableListOf<ConnectionPoint>()
+    connectionPoints.add(parseRemotePoint(vccId, isOper))
+    connectionPoints.addAll(parseLocalPoints(bd, isOper))
+
+    connectionPoint = connectionPoints
+}
+
+fun parseLocalPoints(bd: BridgeDomain, isOper: Boolean): List<ConnectionPoint> {
+    // FIXME finish isOper
+
+    return bd.bdAttachmentCircuits?.bdAttachmentCircuit.orEmpty()
+            .map { atCirc -> atCirc.name.value }
+            .map { ifcName -> toLocalPoint(ifcName) }
+}
+
+fun toLocalPoint(ifcName: String): ConnectionPoint {
+    val connectionPointBuilder = ConnectionPointBuilder()
+
+    connectionPointBuilder
+            .setKey(ConnectionPointKey(ifcName))
+            .config = CpConfigBuilder()
+            .setConnectionPointId(ifcName)
+            .build()
+
+    val localCfgBuilder = LocalConfigBuilder()
+            .setInterface(ifcName)
+
+    if (ifcName.contains('.')) {
+        val split = ifcName.split('.')
+        localCfgBuilder.`interface` = split[0]
+        localCfgBuilder.subinterface = split[1].toLong()
+    }
+
+    connectionPointBuilder.endpoints = EndpointsBuilder()
+            .setEndpoint(listOf(EndpointBuilder()
+                    .setEndpointId(ifcName)
+                    .setConfig(EpConfigBuilder()
+                            .setEndpointId(ifcName)
+                            .setPrecedence(0)
+                            .setType(LOCAL::class.java)
+                            .build())
+                    .setLocal(LocalBuilder()
+                            .setConfig(localCfgBuilder
+                                    .build())
+                            .build())
+                    .build()))
+            .build()
+
+    return connectionPointBuilder.build()
+}
+
+fun parseRemotePoint(vccid: Long, isOper: Boolean): ConnectionPoint {
+    val connectionPointBuilder = ConnectionPointBuilder()
+
+    // FIXME finish isOper
+
+    connectionPointBuilder
+            .setKey(ConnectionPointKey(REMOTE_ID))
+            .config = CpConfigBuilder()
+            .setConnectionPointId(REMOTE_ID)
+            .build()
+
+    connectionPointBuilder.endpoints = EndpointsBuilder()
+            .setEndpoint(listOf(EndpointBuilder()
+                    .setEndpointId(ENDPOINT_ID)
+                    .setConfig(EpConfigBuilder()
+                            .setEndpointId(ENDPOINT_ID)
+                            .setPrecedence(0)
+                            .setType(REMOTE::class.java)
+                            .build())
+                    .setRemote(RemoteBuilder()
+                            .setConfig(RemoteConfigBuilder()
+                                    .setVirtualCircuitIdentifier(vccid)
+                                    .build())
+                            .build())
+                    .build()))
+            .build()
+
+    return connectionPointBuilder.build()
+}
