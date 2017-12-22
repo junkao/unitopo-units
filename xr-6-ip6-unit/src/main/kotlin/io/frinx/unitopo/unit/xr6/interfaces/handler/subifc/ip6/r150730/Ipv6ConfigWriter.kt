@@ -3,6 +3,7 @@ package io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.ip6.r150730
 import io.fd.honeycomb.translate.read.ReadFailedException
 import io.fd.honeycomb.translate.spi.write.WriterCustomizer
 import io.fd.honeycomb.translate.write.WriteContext
+import io.fd.honeycomb.translate.write.WriteFailedException
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev150730.InterfaceActive
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev150730.InterfaceConfigurations
@@ -21,6 +22,7 @@ import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv6.ma.
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.xr.types.rev150629.InterfaceName
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.Interface
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.ipv6.top.ipv6.addresses.address.Config
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.subinterfaces.Subinterface
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.IpAddressNoZone
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.Ipv6AddressNoZone
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
@@ -29,6 +31,11 @@ import java.util.regex.Pattern
 open class Ipv6ConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCustomizer<Config> {
 
     override fun writeCurrentAttributes(id: InstanceIdentifier<Config>, dataAfter: Config, writeContext: WriteContext) {
+        val subId = id.firstKeyOf(Subinterface::class.java).index
+        if (subId != ZERO_SUBINTERFACE_ID) {
+            throw WriteFailedException.CreateFailedException(id, dataAfter,
+                    IllegalArgumentException("Unable to manage IP for subinterface: " + subId))
+        }
         try {
             if (isLinkLocal(dataAfter.ip.value)) {
                 val (underlayId, underlayCfg) = getLinkLocalData(id, dataAfter)
@@ -89,6 +96,8 @@ open class Ipv6ConfigWriter(private val underlayAccess: UnderlayAccess) : Writer
         val IFC_CFGS = InstanceIdentifier.create(InterfaceConfigurations::class.java)!!
 
         val LINK_LOCAL = Pattern.compile("[Ff][Ee][89AaBb].*")
+
+        val ZERO_SUBINTERFACE_ID = 0L
 
         fun isLinkLocal(ip: String): Boolean = LINK_LOCAL.matcher(ip).find()
     }
