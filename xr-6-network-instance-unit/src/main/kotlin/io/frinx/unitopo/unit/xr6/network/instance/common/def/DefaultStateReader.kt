@@ -21,6 +21,11 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
 class DefaultStateReader : OperReaderCustomizer<State, StateBuilder>, CompositeReader.Child<State, StateBuilder> {
 
+    override fun getBuilder(p0: InstanceIdentifier<State>): StateBuilder {
+        // NOOP
+        throw UnsupportedOperationException("Should not be invoked")
+    }
+
     @Throws(ReadFailedException::class)
     override fun readCurrentAttributes(instanceIdentifier: InstanceIdentifier<State>,
                                        configBuilder: StateBuilder,

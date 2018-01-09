@@ -24,6 +24,11 @@ class BgpProtocolReader(private val access: UnderlayAccess) :
         BgpReader.BgpConfigReader<Protocol, ProtocolBuilder>,
         CompositeListReader.Child<Protocol, ProtocolKey, ProtocolBuilder> {
 
+    override fun getBuilder(p0: org.opendaylight.yangtools.yang.binding.InstanceIdentifier<Protocol>): ProtocolBuilder {
+        // NOOP
+        throw UnsupportedOperationException("Should not be invoked")
+    }
+
     @Throws(ReadFailedException::class)
     override fun getAllIds(id: IID<Protocol>, context: ReadContext): List<ProtocolKey> {
         try {

@@ -21,6 +21,11 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
 class L2P2PStateReader(private val underlayAccess: UnderlayAccess) : OperReaderCustomizer<State, StateBuilder>, CompositeReader.Child<State, StateBuilder> {
 
+    override fun getBuilder(p0: InstanceIdentifier<State>): StateBuilder {
+        // NOOP
+        throw UnsupportedOperationException("Should not be invoked")
+    }
+
     override fun readCurrentAttributes(instanceIdentifier: InstanceIdentifier<State>,
                                        configBuilder: StateBuilder,
                                        readContext: ReadContext) {

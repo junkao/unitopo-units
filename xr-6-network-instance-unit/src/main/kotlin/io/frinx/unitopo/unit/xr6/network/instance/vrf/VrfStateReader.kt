@@ -23,6 +23,11 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 class VrfStateReader(private val cli: UnderlayAccess) : OperReaderCustomizer<State, StateBuilder>,
         CompositeReader.Child<State, StateBuilder> {
 
+    override fun getBuilder(p0: InstanceIdentifier<State>): StateBuilder {
+        // NOOP
+        throw UnsupportedOperationException("Should not be invoked")
+    }
+
     @Throws(ReadFailedException::class)
     override fun readCurrentAttributes(instanceIdentifier: InstanceIdentifier<State>,
                                        stateBuilder: StateBuilder,

@@ -27,6 +27,11 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 class L2P2PReader(private val underlayAccess: UnderlayAccess) : ConfigListReaderCustomizer<NetworkInstance, NetworkInstanceKey, NetworkInstanceBuilder>,
         CompositeListReader.Child<NetworkInstance, NetworkInstanceKey, NetworkInstanceBuilder> {
 
+    override fun getBuilder(p0: InstanceIdentifier<NetworkInstance>): NetworkInstanceBuilder {
+        // NOOP
+        throw UnsupportedOperationException("Should not be invoked")
+    }
+
     override fun getAllIds(instanceIdentifier: InstanceIdentifier<NetworkInstance>,
                            readContext: ReadContext): List<NetworkInstanceKey> {
         return getAllIds(underlayAccess)

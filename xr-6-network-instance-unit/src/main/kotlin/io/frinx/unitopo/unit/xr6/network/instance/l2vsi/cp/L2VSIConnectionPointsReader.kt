@@ -42,6 +42,11 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.insta
 class L2VSIConnectionPointsReader(private val underlayAccess: UnderlayAccess) : L2vsiReader.L2vsiConfigReader<ConnectionPoints, ConnectionPointsBuilder>,
         CompositeReader.Child<ConnectionPoints, ConnectionPointsBuilder> {
 
+    override fun getBuilder(p0: InstanceIdentifier<ConnectionPoints>): ConnectionPointsBuilder {
+        // NOOP
+        throw UnsupportedOperationException("Should not be invoked")
+    }
+
     override fun readCurrentAttributesForType(id: InstanceIdentifier<ConnectionPoints>,
                                               builder: ConnectionPointsBuilder,
                                               ctx: ReadContext) {

@@ -25,6 +25,11 @@ class OspfProtocolReader(private val access: UnderlayAccess) :
         OspfReader.OspfConfigReader<Protocol, ProtocolBuilder>,
         CompositeListReader.Child<Protocol, ProtocolKey, ProtocolBuilder> {
 
+    override fun getBuilder(p0: org.opendaylight.yangtools.yang.binding.InstanceIdentifier<Protocol>): ProtocolBuilder {
+        // NOOP
+        throw UnsupportedOperationException("Should not be invoked")
+    }
+
     @Throws(ReadFailedException::class)
     override fun getAllIds(id: IID<Protocol>, context: ReadContext): List<ProtocolKey> {
         try {

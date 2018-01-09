@@ -23,6 +23,11 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 class L2VSIConfigReader(private val underlayAccess: UnderlayAccess) : ConfigReaderCustomizer<Config, ConfigBuilder>,
         CompositeReader.Child<Config, ConfigBuilder> {
 
+    override fun getBuilder(p0: InstanceIdentifier<Config>): ConfigBuilder {
+        // NOOP
+        throw UnsupportedOperationException("Should not be invoked")
+    }
+
     @Throws(ReadFailedException::class)
     override fun readCurrentAttributes(instanceIdentifier: InstanceIdentifier<Config>,
                                        configBuilder: ConfigBuilder,
