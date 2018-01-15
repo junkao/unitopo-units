@@ -150,16 +150,9 @@
        leaf name {
          description "Logical unit number";
          type union {
-           type string {
-             pattern "\*";
-           }
-           type union {
-             type string {
-               pattern "<.*>";
-             }
-             type uint32 {
-               range "0 .. 1073741823";
-             }
+           type string;
+           type uint32 {
+             range "0 .. 1073741823";
            }
          }
        }
