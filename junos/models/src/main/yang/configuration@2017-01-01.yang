@@ -64,6 +64,9 @@
    typedef ipv6prefix {
      type string;
    }
+   typedef interface-device-wildcard {
+     type string;
+   }
    typedef time {
      type string;
    }
@@ -12207,6 +12210,27 @@
        description "Routing protocol configuration";
        uses juniper-protocols;
      }
+     container class-of-service {
+       description "Class-of-service configuration";
+       uses juniper-class-of-service-options;
+     }
+     container firewall {
+       description "Define a firewall configuration";
+       uses apply-advanced;
+       container family {
+         description "Protocol family";
+         container inet {
+           description "Protocol family IPv4 for firewall filter";
+           uses apply-advanced;
+           list filter {
+             key name;
+             ordered-by user;
+             description "Define an IPv4 firewall filter";
+             uses inet_filter;
+           }
+         }
+       }
+     }
    }
    grouping advisory_options_type {
      uses apply-advanced;
@@ -12757,6 +12781,630 @@
        }
      }
    }
+   grouping cos_interfaces_type {
+     description "Physical interface";
+     leaf name {
+       description "Interface name (or wildcard)";
+       type union {
+         type interface-device-wildcard;
+         type string {
+           pattern "<.*>";
+         }
+       }
+     }
+     uses apply-advanced;
+     leaf scheduler-map {
+       description "Output scheduler map";
+       type string {
+         length "1 .. 64";
+       }
+     }
+     list unit {
+       key name;
+       description "Logical interface unit (or wildcard)";
+       leaf name {
+         description "Logical unit number";
+         type union {
+           type string {
+             pattern "\*";
+           }
+           type union {
+             type string {
+               pattern "<.*>";
+             }
+             type uint32 {
+               range "0 .. 1073741823";
+             }
+           }
+         }
+       }
+       uses apply-advanced;
+       leaf output-forwarding-class-map {
+         description "Output forwarding class map name";
+         type string {
+           length "1 .. 64";
+         }
+       }
+       leaf forwarding-class {
+         description "Forwarding class assigned to incoming packets";
+         type string {
+           length "1 .. 64";
+         }
+       }
+       leaf scheduler-map {
+         description "Output scheduler map";
+         type string {
+           length "1 .. 64";
+         }
+       }
+       leaf input-scheduler-map {
+         description "Input scheduler map";
+         type string {
+           length "1 .. 64";
+         }
+       }
+       leaf fragmentation-map {
+         description "Fragmentation map applied to this logical interface";
+         type string {
+           length "1 .. 64";
+         }
+       }
+       container shaping-rate {
+         presence "enable shaping-rate";
+         description "Output shaping rate";
+         choice shaping_rate_choice {
+           case case_1 {
+             leaf rate {
+               description "Shaping rate as an absolute rate";
+               units "bits per second";
+               type string;
+             }
+           }
+           case case_2 {
+             leaf percent {
+               description "Shaping rate as a percentage";
+               type union {
+                 type string {
+                   pattern "<.*>";
+                 }
+                 type uint32 {
+                   range "0 .. 100";
+                 }
+               }
+             }
+           }
+         }
+       }
+       container input-shaping-rate {
+         description "Input shaping rate";
+         choice shaping_rate_choice {
+           case case_1 {
+             leaf rate {
+               description "Shaping rate as an absolute rate";
+               units "bits per second";
+               type string;
+             }
+           }
+           case case_2 {
+             leaf percent {
+               description "Shaping rate as a percentage";
+               type union {
+                 type string {
+                   pattern "<.*>";
+                 }
+                 type uint32 {
+                   range "0 .. 100";
+                 }
+               }
+             }
+           }
+         }
+       }
+       container input-traffic-control-profile {
+         description "Input traffic control profile";
+         leaf profile-name {
+           description "Name of traffic control profile";
+           type string {
+             length "1 .. 64";
+           }
+           mandatory true;
+         }
+         presence "enable input-traffic-control-profile";
+       }
+       container output-traffic-control-profile {
+         description "Output traffic control profile";
+         leaf profile-name {
+           description "Name of the traffic control profile";
+           type string {
+             length "1 .. 64";
+           }
+           mandatory true;
+         }
+         presence "enable output-traffic-control-profile";
+       }
+       container output-traffic-control-profile-remaining {
+         description "Output traffic control profile for remaining traffic on the ifl";
+         leaf profile-name {
+           description "Name of the traffic control profile";
+           type string {
+           }
+           mandatory true;
+         }
+         presence "enable output-traffic-control-profile-remaining";
+       }
+       container report-ingress-shaping-rate {
+         description "Report ingress shaping rate";
+         choice report_ingress_shaping_rate_choice {
+           case case_1 {
+             leaf rate {
+               description "Ingress shaping rate as an absolute value";
+               units "bits per second";
+               type string;
+             }
+           }
+         }
+       }
+       container classifiers {
+         description "Classifiers applied to incoming packets";
+         uses apply-advanced;
+         leaf no-default {
+           description "Do not apply default classifiers to this interface";
+           type empty;
+         }
+         list dscp {
+           key name;
+           ordered-by user;
+           description "Differentiated Services code point classifier";
+           leaf name {
+             description "Name of classifier to be applied";
+             type union {
+               type string {
+                 pattern "default";
+               }
+               type string {
+                 length "1 .. 64";
+               }
+             }
+           }
+           uses apply-advanced;
+           leaf-list family {
+             description "Family for DSCP classifier";
+             type string;
+           }
+         }
+         list dscp-ipv6 {
+           key name;
+           ordered-by user;
+           description "Differentiated Services code point classifier IPv6";
+           leaf name {
+             description "Name of classifier to be applied";
+             type union {
+               type string {
+                 pattern "default";
+               }
+               type string {
+                 length "1 .. 64";
+               }
+             }
+           }
+           uses apply-advanced;
+           leaf-list family {
+             description "Family for DSCP Ipv6 classifier";
+             type string;
+           }
+         }
+         container exp {
+           description "EXP classifier";
+           leaf classifier-name {
+             description "Name of classifier to be applied";
+             type union {
+               type string {
+                 pattern "default";
+               }
+               type string {
+                 length "1 .. 64";
+               }
+             }
+           }
+         }
+         container ieee-802.1 {
+           description "IEEE-802.1 classifier";
+           leaf classifier-name {
+             description "Name of classifier to be applied";
+             type union {
+               type string {
+                 pattern "default";
+               }
+               type string {
+                 length "1 .. 64";
+               }
+             }
+             mandatory true;
+           }
+           presence "enable ieee-802.1";
+           leaf vlan-tag {
+             description "VLAN tag used for classification";
+             type enumeration {
+               enum "outer" {
+                 description "Classification based on outer VLAN tag";
+               }
+               enum "inner" {
+                 description "Classification based on inner VLAN tag";
+               }
+               enum "transparent" {
+                 description "Classification based on hidden VLAN tag";
+               }
+             }
+           }
+         }
+         container inet-precedence {
+           description "IPv4 precedence classifier";
+           leaf classifier-name {
+             description "Name of classifier to be applied";
+             type union {
+               type string {
+                 pattern "default";
+               }
+               type string {
+                 length "1 .. 64";
+               }
+             }
+           }
+         }
+         container ieee-802.1ad {
+           description "IEEE-802.1ad (DEI) classifier";
+           leaf classifier-name {
+             description "Name of classifier to be applied";
+             type union {
+               type string {
+                 pattern "default";
+               }
+               type string {
+                 length "1 .. 64";
+               }
+             }
+             mandatory true;
+           }
+           presence "enable ieee-802.1ad";
+           leaf vlan-tag {
+             description "VLAN tag used for classification";
+             type enumeration {
+               enum "outer" {
+                 description "Classification based on outer VLAN tag";
+               }
+               enum "inner" {
+                 description "Classification based on inner VLAN tag";
+               }
+             }
+           }
+         }
+       }
+       container ingress-rewrite-rules {
+         description "Rewrite rules applied to outgoing packets of the ingress interface";
+         uses apply-advanced;
+         list dscp {
+           key name;
+           ordered-by user;
+           description "Differentiated Services code point rewrite rule";
+           leaf name {
+             description "Name of rewrite rule to be applied";
+             type union {
+               type string {
+                 pattern "default";
+               }
+               type string {
+                 length "1 .. 64";
+               }
+             }
+           }
+         }
+         container dscp-ipv6 {
+           description "Differentiated Services code point rewrite rule IPv6";
+           leaf rewrite-rule-name {
+             description "Name of rewrite rule to be applied";
+             type union {
+               type string {
+                 pattern "default";
+               }
+               type string {
+                 length "1 .. 64";
+               }
+             }
+           }
+         }
+         list inet-precedence {
+           key name;
+           ordered-by user;
+           description "IPv4 precedence rewrite rule";
+           leaf name {
+             description "Name of rewrite rule to be applied";
+             type union {
+               type string {
+                 pattern "default";
+               }
+               type string {
+                 length "1 .. 64";
+               }
+             }
+           }
+         }
+       }
+       container loss-priority-maps {
+         description "Loss priority maps applied to incoming packets";
+         uses apply-advanced;
+         container frame-relay-de {
+           description "Frame Relay discard eligible bit loss priority map";
+           leaf lpmap-name {
+             description "Name of loss priority map to be applied";
+             type union {
+               type string {
+                 pattern "default";
+               }
+               type string {
+                 length "1 .. 64";
+               }
+             }
+           }
+         }
+       }
+       container rewrite-rules {
+         description "Rewrite rules applied to outgoing packets";
+         uses apply-advanced;
+         list dscp {
+           key name;
+           ordered-by user;
+           description "Differentiated Services code point rewrite rule";
+           leaf name {
+             description "Name of rewrite rule to be applied";
+             type union {
+               type string {
+                 pattern "default";
+               }
+               type string {
+                 length "1 .. 64";
+               }
+             }
+           }
+           leaf-list protocol {
+             description "Specify protocol matching criteria";
+             type enumeration {
+               enum "mpls" {
+                 description "Apply to IPv4 packets entering MPLS tunnel";
+               }
+               enum "gtp-inet-outer" {
+                 description "Apply to outer IP header";
+               }
+               enum "gtp-inet-both" {
+                 description "Apply to both IP header";
+               }
+               enum "inet-outer" {
+                 description "Apply to outer IP header";
+               }
+               enum "inet-both" {
+                 description "Apply to both IP header";
+               }
+             }
+           }
+         }
+         list dscp-ipv6 {
+           key name;
+           ordered-by user;
+           description "Differentiated Services code point rewrite rule IPv6";
+           leaf name {
+             description "Name of rewrite rule to be applied";
+             type union {
+               type string {
+                 pattern "default";
+               }
+               type string {
+                 length "1 .. 64";
+               }
+             }
+           }
+           leaf-list protocol {
+             description "Specify protocol matching criteria";
+             type enumeration {
+               enum "mpls" {
+                 description "Apply to IPv6 packets entering MPLS tunnel";
+               }
+               enum "gtp-inet-outer" {
+                 description "Apply to outer IP header";
+               }
+               enum "gtp-inet-both" {
+                 description "Apply to both IP header";
+               }
+             }
+           }
+         }
+         list exp {
+           key name;
+           ordered-by user;
+           description "EXP rewrite rule";
+           leaf name {
+             description "Name of rewrite rule to be applied";
+             type union {
+               type string {
+                 pattern "default";
+               }
+               type string {
+                 length "1 .. 64";
+               }
+             }
+           }
+           leaf-list protocol {
+             description "Specify protocol matching criteria";
+             type enumeration {
+               enum "mpls-any" {
+                 description "Apply to MPLS packets, write MPLS header only";
+               }
+               enum "mpls-inet-both" {
+                 description "Apply to IPv4 MPLS packets, write MPLS and IPv4 header";
+               }
+               enum "mpls-inet-both-non-vpn" {
+                 description "Apply to IPv4 MPLS packets, write MPLS and IPv4 header for only non VPN traffic";
+               }
+             }
+           }
+         }
+         container ieee-802.1 {
+           description "IEEE-802.1 rewrite rule";
+           leaf rewrite-rule-name {
+             description "Name of rewrite rule to be applied";
+             type union {
+               type string {
+                 pattern "default";
+               }
+               type string {
+                 length "1 .. 64";
+               }
+             }
+             mandatory true;
+           }
+           presence "enable ieee-802.1";
+           leaf vlan-tag {
+             description "One or more VLAN tags to which rewrite rule applies";
+             type enumeration {
+               enum "outer" {
+                 description "Rewrite rule applies to outer VLAN tag";
+               }
+               enum "outer-and-inner" {
+                 description "Rewrite rule applies to both outer and inner VLAN tags";
+               }
+             }
+           }
+         }
+         list inet-precedence {
+           key name;
+           ordered-by user;
+           description "IPv4 precedence rewrite rule";
+           leaf name {
+             description "Name of rewrite rule to be applied";
+             type union {
+               type string {
+                 pattern "default";
+               }
+               type string {
+                 length "1 .. 64";
+               }
+             }
+           }
+           leaf-list protocol {
+             description "Specify protocol matching criteria";
+             type enumeration {
+               enum "mpls" {
+                 description "Apply to IPv4 packets entering MPLS tunnel";
+               }
+               enum "gtp-inet-outer" {
+                 description "Apply to outer IP header";
+               }
+               enum "gtp-inet-both" {
+                 description "Apply to both IP header";
+               }
+               enum "inet-outer" {
+                 description "Apply to outer IP header";
+               }
+               enum "inet-both" {
+                 description "Apply to both IP header";
+               }
+             }
+           }
+         }
+         container ieee-802.1ad {
+           description "IEEE-802.1ad (DEI) rewrite rule";
+           uses apply-advanced;
+           leaf rewrite-rule-name {
+             description "Name of rewrite rule to be applied";
+             type union {
+               type string {
+                 pattern "default";
+               }
+               type string {
+                 length "1 .. 64";
+               }
+             }
+             mandatory true;
+           }
+           presence "enable ieee-802.1ad";
+           leaf vlan-tag {
+             description "One or more VLAN tags to which rewrite rule applies";
+             type enumeration {
+               enum "outer" {
+                 description "Rewrite rule applies to outer VLAN tag";
+               }
+               enum "outer-and-inner" {
+                 description "Rewrite rule applies to both outer and inner VLAN tags";
+               }
+             }
+           }
+         }
+       }
+       container loss-priority-rewrites {
+         description "Loss priority rewrites applied to outgoing packets";
+         uses apply-advanced;
+         container frame-relay-de {
+           description "Frame Relay discard eligible bit loss priority rewrite";
+           leaf lprewrite-name {
+             description "Name of loss priority rewrite to be applied";
+             type union {
+               type string {
+                 pattern "default";
+               }
+               type string {
+                 length "1 .. 64";
+               }
+             }
+           }
+         }
+       }
+       container translation-table {
+         description "Translation tables applied to incoming packets";
+         uses apply-advanced;
+         container to-inet-precedence-from-inet-precedence {
+           description "IPv4 precedence translation table";
+           leaf translation-table-name {
+             description "Name of translation table to be applied";
+             type string {
+               length "1 .. 64";
+             }
+           }
+         }
+         container to-dscp-from-dscp {
+           description "Differentiated Services code point translation table";
+           leaf translation-table-name {
+             description "Name of translation table to be applied";
+             type string {
+               length "1 .. 64";
+             }
+           }
+         }
+         container to-dscp-ipv6-from-dscp-ipv6 {
+           description "Differentiated Services code point IPV6 translation table";
+           leaf translation-table-name {
+             description "Name of translation table to be applied";
+             type string {
+               length "1 .. 64";
+             }
+           }
+         }
+         container to-exp-from-exp {
+           description "EXP translation table";
+           leaf translation-table-name {
+             description "Name of translation table to be applied";
+             type string {
+               length "1 .. 64";
+             }
+           }
+         }
+       }
+       container policy-map {
+         description "Policy-map describing the packet marking rule";
+         leaf policy-map-name {
+           description "Name of Policy-map to be applied";
+           type string;
+         }
+       }
+     }
+   }   
    grouping cos_policer {
      description "Define a CoS based policer";
      leaf name {
@@ -13182,6 +13830,747 @@
        description "Burst size limit";
        units "bytes";
        type string;
+     }
+   }
+   grouping firewall_addr_object {
+     leaf name {
+       description "Prefix to match";
+       type ipv4prefix;
+     }
+     leaf except {
+       description "Match address not in this prefix";
+       type empty;
+     }
+   }
+   grouping inet_filter {
+     leaf name {
+       description "Filter name";
+       type string {
+       }
+     }
+     uses apply-advanced;
+     list term {
+       key name;
+       ordered-by user;
+       description "Define a firewall term";
+       leaf name {
+         description "Term name";
+         type string {
+         }
+       }
+       uses apply-advanced;
+       container from {
+         description "Define match criteria";
+         uses apply-advanced;
+         list source-address {
+           key name;
+           ordered-by user;
+           description "Match IP source address";
+           uses firewall_addr_object;
+         }
+         list destination-address {
+           key name;
+           ordered-by user;
+           description "Match IP destination address";
+           uses firewall_addr_object;
+         }
+         list address {
+           key name;
+           ordered-by user;
+           description "Match IP source or destination address";
+           uses firewall_addr_object;
+         }
+       }
+       container then {
+         description "Action to take if the 'from' condition is matched";
+         uses apply-advanced;
+         choice policer-choice {
+           case case_1 {
+             leaf policer {
+               description "Name of policer to use to rate-limit traffic";
+               type string {
+               }
+             }
+           }
+           case case_2 {
+             container three-color-policer {
+               description "Police the packet using a three-color-policer";
+               uses apply-advanced;
+               choice type-choice {
+                 case case_1 {
+                   leaf single-rate {
+                     description "Name of single-rate three-color policer to use to rate-limit traffic";
+                     type string {
+                     }
+                   }
+                 }
+                 case case_2 {
+                   leaf single-packet-rate {
+                     description "Name of single-packet-rate three-color policer to use to rate-limit traffic";
+                     type string {
+                     }
+                   }
+                 }
+                 case case_3 {
+                   leaf two-rate {
+                     description "Name of two-rate three-color policer to use to rate-limit traffic";
+                     type string {
+                     }
+                   }
+                 }
+                 case case_4 {
+                   leaf two-packet-rate {
+                     description "Name of two-packet-rate three-color policer to use to rate-limit traffic";
+                     type string {
+                     }
+                   }
+                 }
+               }
+             }
+           }
+           case case_3 {
+             leaf hierarchical-policer {
+               description "Name of hierarchical policer to use to rate-limit traffic";
+               type string {
+               }
+             }
+           }
+         }
+         choice policy-map-choice {
+           case case_1 {
+             leaf clear-policy-map {
+               description "Clear the policy marking";
+               type empty;
+             }
+           }
+           case case_2 {
+             leaf policy-map {
+               description "Policy map action";
+               type string {
+               }
+             }
+           }
+         }
+         choice inetcnt {
+           case case_1 {
+           }
+           case case_2 {
+             leaf count {
+               description "Count the packet in the named counter";
+               type string {
+               }
+             }
+           }
+         }
+         leaf service-accounting {
+           description "Count the packets for service accounting";
+           type empty;
+         }
+         leaf skip-services {
+           description "Skip the services";
+           type empty;
+         }
+         leaf service-accounting-deferred {
+           description "Count the packets for deferred service accounting";
+           type empty;
+         }
+         leaf log {
+           description "Log the packet";
+           type empty;
+         }
+         leaf syslog {
+           description "System log (syslog) information about the packet";
+           type empty;
+         }
+         leaf sample {
+           description "Sample the packet";
+           type empty;
+         }
+         leaf port-mirror-instance {
+           description "Port-mirror the packet to specified instance";
+           type string {
+           }
+         }
+         leaf port-mirror {
+           description "Port-mirror the packet";
+           type empty;
+         }
+         leaf loss-priority {
+           description "Packet's loss priority";
+           type enumeration {
+             enum "low" {
+               description "Loss priority low";
+             }
+             enum "high" {
+               description "Loss priority high";
+             }
+             enum "medium-low" {
+               description "Loss priority medium-low";
+             }
+             enum "medium-high" {
+               description "Loss priority medium-high";
+             }
+           }
+         }
+         leaf forwarding-class {
+           description "Classify packet to forwarding class";
+           type string {
+           }
+         }
+         leaf service-filter-hit {
+           description "Marked when packet processing by the current type of chained filters is done, the packet is directed to the next type of filters";
+           type empty;
+         }
+         leaf force-premium {
+           description "When this bit is marked, traffic is considered as premium by the following hierarchical policer";
+           type empty;
+         }
+         leaf exclude-accounting {
+           description "When this is marked, traffic is excluded from accurate accounting";
+           type empty;
+         }
+         choice designation {
+           case case_1 {
+             leaf accept {
+               description "Accept the packet";
+               type empty;
+             }
+           }
+           case case_2 {
+             container discard {
+               presence "enable discard";
+               description "Discard the packet";
+               uses apply-advanced;
+               leaf accounting {
+                 description "Named discard collector for packet";
+                 type string;
+               }
+             }
+           }
+           case case_3 {
+             leaf next {
+               description "Continue to next term in a filter";
+               type enumeration {
+                 enum "term" {
+                   description "Continue to next term in a filter";
+                 }
+               }
+             }
+           }
+           case case_4 {
+             list logical-system {
+               key logical-system-name;
+               ordered-by user;
+               description "Packets are directed to specified logical system";
+               max-elements 1;
+               leaf logical-system-name {
+                 description "Name of logical system";
+                 type string {
+                 }
+               }
+               container routing-instance {
+                 description "Packets are directed to specified routing instance";
+                 leaf routing-instance-name {
+                   description "Name of routing instance";
+                   type string {
+                   }
+                   mandatory true;
+                 }
+                 presence "enable routing-instance";
+                 leaf topology {
+                   description "Packets are directed to specified topology";
+                   type string {
+                   }
+                 }
+               }
+               leaf topology {
+                 description "Packets are directed to specified topology";
+                 type string {
+                 }
+               }
+             }
+           }
+           case case_5 {
+             container routing-instance {
+               description "Packets are directed to specified routing instance";
+               leaf routing-instance-name {
+                 description "Name of routing instance";
+                 type string {
+                 }
+                 mandatory true;
+               }
+               presence "enable routing-instance";
+               leaf topology {
+                 description "Packets are directed to specified topology";
+                 type string {
+                 }
+               }
+             }
+           }
+           case case_6 {
+             leaf topology {
+               description "Packets are directed to specified topology";
+               type string {
+               }
+             }
+           }
+           case case_7 {
+             container next-ip {
+               description "Packets are directed to specified the specified ipv4 address";
+               leaf address {
+                 description "Address to route";
+                 type ipv4prefix;
+               }
+               container routing-instance {
+                 description "Packets are directed to specified routing instance";
+                 leaf routing-instance-name {
+                   description "Name of routing instance";
+                   type string {
+                   }
+                   mandatory true;
+                 }
+                 presence "enable routing-instance";
+                 leaf topology {
+                   description "Packets are directed to specified topology";
+                   type string {
+                   }
+                 }
+               }
+             }
+           }
+           case case_8 {
+             container next-interface {
+               presence "enable next-interface";
+               description "Packets are to be routed through the specified interface";
+               uses apply-advanced;
+               leaf interface-name {
+                 description "Interface name";
+                 type string {
+                   length "1 .. 127";
+                 }
+                 mandatory true;
+               }
+               container routing-instance {
+                 description "Packets are directed to specified routing instance";
+                 leaf routing-instance-name {
+                   description "Name of routing instance";
+                   type string {
+                   }
+                   mandatory true;
+                 }
+                 presence "enable routing-instance";
+                 leaf topology {
+                   description "Packets are directed to specified topology";
+                   type string {
+                   }
+                 }
+               }
+               choice designation {
+                 case case_1 {
+                   leaf accept {
+                     description "Accept the packet";
+                     type empty;
+                   }
+                 }
+                 case case_2 {
+                   leaf next {
+                     description "Continue to next term in a filter";
+                     type enumeration {
+                       enum "term" {
+                         description "Continue to next term in a filter";
+                       }
+                     }
+                   }
+                 }
+               }
+             }
+           }
+           case case_9 {
+           }
+           case case_10 {
+             leaf next-hop-group {
+               description "Use specified next-hop group";
+               type string;
+             }
+           }
+           case case_11 {
+             container decapsulate {
+               presence "enable decapsulate";
+               description "Terminate a tunnel";
+               choice tunnel-protocol {
+                 case case_1 {
+                   container gre {
+                     presence "enable gre";
+                     description "GRE protocol";
+                     uses apply-advanced;
+                     leaf-list sample {
+                       description "Sample the packet";
+                       type enumeration {
+                         enum "inet" {
+                           description "IPV4 protocol";
+                         }
+                         enum "inet6" {
+                           description "IPV6 protocol";
+                         }
+                         enum "mpls" {
+                           description "MPLS protocol";
+                         }
+                       }
+                     }
+                     leaf no-decrement-ttl {
+                       description "Do not decrement TTL";
+                       type empty;
+                     }
+                     leaf forwarding-class {
+                       description "Classify packet to forwarding class";
+                       type string {
+                       }
+                     }
+                     leaf interface-group {
+                       description "Set the interface group";
+                       type union {
+                         type string {
+                           pattern "<.*>";
+                         }
+                         type uint32 {
+                           range "0 .. 255";
+                         }
+                       }
+                     }
+                     choice destination {
+                       case case_1 {
+                         container routing-instance {
+                           description "Packets are directed to specified routing instance";
+                           leaf routing-instance-name {
+                             description "Name of routing instance";
+                             type string {
+                             }
+                             mandatory true;
+                           }
+                           presence "enable routing-instance";
+                         }
+                       }
+                     }
+                   }
+                 }
+                 case case_2 {
+                   container gre-in-udp {
+                     presence "enable gre-in-udp";
+                     description "GRE-in-UDP protocol";
+                     uses apply-advanced;
+                     leaf-list sample {
+                       description "Sample the packet";
+                       type enumeration {
+                         enum "inet" {
+                           description "IPV4 protocol";
+                         }
+                         enum "inet6" {
+                           description "IPV6 protocol";
+                         }
+                         enum "mpls" {
+                           description "MPLS protocol";
+                         }
+                       }
+                     }
+                     leaf no-decrement-ttl {
+                       description "Do not decrement TTL";
+                       type empty;
+                     }
+                     leaf forwarding-class {
+                       description "Classify packet to forwarding class";
+                       type string {
+                       }
+                     }
+                     leaf interface-group {
+                       description "Set the interface group";
+                       type union {
+                         type string {
+                           pattern "<.*>";
+                         }
+                         type uint32 {
+                           range "0 .. 255";
+                         }
+                       }
+                     }
+                     choice destination {
+                       case case_1 {
+                         container routing-instance {
+                           description "Packets are directed to specified routing instance";
+                           leaf routing-instance-name {
+                             description "Name of routing instance";
+                             type string {
+                             }
+                             mandatory true;
+                           }
+                           presence "enable routing-instance";
+                         }
+                       }
+                     }
+                   }
+                 }
+                 case case_3 {
+                   container mpls-in-udp {
+                     presence "enable mpls-in-udp";
+                     description "MPLS-in-UDP protocol";
+                     uses apply-advanced;
+                     leaf-list sample {
+                       description "Sample the packet";
+                       type enumeration {
+                         enum "inet" {
+                           description "IPV4 protocol";
+                         }
+                         enum "inet6" {
+                           description "IPV6 protocol";
+                         }
+                         enum "mpls" {
+                           description "MPLS protocol";
+                         }
+                       }
+                     }
+                     leaf no-decrement-ttl {
+                       description "Do not decrement TTL";
+                       type empty;
+                     }
+                     leaf forwarding-class {
+                       description "Classify packet to forwarding class";
+                       type string {
+                       }
+                     }
+                     leaf interface-group {
+                       description "Set the interface group";
+                       type union {
+                         type string {
+                           pattern "<.*>";
+                         }
+                         type uint32 {
+                           range "0 .. 255";
+                         }
+                       }
+                     }
+                     choice destination {
+                       case case_1 {
+                         container routing-instance {
+                           description "Packets are directed to specified routing instance";
+                           leaf routing-instance-name {
+                             description "Name of routing instance";
+                             type string {
+                             }
+                             mandatory true;
+                           }
+                           presence "enable routing-instance";
+                         }
+                       }
+                     }
+                   }
+                 }
+                 case case_4 {
+                   container l2tp {
+                     description "L2TP protocol";
+                     uses apply-advanced;
+                     leaf-list sample {
+                       description "Sample the packet";
+                       type enumeration {
+                         enum "inet" {
+                           description "IPV4 protocol";
+                         }
+                         enum "inet6" {
+                           description "IPV6 protocol";
+                         }
+                         enum "mpls" {
+                           description "MPLS protocol";
+                         }
+                       }
+                     }
+                     leaf no-decrement-ttl {
+                       description "Do not decrement TTL";
+                       type empty;
+                     }
+                     leaf forwarding-class {
+                       description "Classify packet to forwarding class";
+                       type string {
+                       }
+                     }
+                     leaf interface-group {
+                       description "Set the interface group";
+                       type union {
+                         type string {
+                           pattern "<.*>";
+                         }
+                         type uint32 {
+                           range "0 .. 255";
+                         }
+                       }
+                     }
+                     leaf-list cookie {
+                       description "L2TPv3 cookie";
+                       type string {
+                         length "1 .. 32";
+                       }
+                     }
+                     choice destination {
+                       case case_1 {
+                         leaf output-interface {
+                           description "Interface name";
+                           type union {
+                             type interface-unit;
+                             type string {
+                               pattern "<.*>";
+                             }
+                           }
+                         }
+                       }
+                     }
+                   }
+                 }
+               }
+             }
+           }
+           case case_12 {
+             container encapsulate {
+               presence "enable encapsulate";
+               description "Send to a tunnel";
+               leaf tunnel-end-point {
+                 description "Name of the tunnel end point";
+                 type string {
+                 }
+                 mandatory true;
+               }
+             }
+           }
+           case case_13 {
+             container reject {
+               presence "enable reject";
+               description "Reject the packet";
+               choice style {
+                 case case_1 {
+                   leaf network-unreachable {
+                     description "Send ICMP Network Unreachable message";
+                     type empty;
+                   }
+                 }
+                 case case_2 {
+                   leaf host-unreachable {
+                     description "Send ICMP Host Unreachable message";
+                     type empty;
+                   }
+                 }
+                 case case_3 {
+                   leaf protocol-unreachable {
+                     description "Send ICMP Protocol Unreachable message";
+                     type empty;
+                   }
+                 }
+                 case case_4 {
+                   leaf port-unreachable {
+                     description "Send ICMP Port Unreachable message";
+                     type empty;
+                   }
+                 }
+                 case case_5 {
+                   leaf fragmentation-needed {
+                     description "Send ICMP Fragmentation Needed message";
+                     type empty;
+                   }
+                 }
+                 case case_6 {
+                   leaf source-route-failed {
+                     description "Send ICMP Source Route Failed message";
+                     type empty;
+                   }
+                 }
+                 case case_7 {
+                   leaf network-unknown {
+                     description "Send ICMP Network Unknown message";
+                     type empty;
+                   }
+                 }
+                 case case_8 {
+                   leaf host-unknown {
+                     description "Send ICMP Host Unknown message";
+                     type empty;
+                   }
+                 }
+                 case case_9 {
+                   leaf source-host-isolated {
+                     description "Send ICMP Source Host Isolated message";
+                     type empty;
+                   }
+                 }
+                 case case_10 {
+                   leaf network-prohibited {
+                     description "Send ICMP Network Prohibited message";
+                     type empty;
+                   }
+                 }
+                 case case_11 {
+                   leaf host-prohibited {
+                     description "Send ICMP Host Prohibited message";
+                     type empty;
+                   }
+                 }
+                 case case_12 {
+                   leaf bad-network-tos {
+                     description "Send ICMP Bad Network ToS message";
+                     type empty;
+                   }
+                 }
+                 case case_13 {
+                   leaf bad-host-tos {
+                     description "Send ICMP Bad Host ToS message";
+                     type empty;
+                   }
+                 }
+                 case case_14 {
+                   leaf administratively-prohibited {
+                     description "Send ICMP Administratively Prohibited message";
+                     type empty;
+                   }
+                 }
+                 case case_15 {
+                   leaf precedence-violation {
+                     description "Send ICMP Precedence Violation message";
+                     type empty;
+                   }
+                 }
+                 case case_16 {
+                   leaf precedence-cutoff {
+                     description "Send ICMP Precedence Cutoff message";
+                     type empty;
+                   }
+                 }
+                 case case_17 {
+                   leaf tcp-reset {
+                     description "Send TCP Reset message";
+                     type empty;
+                   }
+                 }
+               }
+             }
+           }
+           case case_14 {
+           }
+         }
+         leaf dscp {
+           description "Set Differentiated Services (DiffServ) code point";
+           type string;
+         }
+         leaf dont-fragment {
+           description "Set or clear the DF bit flag of the IP header (ingress only)";
+           type enumeration {
+             enum "clear" {
+               description "Clear DF bit flag";
+             }
+             enum "set" {
+               description "Set DF bit flag";
+             }
+           }
+         }
+         leaf prefix-action {
+           description "Police or count packets using named prefix action";
+           type string {
+           }
+         }
+       }
      }
    }
    grouping interfaces_type {
@@ -25023,6 +26412,715 @@
        uses radius_options_vlan_type;
      }
    }
+   grouping juniper-class-of-service-options {
+     uses apply-advanced;
+     container classifiers {
+       description "Classify incoming packets based on code point value";
+       uses apply-advanced;
+       list dscp {
+         key name;
+         ordered-by user;
+         description "Differentiated Services code point classifier";
+         leaf name {
+           description "Classifier name";
+           type string {
+             length "1 .. 64";
+           }
+         }
+         uses apply-advanced;
+         leaf import {
+           description "Include this classifier in this definition";
+           type union {
+             type string {
+               pattern "default";
+             }
+             type string {
+               length "1 .. 64";
+             }
+           }
+         }
+         list forwarding-class {
+           key name;
+           ordered-by user;
+           description "Define a classification of code point aliases";
+           leaf name {
+             description "Forwarding class name";
+             type string {
+               length "1 .. 64";
+             }
+           }
+           uses apply-advanced;
+           list loss-priority {
+             key name;
+             ordered-by user;
+             description "Classify code points to a loss priority";
+             leaf name {
+               type enumeration {
+                 enum "low" {
+                   description "Code points to classify to loss priority low";
+                 }
+                 enum "high" {
+                   description "Code points to classify to loss priority high";
+                 }
+                 enum "medium-low" {
+                   description "Code points to classify to loss priority medium-low";
+                 }
+                 enum "medium-high" {
+                   description "Code points to classify to loss priority medium-high";
+                 }
+               }
+             }
+             leaf-list code-points {
+               description "List of code point aliases and/or bit strings";
+               type string;
+             }
+           }
+         }
+       }
+       list dscp-ipv6 {
+         key name;
+         ordered-by user;
+         description "Differentiated Services code point classifier IPv6";
+         leaf name {
+           description "Classifier name";
+           type string {
+             length "1 .. 64";
+           }
+         }
+         uses apply-advanced;
+         leaf import {
+           description "Include this classifier in this definition";
+           type union {
+             type string {
+               pattern "default";
+             }
+             type string {
+               length "1 .. 64";
+             }
+           }
+         }
+         list forwarding-class {
+           key name;
+           ordered-by user;
+           description "Define a classification of code point aliases";
+           leaf name {
+             description "Forwarding class name";
+             type string {
+               length "1 .. 64";
+             }
+           }
+           uses apply-advanced;
+           list loss-priority {
+             key name;
+             ordered-by user;
+             description "Classify code points to a loss priority";
+             leaf name {
+               type enumeration {
+                 enum "low" {
+                   description "Code points to classify to loss priority low";
+                 }
+                 enum "high" {
+                   description "Code points to classify to loss priority high";
+                 }
+                 enum "medium-low" {
+                   description "Code points to classify to loss priority medium-low";
+                 }
+                 enum "medium-high" {
+                   description "Code points to classify to loss priority medium-high";
+                 }
+               }
+             }
+             leaf-list code-points {
+               description "List of code point aliases and/or bit strings";
+               type string;
+             }
+           }
+         }
+       }
+       list exp {
+         key name;
+         ordered-by user;
+         description "MPLS EXP classifier";
+         leaf name {
+           description "Classifier name";
+           type string {
+             length "1 .. 64";
+           }
+         }
+         uses apply-advanced;
+         leaf import {
+           description "Include this classifier in this definition";
+           type union {
+             type string {
+               pattern "default";
+             }
+             type string {
+               length "1 .. 64";
+             }
+           }
+         }
+         list forwarding-class {
+           key name;
+           ordered-by user;
+           description "Define a classification of code point aliases";
+           leaf name {
+             description "Forwarding class name";
+             type string {
+               length "1 .. 64";
+             }
+           }
+           uses apply-advanced;
+           list loss-priority {
+             key name;
+             ordered-by user;
+             description "Classify code points to a loss priority";
+             leaf name {
+               type enumeration {
+                 enum "low" {
+                   description "Code points to classify to loss priority low";
+                 }
+                 enum "high" {
+                   description "Code points to classify to loss priority high";
+                 }
+                 enum "medium-low" {
+                   description "Code points to classify to loss priority medium-low";
+                 }
+                 enum "medium-high" {
+                   description "Code points to classify to loss priority medium-high";
+                 }
+               }
+             }
+             leaf-list code-points {
+               description "List of code point aliases and/or bit strings";
+               type string;
+             }
+           }
+         }
+       }
+       list ieee-802.1 {
+         key name;
+         ordered-by user;
+         description "IEEE-802.1 classifier";
+         leaf name {
+           description "Classifier name";
+           type string {
+             length "1 .. 64";
+           }
+         }
+         uses apply-advanced;
+         leaf import {
+           description "Include this classifier in this definition";
+           type union {
+             type string {
+               pattern "default";
+             }
+             type string {
+               length "1 .. 64";
+             }
+           }
+         }
+         list forwarding-class {
+           key name;
+           ordered-by user;
+           description "Define a classification of code point aliases";
+           leaf name {
+             description "Forwarding class name";
+             type string {
+               length "1 .. 64";
+             }
+           }
+           uses apply-advanced;
+           list loss-priority {
+             key name;
+             ordered-by user;
+             description "Classify code points to a loss priority";
+             leaf name {
+               type enumeration {
+                 enum "low" {
+                   description "Code points to classify to loss priority low";
+                 }
+                 enum "high" {
+                   description "Code points to classify to loss priority high";
+                 }
+                 enum "medium-low" {
+                   description "Code points to classify to loss priority medium-low";
+                 }
+                 enum "medium-high" {
+                   description "Code points to classify to loss priority medium-high";
+                 }
+               }
+             }
+             leaf-list code-points {
+               description "List of code point aliases and/or bit strings";
+               type string;
+             }
+           }
+         }
+       }
+       list inet-precedence {
+         key name;
+         ordered-by user;
+         description "IPv4 precedence classifier";
+         leaf name {
+           description "Classifier name";
+           type string {
+             length "1 .. 64";
+           }
+         }
+         uses apply-advanced;
+         leaf import {
+           description "Include this classifier in this definition";
+           type union {
+             type string {
+               pattern "default";
+             }
+             type string {
+               length "1 .. 64";
+             }
+           }
+         }
+         list forwarding-class {
+           key name;
+           ordered-by user;
+           description "Define a classification of code point aliases";
+           leaf name {
+             description "Forwarding class name";
+             type string {
+               length "1 .. 64";
+             }
+           }
+           uses apply-advanced;
+           list loss-priority {
+             key name;
+             ordered-by user;
+             description "Classify code points to a loss priority";
+             leaf name {
+               type enumeration {
+                 enum "low" {
+                   description "Code points to classify to loss priority low";
+                 }
+                 enum "high" {
+                   description "Code points to classify to loss priority high";
+                 }
+                 enum "medium-low" {
+                   description "Code points to classify to loss priority medium-low";
+                 }
+                 enum "medium-high" {
+                   description "Code points to classify to loss priority medium-high";
+                 }
+               }
+             }
+             leaf-list code-points {
+               description "List of code point aliases and/or bit strings";
+               type string;
+             }
+           }
+         }
+       }
+       list ieee-802.1ad {
+         key name;
+         ordered-by user;
+         description "IEEE-802.1ad (DEI) classifier";
+         leaf name {
+           description "Classifier name";
+           type string {
+             length "1 .. 64";
+           }
+         }
+         uses apply-advanced;
+         leaf import {
+           description "Include this classifier in this definition";
+           type union {
+             type string {
+               pattern "default";
+             }
+             type string {
+               length "1 .. 64";
+             }
+           }
+         }
+         list forwarding-class {
+           key name;
+           ordered-by user;
+           description "Define a classification of code point aliases";
+           leaf name {
+             description "Forwarding class name";
+             type string {
+               length "1 .. 64";
+             }
+           }
+           uses apply-advanced;
+           list loss-priority {
+             key name;
+             ordered-by user;
+             description "Classify code points to a loss priority";
+             leaf name {
+               type enumeration {
+                 enum "low" {
+                   description "Code points to classify to loss priority low";
+                 }
+                 enum "high" {
+                   description "Code points to classify to loss priority high";
+                 }
+                 enum "medium-low" {
+                   description "Code points to classify to loss priority medium-low";
+                 }
+                 enum "medium-high" {
+                   description "Code points to classify to loss priority medium-high";
+                 }
+               }
+             }
+             leaf-list code-points {
+               description "List of code point aliases and/or bit strings";
+               type string;
+             }
+           }
+         }
+       }
+     }
+     container forwarding-classes {
+       description "One or more mappings of forwarding class to queue number";
+       uses apply-advanced;
+       list queue {
+         key name;
+         ordered-by user;
+         description "Queue number to map to forwarding class";
+         leaf name {
+           description "Queue number";
+           type union {
+             type string {
+               pattern "<.*>";
+             }
+             type uint32 {
+               range "0 .. 7";
+             }
+           }
+         }
+         leaf class-name {
+           description "Forwarding class name";
+           type string {
+             length "1 .. 64";
+           }
+           mandatory true;
+         }
+         leaf priority {
+           description "Fabric priority";
+           type enumeration {
+             enum "low" {
+               description "Fabric priority low";
+             }
+             enum "high" {
+               description "Fabric priority high";
+             }
+           }
+         }
+         leaf policing-priority {
+           description "Policing priority for hierarchical policers";
+           type enumeration {
+             enum "normal" {
+               description "Normal policing priority";
+             }
+             enum "premium" {
+               description "Premium policing priority";
+             }
+           }
+         }
+       }
+     }
+     container interfaces {
+       description "Apply class-of-service options to interfaces";
+       uses apply-advanced;
+       list interface {
+         key name;
+         description "(null)";
+         uses cos_interfaces_type;
+       }
+     }
+     list scheduler-maps {
+       key name;
+       ordered-by user;
+       description "Mapping of forwarding classes to packet schedulers";
+       leaf name {
+         description "Scheduler map name";
+         type string {
+           length "1 .. 64";
+         }
+       }
+       uses apply-advanced;
+       list forwarding-class {
+         key name;
+         ordered-by user;
+         description "Forwarding class name to map to scheduler";
+         leaf name {
+           description "Forwarding class name";
+           type string {
+             length "1 .. 64";
+           }
+         }
+         leaf scheduler {
+           description "Scheduler name";
+           type string {
+             length "1 .. 64";
+           }
+           mandatory true;
+         }
+       }
+     }
+     list schedulers {
+       key name;
+       ordered-by user;
+       description "Packet schedulers";
+       leaf name {
+         description "Scheduler name";
+         type string {
+           length "1 .. 64";
+         }
+       }
+       uses apply-advanced;
+       container transmit-rate {
+         description "Transmit rate";
+         uses apply-advanced;
+         choice transmit_rate_choice {
+           case case_1 {
+             leaf rate {
+               description "Transmit rate as rate";
+               units "bits per second";
+               type string;
+             }
+           }
+           case case_2 {
+             leaf percent {
+               description "Transmit rate as percentage";
+               type union {
+                 type string {
+                   pattern "<.*>";
+                 }
+                 type uint32 {
+                   range "0 .. 100";
+                 }
+               }
+             }
+           }
+           case case_3 {
+             container remainder {
+               presence "enable remainder";
+               description "Remainder available";
+               uses apply-advanced;
+               leaf percent {
+                 default "0";
+                 type union {
+                   type string {
+                     pattern "<.*>";
+                   }
+                   type uint32 {
+                     range "0 .. 100";
+                   }
+                 }
+               }
+             }
+           }
+         }
+         choice rate_limit_choice {
+           case case_1 {
+             leaf exact {
+               description "Enforce exact transmit rate";
+               type empty;
+             }
+           }
+           case case_2 {
+             leaf rate-limit {
+               description "Enforce rate limit that uses policer";
+               type empty;
+             }
+           }
+         }
+       }
+       container excess-rate {
+         description "Excess bandwidth sharing proportion";
+         choice excess_rate_choice {
+           case case_1 {
+             leaf proportion {
+               description "Excess rate as a proportion";
+               type union {
+                 type string {
+                   pattern "<.*>";
+                 }
+                 type uint32 {
+                   range "0 .. 1000";
+                 }
+               }
+             }
+           }
+           case case_2 {
+             leaf percent {
+               description "Excess rate as a percentage";
+               type union {
+                 type string {
+                   pattern "<.*>";
+                 }
+                 type uint32 {
+                   range "1 .. 100";
+                 }
+               }
+             }
+           }
+         }
+       }
+       container shaping-rate {
+         description "Shaping rate";
+         choice shaping_rate_choice {
+           case case_1 {
+             leaf rate {
+               description "Shaping rate as an absolute rate";
+               units "bits per second";
+               type string;
+             }
+           }
+           case case_2 {
+             leaf percent {
+               description "Shaping rate as a percentage";
+               type union {
+                 type string {
+                   pattern "<.*>";
+                 }
+                 type uint32 {
+                   range "1 .. 100";
+                 }
+               }
+             }
+           }
+         }
+         leaf burst-size {
+           description "Shaping rate burst size";
+           units "bytes";
+           type string;
+         }
+       }
+       container buffer-size {
+         description "Queue transmission buffer size";
+         uses apply-advanced;
+         choice buffer_size_choice {
+           case case_1 {
+             leaf percent {
+               description "Buffer size as a percentage";
+               type union {
+                 type string {
+                   pattern "<.*>";
+                 }
+                 type uint32 {
+                   range "0 .. 100";
+                 }
+               }
+             }
+           }
+           case case_2 {
+             container remainder {
+               presence "enable remainder";
+               description "Remainder of buffer size available";
+               uses apply-advanced;
+               leaf percent {
+                 default "0";
+                 type union {
+                   type string {
+                     pattern "<.*>";
+                   }
+                   type uint32 {
+                     range "0 .. 100";
+                   }
+                 }
+               }
+             }
+           }
+           case case_3 {
+             leaf temporal {
+               description "Buffer size as temporal value";
+               units "microseconds";
+               type string;
+             }
+           }
+         }
+         choice buffer_limit {
+           case case_1 {
+           }
+         }
+       }
+       leaf priority {
+         description "Scheduling priority";
+         type string {
+           length "1 .. 64";
+         }
+       }
+       leaf excess-priority {
+         description "Priority in the excess region";
+         type string {
+           length "1 .. 64";
+         }
+       }
+       list drop-profile-map {
+         key "loss-priority protocol";
+         ordered-by user;
+         description "Assign drop profile to a loss priority and protocol";
+         leaf loss-priority {
+           description "Loss priority value";
+           type enumeration {
+             enum "low" {
+               description "Loss priority low";
+             }
+             enum "high" {
+               description "Loss priority high";
+             }
+             enum "medium-low" {
+               description "Loss priority medium-low";
+             }
+             enum "medium-high" {
+               description "Loss priority medium-high";
+             }
+             enum "any" {
+               description "Ignore loss priority when assigning drop profile";
+             }
+           }
+         }
+         leaf protocol {
+           description "Protocol type";
+           type enumeration {
+             enum "tcp" {
+               description "TCP protocol only";
+             }
+             enum "non-tcp" {
+               description "Non-TCP protocols only";
+             }
+             enum "any" {
+               description "Ignore protocol type when assigning drop profile";
+             }
+           }
+         }
+         leaf drop-profile {
+           description "Name of drop profile to apply";
+           type string {
+             length "1 .. 64";
+           }
+           mandatory true;
+         }
+       }
+       leaf adjust-percent {
+         description "Percent of a bandwidth adjustment applied to a queue";
+         units "percent";
+         type union {
+           type string {
+             pattern "<.*>";
+           }
+           type uint32 {
+             range "0 .. 100";
+           }
+         }
+       }
+       leaf adjust-minimum {
+         description "Minimum shaping-rate when adjusted";
+         units "bits per second";
+         type string;
+       }
+     }
+   }   
    grouping juniper-protocols {
      uses apply-advanced;
      container rsvp {
