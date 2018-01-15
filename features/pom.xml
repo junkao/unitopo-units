@@ -213,5 +213,10 @@
       <artifactId>xr-6-lldp-unit</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>io.frinx.unitopo</groupId>
+      <artifactId>models</artifactId>
+      <version>${project.version}</version>
+    </dependency>
   </dependencies>
 </project>

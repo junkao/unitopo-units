@@ -44,6 +44,14 @@
     <feature name='unified-topology-all-units' version='${project.version}'>
         <feature version='${project.version}'>unified-topology-unit-base</feature>
         <feature version='${project.version}'>unified-topology-unit-xr-6</feature>
+        <feature version='${project.version}'>unified-topology-unit-junos-17-3</feature>
+    </feature>
+
+    <feature name='unified-topology-unit-junos-17-3' version='${project.version}'>
+        <feature version='${unitopo.version}'>unified-topology</feature>
+        <bundle>mvn:org.jetbrains.kotlin/kotlin-osgi-bundle/{{VERSION}}</bundle>
+        <bundle>mvn:commons-net/commons-net/{{VERSION}}</bundle>
+        <bundle>mvn:io.frinx.unitopo/models/{{VERSION}}</bundle>
     </feature>
 
 </features>
