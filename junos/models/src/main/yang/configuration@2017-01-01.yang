@@ -25,10 +25,16 @@
    typedef isoaddr {
      type string;
    }
+   typedef ipprefix {
+     type string;
+   }
    typedef ipprefix-mandatory {
      type string;
    }
    typedef interface-unit {
+     type string;
+   }
+   typedef areaid {
      type string;
    }
    typedef interface-name {
@@ -47,6 +53,9 @@
      type string;
    }
    typedef ipv4prefix {
+     type string;
+   }
+   typedef ipv4addr-or-interface {
      type string;
    }
    typedef ipv6addr {
@@ -12189,6 +12198,14 @@
          description "(null)";
          uses interfaces_type;
        }
+     }
+     container routing-options {
+       description "Protocol-independent routing option configuration";
+       uses juniper-routing-options;
+     }
+     container protocols {
+       description "Routing protocol configuration";
+       uses juniper-protocols;
      }
    }
    grouping advisory_options_type {
@@ -25004,6 +25021,224 @@
      container radius-options {
        description "Interface RADIUS Options";
        uses radius_options_vlan_type;
+     }
+   }
+   grouping juniper-protocols {
+     uses apply-advanced;
+     container rsvp {
+       description "RSVP options";
+       uses juniper-protocols-rsvp;
+     }
+     container mpls {
+       description "Multiprotocol Label Switching options";
+       uses juniper-protocols-mpls;
+     }
+     container bgp {
+       description "BGP options";
+       uses juniper-protocols-bgp;
+     }
+     container ospf {
+       description "OSPF configuration";
+       uses juniper-protocols-ospf;
+     }
+   }
+   grouping juniper-protocols-bgp {
+     uses apply-advanced;
+     list group {
+       key name;
+       ordered-by user;
+       description "Define a peer group";
+       leaf name {
+         description "Group name";
+         type string;
+       }
+       uses apply-advanced;
+       leaf type {
+         description "Type of peer group";
+         type enumeration {
+           enum "internal" {
+             description "IBGP group";
+           }
+           enum "external" {
+             description "EBGP group";
+           }
+         }
+       }
+       list neighbor {
+         key name;
+         ordered-by user;
+         description "Configure a neighbor";
+         leaf name {
+           type ipaddr;
+         }
+         uses apply-advanced;
+       }
+     }
+   }
+   grouping juniper-protocols-mpls {
+     description "Multiprotocol Label Switching options";
+     uses apply-advanced;
+     list label-switched-path {
+       key name;
+       ordered-by user;
+       description "Label-switched path";
+       leaf name {
+         description "Name of path";
+         type string {
+         }
+       }
+       uses apply-advanced;
+       choice label-switched-path-or-template {
+         case case_1 {
+           leaf to {
+             description "Address of egress router";
+             type ipv4addr;
+           }
+         }
+         case case_2 {
+           leaf template {
+             description "Template for dynamic lsp paramaters";
+             type empty;
+           }
+         }
+       }
+       leaf metric {
+         description "Metric value";
+         type union {
+           type string {
+             pattern "<.*>";
+           }
+           type uint32 {
+             range "1 .. 16777215";
+           }
+         }
+       }
+     }
+   }
+   grouping juniper-protocols-ospf {
+     uses apply-advanced;
+     container overload {
+       presence "enable overload";
+       description "Set the overload mode (repel transit traffic)";
+       uses apply-advanced;
+       leaf timeout {
+         description "Time after which overload mode is reset";
+         units "seconds";
+         type union {
+           type string {
+             pattern "<.*>";
+           }
+           type uint32 {
+             range "60 .. 1800";
+           }
+         }
+       }
+     }
+     list area {
+       key name;
+       ordered-by user;
+       description "Configure an OSPF area";
+       leaf name {
+         description "Area ID";
+         type areaid;
+       }
+       uses apply-advanced;
+       list interface {
+         key name;
+         ordered-by user;
+         description "Include an interface in this area";
+         leaf name {
+           description "Interface name";
+           type union {
+             type ipv4addr-or-interface;
+             type string {
+               pattern "<.*>";
+             }
+           }
+         }
+         uses apply-advanced;
+         leaf metric {
+           description "Interface metric";
+           type union {
+             type string {
+               pattern "<.*>";
+             }
+             type uint16 {
+               range "1 .. 65535";
+             }
+           }
+         }
+         leaf te-metric {
+           description "Traffic engineering metric";
+           type union {
+             type string {
+               pattern "<.*>";
+             }
+             type uint32 {
+               range "1 .. 4294967295";
+             }
+           }
+         }
+       }
+     }
+   }
+   grouping juniper-protocols-rsvp {
+     description "RSVP options";
+     uses apply-advanced;
+     list interface {
+       key name;
+       ordered-by user;
+       description "RSVP interface options";
+       leaf name {
+         description "Interface name";
+         type union {
+           type interface-name;
+           type string {
+             pattern "<.*>";
+           }
+         }
+       }
+       uses apply-advanced;
+       leaf bandwidth {
+         description "Available bandwidth for the interface units bps";
+         type string;
+       }
+     }
+   }
+   grouping juniper-routing-options {
+     uses apply-advanced;
+     container autonomous-system {
+       description "Autonomous system number";
+       leaf as-number {
+         description " Autonomous system number in plain number or 'higher 16bits'.'Lower 16 bits' (asdot notation) format";
+         type string {
+         }
+         mandatory true;
+       }
+       presence "enable autonomous-system";
+       leaf loops {
+         description "Maximum number of times this AS can be in an AS path";
+         type union {
+           type string {
+             pattern "<.*>";
+           }
+           type int32 {
+             range "1 .. 10";
+           }
+         }
+       }
+       leaf asdot-notation {
+         description "Use AS-Dot notation to display true 4 byte AS numbers";
+         type empty;
+       }
+       container independent-domain {
+         presence "enable independent-domain";
+         description "Independent autonomous-system domain from master instance";
+         leaf no-attrset {
+           description "Do not tunnel ce bgp attributes across provider network";
+           type empty;
+         }
+       }
      }
    }
    grouping keepalives_type {
