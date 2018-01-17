@@ -26,7 +26,7 @@
   </prerequisites>
 
   <modules>
-    <module>models</module>
+    <module>junos-17-models</module>
   </modules>
 
   <build>
