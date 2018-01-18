@@ -12,6 +12,7 @@ import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.read.ReadFailedException
 import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess
+import io.frinx.unitopo.unit.junos.interfaces.handler.InterfaceReader.Companion.LAG_PREFIX
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.Interface
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.InterfaceBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces._interface.Config
@@ -38,7 +39,7 @@ class InterfaceConfigReader(private val underlayAccess: UnderlayAccess) : Config
                                        configBuilder: ConfigBuilder,
                                        readContext: ReadContext) {
         try {
-            val name = instanceIdentifier.firstKeyOf(Interface::class.java).name
+            val name = instanceIdentifier.firstKeyOf(Interface::class.java).name.removePrefix(LAG_PREFIX)
             InterfaceReader.readInterfaceCfg(underlayAccess, name, { configBuilder.fromUnderlay(it) })
         } catch (e: MDSalReadFailed) {
             throw ReadFailedException(instanceIdentifier, e)
@@ -51,9 +52,14 @@ class InterfaceConfigReader(private val underlayAccess: UnderlayAccess) : Config
 }
 
 internal fun ConfigBuilder.fromUnderlay(underlay: JunosInterface) {
-    name = underlay.name
+    val ifcType = parseIfcType(underlay.name)
+
+    name = when(ifcType){
+        Ieee8023adLag::class.java -> LAG_PREFIX + underlay.name
+        else -> underlay.name
+    }
     description = underlay.description
-    type = parseIfcType(underlay.name)
+    type = ifcType
     mtu = underlay.mtu?.uint32?.toInt()
     isEnabled = parseEnableDisable(underlay.enableDisable)
 }
