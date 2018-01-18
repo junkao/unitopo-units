@@ -27,6 +27,7 @@
 
   <modules>
     <module>junos-17-models</module>
+    <module>junos-17-network-instance-unit</module>
   </modules>
 
   <build>

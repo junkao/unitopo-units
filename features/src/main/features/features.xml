@@ -52,7 +52,9 @@
         <feature version='${unitopo.version}'>unified-topology</feature>
         <bundle>mvn:org.jetbrains.kotlin/kotlin-osgi-bundle/{{VERSION}}</bundle>
         <bundle>mvn:commons-net/commons-net/{{VERSION}}</bundle>
+        <bundle>mvn:io.frinx.unitopo/network-instance-unit/{{VERSION}}</bundle>
         <bundle>mvn:io.frinx.unitopo/junos-17-models/{{VERSION}}</bundle>
+        <bundle>mvn:io.frinx.unitopo/junos-17-network-instance-unit/{{VERSION}}</bundle>
     </feature>
 
 </features>
