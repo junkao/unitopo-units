@@ -32,6 +32,7 @@
         <bundle>mvn:commons-net/commons-net/{{VERSION}}</bundle>
         <bundle>mvn:io.frinx.unitopo/xr-6-interface-unit/{{VERSION}}</bundle>
         <bundle>mvn:io.frinx.unitopo/xr-6-ip6-unit/{{VERSION}}</bundle>
+        <bundle>mvn:io.frinx.unitopo/network-instance-unit/{{VERSION}}</bundle>
         <bundle>mvn:io.frinx.unitopo/xr-6-network-instance-unit/{{VERSION}}</bundle>
         <bundle>mvn:io.frinx.unitopo/xr-6-bgp-unit/{{VERSION}}</bundle>
         <bundle>mvn:io.frinx.unitopo/xr-6-ospf-unit/{{VERSION}}</bundle>

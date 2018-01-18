@@ -168,6 +168,11 @@
       <artifactId>kotlin-osgi-bundle</artifactId>
       <version>${kotlin.version}</version>
     </dependency>
+     <dependency>
+      <groupId>io.frinx.unitopo</groupId>
+      <artifactId>network-instance-unit</artifactId>
+      <version>${project.version}</version>
+    </dependency>
     <dependency>
       <groupId>io.frinx.unitopo</groupId>
       <artifactId>xr-6-interface-unit</artifactId>
