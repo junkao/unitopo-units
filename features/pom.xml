@@ -228,5 +228,10 @@
       <artifactId>junos-17-network-instance-unit</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>io.frinx.unitopo</groupId>
+      <artifactId>junos-17-mpls-unit</artifactId>
+      <version>${project.version}</version>
+    </dependency>
   </dependencies>
 </project>

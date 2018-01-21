@@ -28,6 +28,7 @@
   <modules>
     <module>junos-17-models</module>
     <module>junos-17-network-instance-unit</module>
+    <module>junos-17-mpls-unit</module>
   </modules>
 
   <build>
