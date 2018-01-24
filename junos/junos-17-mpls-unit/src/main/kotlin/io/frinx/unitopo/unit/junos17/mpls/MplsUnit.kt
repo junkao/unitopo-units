@@ -23,14 +23,13 @@ import org.opendaylight.yangtools.yang.binding.YangModuleInfo
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.`$YangModuleInfoImpl` as JunosYangInfo
 import io.frinx.unitopo.registry.spi.TranslateUnit
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.junos17.mpls.handler.TeInterfaceConfigReader
-import io.frinx.unitopo.unit.junos17.mpls.handler.TeInterfaceConfigWriter
-import io.frinx.unitopo.unit.junos17.mpls.handler.TeInterfaceReader
+import io.frinx.unitopo.unit.junos17.mpls.handler.*
 import io.frinx.unitopo.unit.network.instance.NoopListWriter
 import io.frinx.unitopo.unit.network.instance.NoopWriter
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.mpls.rev170824.mpls.top.Mpls
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.mpls.rev170824.te._interface.attributes.top.Interface
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.mpls.rev170824.te._interface.attributes.top.InterfaceKey
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.mpls.rev170824.mpls.top.mpls.LspsBuilder
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.mpls.rev170824.mpls.top.mpls.lsps.ConstrainedPathBuilder
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.mpls.rev170824.te.tunnel.p2p_top.P2pTunnelAttributesBuilder
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.mpls.rev170824.te.tunnels_top.TunnelsBuilder
 
 class MplsUnit(private val registry: TranslationUnitCollector) : TranslateUnit {
 
@@ -64,12 +63,19 @@ class MplsUnit(private val registry: TranslationUnitCollector) : TranslateUnit {
     }
 
     private fun provideWriters(wRegistry: ModifiableWriterRegistryBuilder, underlayAccess: UnderlayAccess) {
-        wRegistry.add(GenericWriter<Mpls>(IIDs.NE_NE_MPLS, NoopWriter<Mpls>()))
+        wRegistry.add(GenericWriter(IIDs.NE_NE_MPLS, NoopWriter()))
 
         // TE
-        wRegistry.add(GenericWriter(IIDs.NE_NE_MP_TE_INTERFACE, NoopListWriter<Interface, InterfaceKey>()))
+        wRegistry.add(GenericWriter(IIDs.NE_NE_MP_TE_INTERFACE, NoopListWriter()))
         wRegistry.add(GenericWriter(IIDs.NE_NE_MP_TE_IN_CONFIG, TeInterfaceConfigWriter(underlayAccess)))
 
+        // Tunnel
+        wRegistry.add(GenericWriter(IIDs.NE_NE_MP_LSPS, NoopWriter()))
+        wRegistry.add(GenericWriter(IIDs.NE_NE_MP_LS_CONSTRAINEDPATH, NoopWriter()))
+        wRegistry.add(GenericWriter(IIDs.NE_NE_MP_LS_CO_TU_TUNNEL, NoopListWriter()))
+        wRegistry.add(GenericWriter(IIDs.NE_NE_MP_LS_CO_TU_TU_CONFIG, TunnelConfigWriter(underlayAccess)))
+        wRegistry.add(GenericWriter(IIDs.NE_NE_MP_LS_CO_TU_TU_P2PTUNNELATTRIBUTES, NoopWriter()))
+        wRegistry.add(GenericWriter(IIDs.NE_NE_MP_LS_CO_TU_TU_P2_CONFIG, NoopWriter()))
     }
 
     private fun provideReaders(rRegistry: ModifiableReaderRegistryBuilder, underlayAccess: UnderlayAccess) {
@@ -79,6 +85,15 @@ class MplsUnit(private val registry: TranslationUnitCollector) : TranslateUnit {
         rRegistry.addStructuralReader(IIDs.NE_NE_MP_TEINTERFACEATTRIBUTES, TeInterfaceAttributesBuilder::class.java)
         rRegistry.add(GenericConfigListReader(IIDs.NE_NE_MP_TE_INTERFACE, TeInterfaceReader(underlayAccess)))
         rRegistry.add(GenericConfigReader(IIDs.NE_NE_MP_TE_IN_CONFIG, TeInterfaceConfigReader()))
+
+        // Tunnel
+        rRegistry.addStructuralReader(IIDs.NE_NE_MP_LSPS, LspsBuilder::class.java)
+        rRegistry.addStructuralReader(IIDs.NE_NE_MP_LS_CONSTRAINEDPATH, ConstrainedPathBuilder::class.java)
+        rRegistry.addStructuralReader(IIDs.NE_NE_MP_LS_CO_TUNNELS, TunnelsBuilder::class.java)
+        rRegistry.add(GenericConfigListReader(IIDs.NE_NE_MP_LS_CO_TU_TUNNEL, TunnelReader(underlayAccess)))
+        rRegistry.add(GenericConfigReader(IIDs.NE_NE_MP_LS_CO_TU_TU_CONFIG, TunnelConfigReader(underlayAccess)))
+        rRegistry.addStructuralReader(IIDs.NE_NE_MP_LS_CO_TU_TU_P2PTUNNELATTRIBUTES, P2pTunnelAttributesBuilder::class.java)
+        rRegistry.add(GenericConfigReader(IIDs.NE_NE_MP_LS_CO_TU_TU_P2_CONFIG, P2pAttributesConfigReader(underlayAccess)))
     }
 
     override fun toString(): String {
