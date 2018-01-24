@@ -56,6 +56,7 @@
         <bundle>mvn:io.frinx.unitopo/junos-17-models/{{VERSION}}</bundle>
         <bundle>mvn:io.frinx.unitopo/junos-17-network-instance-unit/{{VERSION}}</bundle>
         <bundle>mvn:io.frinx.unitopo/junos-17-mpls-unit/{{VERSION}}</bundle>
+        <bundle>mvn:io.frinx.unitopo/junos-17-snmp-unit/{{VERSION}}</bundle>
     </feature>
 
 </features>
