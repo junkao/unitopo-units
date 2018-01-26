@@ -22,6 +22,7 @@ import io.frinx.unitopo.registry.spi.TranslateUnit
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.network.instance.protocol.ProtocolConfigReader
 import io.frinx.unitopo.unit.network.instance.protocol.ProtocolStateReader
+import io.frinx.unitopo.unit.utils.NoopWriter
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.NetworkInstancesBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.ProtocolsBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.InterfacesBuilder
@@ -72,28 +73,6 @@ abstract class NetworkInstanceUnit : TranslateUnit {
     abstract fun provideSpecificReaders(rRegistry: ModifiableReaderRegistryBuilder, underlayAccess: UnderlayAccess)
 
     override fun toString(): String = "Network-instance translate unit"
-}
-
-// FIXME
-class NoopWriter<T : DataObject> : WriterCustomizer<T> {
-
-    override fun writeCurrentAttributes(id: InstanceIdentifier<T>, dataAfter: T, writeContext: WriteContext) {
-    }
-
-    override fun deleteCurrentAttributes(id: InstanceIdentifier<T>, dataBefore: T, writeContext: WriteContext) {
-        // NOOP
-    }
-}
-
-class NoopListWriter<T : DataObject, K : Identifier<T>> : ListWriterCustomizer<T, K> where T : Identifiable<K> {
-
-    override fun writeCurrentAttributes(id: InstanceIdentifier<T>, dataAfter: T, writeContext: WriteContext) {
-        // NOOP
-    }
-
-    override fun deleteCurrentAttributes(id: InstanceIdentifier<T>, dataBefore: T, writeContext: WriteContext) {
-        // NOOP
-    }
 }
 
 
