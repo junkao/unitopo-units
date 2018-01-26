@@ -130,12 +130,7 @@
      description "Physical interface";
      leaf name {
        description "Interface name (or wildcard)";
-       type union {
-         type interface-device-wildcard;
-         type string {
-           pattern "<.*>";
-         }
-       }
+       type string;
      }
      uses apply-advanced;
      leaf scheduler-map {

@@ -32,6 +32,7 @@
     <module>junos-17-interface-unit</module>
     <module>junos-17-snmp-unit</module>
     <module>junos-17-acl-unit</module>
+    <module>junos-17-policy-forwarding-unit</module>
   </modules>
 
   <build>

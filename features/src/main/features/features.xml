@@ -61,6 +61,7 @@
         <bundle>mvn:io.frinx.unitopo/junos-17-interface-unit/{{VERSION}}</bundle>
         <bundle>mvn:io.frinx.unitopo/junos-17-snmp-unit/{{VERSION}}</bundle>
         <bundle>mvn:io.frinx.unitopo/junos-17-acl-unit/{{VERSION}}</bundle>
+        <bundle>mvn:io.frinx.unitopo/junos-17-policy-forwarding-unit/{{VERSION}}</bundle>
     </feature>
 
 </features>
