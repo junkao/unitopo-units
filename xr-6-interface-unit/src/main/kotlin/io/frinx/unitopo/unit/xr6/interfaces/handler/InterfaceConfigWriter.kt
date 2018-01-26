@@ -66,10 +66,10 @@ class InterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : Writer
             // Check if enabling the interface from disabled state
             // since shutdown is an empty leaf, enabling an interface cannot be done with merge
             if (before != null &&
-                    before.isShutdown &&
+                    before.isShutdown != null &&
                     dataAfter.isEnabled) {
 
-                val previousStateWithoutShut = InterfaceConfigurationBuilder(before).setShutdown(false).build()
+                val previousStateWithoutShut = InterfaceConfigurationBuilder(before).setShutdown(null).build()
                 underlayAccess.put(underlayId, previousStateWithoutShut)
             }
 
