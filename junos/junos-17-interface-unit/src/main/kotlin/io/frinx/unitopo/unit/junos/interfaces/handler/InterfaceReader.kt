@@ -22,6 +22,7 @@ import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configur
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.iana._if.type.rev140508.Ieee8023adLag
 import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
+import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.Damping as JunosDamping
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.HoldTime as JunosHoldTime
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.HoldTimeBuilder as JunosHoldTimeBuilder
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.config.Interfaces as JunosInterfaces
@@ -116,6 +117,12 @@ class InterfaceReader(private val underlayAccess: UnderlayAccess) : ConfigListRe
                 Ieee8023adLag::class.java -> LAG_PREFIX + ifcName
                 else -> ifcName
             }
+        }
+
+        fun readDampingCfg(underlayAccess: UnderlayAccess, name: String, handler: (JunosDamping) -> Unit) {
+            readInterface(underlayAccess, name)
+                    // Invoke handler with read HoldTimeConfig or use default
+                    .let { it?.damping?.let { it1 -> handler(it1) } }
         }
     }
 }

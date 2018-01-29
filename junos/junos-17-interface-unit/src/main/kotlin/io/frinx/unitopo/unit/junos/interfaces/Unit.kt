@@ -21,13 +21,21 @@ import io.frinx.unitopo.registry.spi.TranslateUnit
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.junos.interfaces.handler.InterfaceConfigReader
 import io.frinx.unitopo.unit.junos.interfaces.handler.InterfaceConfigWriter
+import io.frinx.unitopo.unit.junos.interfaces.handler.InterfaceDampingConfigReader
+import io.frinx.unitopo.unit.junos.interfaces.handler.InterfaceDampingConfigWriter
 import io.frinx.unitopo.unit.junos.interfaces.handler.InterfaceHoldTimeConfigReader
 import io.frinx.unitopo.unit.junos.interfaces.handler.InterfaceHoldTimeConfigWriter
 import io.frinx.unitopo.unit.junos.interfaces.handler.InterfaceReader
 import io.frinx.unitopo.unit.junos.interfaces.handler.InterfaceWriter
 import io.frinx.unitopo.unit.utils.NoopWriter
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.damping.rev171024.IfDampAug
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.damping.rev171024.IfDampAugBuilder
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.damping.rev171024.damping.top.Damping
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.damping.rev171024.damping.top.DampingBuilder
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.damping.rev171024.damping.top.damping.Config
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222._interface.phys.holdtime.top.HoldTimeBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.InterfacesBuilder
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.damping.rev171024.`$YangModuleInfoImpl` as DampingYangInfo
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.`$YangModuleInfoImpl` as IpYangInfo
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.`$YangModuleInfoImpl` as InterfacesYangInfo
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.`$YangModuleInfoImpl` as UnderlayInterfacesYangInfo
@@ -46,7 +54,8 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
     override fun getYangSchemas() = setOf(
 
             InterfacesYangInfo.getInstance(),
-            IpYangInfo.getInstance())
+            IpYangInfo.getInstance(),
+            DampingYangInfo.getInstance())
 
     override fun getUnderlayYangSchemas() = setOf(
             UnderlayInterfacesYangInfo.getInstance())
@@ -65,6 +74,9 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
         wRegistry.add(GenericWriter(IIDs.IN_IN_CONFIG, InterfaceConfigWriter(underlayAccess)))
         wRegistry.add(GenericWriter(IIDs.IN_IN_HOLDTIME, NoopWriter()))
         wRegistry.add(GenericWriter(IIDs.IN_IN_HO_CONFIG, InterfaceHoldTimeConfigWriter(underlayAccess)))
+        wRegistry.add(GenericWriter(IFC_Damping_AUG_ID, NoopWriter()))
+        wRegistry.add(GenericWriter(IFC_Damping_ID, NoopWriter()))
+        wRegistry.add(GenericWriter(IFC_Damping_CFG_ID, InterfaceDampingConfigWriter(underlayAccess)))
     }
 
     private fun provideReaders(rRegistry: ModifiableReaderRegistryBuilder, underlayAccess: UnderlayAccess) {
@@ -73,8 +85,16 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
         rRegistry.add(GenericConfigReader(IIDs.IN_IN_CONFIG, InterfaceConfigReader(underlayAccess)))
         rRegistry.addStructuralReader(IIDs.IN_IN_HOLDTIME, HoldTimeBuilder::class.java)
         rRegistry.add(GenericConfigReader(IIDs.IN_IN_HO_CONFIG, InterfaceHoldTimeConfigReader(underlayAccess)))
+        rRegistry.addStructuralReader(IFC_Damping_AUG_ID, IfDampAugBuilder::class.java)
+        rRegistry.addStructuralReader(IFC_Damping_ID, DampingBuilder::class.java)
+        rRegistry.add(GenericConfigReader(IFC_Damping_CFG_ID, InterfaceDampingConfigReader(underlayAccess)))
     }
 
     override fun toString(): String = "Junos 17.3 interface translate unit"
 
+    companion object {
+        private val IFC_Damping_AUG_ID = IIDs.IN_INTERFACE.augmentation(IfDampAug::class.java)
+        private val IFC_Damping_ID = IFC_Damping_AUG_ID.child(Damping::class.java)
+        private val IFC_Damping_CFG_ID = IFC_Damping_ID.child(Config::class.java)
+    }
 }
