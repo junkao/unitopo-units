@@ -88,6 +88,11 @@
             <artifactId>junos-17-bgp-unit</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>io.frinx.unitopo</groupId>
+            <artifactId>junos-17-ospf-unit</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <!-- Models unified -->
         <dependency>

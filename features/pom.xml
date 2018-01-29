@@ -173,7 +173,7 @@
       <artifactId>kotlin-osgi-bundle</artifactId>
       <version>${kotlin.version}</version>
     </dependency>
-     <dependency>
+    <dependency>
       <groupId>io.frinx.unitopo</groupId>
       <artifactId>network-instance-unit</artifactId>
       <version>${project.version}</version>
@@ -261,6 +261,11 @@
     <dependency>
       <groupId>io.frinx.unitopo</groupId>
       <artifactId>junos-17-policy-forwarding-unit</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.frinx.unitopo</groupId>
+      <artifactId>junos-17-ospf-unit</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
