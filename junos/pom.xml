@@ -30,6 +30,7 @@
     <module>junos-17-network-instance-unit</module>
     <module>junos-17-mpls-unit</module>
     <module>junos-17-snmp-unit</module>
+    <module>junos-17-acl-unit</module>
   </modules>
 
   <build>
