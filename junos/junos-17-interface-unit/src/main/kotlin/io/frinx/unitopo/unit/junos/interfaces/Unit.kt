@@ -23,6 +23,8 @@ import io.frinx.unitopo.unit.junos.interfaces.handler.InterfaceConfigReader
 import io.frinx.unitopo.unit.junos.interfaces.handler.InterfaceConfigWriter
 import io.frinx.unitopo.unit.junos.interfaces.handler.InterfaceDampingConfigReader
 import io.frinx.unitopo.unit.junos.interfaces.handler.InterfaceDampingConfigWriter
+import io.frinx.unitopo.unit.junos.interfaces.handler.InterfaceEthernetConfigReader
+import io.frinx.unitopo.unit.junos.interfaces.handler.InterfaceEthernetConfigWriter
 import io.frinx.unitopo.unit.junos.interfaces.handler.InterfaceHoldTimeConfigReader
 import io.frinx.unitopo.unit.junos.interfaces.handler.InterfaceHoldTimeConfigWriter
 import io.frinx.unitopo.unit.junos.interfaces.handler.InterfaceReader
@@ -33,9 +35,17 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.damping.rev17
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.damping.rev171024.damping.top.Damping
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.damping.rev171024.damping.top.DampingBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.damping.rev171024.damping.top.damping.Config
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.aggregate.rev161222.Config1
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ethernet.rev161222.Interface1
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ethernet.rev161222.Interface1Builder
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ethernet.rev161222.ethernet.top.Ethernet
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ethernet.rev161222.ethernet.top.EthernetBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222._interface.phys.holdtime.top.HoldTimeBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.InterfacesBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.damping.rev171024.`$YangModuleInfoImpl` as DampingYangInfo
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ethernet.rev161222.`$YangModuleInfoImpl` as OpenConfEthCfgYangInfo
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ethernet.rev161222.ethernet.top.ethernet.Config as EthernetConfig
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ethernet.rev161222.ethernet.top.ethernet.ConfigBuilder as EthernetConfigBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.`$YangModuleInfoImpl` as IpYangInfo
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.`$YangModuleInfoImpl` as InterfacesYangInfo
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.`$YangModuleInfoImpl` as UnderlayInterfacesYangInfo
@@ -55,7 +65,8 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
 
             InterfacesYangInfo.getInstance(),
             IpYangInfo.getInstance(),
-            DampingYangInfo.getInstance())
+            DampingYangInfo.getInstance(),
+            OpenConfEthCfgYangInfo.getInstance())
 
     override fun getUnderlayYangSchemas() = setOf(
             UnderlayInterfacesYangInfo.getInstance())
@@ -77,6 +88,11 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
         wRegistry.add(GenericWriter(IFC_Damping_AUG_ID, NoopWriter()))
         wRegistry.add(GenericWriter(IFC_Damping_ID, NoopWriter()))
         wRegistry.add(GenericWriter(IFC_Damping_CFG_ID, InterfaceDampingConfigWriter(underlayAccess)))
+
+        wRegistry.add(GenericWriter(IFC_ETHERNET_AUG_ID, NoopWriter()))
+        wRegistry.add(GenericWriter(IFC_ETHERNET_ID, NoopWriter()))
+        wRegistry.add(GenericWriter(IFC_ETHERNET_CFG_ID, NoopWriter()))
+        wRegistry.add(GenericWriter(IFC_ETHERNET_CFG_AUG_ID, InterfaceEthernetConfigWriter(underlayAccess)))
     }
 
     private fun provideReaders(rRegistry: ModifiableReaderRegistryBuilder, underlayAccess: UnderlayAccess) {
@@ -85,9 +101,15 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
         rRegistry.add(GenericConfigReader(IIDs.IN_IN_CONFIG, InterfaceConfigReader(underlayAccess)))
         rRegistry.addStructuralReader(IIDs.IN_IN_HOLDTIME, HoldTimeBuilder::class.java)
         rRegistry.add(GenericConfigReader(IIDs.IN_IN_HO_CONFIG, InterfaceHoldTimeConfigReader(underlayAccess)))
+
         rRegistry.addStructuralReader(IFC_Damping_AUG_ID, IfDampAugBuilder::class.java)
         rRegistry.addStructuralReader(IFC_Damping_ID, DampingBuilder::class.java)
         rRegistry.add(GenericConfigReader(IFC_Damping_CFG_ID, InterfaceDampingConfigReader(underlayAccess)))
+
+        rRegistry.addStructuralReader(IFC_ETHERNET_AUG_ID, Interface1Builder::class.java)
+        rRegistry.addStructuralReader(IFC_ETHERNET_ID, EthernetBuilder::class.java)
+        rRegistry.addStructuralReader(IFC_ETHERNET_CFG_ID, EthernetConfigBuilder::class.java)
+        rRegistry.add(GenericConfigReader(IFC_ETHERNET_CFG_AUG_ID, InterfaceEthernetConfigReader(underlayAccess)))
     }
 
     override fun toString(): String = "Junos 17.3 interface translate unit"
@@ -96,5 +118,10 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
         private val IFC_Damping_AUG_ID = IIDs.IN_INTERFACE.augmentation(IfDampAug::class.java)
         private val IFC_Damping_ID = IFC_Damping_AUG_ID.child(Damping::class.java)
         private val IFC_Damping_CFG_ID = IFC_Damping_ID.child(Config::class.java)
+
+        private val IFC_ETHERNET_AUG_ID = IIDs.IN_INTERFACE.augmentation(Interface1::class.java)
+        private val IFC_ETHERNET_ID = IFC_ETHERNET_AUG_ID.child(Ethernet::class.java)
+        private val IFC_ETHERNET_CFG_ID = IFC_ETHERNET_ID.child(EthernetConfig::class.java)
+        private val IFC_ETHERNET_CFG_AUG_ID = IFC_ETHERNET_CFG_ID.augmentation(Config1::class.java)
     }
 }

@@ -29,6 +29,8 @@ import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configur
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.config.interfaces.Interface as JunosInterface
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.config.interfaces.InterfaceBuilder as JunosInterfaceBuilder
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.config.interfaces.InterfaceKey as JunosInterfaceKey
+import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.gigether.options.Ieee8023ad as JunosGigEthIeee8023ad
+
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
 class InterfaceReader(private val underlayAccess: UnderlayAccess) : ConfigListReaderCustomizer<Interface, InterfaceKey, InterfaceBuilder> {
@@ -123,6 +125,12 @@ class InterfaceReader(private val underlayAccess: UnderlayAccess) : ConfigListRe
             readInterface(underlayAccess, name)
                     // Invoke handler with read HoldTimeConfig or use default
                     .let { it?.damping?.let { it1 -> handler(it1) } }
+        }
+
+        fun readEthernetCfg(underlayAccess: UnderlayAccess, name: String, handler: (JunosGigEthIeee8023ad) -> Unit) {
+            readInterface(underlayAccess, name)
+                    // Invoke handler with read HoldTimeConfig or use default
+                    .let { it?.gigetherOptions?.ieee8023ad?.let { it1 -> handler(it1) } }
         }
     }
 }
