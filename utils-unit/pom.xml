@@ -86,5 +86,10 @@
             <version>${cli.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>io.fd.honeycomb</groupId>
+            <artifactId>translate-spi</artifactId>
+            <version>${hc.version}</version>
+        </dependency>
     </dependencies>
 </project>

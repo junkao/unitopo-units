@@ -25,8 +25,8 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.mpls.extensio
 import io.frinx.unitopo.registry.spi.TranslateUnit
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.junos17.mpls.handler.*
-import io.frinx.unitopo.unit.network.instance.NoopListWriter
-import io.frinx.unitopo.unit.network.instance.NoopWriter
+import io.frinx.unitopo.unit.utils.NoopListWriter
+import io.frinx.unitopo.unit.utils.NoopWriter
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.mpls.extension.rev171024.NiMplsRsvpIfSubscripAug
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.mpls.rev170824.mpls.top.mpls.LspsBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.mpls.rev170824.mpls.top.mpls.SignalingProtocolsBuilder
