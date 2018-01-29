@@ -22,6 +22,8 @@ import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configur
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.iana._if.type.rev140508.Ieee8023adLag
 import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
+import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.HoldTime as JunosHoldTime
+import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.HoldTimeBuilder as JunosHoldTimeBuilder
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.config.Interfaces as JunosInterfaces
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.config.interfaces.Interface as JunosInterface
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.config.interfaces.InterfaceBuilder as JunosInterfaceBuilder
@@ -101,6 +103,12 @@ class InterfaceReader(private val underlayAccess: UnderlayAccess) : ConfigListRe
             return underlayAccess.read(IFCS.child(JunosInterface::class.java, JunosInterfaceKey(name)),
                     LogicalDatastoreType.CONFIGURATION)
                     .checkedGet().orNull()
+        }
+
+        fun readHoldTimeCfg(underlayAccess: UnderlayAccess, name: String, handler: (JunosHoldTime) -> kotlin.Unit) {
+            readInterface(underlayAccess, name)
+                    // Invoke handler with read HoldTimeConfig or use default
+                    .let { it?.holdTime?.let { it1 -> handler(it1) } }
         }
 
         fun parseIfcName(ifcName: String): String? {

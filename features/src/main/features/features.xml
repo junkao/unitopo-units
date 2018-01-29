@@ -54,6 +54,7 @@
         <bundle>mvn:commons-net/commons-net/{{VERSION}}</bundle>
         <bundle>mvn:io.frinx.unitopo/utils-unit/{{VERSION}}</bundle>
         <bundle>mvn:io.frinx.unitopo/network-instance-unit/{{VERSION}}</bundle>
+        <bundle>mvn:io.frinx.unitopo/utils-unit/{{VERSION}}</bundle>
         <bundle>mvn:io.frinx.unitopo/junos-17-models/{{VERSION}}</bundle>
         <bundle>mvn:io.frinx.unitopo/junos-17-network-instance-unit/{{VERSION}}</bundle>
         <bundle>mvn:io.frinx.unitopo/junos-17-mpls-unit/{{VERSION}}</bundle>

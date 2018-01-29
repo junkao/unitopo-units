@@ -21,8 +21,12 @@ import io.frinx.unitopo.registry.spi.TranslateUnit
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.junos.interfaces.handler.InterfaceConfigReader
 import io.frinx.unitopo.unit.junos.interfaces.handler.InterfaceConfigWriter
+import io.frinx.unitopo.unit.junos.interfaces.handler.InterfaceHoldTimeConfigReader
+import io.frinx.unitopo.unit.junos.interfaces.handler.InterfaceHoldTimeConfigWriter
 import io.frinx.unitopo.unit.junos.interfaces.handler.InterfaceReader
 import io.frinx.unitopo.unit.junos.interfaces.handler.InterfaceWriter
+import io.frinx.unitopo.unit.utils.NoopWriter
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222._interface.phys.holdtime.top.HoldTimeBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.InterfacesBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.`$YangModuleInfoImpl` as IpYangInfo
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.`$YangModuleInfoImpl` as InterfacesYangInfo
@@ -59,12 +63,16 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
     private fun provideWriters(wRegistry: ModifiableWriterRegistryBuilder, underlayAccess: UnderlayAccess) {
         wRegistry.add(GenericListWriter(IIDs.IN_INTERFACE, InterfaceWriter()))
         wRegistry.add(GenericWriter(IIDs.IN_IN_CONFIG, InterfaceConfigWriter(underlayAccess)))
+        wRegistry.add(GenericWriter(IIDs.IN_IN_HOLDTIME, NoopWriter()))
+        wRegistry.add(GenericWriter(IIDs.IN_IN_HO_CONFIG, InterfaceHoldTimeConfigWriter(underlayAccess)))
     }
 
     private fun provideReaders(rRegistry: ModifiableReaderRegistryBuilder, underlayAccess: UnderlayAccess) {
         rRegistry.addStructuralReader(IIDs.INTERFACES, InterfacesBuilder::class.java)
         rRegistry.add(GenericConfigListReader(IIDs.IN_INTERFACE, InterfaceReader(underlayAccess)))
         rRegistry.add(GenericConfigReader(IIDs.IN_IN_CONFIG, InterfaceConfigReader(underlayAccess)))
+        rRegistry.addStructuralReader(IIDs.IN_IN_HOLDTIME, HoldTimeBuilder::class.java)
+        rRegistry.add(GenericConfigReader(IIDs.IN_IN_HO_CONFIG, InterfaceHoldTimeConfigReader(underlayAccess)))
     }
 
     override fun toString(): String = "Junos 17.3 interface translate unit"
