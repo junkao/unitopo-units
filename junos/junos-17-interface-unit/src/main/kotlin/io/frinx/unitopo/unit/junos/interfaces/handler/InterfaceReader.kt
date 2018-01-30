@@ -23,18 +23,20 @@ import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configur
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.iana._if.type.rev140508.Ieee8023adLag
 import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
-import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.Unit as JunosInterfaceUnit
+import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.AggregatedEtherOptions as JunosAggregatedEtherOptions
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.Damping as JunosDamping
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.HoldTime as JunosHoldTime
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.HoldTimeBuilder as JunosHoldTimeBuilder
+import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.Unit as JunosInterfaceUnit
+import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.aggregated.ether.options.BfdLivenessDetection as JunosBfdLivenessDetection
+import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.gigether.options.Ieee8023ad as JunosGigEthIeee8023ad
+import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.unit.family.inet.Address as JunosInterfaceUnitAddress
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.config.Interfaces as JunosInterfaces
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.config.interfaces.Interface as JunosInterface
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.config.interfaces.InterfaceBuilder as JunosInterfaceBuilder
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.config.interfaces.InterfaceKey as JunosInterfaceKey
-import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.gigether.options.Ieee8023ad as JunosGigEthIeee8023ad
-import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.unit.family.inet.Address as JunosInterfaceUnitAddress
-
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
+
 
 class InterfaceReader(private val underlayAccess: UnderlayAccess) : ConfigListReaderCustomizer<Interface, InterfaceKey, InterfaceBuilder> {
 
@@ -153,6 +155,22 @@ class InterfaceReader(private val underlayAccess: UnderlayAccess) : ConfigListRe
                     }
         }
 
+        fun readAggregationCfg(underlayAccess: UnderlayAccess, ifcName: String, handler: (JunosAggregatedEtherOptions) -> Unit) {
+            readInterface(underlayAccess, ifcName)
+                    // Invoke handler with read UnitAddress
+                    .let {
+                        it?.aggregatedEtherOptions
+                                ?.let { it2 -> handler(it2) }
+                    }
+        }
 
+        fun readAggregationBfdCfg(underlayAccess: UnderlayAccess, ifcName: String, handler: (JunosBfdLivenessDetection) -> Unit) {
+            readInterface(underlayAccess, ifcName)
+                    // Invoke handler with read UnitAddress
+                    .let {
+                        it?.aggregatedEtherOptions?.bfdLivenessDetection
+                                ?.let { it2 -> handler(it2) }
+                    }
+        }
     }
 }

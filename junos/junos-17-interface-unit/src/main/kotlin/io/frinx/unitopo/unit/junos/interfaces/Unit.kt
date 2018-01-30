@@ -29,6 +29,10 @@ import io.frinx.unitopo.unit.junos.interfaces.handler.InterfaceHoldTimeConfigRea
 import io.frinx.unitopo.unit.junos.interfaces.handler.InterfaceHoldTimeConfigWriter
 import io.frinx.unitopo.unit.junos.interfaces.handler.InterfaceReader
 import io.frinx.unitopo.unit.junos.interfaces.handler.InterfaceWriter
+import io.frinx.unitopo.unit.junos.interfaces.handler.lag.aggregate.InterfaceAggregationBfdConfigReader
+import io.frinx.unitopo.unit.junos.interfaces.handler.lag.aggregate.InterfaceAggregationBfdConfigWriter
+import io.frinx.unitopo.unit.junos.interfaces.handler.lag.aggregate.InterfaceAggregationConfigReader
+import io.frinx.unitopo.unit.junos.interfaces.handler.lag.aggregate.InterfaceAggregationConfigWriter
 import io.frinx.unitopo.unit.junos.interfaces.handler.subinterfaces.SubinterfaceAddressConfigReader
 import io.frinx.unitopo.unit.utils.NoopWriter
 import io.frinx.unitopo.unit.junos.interfaces.handler.subinterfaces.SubinterfaceAddressConfigWriter
@@ -37,12 +41,18 @@ import io.frinx.unitopo.unit.junos.interfaces.handler.subinterfaces.Subinterface
 import io.frinx.unitopo.unit.junos.interfaces.handler.subinterfaces.SubinterfaceConfigWriter
 import io.frinx.unitopo.unit.junos.interfaces.handler.subinterfaces.SubinterfaceReader
 import io.frinx.unitopo.unit.utils.NoopListWriter
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bfd.rev171024.IfLagBfdAug
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bfd.rev171024.IfLagBfdAugBuilder
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bfd.rev171024.bfd.top.Bfd
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bfd.rev171024.bfd.top.BfdBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.damping.rev171024.IfDampAug
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.damping.rev171024.IfDampAugBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.damping.rev171024.damping.top.Damping
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.damping.rev171024.damping.top.DampingBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.damping.rev171024.damping.top.damping.Config
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.aggregate.rev161222.Config1
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.aggregate.rev161222.aggregation.logical.top.Aggregation
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.aggregate.rev161222.aggregation.logical.top.AggregationBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ethernet.rev161222.Interface1
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ethernet.rev161222.Interface1Builder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ethernet.rev161222.ethernet.top.Ethernet
@@ -54,15 +64,25 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.ipv4.top.ipv4.Addresses
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.ipv4.top.ipv4.AddressesBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.ipv4.top.ipv4.addresses.Address
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.juniper.rev171024.IfLagJuniperAug
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222._interface.phys.holdtime.top.HoldTimeBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.InterfacesBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.SubinterfacesBuilder
+import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bfd.rev171024.`$YangModuleInfoImpl` as LagBfdYangInfo
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bfd.rev171024.bfd.top.bfd.Config as BfdConfig
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.damping.rev171024.`$YangModuleInfoImpl` as DampingYangInfo
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.aggregate.rev161222.Interface1 as AggregateInterface1Aug
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.aggregate.rev161222.Interface1Builder as AggregateInterface1AugBuilder
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.aggregate.rev161222.`$YangModuleInfoImpl` as AggregateYangInfo
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.aggregate.rev161222.aggregation.logical.top.aggregation.Config as AggregationConfig
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ethernet.rev161222.`$YangModuleInfoImpl` as OpenConfEthCfgYangInfo
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ethernet.rev161222.ethernet.top.ethernet.Config as EthernetConfig
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ethernet.rev161222.ethernet.top.ethernet.ConfigBuilder as EthernetConfigBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.`$YangModuleInfoImpl` as IpYangInfo
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.ipv4.top.ipv4.addresses.address.Config as AddressConfig
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.juniper.rev171024.`$YangModuleInfoImpl` as IfLagJuniperAugYangInfo
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.juniper.rev171024.`$YangModuleInfoImpl` as JuniperYangInfo
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.`$YangModuleInfoImpl` as InterfacesYangInfo
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.`$YangModuleInfoImpl` as UnderlayInterfacesYangInfo
 
@@ -82,7 +102,10 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
             InterfacesYangInfo.getInstance(),
             IpYangInfo.getInstance(),
             DampingYangInfo.getInstance(),
-            OpenConfEthCfgYangInfo.getInstance())
+            OpenConfEthCfgYangInfo.getInstance(),
+            AggregateYangInfo.getInstance(),
+            LagBfdYangInfo.getInstance(),
+            IfLagJuniperAugYangInfo.getInstance())
 
     override fun getUnderlayYangSchemas() = setOf(
             UnderlayInterfacesYangInfo.getInstance())
@@ -118,6 +141,13 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
         wRegistry.addAfter(GenericWriter(IFC_SUBIFC_IPV4_ADDRESSES, NoopWriter()), IFC_SUBIFC_IPV4)
         wRegistry.addAfter(GenericListWriter(IFC_SUBIFC_IPV4_ADDRESSES_ADDR, NoopListWriter()), IFC_SUBIFC_IPV4_ADDRESSES)
         wRegistry.addAfter(GenericWriter(IFC_SUBIFC_IPV4_ADDRESSES_ADDR_CFG, SubinterfaceAddressConfigWriter(underlayAccess)), IFC_SUBIFC_IPV4_ADDRESSES_ADDR)
+
+        wRegistry.addAfter(GenericWriter(IFC_AGGREGATE_AUG, NoopWriter()), IIDs.IN_IN_CONFIG)
+        wRegistry.add(GenericWriter(IFC_AGGREGATE_ID, NoopWriter()))
+        wRegistry.add(GenericWriter(IFC_AGGREGATE_BFD_AUG, NoopWriter()))
+        wRegistry.add(GenericWriter(IFC_AGGREGATE_BFD_ID, NoopWriter()))
+        wRegistry.subtreeAdd(setOf(IFC_AGGREGATE_CFG_AUG), GenericWriter(IFC_AGGREGATE_CFG, InterfaceAggregationConfigWriter(underlayAccess)))
+        wRegistry.add(GenericWriter(IFC_AGGREGATE_BFD_CFG, InterfaceAggregationBfdConfigWriter(underlayAccess)))
     }
 
     private fun provideReaders(rRegistry: ModifiableReaderRegistryBuilder, underlayAccess: UnderlayAccess) {
@@ -144,6 +174,13 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
         rRegistry.addStructuralReader(IFC_SUBIFC_IPV4_ADDRESSES, AddressesBuilder::class.java)
         rRegistry.add(GenericConfigListReader(IFC_SUBIFC_IPV4_ADDRESSES_ADDR, SubinterfaceAddressReader(underlayAccess)))
         rRegistry.add(GenericConfigReader(IFC_SUBIFC_IPV4_ADDRESSES_ADDR_CFG, SubinterfaceAddressConfigReader(underlayAccess)))
+
+        rRegistry.addStructuralReader(IFC_AGGREGATE_AUG, AggregateInterface1AugBuilder::class.java)
+        rRegistry.addStructuralReader(IFC_AGGREGATE_ID, AggregationBuilder::class.java)
+        rRegistry.addStructuralReader(IFC_AGGREGATE_BFD_AUG, IfLagBfdAugBuilder::class.java)
+        rRegistry.addStructuralReader(IFC_AGGREGATE_BFD_ID, BfdBuilder::class.java)
+        rRegistry.subtreeAdd(setOf(IFC_AGGREGATE_CFG_AUG),GenericConfigReader(IFC_AGGREGATE_CFG, InterfaceAggregationConfigReader(underlayAccess)))
+        rRegistry.add(GenericConfigReader(IFC_AGGREGATE_BFD_CFG, InterfaceAggregationBfdConfigReader(underlayAccess)))
     }
 
     override fun toString(): String = "Junos 17.3 interface translate unit"
@@ -163,5 +200,13 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
         private val IFC_SUBIFC_IPV4_ADDRESSES = IFC_SUBIFC_IPV4.child(Addresses::class.java)
         private val IFC_SUBIFC_IPV4_ADDRESSES_ADDR = IFC_SUBIFC_IPV4_ADDRESSES.child(Address::class.java)
         private val IFC_SUBIFC_IPV4_ADDRESSES_ADDR_CFG = IFC_SUBIFC_IPV4_ADDRESSES_ADDR.child(AddressConfig::class.java)
+
+        private val IFC_AGGREGATE_AUG = IIDs.IN_INTERFACE.augmentation(AggregateInterface1Aug::class.java)
+        private val IFC_AGGREGATE_ID = IFC_AGGREGATE_AUG.child(Aggregation::class.java)
+        private val IFC_AGGREGATE_CFG = IFC_AGGREGATE_ID.child(AggregationConfig::class.java)
+        private val IFC_AGGREGATE_CFG_AUG = InstanceIdentifier.create(AggregationConfig::class.java).augmentation(IfLagJuniperAug::class.java)
+        private val IFC_AGGREGATE_BFD_AUG = IFC_AGGREGATE_ID.augmentation(IfLagBfdAug::class.java)
+        private val IFC_AGGREGATE_BFD_ID = IFC_AGGREGATE_BFD_AUG.child(Bfd::class.java)
+        private val IFC_AGGREGATE_BFD_CFG = IFC_AGGREGATE_BFD_ID.child(BfdConfig::class.java)
     }
 }
