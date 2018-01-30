@@ -29,7 +29,14 @@ import io.frinx.unitopo.unit.junos.interfaces.handler.InterfaceHoldTimeConfigRea
 import io.frinx.unitopo.unit.junos.interfaces.handler.InterfaceHoldTimeConfigWriter
 import io.frinx.unitopo.unit.junos.interfaces.handler.InterfaceReader
 import io.frinx.unitopo.unit.junos.interfaces.handler.InterfaceWriter
+import io.frinx.unitopo.unit.junos.interfaces.handler.subinterfaces.SubinterfaceAddressConfigReader
 import io.frinx.unitopo.unit.utils.NoopWriter
+import io.frinx.unitopo.unit.junos.interfaces.handler.subinterfaces.SubinterfaceAddressConfigWriter
+import io.frinx.unitopo.unit.junos.interfaces.handler.subinterfaces.SubinterfaceAddressReader
+import io.frinx.unitopo.unit.junos.interfaces.handler.subinterfaces.SubinterfaceConfigReader
+import io.frinx.unitopo.unit.junos.interfaces.handler.subinterfaces.SubinterfaceConfigWriter
+import io.frinx.unitopo.unit.junos.interfaces.handler.subinterfaces.SubinterfaceReader
+import io.frinx.unitopo.unit.utils.NoopListWriter
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.damping.rev171024.IfDampAug
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.damping.rev171024.IfDampAugBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.damping.rev171024.damping.top.Damping
@@ -40,13 +47,22 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.et
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ethernet.rev161222.Interface1Builder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ethernet.rev161222.ethernet.top.Ethernet
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ethernet.rev161222.ethernet.top.EthernetBuilder
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.Subinterface1
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.Subinterface1Builder
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.ipv4.top.Ipv4
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.ipv4.top.Ipv4Builder
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.ipv4.top.ipv4.Addresses
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.ipv4.top.ipv4.AddressesBuilder
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.ipv4.top.ipv4.addresses.Address
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222._interface.phys.holdtime.top.HoldTimeBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.InterfacesBuilder
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.SubinterfacesBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.damping.rev171024.`$YangModuleInfoImpl` as DampingYangInfo
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ethernet.rev161222.`$YangModuleInfoImpl` as OpenConfEthCfgYangInfo
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ethernet.rev161222.ethernet.top.ethernet.Config as EthernetConfig
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ethernet.rev161222.ethernet.top.ethernet.ConfigBuilder as EthernetConfigBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.`$YangModuleInfoImpl` as IpYangInfo
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.ipv4.top.ipv4.addresses.address.Config as AddressConfig
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.`$YangModuleInfoImpl` as InterfacesYangInfo
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.`$YangModuleInfoImpl` as UnderlayInterfacesYangInfo
 
@@ -84,15 +100,24 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
         wRegistry.add(GenericListWriter(IIDs.IN_INTERFACE, InterfaceWriter()))
         wRegistry.add(GenericWriter(IIDs.IN_IN_CONFIG, InterfaceConfigWriter(underlayAccess)))
         wRegistry.add(GenericWriter(IIDs.IN_IN_HOLDTIME, NoopWriter()))
-        wRegistry.add(GenericWriter(IIDs.IN_IN_HO_CONFIG, InterfaceHoldTimeConfigWriter(underlayAccess)))
+        wRegistry.addAfter(GenericWriter(IIDs.IN_IN_HO_CONFIG, InterfaceHoldTimeConfigWriter(underlayAccess)), IIDs.IN_IN_CONFIG)
         wRegistry.add(GenericWriter(IFC_Damping_AUG_ID, NoopWriter()))
         wRegistry.add(GenericWriter(IFC_Damping_ID, NoopWriter()))
-        wRegistry.add(GenericWriter(IFC_Damping_CFG_ID, InterfaceDampingConfigWriter(underlayAccess)))
+        wRegistry.addAfter(GenericWriter(IFC_Damping_CFG_ID, InterfaceDampingConfigWriter(underlayAccess)), IIDs.IN_IN_CONFIG)
 
         wRegistry.add(GenericWriter(IFC_ETHERNET_AUG_ID, NoopWriter()))
         wRegistry.add(GenericWriter(IFC_ETHERNET_ID, NoopWriter()))
         wRegistry.add(GenericWriter(IFC_ETHERNET_CFG_ID, NoopWriter()))
-        wRegistry.add(GenericWriter(IFC_ETHERNET_CFG_AUG_ID, InterfaceEthernetConfigWriter(underlayAccess)))
+        wRegistry.addAfter(GenericWriter(IFC_ETHERNET_CFG_AUG_ID, InterfaceEthernetConfigWriter(underlayAccess)), IIDs.IN_IN_CONFIG)
+
+        wRegistry.addAfter(GenericWriter(IIDs.IN_IN_SUBINTERFACES, NoopWriter()), IIDs.IN_IN_CONFIG)
+        wRegistry.addAfter(GenericListWriter(IIDs.IN_IN_SU_SUBINTERFACE, NoopListWriter()), IIDs.IN_IN_SUBINTERFACES)
+        wRegistry.addAfter(GenericWriter(IIDs.IN_IN_SU_SU_CONFIG, SubinterfaceConfigWriter(underlayAccess)), IIDs.IN_IN_SU_SUBINTERFACE)
+        wRegistry.addAfter(GenericWriter(IFC_SUBIFC_IPV4_AUG, NoopWriter()), IIDs.IN_IN_SU_SU_CONFIG)
+        wRegistry.addAfter(GenericWriter(IFC_SUBIFC_IPV4, NoopWriter()), IFC_SUBIFC_IPV4_AUG)
+        wRegistry.addAfter(GenericWriter(IFC_SUBIFC_IPV4_ADDRESSES, NoopWriter()), IFC_SUBIFC_IPV4)
+        wRegistry.addAfter(GenericListWriter(IFC_SUBIFC_IPV4_ADDRESSES_ADDR, NoopListWriter()), IFC_SUBIFC_IPV4_ADDRESSES)
+        wRegistry.addAfter(GenericWriter(IFC_SUBIFC_IPV4_ADDRESSES_ADDR_CFG, SubinterfaceAddressConfigWriter(underlayAccess)), IFC_SUBIFC_IPV4_ADDRESSES_ADDR)
     }
 
     private fun provideReaders(rRegistry: ModifiableReaderRegistryBuilder, underlayAccess: UnderlayAccess) {
@@ -110,6 +135,15 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
         rRegistry.addStructuralReader(IFC_ETHERNET_ID, EthernetBuilder::class.java)
         rRegistry.addStructuralReader(IFC_ETHERNET_CFG_ID, EthernetConfigBuilder::class.java)
         rRegistry.add(GenericConfigReader(IFC_ETHERNET_CFG_AUG_ID, InterfaceEthernetConfigReader(underlayAccess)))
+
+        rRegistry.addStructuralReader(IIDs.IN_IN_SUBINTERFACES, SubinterfacesBuilder::class.java)
+        rRegistry.add(GenericConfigListReader(IIDs.IN_IN_SU_SUBINTERFACE, SubinterfaceReader(underlayAccess)))
+        rRegistry.add(GenericConfigReader(IIDs.IN_IN_SU_SU_CONFIG, SubinterfaceConfigReader(underlayAccess)))
+        rRegistry.addStructuralReader(IFC_SUBIFC_IPV4_AUG, Subinterface1Builder::class.java)
+        rRegistry.addStructuralReader(IFC_SUBIFC_IPV4, Ipv4Builder::class.java)
+        rRegistry.addStructuralReader(IFC_SUBIFC_IPV4_ADDRESSES, AddressesBuilder::class.java)
+        rRegistry.add(GenericConfigListReader(IFC_SUBIFC_IPV4_ADDRESSES_ADDR, SubinterfaceAddressReader(underlayAccess)))
+        rRegistry.add(GenericConfigReader(IFC_SUBIFC_IPV4_ADDRESSES_ADDR_CFG, SubinterfaceAddressConfigReader(underlayAccess)))
     }
 
     override fun toString(): String = "Junos 17.3 interface translate unit"
@@ -123,5 +157,11 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
         private val IFC_ETHERNET_ID = IFC_ETHERNET_AUG_ID.child(Ethernet::class.java)
         private val IFC_ETHERNET_CFG_ID = IFC_ETHERNET_ID.child(EthernetConfig::class.java)
         private val IFC_ETHERNET_CFG_AUG_ID = IFC_ETHERNET_CFG_ID.augmentation(Config1::class.java)
+
+        private val IFC_SUBIFC_IPV4_AUG = IIDs.IN_IN_SU_SUBINTERFACE.augmentation(Subinterface1::class.java)
+        private val IFC_SUBIFC_IPV4 = IFC_SUBIFC_IPV4_AUG.child(Ipv4::class.java)
+        private val IFC_SUBIFC_IPV4_ADDRESSES = IFC_SUBIFC_IPV4.child(Addresses::class.java)
+        private val IFC_SUBIFC_IPV4_ADDRESSES_ADDR = IFC_SUBIFC_IPV4_ADDRESSES.child(Address::class.java)
+        private val IFC_SUBIFC_IPV4_ADDRESSES_ADDR_CFG = IFC_SUBIFC_IPV4_ADDRESSES_ADDR.child(AddressConfig::class.java)
     }
 }

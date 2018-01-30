@@ -64,6 +64,10 @@
             <artifactId>utils-unit</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>commons-net</groupId>
+            <artifactId>commons-net</artifactId>
+        </dependency>
 
         <!-- Models junos -->
         <dependency>
