@@ -6,7 +6,7 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 
-package io.frinx.unitopo.unit.xr6.bgp.common
+package io.frinx.unitopo.unit.network.instance.protocol.bgp.common
 
 import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
 import io.fd.honeycomb.translate.spi.read.OperReaderCustomizer
@@ -24,6 +24,7 @@ interface BgpReader<O : DataObject, B : Builder<O>> : TypedReader<O, B> {
 
     companion object {
         val TYPE: Class<BGP> = BGP::class.java
+        val NAME: String = "BGP"
     }
 
 

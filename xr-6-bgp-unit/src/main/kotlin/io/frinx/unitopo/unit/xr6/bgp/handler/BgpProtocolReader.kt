@@ -12,7 +12,7 @@ import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.read.ReadFailedException
 import io.frinx.cli.registry.common.CompositeListReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.xr6.bgp.common.BgpReader
+import io.frinx.unitopo.unit.network.instance.protocol.bgp.common.BgpReader
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.Bgp
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.Protocol
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.ProtocolBuilder
