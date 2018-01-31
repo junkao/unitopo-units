@@ -60,7 +60,7 @@ class InterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : Writer
         try {
             // Check if enabling the interface from disabled state
             // since enableDisable is an empty leaf, enabling an interface cannot be done with merge
-            if (!dataBefore.isEnabled && dataAfter.isEnabled) {
+            if (!dataBefore.isEnabled && !dataAfter.shutdown()) {
                 val previousStateWithoutShut = getJunosInterfaceBuilder(dataBefore, id).setEnableDisable(null).build()
                 underlayAccess.put(underlayId, previousStateWithoutShut)
             }
@@ -83,7 +83,7 @@ class InterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : Writer
     private fun getJunosInterfaceBuilder(dataAfter: Config, id: InstanceIdentifier<Config>): JunosInterfaceBuilder {
         val (ifcName, underlayId) = getUnderlayId(id)
         val ifcBuilder = JunosInterfaceBuilder()
-        if (!dataAfter.isEnabled) ifcBuilder.enableDisable = Case1Builder().setDisable(true).build()
+        if (dataAfter.shutdown()) ifcBuilder.enableDisable = Case1Builder().setDisable(true).build()
         if (!checkInterfaceType(ifcName, dataAfter.type)) {
             throw WriteFailedException(underlayId, String.format("Provided type: {} doesn't match interface name: {}",
                     dataAfter.type, ifcName))
@@ -110,6 +110,8 @@ class InterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : Writer
 
         return Pair(ifcName, underlayId)
     }
+
+    private fun Config.shutdown() = isEnabled == null || !isEnabled
 
     private fun isEthernetCsmaCd(ifcName: String): Boolean {
         return ifcName.startsWith("em")         // Management and internal Ethernet interfaces.

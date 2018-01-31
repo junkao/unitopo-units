@@ -67,7 +67,7 @@ class InterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : Writer
             // since shutdown is an empty leaf, enabling an interface cannot be done with merge
             if (before != null &&
                     before.isShutdown != null &&
-                    dataAfter.isEnabled) {
+                    !dataAfter.shutdown()) {
 
                 val previousStateWithoutShut = InterfaceConfigurationBuilder(before).setShutdown(null).build()
                 underlayAccess.put(underlayId, previousStateWithoutShut)
@@ -84,7 +84,7 @@ class InterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : Writer
         val (interfaceActive, ifcName, underlayId) = getId(id)
 
         val ifcCfgBuilder = InterfaceConfigurationBuilder()
-        if (!dataAfter.isEnabled) ifcCfgBuilder.isShutdown = true
+        if (dataAfter.shutdown()) ifcCfgBuilder.isShutdown = true
         if (isVirtualInterface(dataAfter.type)) ifcCfgBuilder.isInterfaceVirtual = true
 
         val underlayIfcCfg = ifcCfgBuilder
@@ -94,6 +94,8 @@ class InterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : Writer
                 .build()
         return Pair(underlayId, underlayIfcCfg)
     }
+
+    private fun Config.shutdown() = isEnabled == null || !isEnabled
 
     private fun getId(id: InstanceIdentifier<Config>):
             Triple<InterfaceActive, InterfaceName, InstanceIdentifier<InterfaceConfiguration>> {

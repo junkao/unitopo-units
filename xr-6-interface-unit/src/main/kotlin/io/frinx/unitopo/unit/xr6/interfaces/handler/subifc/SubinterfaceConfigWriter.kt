@@ -48,7 +48,7 @@ class SubinterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : Wri
         val (interfaceActive, ifcName, underlayId) = getId(id)
 
         val ifcCfgBuilder = InterfaceConfigurationBuilder()
-        if (!dataAfter.isEnabled) ifcCfgBuilder.isShutdown = true
+        if (dataAfter.shutdown()) ifcCfgBuilder.isShutdown = true
 
         val underlayIfcCfg = ifcCfgBuilder
                 .setInterfaceName(ifcName)
@@ -73,6 +73,8 @@ class SubinterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : Wri
 
         return Triple(interfaceActive, underlaySubifcName, underlayId)
     }
+
+    private fun Config.shutdown() = isEnabled == null || !isEnabled
 
     companion object {
         fun isInterfaceVirtual(ifcName : InterfaceName) =
