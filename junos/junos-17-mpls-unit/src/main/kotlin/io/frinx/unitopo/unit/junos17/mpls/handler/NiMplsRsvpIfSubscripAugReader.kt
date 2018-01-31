@@ -12,6 +12,7 @@ import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.read.ReadFailedException
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.junos17.mpls.common.MplsReader
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.mpls.extension.rev171024.MplsRsvpSubscriptionConfig
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.mpls.extension.rev171024.NiMplsRsvpIfSubscripAug
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.mpls.extension.rev171024.NiMplsRsvpIfSubscripAugBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.rsvp.rev170824.mpls.rsvp.subscription.subscription.ConfigBuilder
@@ -35,7 +36,7 @@ class NiMplsRsvpIfSubscripAugReader(private val underlayAccess: UnderlayAccess) 
         try {
             RsvpInterfaceConfigReader.readInterface(underlayAccess, name)?.let {
                 it.bandwidth?.let {
-                    configBuilder.bandwidth = it.toLong()
+                    configBuilder.bandwidth = MplsRsvpSubscriptionConfig.Bandwidth(it.toLong())
                 }
             }
         } catch (e: MdSalReadFailedException) {

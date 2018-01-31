@@ -40,7 +40,8 @@ class NiMplsRsvpIfSubscripAugWriter (private val underlayAccess: UnderlayAccess)
         val underlayIfcCfg = InterfaceBuilder()
             .setName(Interface.Name(ifcName))
         data.bandwidth?.let {
-            underlayIfcCfg.setBandwidth(data.bandwidth.toString())
+            // we can safely ignore string value
+            underlayIfcCfg.setBandwidth(data.bandwidth.uint32.toString())
         }
         return Pair(RsvpInterfaceConfigWriter.getId(ifcName), underlayIfcCfg.build())
     }
