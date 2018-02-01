@@ -20,11 +20,7 @@ import io.frinx.openconfig.openconfig.interfaces.IIDs
 import io.frinx.unitopo.registry.api.TranslationUnitCollector
 import io.frinx.unitopo.registry.spi.TranslateUnit
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.xr6.interfaces.handler.InterfaceConfigReader
-import io.frinx.unitopo.unit.xr6.interfaces.handler.InterfaceConfigWriter
-import io.frinx.unitopo.unit.xr6.interfaces.handler.InterfaceReader
-import io.frinx.unitopo.unit.xr6.interfaces.handler.InterfaceStateReader
-import io.frinx.unitopo.unit.xr6.interfaces.handler.InterfaceWriter
+import io.frinx.unitopo.unit.xr6.interfaces.handler.*
 import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.*
 import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.vlan.SubinterfaceVlanConfigReader
 import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.vlan.SubinterfaceVlanConfigWriter
@@ -91,7 +87,8 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
 
         // TODO extract noop writer and use that, then delete empty SubinterfaceWriter
         wRegistry.add(GenericListWriter(IIDs.IN_IN_SU_SUBINTERFACE, SubinterfaceWriter()))
-        wRegistry.add(GenericWriter(IIDs.IN_IN_SU_SU_CONFIG, SubinterfaceConfigWriter(underlayAccess)))
+        wRegistry.addAfter(GenericWriter(IIDs.IN_IN_SU_SU_CONFIG, SubinterfaceConfigWriter(underlayAccess)),
+                IIDs.IN_IN_CONFIG)
         wRegistry.addAfter(GenericWriter(SUBIFC_VLAN_CFG_ID, SubinterfaceVlanConfigWriter(underlayAccess)),
                 IIDs.IN_IN_SU_SU_CONFIG)
 
@@ -134,7 +131,7 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
         private val SUBIFC_VLAN_AUG_ID = IIDs.IN_IN_SU_SUBINTERFACE.augmentation(VlanAug::class.java)
 
         private val SUBIFC_VLAN_ID = SUBIFC_VLAN_AUG_ID.child(Vlan::class.java)
-        private val SUBIFC_VLAN_CFG_ID = SUBIFC_VLAN_ID.child(Config::class.java)
+        public val SUBIFC_VLAN_CFG_ID = SUBIFC_VLAN_ID.child(Config::class.java)
     }
 }
 

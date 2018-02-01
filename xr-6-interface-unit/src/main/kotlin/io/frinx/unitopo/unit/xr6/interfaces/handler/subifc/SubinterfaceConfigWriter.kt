@@ -21,6 +21,7 @@ import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.xr.types.rev150
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.Interface
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.subinterfaces.Subinterface
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.subinterfaces.subinterface.Config
+import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
 class SubinterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCustomizer<Config> {
@@ -43,42 +44,43 @@ class SubinterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : Wri
         writeCurrentAttributes(id, dataAfter, writeContext)
     }
 
-    fun getData(id: InstanceIdentifier<Config>, dataAfter: Config):
-            Pair<InstanceIdentifier<InterfaceConfiguration>, InterfaceConfiguration> {
-        val (interfaceActive, ifcName, underlayId) = getId(id)
-
-        val ifcCfgBuilder = InterfaceConfigurationBuilder()
-        if (dataAfter.shutdown()) ifcCfgBuilder.isShutdown = true
-
-        val underlayIfcCfg = ifcCfgBuilder
-                .setInterfaceName(ifcName)
-                .setInterfaceModeNonPhysical(InterfaceModeEnum.Default)
-                .setActive(interfaceActive)
-                .setDescription(dataAfter.description)
-                .build()
-        return Pair(underlayId, underlayIfcCfg)
-    }
-
-    fun getId(id: InstanceIdentifier<Config>):
-            Triple<InterfaceActive, InterfaceName, InstanceIdentifier<InterfaceConfiguration>> {
-
-            // TODO supporting only "act" interfaces
-        val interfaceActive = InterfaceActive("act")
-
-        val underlaySubifcName = InterfaceName(
-                getSubIfcName(id.firstKeyOf(Interface::class.java).name, id.firstKeyOf(Subinterface::class.java).index))
-
-        val underlayId = InterfaceReader.IFC_CFGS.child(InterfaceConfiguration::class.java,
-                InterfaceConfigurationKey(interfaceActive, underlaySubifcName))
-
-        return Triple(interfaceActive, underlaySubifcName, underlayId)
-    }
-
-    private fun Config.shutdown() = isEnabled == null || !isEnabled
-
     companion object {
         fun isInterfaceVirtual(ifcName : InterfaceName) =
             ifcName.value.startsWith("Loopback") || ifcName.value.startsWith("null")
+
+        private fun Config.shutdown() = isEnabled == null || !isEnabled
+
+        public fun getId(id: InstanceIdentifier<out DataObject>):
+                Triple<InterfaceActive, InterfaceName, InstanceIdentifier<InterfaceConfiguration>> {
+
+            // TODO supporting only "act" interfaces
+            val interfaceActive = InterfaceActive("act")
+
+            val underlaySubifcName = InterfaceName(
+                    getSubIfcName(id.firstKeyOf(Interface::class.java).name, id.firstKeyOf(Subinterface::class.java).index))
+
+            val underlayId = InterfaceReader.IFC_CFGS.child(InterfaceConfiguration::class.java,
+                    InterfaceConfigurationKey(interfaceActive, underlaySubifcName))
+
+            return Triple(interfaceActive, underlaySubifcName, underlayId)
+        }
+
+
+        public fun getData(id: InstanceIdentifier<Config>, dataAfter: Config):
+                Pair<InstanceIdentifier<InterfaceConfiguration>, InterfaceConfiguration> {
+            val (interfaceActive, ifcName, underlayId) = getId(id)
+
+            val ifcCfgBuilder = InterfaceConfigurationBuilder()
+            if (dataAfter.shutdown()) ifcCfgBuilder.isShutdown = true
+
+            val underlayIfcCfg = ifcCfgBuilder
+                    .setInterfaceName(ifcName)
+                    .setActive(interfaceActive)
+                    .setInterfaceModeNonPhysical(InterfaceModeEnum.Default)
+                    .setDescription(dataAfter.description)
+                    .build()
+            return Pair(underlayId, underlayIfcCfg)
+        }
     }
 }
 

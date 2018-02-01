@@ -9,7 +9,9 @@
 package io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.vlan
 
 import io.fd.honeycomb.translate.spi.write.WriterCustomizer
+import io.fd.honeycomb.translate.util.RWUtils
 import io.fd.honeycomb.translate.write.WriteContext
+import io.frinx.openconfig.openconfig.interfaces.IIDs
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr6.interfaces.handler.InterfaceReader
 import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.getSubIfcName
@@ -32,7 +34,11 @@ class SubinterfaceVlanConfigWriter(private val underlayAccess: UnderlayAccess) :
 
     override fun deleteCurrentAttributes(id: InstanceIdentifier<Config>, dataBefore: Config, writeContext: WriteContext) {
         val underlayId = getId(id)
-        underlayAccess.delete(underlayId)
+        writeContext.readAfter(RWUtils.cutId(id, IIDs.IN_IN_SU_SUBINTERFACE)).orNull()?.let {
+            // Delete only if the subinterface stays. If we delete the VLAN tag for subifc and subinterface in a single TX,
+            // XR fails the transaction
+            underlayAccess.delete(underlayId)
+        }
     }
 
     override fun writeCurrentAttributes(id: InstanceIdentifier<Config>, dataAfter: Config, writeContext: WriteContext) {
@@ -51,7 +57,6 @@ class SubinterfaceVlanConfigWriter(private val underlayAccess: UnderlayAccess) :
     private fun getData(id: InstanceIdentifier<Config>, dataAfter: Config):
             Pair<InstanceIdentifier<VlanSubConfiguration>, VlanSubConfiguration> {
         val underlayId = getId(id)
-
 
         val vlanIdBuilder = VlanIdentifierBuilder()
         vlanIdBuilder.firstTag = dataAfter.vlanId?.vlanId?.value
