@@ -6,7 +6,7 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 
-package io.frinx.unitopo.unit.xr6.bgp.common
+package io.frinx.unitopo.unit.network.instance.protocol.bgp.common
 
 import io.fd.honeycomb.translate.spi.read.ConfigListReaderCustomizer
 import io.fd.honeycomb.translate.spi.read.OperListReaderCustomizer
