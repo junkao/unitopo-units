@@ -24,20 +24,18 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 class SnmpConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCustomizer<Config> {
 
     override fun writeCurrentAttributes(id: IID<Config>, dataAfter: Config, writeContext: WriteContext) {
-        val (underlayId, underlayIfcCfg) = getData(id, dataAfter)
-
-        try {
-            underlayAccess.merge(underlayId, underlayIfcCfg)
-        } catch (e: Exception) {
-            throw WriteFailedException(id, e)
-        }
+        writeData(id, dataAfter)
     }
 
     override fun deleteCurrentAttributes(id: IID<Config>, dataBefore: Config, writeContext: WriteContext) {
-        val (_ , underlayId) = SnmpConfigReader.getUnderlayId(id)
+        writeData(id, null)
+    }
+
+    private fun writeData(id: IID<Config>, data: Config?) {
+        val (underlayId, underlayIfcCfg) = getData(id, data)
 
         try {
-            underlayAccess.delete(underlayId)
+            underlayAccess.merge(underlayId, underlayIfcCfg)
         } catch (e: Exception) {
             throw WriteFailedException(id, e)
         }
@@ -59,4 +57,5 @@ class SnmpConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCusto
                 .build()
         return Pair(underlayId, ifcData)
     }
+
 }
