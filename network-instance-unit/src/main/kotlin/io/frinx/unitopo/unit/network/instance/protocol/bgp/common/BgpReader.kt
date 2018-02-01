@@ -24,7 +24,7 @@ interface BgpReader<O : DataObject, B : Builder<O>> : TypedReader<O, B> {
 
     companion object {
         val TYPE: Class<BGP> = BGP::class.java
-        val NAME: String = "BGP"
+        val NAME: String = "default"
     }
 
 
