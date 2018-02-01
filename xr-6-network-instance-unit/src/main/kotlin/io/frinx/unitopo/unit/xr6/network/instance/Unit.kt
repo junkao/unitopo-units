@@ -19,8 +19,11 @@ import io.frinx.openconfig.openconfig.network.instance.IIDs
 import io.frinx.unitopo.registry.api.TranslationUnitCollector
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.network.instance.NetworkInstanceUnit
+import io.frinx.unitopo.unit.xr6.interfaces.Unit
 import io.frinx.unitopo.unit.xr6.network.instance.vrf.ifc.VrfInterfaceReader
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.*
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.Config
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.ConfigBuilder
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.ConnectionPoints
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev150730.`$YangModuleInfoImpl` as UnderlayInterfacesYangInfo
@@ -48,7 +51,9 @@ class Unit(private val registry: TranslationUnitCollector) : NetworkInstanceUnit
 
     override fun provideSpecificWriters(wRegistry: ModifiableWriterRegistryBuilder, underlayAccess: UnderlayAccess) {
         wRegistry.addAfter(GenericWriter(IIDs.NE_NE_CONFIG, NetworkInstanceConfigWriter(underlayAccess)),
-                /*handle after ifc configuration*/ io.frinx.openconfig.openconfig.interfaces.IIDs.IN_IN_CONFIG)
+                setOf(
+                        /*handle after ifc configuration*/ io.frinx.openconfig.openconfig.interfaces.IIDs.IN_IN_CONFIG,
+                        /*also after subinterface*/ Unit.SUBIFC_VLAN_CFG_ID))
 
         wRegistry.subtreeAddAfter(Sets.newHashSet<InstanceIdentifier<*>>(
                 RWUtils.cutIdFromStart(IIDs.NE_NE_CO_CONNECTIONPOINT, CONN_PTS_ID),

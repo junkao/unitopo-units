@@ -16,7 +16,6 @@
 
 package io.frinx.unitopo.unit.xr6.interfaces.handler
 
-import io.fd.honeycomb.translate.read.ReadFailedException
 import io.fd.honeycomb.translate.spi.write.WriterCustomizer
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.unitopo.registry.spi.UnderlayAccess
@@ -36,21 +35,13 @@ class InterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : Writer
     override fun writeCurrentAttributes(id: InstanceIdentifier<Config>, dataAfter: Config, writeContext: WriteContext) {
         val (underlayId, underlayIfcCfg) = getData(id, dataAfter)
 
-        try {
-            underlayAccess.put(underlayId, underlayIfcCfg)
-        } catch (e: Exception) {
-            throw io.fd.honeycomb.translate.read.ReadFailedException(id, e)
-        }
+        underlayAccess.put(underlayId, underlayIfcCfg)
     }
 
     override fun deleteCurrentAttributes(id: InstanceIdentifier<Config>, dataBefore: Config, writeContext: WriteContext) {
         val (_, _, underlayId) = getId(id)
 
-        try {
-            underlayAccess.delete(underlayId)
-        } catch (e: Exception) {
-            throw ReadFailedException(id, e)
-        }
+        underlayAccess.delete(underlayId)
     }
 
     override fun updateCurrentAttributes(id: InstanceIdentifier<Config>,
@@ -58,25 +49,21 @@ class InterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : Writer
                                          writeContext: WriteContext) {
         val (underlayId, underlayIfcCfg) = getData(id, dataAfter)
 
-        try {
-            val before = underlayAccess.read(underlayId)
-                    .checkedGet()
-                    .orNull()
+        val before = underlayAccess.read(underlayId)
+                .checkedGet()
+                .orNull()
 
-            // Check if enabling the interface from disabled state
-            // since shutdown is an empty leaf, enabling an interface cannot be done with merge
-            if (before != null &&
-                    before.isShutdown != null &&
-                    !dataAfter.shutdown()) {
+        // Check if enabling the interface from disabled state
+        // since shutdown is an empty leaf, enabling an interface cannot be done with merge
+        if (before != null &&
+                before.isShutdown != null &&
+                !dataAfter.shutdown()) {
 
-                val previousStateWithoutShut = InterfaceConfigurationBuilder(before).setShutdown(null).build()
-                underlayAccess.put(underlayId, previousStateWithoutShut)
-            }
-
-            underlayAccess.merge(underlayId, underlayIfcCfg)
-        } catch (e: Exception) {
-            throw ReadFailedException(id, e)
+            val previousStateWithoutShut = InterfaceConfigurationBuilder(before).setShutdown(null).build()
+            underlayAccess.put(underlayId, previousStateWithoutShut)
         }
+
+        underlayAccess.merge(underlayId, underlayIfcCfg)
     }
 
     private fun getData(id: InstanceIdentifier<Config>, dataAfter: Config):
