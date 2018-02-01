@@ -51,11 +51,6 @@ abstract class NetworkInstanceUnit : TranslateUnit {
         wRegistry.add(GenericWriter(IIDs.NE_NETWORKINSTANCE, NoopWriter()))
         wRegistry.add(GenericWriter(IIDs.NE_NE_PR_PROTOCOL, NoopWriter()))
         wRegistry.add(GenericWriter(IIDs.NE_NE_PR_PR_CONFIG, NoopWriter()))
-        // FIXME join with bgp writers
-        wRegistry.add(GenericWriter(IIDs.NE_NE_PR_PR_BGP, NoopWriter()))
-        wRegistry.add(GenericWriter(IIDs.NE_NE_PR_PR_BG_GLOBAL, NoopWriter()))
-        wRegistry.add(GenericWriter(IIDs.NE_NE_PR_PR_BG_GL_CONFIG, NoopWriter()))
-
     }
 
     private fun provideReaders(rRegistry: ModifiableReaderRegistryBuilder) {

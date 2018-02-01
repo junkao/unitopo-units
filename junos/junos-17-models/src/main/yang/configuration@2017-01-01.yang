@@ -737,7 +737,7 @@
          }
        }
      }
-   }   
+   }
    grouping dcd_shaping_config {
      description "Traffic-shaping profile";
      uses apply-advanced;
@@ -1848,7 +1848,7 @@
          description "Enable interface damping";
          type empty;
        }
-     }     
+     }
      container gigether-options {
        description "Gigabit Ethernet interface-specific options";
        uses apply-advanced;
@@ -5014,7 +5014,7 @@
          type string;
        }
      }
-   }   
+   }
    grouping juniper-protocols {
      uses apply-advanced;
      container rsvp {
@@ -5062,6 +5062,10 @@
          description "Configure a neighbor";
          leaf name {
            type ipaddr;
+         }
+         leaf peer-as {
+           type string{
+           }
          }
          uses apply-advanced;
        }
@@ -5318,6 +5322,7 @@
      description "Virtual Router Redundancy Protocol group";
      leaf name {
        description "Identifier for VRRP group";
+       /*
        type union {
          type string {
            pattern "<.*>";
@@ -5325,6 +5330,12 @@
          type uint32 {
            range "0 .. 255";
          }
+       }
+       */
+       // 'name' has type union and name is used as key in list - constructor for DTO is not generated properly
+       // generated constructor should contain parameter but it does not
+       type uint32 {
+         range "0 .. 255";
        }
      }
      uses apply-advanced;

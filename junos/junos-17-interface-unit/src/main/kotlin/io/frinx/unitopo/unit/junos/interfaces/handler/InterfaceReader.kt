@@ -95,6 +95,13 @@ class InterfaceReader(private val underlayAccess: UnderlayAccess) : ConfigListRe
         private fun interfaceExists(underlayAccess: UnderlayAccess, name: String) =
                 getInterfaceIds(underlayAccess).contains(InterfaceKey(parseIfcName(name)))
 
+        fun createBuilderFromExistingInterface(underlayAccess: UnderlayAccess, name: String): JunosInterfaceBuilder {
+            val existingInterface = readInterface(underlayAccess, name)
+            return if (existingInterface == null)
+                JunosInterfaceBuilder()
+            else JunosInterfaceBuilder(existingInterface)
+        }
+
         /**
          * Read interface configuration
          */
