@@ -26,7 +26,7 @@ import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configur
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.config.interfaces.Interface as JunosInterface
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.config.interfaces.InterfaceKey as JunosInterfaceKey
 
-class InterfaceEthernetConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCustomizer<Config1> {
+class InterfaceIfAggregateConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCustomizer<Config1> {
 
     override fun writeCurrentAttributes(id: InstanceIdentifier<Config1>, dataAfter: Config1, writeContext: WriteContext) {
         val (underlayGigEthIeee8023adId, underlayGigEthIeee8023ad) = getData(id, dataAfter)
@@ -72,6 +72,7 @@ class InterfaceEthernetConfigWriter(private val underlayAccess: UnderlayAccess) 
         val (_, underlayGigEthIeee8023adId) = getUnderlayId(id)
 
         val gigEthIeee8023adBuilder = JunosGigEthIeee8023adBuilder()
+
                 .setBundle(JunosGigEthIeee8023adBundle(dataAfter.aggregateId.removePrefix(InterfaceReader.LAG_PREFIX)))
                 .build()
 

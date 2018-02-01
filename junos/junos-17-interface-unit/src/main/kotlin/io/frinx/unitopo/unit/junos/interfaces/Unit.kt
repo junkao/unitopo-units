@@ -16,19 +16,11 @@ import io.fd.honeycomb.translate.impl.write.GenericWriter
 import io.fd.honeycomb.translate.read.registry.ModifiableReaderRegistryBuilder
 import io.fd.honeycomb.translate.write.registry.ModifiableWriterRegistryBuilder
 import io.frinx.openconfig.openconfig.interfaces.IIDs
+import io.frinx.openconfig.openconfig.lacp.IIDs as LIIDs
 import io.frinx.unitopo.registry.api.TranslationUnitCollector
 import io.frinx.unitopo.registry.spi.TranslateUnit
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.junos.interfaces.handler.InterfaceConfigReader
-import io.frinx.unitopo.unit.junos.interfaces.handler.InterfaceConfigWriter
-import io.frinx.unitopo.unit.junos.interfaces.handler.InterfaceDampingConfigReader
-import io.frinx.unitopo.unit.junos.interfaces.handler.InterfaceDampingConfigWriter
-import io.frinx.unitopo.unit.junos.interfaces.handler.InterfaceEthernetConfigReader
-import io.frinx.unitopo.unit.junos.interfaces.handler.InterfaceEthernetConfigWriter
-import io.frinx.unitopo.unit.junos.interfaces.handler.InterfaceHoldTimeConfigReader
-import io.frinx.unitopo.unit.junos.interfaces.handler.InterfaceHoldTimeConfigWriter
-import io.frinx.unitopo.unit.junos.interfaces.handler.InterfaceReader
-import io.frinx.unitopo.unit.junos.interfaces.handler.InterfaceWriter
+import io.frinx.unitopo.unit.junos.interfaces.handler.*
 import io.frinx.unitopo.unit.junos.interfaces.handler.lag.aggregate.InterfaceAggregationBfdConfigReader
 import io.frinx.unitopo.unit.junos.interfaces.handler.lag.aggregate.InterfaceAggregationBfdConfigWriter
 import io.frinx.unitopo.unit.junos.interfaces.handler.lag.aggregate.InterfaceAggregationConfigReader
@@ -50,7 +42,7 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.damping.rev17
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.damping.rev171024.damping.top.Damping
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.damping.rev171024.damping.top.DampingBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.damping.rev171024.damping.top.damping.Config
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.aggregate.rev161222.Config1
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.aggregate.rev161222.Config1 as AgIdConfig
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.aggregate.rev161222.aggregation.logical.top.Aggregation
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.aggregate.rev161222.aggregation.logical.top.AggregationBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ethernet.rev161222.Interface1
@@ -68,7 +60,11 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ju
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222._interface.phys.holdtime.top.HoldTimeBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.InterfacesBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.SubinterfacesBuilder
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.lacp.lag.member.rev171109.LacpEthConfigAug
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.lacp.lag.member.rev171109.Config1 as LacpConfig
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.lacp.lag.member.rev171109.`$YangModuleInfoImpl` as LacpAugYangInfo
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.lacp.rev170505.`$YangModuleInfoImpl` as LacpYangInfo
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bfd.rev171024.`$YangModuleInfoImpl` as LagBfdYangInfo
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bfd.rev171024.bfd.top.bfd.Config as BfdConfig
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.damping.rev171024.`$YangModuleInfoImpl` as DampingYangInfo
@@ -105,7 +101,9 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
             OpenConfEthCfgYangInfo.getInstance(),
             AggregateYangInfo.getInstance(),
             LagBfdYangInfo.getInstance(),
-            IfLagJuniperAugYangInfo.getInstance())
+            IfLagJuniperAugYangInfo.getInstance(),
+            LacpYangInfo.getInstance(),
+            LacpAugYangInfo.getInstance())
 
     override fun getUnderlayYangSchemas() = setOf(
             UnderlayInterfacesYangInfo.getInstance())
@@ -131,7 +129,8 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
         wRegistry.add(GenericWriter(IFC_ETHERNET_AUG_ID, NoopWriter()))
         wRegistry.add(GenericWriter(IFC_ETHERNET_ID, NoopWriter()))
         wRegistry.add(GenericWriter(IFC_ETHERNET_CFG_ID, NoopWriter()))
-        wRegistry.addAfter(GenericWriter(IFC_ETHERNET_CFG_AUG_ID, InterfaceEthernetConfigWriter(underlayAccess)), IIDs.IN_IN_CONFIG)
+        wRegistry.addAfter(GenericWriter(IFC_ETHERNET_CFG_AUG_AG_ID, InterfaceIfAggregateConfigWriter(underlayAccess)), IIDs.IN_IN_CONFIG)
+        wRegistry.addAfter(GenericWriter(IFC_ETHERNET_CFG_ID.augmentation(LacpEthConfigAug::class.java), InterfaceLacpConfigWriter(underlayAccess)), IIDs.IN_IN_CONFIG)
 
         wRegistry.addAfter(GenericWriter(IIDs.IN_IN_SUBINTERFACES, NoopWriter()), IIDs.IN_IN_CONFIG)
         wRegistry.addAfter(GenericListWriter(IIDs.IN_IN_SU_SUBINTERFACE, NoopListWriter()), IIDs.IN_IN_SUBINTERFACES)
@@ -164,7 +163,8 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
         rRegistry.addStructuralReader(IFC_ETHERNET_AUG_ID, Interface1Builder::class.java)
         rRegistry.addStructuralReader(IFC_ETHERNET_ID, EthernetBuilder::class.java)
         rRegistry.addStructuralReader(IFC_ETHERNET_CFG_ID, EthernetConfigBuilder::class.java)
-        rRegistry.add(GenericConfigReader(IFC_ETHERNET_CFG_AUG_ID, InterfaceEthernetConfigReader(underlayAccess)))
+        rRegistry.add(GenericConfigReader(IFC_ETHERNET_CFG_AUG_AG_ID, InterfaceIfAggregateConfigReader(underlayAccess)))
+        rRegistry.add(GenericConfigReader(IFC_ETHERNET_CFG_AUG_LACP_ID, InterfaceLacpConfigReader(underlayAccess)))
 
         rRegistry.addStructuralReader(IIDs.IN_IN_SUBINTERFACES, SubinterfacesBuilder::class.java)
         rRegistry.add(GenericConfigListReader(IIDs.IN_IN_SU_SUBINTERFACE, SubinterfaceReader(underlayAccess)))
@@ -193,7 +193,8 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
         private val IFC_ETHERNET_AUG_ID = IIDs.IN_INTERFACE.augmentation(Interface1::class.java)
         private val IFC_ETHERNET_ID = IFC_ETHERNET_AUG_ID.child(Ethernet::class.java)
         private val IFC_ETHERNET_CFG_ID = IFC_ETHERNET_ID.child(EthernetConfig::class.java)
-        private val IFC_ETHERNET_CFG_AUG_ID = IFC_ETHERNET_CFG_ID.augmentation(Config1::class.java)
+        private val IFC_ETHERNET_CFG_AUG_AG_ID = IFC_ETHERNET_CFG_ID.augmentation(AgIdConfig::class.java)
+        private val IFC_ETHERNET_CFG_AUG_LACP_ID = IFC_ETHERNET_CFG_ID.augmentation(LacpConfig::class.java)
 
         private val IFC_SUBIFC_IPV4_AUG = IIDs.IN_IN_SU_SUBINTERFACE.augmentation(Subinterface1::class.java)
         private val IFC_SUBIFC_IPV4 = IFC_SUBIFC_IPV4_AUG.child(Ipv4::class.java)
