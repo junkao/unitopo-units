@@ -25,13 +25,10 @@ import io.frinx.unitopo.unit.junos.snmp.handler.SnmpInterfaceReader
 import io.frinx.unitopo.unit.utils.NoopListWriter
 import io.frinx.unitopo.unit.utils.NoopWriter
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.snmp.rev171024.snmp._interface.config.EnabledTrapForEvent
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.snmp.rev171024.snmp._interface.config.EnabledTrapForEventKey
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.snmp.rev171024.snmp.interfaces.structural.Interfaces
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.snmp.rev171024.snmp.interfaces.structural.InterfacesBuilder
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.snmp.rev171024.snmp.interfaces.structural.interfaces.Interface
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.snmp.rev171024.snmp.interfaces.structural.interfaces.InterfaceKey
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.snmp.rev171024.snmp.top.Snmp
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.snmp.rev171024.snmp.interfaces.structural.interfaces._interface.Config
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.snmp.rev171024.snmp.top.SnmpBuilder
+import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.snmp.rev171024.`$YangModuleInfoImpl` as SnmpYangInfo
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.`$YangModuleInfoImpl` as UnderlayInterfacesYangInfo
 
@@ -65,8 +62,8 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
         wRegistry.add(GenericWriter(IIDs.SNMP, NoopWriter()))
         wRegistry.add(GenericWriter(IIDs.SN_INTERFACES, NoopWriter()))
         wRegistry.add(GenericListWriter(IIDs.SN_IN_INTERFACE, NoopListWriter()))
-        wRegistry.add(GenericWriter(IIDs.SN_IN_IN_CONFIG, SnmpConfigWriter(underlayAccess)))
-        wRegistry.add(GenericListWriter(IIDs.SN_IN_IN_CO_ENABLEDTRAPFOREVENT, NoopListWriter()))
+        wRegistry.subtreeAdd(setOf(InstanceIdentifier.create(Config::class.java).child(EnabledTrapForEvent::class.java)),
+                GenericWriter(IIDs.SN_IN_IN_CONFIG, SnmpConfigWriter(underlayAccess)))
     }
 
     private fun provideReaders(rRegistry: ModifiableReaderRegistryBuilder, underlayAccess: UnderlayAccess) {

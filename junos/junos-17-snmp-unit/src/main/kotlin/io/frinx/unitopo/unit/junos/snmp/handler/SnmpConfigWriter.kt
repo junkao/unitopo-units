@@ -48,7 +48,9 @@ class SnmpConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCusto
         val ifcData = InterfaceBuilder()
                 .setKey(InterfaceKey(ifcName))
                 .let {
-                    if (dataAfter != null) {
+                    if (dataAfter != null
+                            && dataAfter.enabledTrapForEvent != null
+                            && !dataAfter.enabledTrapForEvent!!.isEmpty()) {
                         it.setTrapsChoice(TrapsBuilder().setTraps(true).build())
                     } else {
                         it.setTrapsChoice(NoTrapsBuilder().setNoTraps(true).build())
