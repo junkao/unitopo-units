@@ -737,7 +737,7 @@
          }
        }
      }
-   }   
+   }
    grouping dcd_shaping_config {
      description "Traffic-shaping profile";
      uses apply-advanced;
@@ -1848,7 +1848,7 @@
          description "Enable interface damping";
          type empty;
        }
-     }     
+     }
      container gigether-options {
        description "Gigabit Ethernet interface-specific options";
        uses apply-advanced;
@@ -5014,7 +5014,7 @@
          type string;
        }
      }
-   }   
+   }
    grouping juniper-protocols {
      uses apply-advanced;
      container rsvp {
@@ -5062,6 +5062,10 @@
          description "Configure a neighbor";
          leaf name {
            type ipaddr;
+         }
+         leaf peer-as {
+           type string{
+           }
          }
          uses apply-advanced;
        }

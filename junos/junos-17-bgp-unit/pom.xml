@@ -20,13 +20,13 @@
         <relativePath>../../kotlin-unit-parent</relativePath>
     </parent>
 
-    <artifactId>junos-17-network-instance-unit</artifactId>
+    <artifactId>junos-17-bgp-unit</artifactId>
     <version>3.1.2.rc1-frinx-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <description>
-        Unified topology unit for Junos network instance.
+        Unified topology unit for Junos BGP protocol.
         Compatible with:
-            Junos 17.3.R1.10
+        Junos 17.3.R1.10
     </description>
 
     <build>
@@ -81,11 +81,6 @@
         <dependency>
             <groupId>io.frinx.unitopo</groupId>
             <artifactId>junos-17-models</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.frinx.unitopo</groupId>
-            <artifactId>junos-17-bgp-unit</artifactId>
             <version>${project.version}</version>
         </dependency>
 
