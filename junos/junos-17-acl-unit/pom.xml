@@ -17,10 +17,9 @@
         <groupId>io.frinx.unitopo</groupId>
         <artifactId>kotlin-unit-parent</artifactId>
         <version>3.1.2.rc1-frinx-SNAPSHOT</version>
-        <relativePath/>
+        <relativePath>../../kotlin-unit-parent</relativePath>
     </parent>
 
-    <groupId>io.frinx.unitopo</groupId>
     <artifactId>junos-17-acl-unit</artifactId>
     <version>3.1.2.rc1-frinx-SNAPSHOT</version>
     <packaging>bundle</packaging>
