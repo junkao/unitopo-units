@@ -16,12 +16,12 @@
     <parent>
         <groupId>io.frinx.unitopo</groupId>
         <artifactId>kotlin-unit-parent</artifactId>
-        <version>3.1.2.rc2-frinx</version>
+        <version>3.1.2.rc3-frinx-SNAPSHOT</version>
         <relativePath>../../kotlin-unit-parent</relativePath>
     </parent>
 
     <artifactId>junos-17-policy-forwarding-unit</artifactId>
-    <version>3.1.2.rc2-frinx</version>
+    <version>3.1.2.rc3-frinx-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <description>
         Unified topology unit for Junos Policy Fow.
