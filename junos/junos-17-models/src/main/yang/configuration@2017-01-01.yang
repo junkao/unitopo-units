@@ -5322,6 +5322,7 @@
      description "Virtual Router Redundancy Protocol group";
      leaf name {
        description "Identifier for VRRP group";
+       /*
        type union {
          type string {
            pattern "<.*>";
@@ -5329,6 +5330,12 @@
          type uint32 {
            range "0 .. 255";
          }
+       }
+       */
+       // 'name' has type union and name is used as key in list - constructor for DTO is not generated properly
+       // generated constructor should contain parameter but it does not
+       type uint32 {
+         range "0 .. 255";
        }
      }
      uses apply-advanced;

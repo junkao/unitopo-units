@@ -55,46 +55,42 @@ class InterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : Writer
     override fun updateCurrentAttributes(id: InstanceIdentifier<Config>,
                                          dataBefore: Config, dataAfter: Config,
                                          writeContext: WriteContext) {
-        val (underlayId, underlayIfcCfg) = getData(id, dataAfter)
-
-        try {
-            // Check if enabling the interface from disabled state
-            // since enableDisable is an empty leaf, enabling an interface cannot be done with merge
-            if (!dataBefore.isEnabled && !dataAfter.shutdown()) {
-                val previousStateWithoutShut = getJunosInterfaceBuilder(dataBefore, id).setEnableDisable(null).build()
-                underlayAccess.put(underlayId, previousStateWithoutShut)
-            }
-
-            underlayAccess.merge(underlayId, underlayIfcCfg)
-        } catch (e: Exception) {
-            throw WriteFailedException(id, e)
-        }
+        // same as write - preserve existing data and override changed.
+        writeCurrentAttributes(id, dataAfter, writeContext)
     }
 
     private fun getData(id: InstanceIdentifier<Config>, dataAfter: Config):
             Pair<InstanceIdentifier<JunosInterface>, JunosInterface> {
-        val (_, underlayId) = getUnderlayId(id)
-
-        val ifcBuilder = getJunosInterfaceBuilder(dataAfter, id)
-
+        checkPreconditions(dataAfter, id)
+        val (ifcName, underlayId) = getUnderlayId(id)
+        val ifcBuilder = InterfaceReader.createBuilderFromExistingInterface(underlayAccess, ifcName)
+        setJunosInterfaceBuilder(dataAfter, id, ifcBuilder)
         return Pair(underlayId, ifcBuilder.build())
     }
 
-    private fun getJunosInterfaceBuilder(dataAfter: Config, id: InstanceIdentifier<Config>): JunosInterfaceBuilder {
+    private fun setJunosInterfaceBuilder(dataAfter: Config, id: InstanceIdentifier<Config>, ifcBuilder: JunosInterfaceBuilder) {
+        val (ifcName, _) = getUnderlayId(id)
+        if (dataAfter.shutdown())
+            ifcBuilder.enableDisable = Case1Builder().setDisable(true).build()
+        else
+            ifcBuilder.enableDisable = Case1Builder().setDisable(null).build()
+        if (dataAfter.mtu != null)
+            ifcBuilder.mtu = InterfacesType.Mtu(dataAfter.mtu.toLong())
+        else
+            ifcBuilder.mtu = null
+        ifcBuilder.name = ifcName
+        ifcBuilder.description = dataAfter.description
+    }
+
+    private fun checkPreconditions(dataAfter: Config, id: InstanceIdentifier<Config>) {
         val (ifcName, underlayId) = getUnderlayId(id)
-        val ifcBuilder = JunosInterfaceBuilder()
-        if (dataAfter.shutdown()) ifcBuilder.enableDisable = Case1Builder().setDisable(true).build()
-        if (!checkInterfaceType(ifcName, dataAfter.type)) {
+        if (!isIfaceNameAndTypeValid(ifcName, dataAfter.type)) {
             throw WriteFailedException(underlayId, String.format("Provided type: {} doesn't match interface name: {}",
                     dataAfter.type, ifcName))
         }
-        if (dataAfter.mtu != null) ifcBuilder.mtu = InterfacesType.Mtu(dataAfter.mtu.toLong())
-        ifcBuilder.name = ifcName
-        ifcBuilder.description = dataAfter.description
-        return ifcBuilder
     }
 
-    private fun checkInterfaceType(ifcName: String, type: Class<out InterfaceType>?): Boolean {
+    private fun isIfaceNameAndTypeValid(ifcName: String, type: Class<out InterfaceType>?): Boolean {
         return when(type){
             EthernetCsmacd::class.java -> isEthernetCsmaCd(ifcName)
             SoftwareLoopback::class.java -> ifcName.startsWith("lo")
