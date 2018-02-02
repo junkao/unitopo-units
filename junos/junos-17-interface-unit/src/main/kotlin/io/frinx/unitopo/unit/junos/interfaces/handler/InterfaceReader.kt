@@ -111,7 +111,7 @@ class InterfaceReader(private val underlayAccess: UnderlayAccess) : ConfigListRe
                     .let { it?.let { it1 -> handler(it1) } }
         }
 
-        private fun readInterface(underlayAccess: UnderlayAccess, name: String): JunosInterface? {
+        fun readInterface(underlayAccess: UnderlayAccess, name: String): JunosInterface? {
             if (!interfaceExists(underlayAccess, name)) {
                 return null
             }
