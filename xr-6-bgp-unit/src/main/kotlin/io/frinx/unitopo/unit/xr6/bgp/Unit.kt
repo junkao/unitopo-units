@@ -71,7 +71,7 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
         wRegistry.add(GenericWriter(IIDs.NE_NE_PR_PR_LO_AG_CONFIG, AggregateConfigWriter(access)))
         wRegistry.add(GenericWriter(IIDs.NE_NE_PR_PR_BGP, NoopWriter()))
         wRegistry.add(GenericWriter(IIDs.NE_NE_PR_PR_BG_GLOBAL, NoopWriter()))
-        wRegistry.add(GenericWriter(IIDs.NE_NE_PR_PR_BG_GL_CONFIG, NoopWriter()))
+        wRegistry.add(GenericWriter(IIDs.NE_NE_PR_PR_BG_GL_CONFIG, BgpGlobalConfigWriter(access)))
         wRegistry.add(GenericWriter(IIDs.NE_NE_PR_PR_BG_GL_AFISAFIS, NoopWriter()))
         wRegistry.add(GenericListWriter(IIDs.NE_NE_PR_PR_BG_GL_AF_AFISAFI, AfiSafilWriter(access)))
         wRegistry.add(GenericWriter(IIDs.NE_NE_PR_PR_BG_GL_AF_AF_CONFIG, NoopWriter()))
