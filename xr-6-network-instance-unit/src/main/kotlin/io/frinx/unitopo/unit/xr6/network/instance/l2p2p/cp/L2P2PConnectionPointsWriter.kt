@@ -272,8 +272,12 @@ class L2P2PConnectionPointsWriter(private val underlayAccess: UnderlayAccess) : 
     private fun deleteL2SubifcCofiguration(underlaySubifcName: String, index: Long) {
         val underlayIfcId = getUnderlayIfcId(underlaySubifcName + "." + index)
 
-        val underlaySubifcConfiguration = requireNotNull(underlayAccess.read(underlayIfcId).get().orNull(),
-                { "Cannot delete L2P2 configuration from non-existent subinterface $underlaySubifcName" })
+        val underlaySubifcConfiguration = underlayAccess.read(underlayIfcId).get()
+
+        // If the subinterface no longer exists, don't do anything.
+        // XR allows l2p2 configurations to exist on non existing subinterfaces
+        if (!underlaySubifcConfiguration.isPresent)
+            return
 
         val vlanSubConfig = VlanSubConfigurationBuilder()
                 .setVlanIdentifier(VlanIdentifierBuilder()
@@ -286,7 +290,7 @@ class L2P2PConnectionPointsWriter(private val underlayAccess: UnderlayAccess) : 
                 .setVlanSubConfiguration(vlanSubConfig)
                 .build()
 
-        val underlaySubifcConfigBefore = InterfaceConfigurationBuilder(underlaySubifcConfiguration)
+        val underlaySubifcConfigBefore = InterfaceConfigurationBuilder(underlaySubifcConfiguration.get()!!)
                 .removeAugmentation(UnderlayIfcEthernetServiceAug::class.java)
                 .setInterfaceModeNonPhysical(InterfaceModeEnum.Default)
                 .addAugmentation(VlanSubConfigurationAugmentation::class.java, vlanCfg)
