@@ -66,9 +66,9 @@ class InterfaceLacpConfigWriter(private val underlayAccess: UnderlayAccess) : Wr
         val lacpBuilder = LacpBuilder()
         dataAfter.lacpMode?.let {
             if (it == LacpActivityType.ACTIVE) {
-                lacpBuilder.mode = Case1Builder().setActive(null).build()
+                lacpBuilder.mode = Case1Builder().setActive(true).build()
             } else if (it == LacpActivityType.PASSIVE) {
-                lacpBuilder.mode = Case2Builder().setPassive(null).build()
+                lacpBuilder.mode = Case2Builder().setPassive(true).build()
             }
         }
         dataAfter.interval?.let {
