@@ -13,12 +13,14 @@ import io.fd.honeycomb.translate.read.ReadFailedException
 import io.frinx.cli.registry.common.CompositeListReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.network.instance.protocol.bgp.common.BgpReader
+import io.frinx.unitopo.unit.xr6.bgp.IID
+import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.Bgp
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.Instance
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.instance.instance.`as`.FourByteAs
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.Protocol
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.ProtocolBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.ProtocolKey
-import org.opendaylight.controller.md.sal.common.api.data.ReadFailedException as MdSalReadFailedEx
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
 class BgpProtocolReader(private val access: UnderlayAccess) :
         BgpReader.BgpConfigReader<Protocol, ProtocolBuilder>,
@@ -31,19 +33,10 @@ class BgpProtocolReader(private val access: UnderlayAccess) :
 
     @Throws(ReadFailedException::class)
     override fun getAllIds(id: IID<Protocol>, context: ReadContext): List<ProtocolKey> {
-        try {
-            return access.read(UNDERLAY_BGP)
-                    .checkedGet()
-                    .orNull()
-                    ?.let {
-                        it.instance
-                                .orEmpty()
-                                // FIXME filter only per VRF
-                                .map { ProtocolKey(BgpReader.TYPE, it.instanceName.value) }
-                    }.orEmpty()
-        } catch (e: MdSalReadFailedEx) {
-            throw ReadFailedException(id, e)
-        }
+        val data = access.read(BgpProtocolReader.UNDERLAY_BGP, LogicalDatastoreType.CONFIGURATION)
+                .checkedGet()
+                .orNull()
+        return parseIds(data)
     }
 
     @Throws(ReadFailedException::class)
@@ -55,5 +48,19 @@ class BgpProtocolReader(private val access: UnderlayAccess) :
 
     companion object {
         val UNDERLAY_BGP = IID.create(Bgp::class.java)!!
+
+        fun getFirst4ByteAs(underlayInstance: Instance?): FourByteAs? =
+                underlayInstance?.instanceAs.orEmpty().firstOrNull()
+                        ?.fourByteAs.orEmpty().firstOrNull()
+
+        fun parseIds(data: Bgp?): List<ProtocolKey> {
+            return data
+                    ?.let {
+                        it.instance
+                                .orEmpty()
+                                .map { ProtocolKey(BgpReader.TYPE, it.instanceName.value) }
+                    }.orEmpty()
+        }
+
     }
 }

@@ -10,7 +10,9 @@ package io.frinx.unitopo.unit.xr6.bgp.handler
 
 import io.fd.honeycomb.translate.write.WriteContext
 import io.fd.honeycomb.translate.write.WriteFailedException
+import io.frinx.openconfig.network.instance.NetworInstance
 import io.frinx.unitopo.registry.spi.UnderlayAccess
+import io.frinx.unitopo.unit.xr6.bgp.IID
 import io.frinx.unitopo.unit.xr6.bgp.common.BgpWriter
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.Bgp
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.Instance
@@ -26,9 +28,8 @@ import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.xr.types.rev150629.CiscoIosXrString
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.global.base.Config
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
-class BgpGlobalConfigWriter(private val underlayAccess: UnderlayAccess) : BgpWriter<Config> {
+class GlobalConfigWriter(private val underlayAccess: UnderlayAccess) : BgpWriter<Config> {
 
     override fun updateCurrentAttributesForType(iid: IID<Config>, dataBefore: Config, dataAfter: Config, writeContext: WriteContext) {
         //NOOP
@@ -54,7 +55,7 @@ class BgpGlobalConfigWriter(private val underlayAccess: UnderlayAccess) : BgpWri
     private fun getDeleteIdentifier(vrfName: String, bgpProcess: Long): IID<*> {
         return IID.create(Bgp::class.java)
                 .let {
-                    if (!vrfName.equals("default")) {
+                    if (vrfName != NetworInstance.DEFAULT_NETWORK_NAME) {
                         it.child(Instance::class.java, InstanceKey(CiscoIosXrString("default")))
                                 .child(InstanceAs::class.java, InstanceAsKey(BgpAsRange(0)))
                                 .child(FourByteAs::class.java, FourByteAsKey(BgpAsRange(bgpProcess)))

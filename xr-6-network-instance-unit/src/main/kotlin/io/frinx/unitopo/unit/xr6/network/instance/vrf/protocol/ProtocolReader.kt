@@ -6,16 +6,16 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 
-package io.frinx.unitopo.unit.xr6.network.instance
+package io.frinx.unitopo.unit.xr6.network.instance.vrf.protocol
 
 import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.read.ReadFailedException
 import io.fd.honeycomb.translate.spi.read.ListReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.xr6.bgp.handler.BgpProtocolReader
-import io.frinx.unitopo.unit.xr6.lr.handler.StaticProtocolReader
 import io.frinx.unitopo.unit.network.instance.common.L3VrfListReader
 import io.frinx.unitopo.unit.network.instance.protocol.ProtocolReaderComposite
+import io.frinx.unitopo.unit.xr6.bgp.handler.BgpProtocolReader
+import io.frinx.unitopo.unit.xr6.lr.handler.StaticProtocolReader
 import io.frinx.unitopo.unit.xr6.ospf.handler.OspfProtocolReader
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.Protocol
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.ProtocolBuilder

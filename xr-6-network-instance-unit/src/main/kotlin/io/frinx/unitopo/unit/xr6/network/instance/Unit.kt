@@ -24,6 +24,10 @@ import io.frinx.unitopo.unit.xr6.interfaces.Unit
 import io.frinx.unitopo.unit.xr6.network.instance.vrf.VrfTableConnectionConfigWriter
 import io.frinx.unitopo.unit.xr6.network.instance.vrf.ifc.VrfInterfaceConfigWriter
 import io.frinx.unitopo.unit.xr6.network.instance.vrf.ifc.VrfInterfaceReader
+import io.frinx.unitopo.unit.xr6.network.instance.vrf.protocol.LocalAggregateConfigReader
+import io.frinx.unitopo.unit.xr6.network.instance.vrf.protocol.LocalAggregateReader
+import io.frinx.unitopo.unit.xr6.network.instance.vrf.protocol.ProtocolReader
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.local.routing.rev170515.local.aggregate.top.LocalAggregatesBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.Config
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.ConfigBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.ConnectionPoints
@@ -88,6 +92,11 @@ class Unit(private val registry: TranslationUnitCollector) : NetworkInstanceUnit
         rRegistry.add(GenericConfigListReader(IIDs.NE_NE_IN_INTERFACE, VrfInterfaceReader(underlayAccess)))
 
         rRegistry.add(GenericConfigListReader(IIDs.NE_NE_PR_PROTOCOL, ProtocolReader(underlayAccess)))
+
+        // Local aggregates
+        rRegistry.addStructuralReader(IIDs.NE_NE_PR_PR_LOCALAGGREGATES, LocalAggregatesBuilder::class.java)
+        rRegistry.add(GenericConfigListReader(IIDs.NE_NE_PR_PR_LO_AGGREGATE, LocalAggregateReader(underlayAccess)))
+        rRegistry.add(GenericConfigReader(IIDs.NE_NE_PR_PR_LO_AG_CONFIG, LocalAggregateConfigReader(underlayAccess)))
 
         // Connection points for L2P2p
         rRegistry.subtreeAdd(Sets.newHashSet<InstanceIdentifier<*>>(

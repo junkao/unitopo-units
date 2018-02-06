@@ -1,0 +1,105 @@
+<?xml version="1.0"?>
+<!--
+#519
+<rpc id="a" a="64" xmlnx="a:b:c:d" xmlns="urn:ietf:params:xml:ns:netconf:base:1.0" message-id="102">
+    <get>
+    <filter type="subtree">
+     <bgp xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-ipv4-bgp-oper">
+     <instances>
+     <instance>
+     <instance-name>default</instance-name>
+     <instance-active>
+     <vrfs>
+     <vrf>
+     <vrf-name>abcd</vrf-name>
+     <global-process-info/>
+     </vrf>
+     </vrfs>
+     </instance-active>
+     </instance>
+     </instances>
+     </bgp>
+    </filter>
+    </get>
+</rpc>
+##
+-->
+<rpc-reply message-id="102" id="a" a="64" xmlnx="a:b:c:d" xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+    <data>
+        <bgp xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-ipv4-bgp-oper">
+            <instances>
+                <instance>
+                    <instance-name>default</instance-name>
+                    <instance-active>
+                        <vrfs>
+                            <vrf>
+                                <vrf-name>abcd</vrf-name>
+                                <global-process-info>
+                                    <vrf-name>abcd</vrf-name>
+                                    <vrfid>1610612738</vrfid>
+                                    <global>
+                                        <in-standalone-mode>true</in-standalone-mode>
+                                        <local-as>720919</local-as>
+                                        <instance-name>default</instance-name>
+                                        <restart-count>2</restart-count>
+                                        <update-delay>120</update-delay>
+                                        <generic-scan-period>60</generic-scan-period>
+                                        <confederation-id>0</confederation-id>
+                                        <cluster-id>16843009</cluster-id>
+                                        <configured-cluster-id>0</configured-cluster-id>
+                                        <is-cluster-id-specified-as-ip>true</is-cluster-id-specified-as-ip>
+                                        <cluster-id-entry>
+                                            <cluster-id-val>16843009</cluster-id-val>
+                                            <cluster-id-type>2</cluster-id-type>
+                                        </cluster-id-entry>
+                                        <asn-format>1</asn-format>
+                                        <srgb-start-configured>0</srgb-start-configured>
+                                        <srgb-end-configured>0</srgb-end-configured>
+                                        <srgb-start>0</srgb-start>
+                                        <srgb-end>0</srgb-end>
+                                        <graceful-maintenance>false</graceful-maintenance>
+                                        <graceful-maint-all-nbrs>false</graceful-maint-all-nbrs>
+                                        <graceful-maint-retain-routes>false</graceful-maint-retain-routes>
+                                        <process-rlimit>2147483648</process-rlimit>
+                                        <bmp-maximum-buffer-size>409</bmp-maximum-buffer-size>
+                                        <bmp-default-buffer-size>307</bmp-default-buffer-size>
+                                    </global>
+                                    <vrf>
+                                        <vrf-is-active>true</vrf-is-active>
+                                        <route-distinguisher>00:02:30:23:00:04:00:22</route-distinguisher>
+                                        <router-id>8.8.8.8</router-id>
+                                        <configured-router-id>0.0.0.0</configured-router-id>
+                                        <is-redistribute-ibgp-to-ig-ps-enabled>true</is-redistribute-ibgp-to-ig-ps-enabled>
+                                        <is-fast-external-fallover-enabled>true</is-fast-external-fallover-enabled>
+                                        <is-bestpath-missing-med-is-worst-enabled>false</is-bestpath-missing-med-is-worst-enabled>
+                                        <is-bestpath-always-compare-med-enabled>false</is-bestpath-always-compare-med-enabled>
+                                        <is-bestpath-ignore-as-path-enabled>false</is-bestpath-ignore-as-path-enabled>
+                                        <is-bestpath-as-path-mpath-relax-enabled>false</is-bestpath-as-path-mpath-relax-enabled>
+                                        <is-bestpath-compare-med-from-confed-peer-enabled>false</is-bestpath-compare-med-from-confed-peer-enabled>
+                                        <is-bestpath-compare-router-id-for-ebgp-peers-enabled>false</is-bestpath-compare-router-id-for-ebgp-peers-enabled>
+                                        <is-bestpath-aigp-ignore-enabled>false</is-bestpath-aigp-ignore-enabled>
+                                        <is-multipath-as-path-ignore-onwards-enabled>false</is-multipath-as-path-ignore-onwards-enabled>
+                                        <is-enforce-first-as-enabled>true</is-enforce-first-as-enabled>
+                                        <default-local-preference>100</default-local-preference>
+                                        <keep-alive-time>60</keep-alive-time>
+                                        <hold-time>180</hold-time>
+                                        <min-acceptable-hold-time>3</min-acceptable-hold-time>
+                                        <is-neighbor-logging>true</is-neighbor-logging>
+                                        <is-default-metric-configured>false</is-default-metric-configured>
+                                        <default-metric>0</default-metric>
+                                        <is-default-originate-configured>false</is-default-originate-configured>
+                                        <is-graceful-restart>false</is-graceful-restart>
+                                        <is-nsr>true</is-nsr>
+                                        <restart-time>120</restart-time>
+                                        <stale-path-time>360</stale-path-time>
+                                        <rib-purge-timeout>600</rib-purge-timeout>
+                                    </vrf>
+                                </global-process-info>
+                            </vrf>
+                        </vrfs>
+                    </instance-active>
+                </instance>
+            </instances>
+        </bgp>
+    </data>
+</rpc-reply>

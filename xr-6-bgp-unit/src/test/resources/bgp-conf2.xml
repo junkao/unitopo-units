@@ -1,0 +1,160 @@
+<?xml version="1.0"?>
+<!--
+#325
+<rpc id="a" a="64" xmlnx="a:b:c:d" xmlns="urn:ietf:params:xml:ns:netconf:base:1.0" message-id="101">
+    <get-config>
+        <source>
+            <running/>
+        </source>
+        <filter type="subtree">
+         <bgp xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-ipv4-bgp-cfg"/>
+        </filter>
+    </get-config>
+</rpc>
+##
+-->
+<rpc-reply xmlns="urn:ietf:params:xml:ns:netconf:base:1.0" message-id="m-1">
+    <data>
+        <bgp xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-ipv4-bgp-cfg">
+            <instance>
+                <instance-name>default</instance-name>
+                <instance-as>
+                    <as>11</as>
+                    <four-byte-as>
+                        <as>23</as>
+                        <bgp-running></bgp-running>
+                        <default-vrf>
+                            <global>
+                                <router-id>1.1.1.1</router-id>
+                                <global-afs>
+                                    <global-af>
+                                        <af-name>ipv4-unicast</af-name>
+                                        <enable></enable>
+                                        <sourced-networks>
+                                            <sourced-network>
+                                                <network-addr>42.41.43.0</network-addr>
+                                                <network-prefix>24</network-prefix>
+                                            </sourced-network>
+                                        </sourced-networks>
+                                    </global-af>
+                                    <global-af>
+                                        <af-name>vp-nv4-unicast</af-name>
+                                        <enable></enable>
+                                    </global-af>
+                                    <global-af>
+                                        <af-name>ipv6-unicast</af-name>
+                                        <enable></enable>
+                                        <sourced-networks>
+                                            <sourced-network>
+                                                <network-addr>9009::</network-addr>
+                                                <network-prefix>64</network-prefix>
+                                            </sourced-network>
+                                        </sourced-networks>
+                                    </global-af>
+                                    <global-af>
+                                        <af-name>vp-nv6-unicast</af-name>
+                                        <enable></enable>
+                                    </global-af>
+                                </global-afs>
+
+                            </global>
+                            <bgp-entity>
+                                <neighbors>
+                                    <neighbor>
+                                        <neighbor-address>2.3.4.5</neighbor-address>
+                                        <remote-as>
+                                            <as-xx>77</as-xx>
+                                            <as-yy>1</as-yy>
+                                        </remote-as>
+                                        <update-source-interface>Loopback0</update-source-interface>
+                                        <neighbor-afs>
+                                            <neighbor-af>
+                                                <af-name>ipv4-unicast</af-name>
+                                                <activate></activate>
+                                            </neighbor-af>
+                                        </neighbor-afs>
+                                    </neighbor>
+                                    <neighbor>
+                                        <neighbor-address>4004::1</neighbor-address>
+                                        <remote-as>
+                                            <as-xx>0</as-xx>
+                                            <as-yy>123</as-yy>
+                                        </remote-as>
+                                        <neighbor-afs>
+                                            <neighbor-af>
+                                                <af-name>ipv6-unicast</af-name>
+                                                <activate></activate>
+                                                <route-policy-in>allowAll</route-policy-in>
+                                                <route-policy-out>allowAll</route-policy-out>
+                                            </neighbor-af>
+                                        </neighbor-afs>
+                                    </neighbor>
+                                    <neighbor>
+                                        <neighbor-address>10.1.0.4</neighbor-address>
+                                        <remote-as>
+                                            <as-xx>0</as-xx>
+                                            <as-yy>123</as-yy>
+                                        </remote-as>
+                                        <update-source-interface>Loopback0</update-source-interface>
+                                        <neighbor-afs>
+                                            <neighbor-af>
+                                                <af-name>ipv4-unicast</af-name>
+                                                <activate></activate>
+                                            </neighbor-af>
+                                            <neighbor-af>
+                                                <af-name>vp-nv4-unicast</af-name>
+                                                <activate></activate>
+                                                <route-policy-in>allowAll</route-policy-in>
+                                                <route-policy-out>allowAll</route-policy-out>
+                                            </neighbor-af>
+                                        </neighbor-afs>
+                                    </neighbor>
+                                </neighbors>
+                            </bgp-entity>
+                        </default-vrf>
+                        <vrfs>
+                            <vrf>
+                                <vrf-name>abcd</vrf-name>
+                                <vrf-global>
+                                    <exists></exists>
+                                    <route-distinguisher>
+                                        <type>four-byte-as</type>
+                                        <as-xx>12323</as-xx>
+                                        <as>4</as>
+                                        <as-index>34</as-index>
+                                    </route-distinguisher>
+                                    <vrf-global-afs>
+                                        <vrf-global-af>
+                                            <af-name>ipv4-unicast</af-name>
+                                            <enable></enable>
+                                            <sourced-networks>
+                                                <sourced-network>
+                                                    <network-addr>1.2.0.0</network-addr>
+                                                    <network-prefix>16</network-prefix>
+                                                </sourced-network>
+                                            </sourced-networks>
+                                        </vrf-global-af>
+                                    </vrf-global-afs>
+                                </vrf-global>
+                                <vrf-neighbors>
+                                    <vrf-neighbor>
+                                        <neighbor-address>4444::1111</neighbor-address>
+                                        <remote-as>
+                                            <as-xx>1</as-xx>
+                                            <as-yy>1</as-yy>
+                                        </remote-as>
+                                    </vrf-neighbor>
+                                </vrf-neighbors>
+                            </vrf>
+                        </vrfs>
+                    </four-byte-as>
+                </instance-as>
+            </instance>
+        </bgp>
+    </data>
+</rpc-reply>
+
+
+
+
+

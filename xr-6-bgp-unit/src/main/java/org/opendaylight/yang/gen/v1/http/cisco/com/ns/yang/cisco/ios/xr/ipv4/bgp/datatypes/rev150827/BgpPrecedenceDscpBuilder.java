@@ -11,7 +11,7 @@ package org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bg
  */
 public class BgpPrecedenceDscpBuilder {
 
-    public static BgpPrecedenceDscp getDefaultInstance(java.lang.String defaultValue) {
+    public static org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.datatypes.rev150827.BgpPrecedenceDscp getDefaultInstance(java.lang.String defaultValue) {
         throw new java.lang.UnsupportedOperationException("Not yet implemented");
     }
 

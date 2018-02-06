@@ -1,3 +1,26 @@
+<?xml version="1.0"?>
+<!--
+<hello xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+    <capabilities>
+        <capability>urn:ietf:params:netconf:base:1.0</capability>
+        <capability>urn:ietf:params:netconf:base:1.1</capability>
+    </capabilities>
+</hello>
+]]>]]>
+
+#325
+<rpc id="a" a="64" xmlnx="a:b:c:d" xmlns="urn:ietf:params:xml:ns:netconf:base:1.0" message-id="101">
+    <get-config>
+        <source>
+            <running/>
+        </source>
+        <filter type="subtree">
+         <bgp xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-ipv4-bgp-cfg"/>
+        </filter>
+    </get-config>
+</rpc>
+##
+-->
 <rpc-reply xmlns="urn:ietf:params:xml:ns:netconf:base:1.0" message-id="m-1">
     <data>
         <bgp xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-ipv4-bgp-cfg">
