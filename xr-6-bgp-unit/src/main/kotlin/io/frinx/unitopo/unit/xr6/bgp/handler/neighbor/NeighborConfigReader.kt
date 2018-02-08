@@ -6,7 +6,7 @@ import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.network.instance.protocol.bgp.common.BgpReader
 import io.frinx.unitopo.unit.xr6.bgp.UnderlayNeighbor
 import io.frinx.unitopo.unit.xr6.bgp.UnderlayVrfNeighbor
-import io.frinx.unitopo.unit.xr6.bgp.common.asFromDotNotation
+import io.frinx.unitopo.unit.xr6.bgp.common.As.Companion.asFromDotNotation
 import io.frinx.unitopo.unit.xr6.bgp.handler.BgpProtocolReader
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.REMOTEAS
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.SHUTDOWN

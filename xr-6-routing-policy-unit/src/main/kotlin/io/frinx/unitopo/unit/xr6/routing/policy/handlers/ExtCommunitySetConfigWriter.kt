@@ -6,11 +6,12 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 
-package io.frinx.unitopo.unit.xr6.bgp.handler
+package io.frinx.unitopo.unit.xr6.routing.policy.handlers
 
+import io.fd.honeycomb.translate.spi.write.WriterCustomizer
 import io.fd.honeycomb.translate.write.WriteContext
+import io.frinx.openconfig.openconfig.network.instance.IIDs
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.xr6.bgp.common.BgpWriter
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.infra.rsi.cfg.rev150730.VrfAddressFamily
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.infra.rsi.cfg.rev150730.VrfSubAddressFamily
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.infra.rsi.cfg.rev150730.Vrfs
@@ -38,88 +39,99 @@ import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.vrfs.vrf.afs.af.bgp.ImportRouteTargetsBuilder
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.xr.types.rev150629.CiscoIosXrString
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.policy.rev170730.ExtCommunitySetConfig
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.policy.rev170730.ext.community.set.top.ExtCommunitySets
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.policy.rev170730.ext.community.set.top.ext.community.sets.ext.community.set.Config
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.policy.rev170730.routing.policy.defined.sets.BgpDefinedSets
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstanceKey
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.openconfig.types.rev170113.IPV4
 import java.util.*
+import java.util.regex.Matcher
 import java.util.regex.Pattern
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
-class ExtCommunitySetConfigWriter(private val underlayAccess: UnderlayAccess) : BgpWriter<Config> {
+class ExtCommunitySetConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCustomizer<Config> {
 
-    val importPattern = Pattern.compile("(?<vrf>.+)-route-target-import-set")
-    val exportPattern = Pattern.compile("(?<vrf>.+)-route-target-export-set")
-    val routeTargetPattern = Pattern.compile("(?<as>.+):(?<asIndex>.+)")
-
-    override fun updateCurrentAttributesForType(iid: IID<Config>, dataBefore: Config, dataAfter: Config, writeContext: WriteContext) {
-        deleteCurrentAttributesForType(iid, dataBefore, writeContext)
-        writeCurrentAttributesForType(iid, dataAfter, writeContext)
+    override fun updateCurrentAttributes(iid: IID<Config>, dataBefore: Config, dataAfter: Config, writeContext: WriteContext) {
+        deleteCurrentAttributes(iid, dataBefore, writeContext)
+        writeCurrentAttributes(iid, dataAfter, writeContext)
     }
 
-    override fun deleteCurrentAttributesForType(iid: IID<Config>, dataBefore: Config, wtc: WriteContext) {
-        val bgpIid = getBgpIid(iid.firstKeyOf(NetworkInstance::class.java).name)
-        val importMatcher = importPattern.matcher(dataBefore.extCommunitySetName)
-        val exportMatcher = exportPattern.matcher(dataBefore.extCommunitySetName)
+    override fun deleteCurrentAttributes(iid: IID<Config>, dataBefore: Config, wtc: WriteContext) {
+        val importMatcher = IMPORT_TARGET_PATTERN.matcher(dataBefore.extCommunitySetName)
+        val exportMatcher = EXPORT_TARGET_PATTERN.matcher(dataBefore.extCommunitySetName)
+
+        val vrfName = if (importMatcher.matches()) importMatcher.group("vrf") else {
+            exportMatcher.matches()
+
+            exportMatcher.group("vrf")
+        }
+
+        val bgpIid = getBgpIid(vrfName)
 
         if (importMatcher.matches()) {
-            dataBefore.extCommunityMember?.forEach {
-                val asMatcher = routeTargetPattern.matcher(String(it.value))
-                val asNumber = asMatcher.group("as")
-                val asIndex = asMatcher.group("asIndex")
+            dataBefore.extCommunityMember.orEmpty()
+                    .map { ROUTE_TARGET.matcher(String(it.value)) }
+                    .filter { it.matches() }
+                    .forEach {
+                        val asNumber = it.group("as")
+                        val asIndex = it.group("asIndex")
 
-                val deleteIid = bgpIid.child(ImportRouteTargets::class.java)
-                        .child(RouteTargets::class.java)
-                        .child(RouteTarget::class.java, RouteTargetKey(BgpVrfRouteTarget.As))
-                        .child(AsOrFourByteAs::class.java, AsOrFourByteAsKey(asNumber.toLong(),
-                                RouteTargetAsIndex(asIndex.toLong()),
-                                0,0))
-                try {
-                    underlayAccess.delete(deleteIid)
-                } catch (e: Exception) {
-                    throw io.fd.honeycomb.translate.write.WriteFailedException(deleteIid, e)
-                }
-            }
+                        val deleteIid = bgpIid.child(ImportRouteTargets::class.java)
+                                .child(RouteTargets::class.java)
+                                .child(RouteTarget::class.java, RouteTargetKey(BgpVrfRouteTarget.As))
+                                .child(AsOrFourByteAs::class.java, AsOrFourByteAsKey(asNumber.toLong(),
+                                        RouteTargetAsIndex(asIndex.toLong()),
+                                        0, 0))
+                        underlayAccess.delete(deleteIid)
+                    }
         } else if (exportMatcher.matches()) {
-            dataBefore.extCommunityMember?.forEach {
-                val asMatcher = routeTargetPattern.matcher(String(it.value))
-                val asNumber = asMatcher.group("as")
-                val asIndex = asMatcher.group("asIndex")
+            dataBefore.extCommunityMember.orEmpty()
+                    .map { ROUTE_TARGET.matcher(String(it.value)) }
+                    .filter { it.matches() }
+                    .forEach {
+                        val asNumber = it.group("as")
+                        val asIndex = it.group("asIndex")
 
-                val deleteIid = bgpIid.child(ExportRouteTargets::class.java)
-                        .child(RouteTargets::class.java)
-                        .child(RouteTarget::class.java, RouteTargetKey(BgpVrfRouteTarget.As))
-                        .child(AsOrFourByteAs::class.java, AsOrFourByteAsKey(asNumber.toLong(),
-                                RouteTargetAsIndex(asIndex.toLong()),
-                                0, 0))
-                try {
-                    underlayAccess.delete(deleteIid)
-                } catch (e: Exception) {
-                    throw io.fd.honeycomb.translate.write.WriteFailedException(deleteIid, e)
-                }
-            }
+                        val deleteIid = bgpIid.child(ExportRouteTargets::class.java)
+                                .child(RouteTargets::class.java)
+                                .child(RouteTarget::class.java, RouteTargetKey(BgpVrfRouteTarget.As))
+                                .child(AsOrFourByteAs::class.java, AsOrFourByteAsKey(asNumber.toLong(),
+                                        RouteTargetAsIndex(asIndex.toLong()),
+                                        0, 0))
+                        underlayAccess.delete(deleteIid)
+                    }
         }
     }
 
-    override fun writeCurrentAttributesForType(iid: IID<Config>, dataAfter: Config, wtc: WriteContext) {
-        val vrfName =  iid.firstKeyOf(NetworkInstance::class.java).name
+    override fun writeCurrentAttributes(iid: IID<Config>, data: Config, wtc: WriteContext) {
+        val importMatcher = IMPORT_TARGET_PATTERN.matcher(data.extCommunitySetName)
+        val exportMatcher = EXPORT_TARGET_PATTERN.matcher(data.extCommunitySetName)
+
+        require(importMatcher.matches() || exportMatcher.matches(),
+                { "Invalid ext community: ${data.extCommunitySetName}. Expected communities are in format: $IMPORT_TARGET_PATTERN or $EXPORT_TARGET_PATTERN" })
+
+        val vrfName = if (importMatcher.matches()) importMatcher.group("vrf") else exportMatcher.group("vrf")
+
+        val enabledAfis = wtc.readAfter(IIDs.NETWORKINSTANCES.child(NetworkInstance::class.java, NetworkInstanceKey(vrfName)))
+                .orNull()
+                ?.config
+                ?.enabledAddressFamilies.orEmpty()
+
+        require(enabledAfis.isNotEmpty(),
+                { "No enabled address family for VRF: $vrfName" })
+
+        // TODO only Ipv4 supported
+        requireNotNull(enabledAfis.find { it == IPV4::class.java },
+                { "IPv4 is not among enabled address families for vrf: $vrfName" })
+
         val bgpIid = getBgpIid(vrfName)
-        val extCommSets = wtc.readAfter(IID.create(BgpDefinedSets::class.java)
-                .child(ExtCommunitySets::class.java))
-                .get()
 
-        val bgp = getBgpData(dataAfter)
+        val bgp = getBgpData(data, importMatcher, exportMatcher)
 
-        try {
-            underlayAccess.merge(bgpIid, bgp)
-        } catch (e: Exception) {
-            throw io.fd.honeycomb.translate.write.WriteFailedException(bgpIid, e)
-        }
+        underlayAccess.merge(bgpIid, bgp)
     }
 
-    private fun getBgpData(data: Config): Bgp {
-        val importMatcher = importPattern.matcher(data.extCommunitySetName)
-        val exportMatcher = exportPattern.matcher(data.extCommunitySetName)
+    private fun getBgpData(data: Config, importMatcher: Matcher, exportMatcher: Matcher): Bgp {
+
         val bgp = BgpBuilder()
                 .let({
                     if (importMatcher.matches()) {
@@ -150,24 +162,29 @@ class ExtCommunitySetConfigWriter(private val underlayAccess: UnderlayAccess) : 
     }
 
     private fun extCommunityMemberToAsOrFourByteAs(members: List<ExtCommunitySetConfig.ExtCommunityMember>): List<AsOrFourByteAs> {
-        val list = ArrayList<AsOrFourByteAs>()
-        members.forEach {
-            list.add(AsOrFourByteAsBuilder()
-                    .setKey(AsOrFourByteAsKey(
-                            routeTargetPattern.matcher(String(it.value))
-                                    .group("as")
-                                    .toLong(),
-                            RouteTargetAsIndex(routeTargetPattern.matcher(String(it.value))
-                                    .group("asIndex")
-                                    .toLong()),
-                            0, 0))
-                    .build())
-        }
-        return list
+        return members
+                .map { ROUTE_TARGET.matcher(String(it.value)) }
+                .filter { it.matches() }
+                .map {
+                    AsOrFourByteAsBuilder()
+                            .setKey(AsOrFourByteAsKey(
+                                    it.group("as")
+                                            .toLong(),
+                                    RouteTargetAsIndex(it
+                                            .group("asIndex")
+                                            .toLong()),
+                                    0, 0))
+                            .build()
+                }
     }
 
     companion object {
+        val IMPORT_TARGET_PATTERN = Pattern.compile("(?<vrf>.+)-route-target-import-set")
+        val EXPORT_TARGET_PATTERN = Pattern.compile("(?<vrf>.+)-route-target-export-set")
+        val ROUTE_TARGET = Pattern.compile("(?<as>.+):(?<asIndex>.+)")
+
         public fun getBgpIid(vrfName: String): IID<Bgp> {
+
             return IID.create(Vrfs::class.java)
                     .child(Vrf::class.java, VrfKey(CiscoIosXrString(vrfName)))
                     .child(Afs::class.java)

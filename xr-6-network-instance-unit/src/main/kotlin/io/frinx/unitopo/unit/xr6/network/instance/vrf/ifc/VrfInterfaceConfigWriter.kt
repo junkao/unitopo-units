@@ -10,6 +10,7 @@ package io.frinx.unitopo.unit.xr6.network.instance.vrf.ifc
 
 import io.fd.honeycomb.translate.spi.write.WriterCustomizer
 import io.fd.honeycomb.translate.write.WriteContext
+import io.frinx.openconfig.network.instance.NetworInstance
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev150730.InterfaceActive
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev150730.InterfaceConfigurations
@@ -27,22 +28,24 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 class VrfInterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCustomizer<Config> {
     override fun deleteCurrentAttributes(iid: IID<Config>, dataBefore: Config, wc: WriteContext) {
         val vrfName = iid.firstKeyOf(NetworkInstance::class.java).name
-        if (vrfName.equals("default") || dataBefore.`interface` == null) {
+
+        if (vrfName == NetworInstance.DEFAULT_NETWORK_NAME || dataBefore.`id` == null) {
             return
         }
 
-        val delIid = getInterfaceConfigurationIdentifier(dataBefore.`interface`)
-                .augmentation(InterfaceConfiguration1::class.java)
-        try {
-            underlayAccess.delete(delIid)
-        } catch (e: Exception) {
-            throw io.fd.honeycomb.translate.write.WriteFailedException(delIid, e)
-        }
+        val builder = underlayAccess.read(getInterfaceConfigurationIdentifier(dataBefore.`id`))
+                .checkedGet()
+                .or(InterfaceConfigurationBuilder().build())
+                .let { InterfaceConfigurationBuilder(it) }
+        builder.removeAugmentation(InterfaceConfiguration1::class.java)
+        builder.interfaceModeNonPhysical = null
+
+        underlayAccess.put(getInterfaceConfigurationIdentifier(dataBefore.`id`), builder.build())
     }
 
     override fun writeCurrentAttributes(iid: IID<Config>, data: Config, wc: WriteContext) {
         val vrfName = iid.firstKeyOf(NetworkInstance::class.java).name
-        if (vrfName.equals("default")) {
+        if (vrfName == NetworInstance.DEFAULT_NETWORK_NAME) {
             return
         }
 
@@ -54,15 +57,11 @@ class VrfInterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : Wri
                         .build())
                 .build()
 
-        try {
-            underlayAccess.merge(writeIid, ifConfig)
-        } catch (e: Exception) {
-            throw io.fd.honeycomb.translate.write.WriteFailedException(writeIid, e)
-        }
+        underlayAccess.merge(writeIid, ifConfig)
     }
 
     companion object {
-        public fun getInterfaceConfigurationIdentifier(ifaceName: String): IID<InterfaceConfiguration>{
+        public fun getInterfaceConfigurationIdentifier(ifaceName: String): IID<InterfaceConfiguration> {
             return IID.create(InterfaceConfigurations::class.java)
                     .child(InterfaceConfiguration::class.java, InterfaceConfigurationKey(InterfaceActive("act"), InterfaceName(ifaceName)))
 

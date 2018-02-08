@@ -13,7 +13,7 @@ import io.fd.honeycomb.translate.read.ReadContext
 import io.frinx.openconfig.network.instance.NetworInstance
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.network.instance.protocol.bgp.common.BgpReader
-import io.frinx.unitopo.unit.xr6.bgp.common.asFromDotNotation
+import io.frinx.unitopo.unit.xr6.bgp.common.As.Companion.asFromDotNotation
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.Bgp
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.Instance
@@ -65,16 +65,18 @@ fun ConfigBuilder.fromUnderlay(underlayInstance: Instance, vrfName: String) {
     val firstAs = underlayInstance.instanceAs.orEmpty().firstOrNull()?.`as`
 
     BgpProtocolReader.getFirst4ByteAs(underlayInstance)
-            ?.let {
-                `as` = asFromDotNotation(firstAs?.value, it.`as`.value)
+            ?.let { fourByteAs ->
 
                 // Set router ID for appropriate VRF
                 if (NetworInstance.DEFAULT_NETWORK_NAME == vrfName) {
-                    it.defaultVrf?.global?.routerId?.value?.let { routerId = DottedQuad(it) }
+                    `as` = asFromDotNotation(firstAs?.value, fourByteAs.`as`.value)
+                    fourByteAs.defaultVrf?.global?.routerId?.value?.let { routerId = DottedQuad(it) }
                 } else {
-                    it.vrfs?.vrf.orEmpty()
+                    fourByteAs.vrfs?.vrf.orEmpty()
                             .find { it.vrfName.value == vrfName }
-                            ?.let { it.vrfGlobal?.routerId?.value?.let { routerId = DottedQuad(it) } }
+                            ?.let {
+                                `as` = asFromDotNotation(firstAs?.value, fourByteAs.`as`.value)
+                                it.vrfGlobal?.routerId?.value?.let { routerId = DottedQuad(it) } }
                 }
             }
 }

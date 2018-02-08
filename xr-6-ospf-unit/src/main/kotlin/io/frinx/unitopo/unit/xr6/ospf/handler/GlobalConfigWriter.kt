@@ -25,11 +25,11 @@ import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.osp
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.xr.types.rev150629.CiscoIosXrString
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.Protocol
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.protocol.Config as ProtoConfig
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.ospfv2.rev170228.ospfv2.global.structural.global.Config
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.Ipv4AddressNoZone
 import org.opendaylight.yangtools.yang.binding.DataObject
 import java.util.*
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.protocol.Config as ProtoConfig
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
 class GlobalConfigWriter(private val underlayAccess: UnderlayAccess) : OspfWriter<Config> {
@@ -42,11 +42,7 @@ class GlobalConfigWriter(private val underlayAccess: UnderlayAccess) : OspfWrite
     override fun writeCurrentAttributesForType(id: IID<Config>, dataAfter: Config, wtx: WriteContext) {
         val (underlayId, underlayCfg) = getData(id, dataAfter)
 
-        try {
-            underlayAccess.merge(underlayId, underlayCfg)
-        } catch (e: Exception) {
-            throw io.fd.honeycomb.translate.write.WriteFailedException(id, e)
-        }
+        underlayAccess.merge(underlayId, underlayCfg)
     }
 
     override fun deleteCurrentAttributesForType(id: IID<Config>, dataBefore: Config, wtx: WriteContext) {
@@ -61,11 +57,7 @@ class GlobalConfigWriter(private val underlayAccess: UnderlayAccess) : OspfWrite
                         VrfKey(CiscoIosXrString(vrfName)))
             }
         }
-        try {
-            underlayAccess.delete(vrfIid)
-        } catch (e: Exception) {
-            throw io.fd.honeycomb.translate.write.WriteFailedException(id, e)
-        }
+        underlayAccess.delete(vrfIid)
     }
 
     private fun getData(id: IID<Config>, data: Config):
@@ -99,7 +91,7 @@ class GlobalConfigWriter(private val underlayAccess: UnderlayAccess) : OspfWrite
     companion object {
         val DEFAULT_VRF = "default"
 
-        public fun getIdentifiers(id: IID<out DataObject>) : Pair<IID<Process>, String> {
+        public fun getIdentifiers(id: IID<out DataObject>): Pair<IID<Process>, String> {
             val processName = id.firstKeyOf(Protocol::class.java).name
             val vrfName = id.firstKeyOf(NetworkInstance::class.java).name
             val processIid = IID.create(Ospf::class.java).child(Processes::class.java).child(Process::class.java,

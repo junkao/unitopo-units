@@ -419,14 +419,14 @@ module Cisco-IOS-XR-ipv4-bgp-cfg {
         type uint32 {
           range "1..100";
         }
-        default "75";
+        // default "75";
         description
           "Threshold value (%) at which to generate a
           warning message.";
       }
       leaf warning-only {
         type boolean;
-        default "false";
+        // default "false";
         description
           "TRUE to only give a warning message when limit
           is exceeded.  FALSE to accept max prefix limit
@@ -436,12 +436,12 @@ module Cisco-IOS-XR-ipv4-bgp-cfg {
         type uint32 {
           range "0..65535";
         }
-        default "0";
+        // default "0";
         description "Restart interval";
       }
       leaf discard-extra-paths {
         type boolean;
-        default "false";
+        // default "false";
         description "Discard extra paths when limit is exceeded";
       }
     }
@@ -456,21 +456,21 @@ module Cisco-IOS-XR-ipv4-bgp-cfg {
         type uint32 {
           range "1..255";
         }
-        default "20";
+        // default "20";
         description "Distance for routes external to the AS";
       }
       leaf internal-routes {
         type uint32 {
           range "1..255";
         }
-        default "200";
+        // default "200";
         description "Distance for routes internal to the AS";
       }
       leaf local-routes {
         type uint32 {
           range "1..255";
         }
-        default "200";
+        // default "200";
         description "Distance for local routes";
       }
     }
@@ -845,7 +845,7 @@ module Cisco-IOS-XR-ipv4-bgp-cfg {
       description "Originate default route to this neighbor";
       leaf enable {
         type boolean;
-        default "false";
+        // default "false";
         description
           "FALSE to prevent default-originate from, being
           inherited from a parent. TRUE otherwise.";
@@ -870,14 +870,14 @@ module Cisco-IOS-XR-ipv4-bgp-cfg {
         type uint32 {
           range "0..65535";
         }
-        default "60";
+        // default "60";
         description "Keepalive interval";
       }
       leaf hold-time {
         type uint32 {
           range "0..65535";
         }
-        default "180";
+        // default "180";
         description
           "Hold time.  Specify 0 to disable
           keepalives/hold time";
@@ -886,7 +886,7 @@ module Cisco-IOS-XR-ipv4-bgp-cfg {
         type uint32 {
           range "0..65535";
         }
-        default "3";
+        // default "3";
         description
           "Minimum acceptable hold time.  Specify 0 to
           disable keepalives/hold time";
@@ -1014,14 +1014,14 @@ module Cisco-IOS-XR-ipv4-bgp-cfg {
         this neighbor/neighbor-group/af-group";
       leaf inbound-soft {
         type boolean;
-        default "false";
+        // default "false";
         description
           "FALSE to prohibit inbound soft reconfiguration.
           TRUE otherwise.";
       }
       leaf soft-always {
         type boolean;
-        default "false";
+        // default "false";
         description
           "TRUE to always use soft reconfig, even if route
           refresh is supported.  FALSE otherwise.";
@@ -1118,7 +1118,7 @@ module Cisco-IOS-XR-ipv4-bgp-cfg {
       vrf-neighbor-af, af-group-af";
     leaf as-override {
       type boolean;
-      default "true";
+      // default "true";
       description
         "TRUE to override matching AS-number while
         sending update. FALSE to prevent as-override
@@ -1214,7 +1214,7 @@ module Cisco-IOS-XR-ipv4-bgp-cfg {
         range "1..4095";
       }
       units "second";
-      default "120";
+      // default "120";
       description "Restart time advertised to neighbor";
     }
   }
@@ -1295,7 +1295,7 @@ module Cisco-IOS-XR-ipv4-bgp-cfg {
       type uint32 {
         range "1..10";
       }
-      default "3";
+      // default "3";
       description "Allow as-path with my AS present in it";
     }
   }
@@ -1388,7 +1388,7 @@ module Cisco-IOS-XR-ipv4-bgp-cfg {
       vrf-neighbor-af, af-group-af";
     leaf neighbor-af-long-lived-graceful-restart-capable {
       type boolean;
-      default "false";
+      // default "false";
       description
         "TRUE to treat neighbor as Long-lived
         Graceful-restart capable. FALSE to rely on
@@ -1417,7 +1417,7 @@ module Cisco-IOS-XR-ipv4-bgp-cfg {
           range "0..65535";
         }
         units "second";
-        default "60";
+        // default "60";
         description "Keepalive interval (seconds)";
       }
       leaf hold-time {
@@ -1425,7 +1425,7 @@ module Cisco-IOS-XR-ipv4-bgp-cfg {
           range "0..65535";
         }
         units "second";
-        default "180";
+        // default "180";
         description
           "Hold time (seconds).  Specify 0 to disable
           keepalives/hold time";
@@ -1435,7 +1435,7 @@ module Cisco-IOS-XR-ipv4-bgp-cfg {
           range "0..65535";
         }
         units "second";
-        default "3";
+        // default "3";
         description
           "Minimum acceptable hold time (seconds). Specify
           0 to disable keepalives/hold time";
@@ -1480,7 +1480,7 @@ module Cisco-IOS-XR-ipv4-bgp-cfg {
       type uint32 {
         range "0..4294967295";
       }
-      default "100";
+      // default "100";
       description "Configure default local preference";
     }
   }
@@ -1519,7 +1519,7 @@ module Cisco-IOS-XR-ipv4-bgp-cfg {
           range "4096..131072";
         }
         units "byte";
-        default "24576";
+        // default "24576";
         description "Send socket buffer size in bytes";
       }
       leaf bgp-send-size {
@@ -1527,7 +1527,7 @@ module Cisco-IOS-XR-ipv4-bgp-cfg {
           range "4096..131072";
         }
         units "byte";
-        default "4096";
+        // default "4096";
         description "BGP Write buffer size in bytes";
       }
     }
@@ -1545,7 +1545,7 @@ module Cisco-IOS-XR-ipv4-bgp-cfg {
           range "512..131072";
         }
         units "byte";
-        default "32768";
+        // default "32768";
         description "Receive socket buffer size in bytes";
       }
       leaf bgp-receive-size {
@@ -1553,7 +1553,7 @@ module Cisco-IOS-XR-ipv4-bgp-cfg {
           range "512..131072";
         }
         units "byte";
-        default "4096";
+        // default "4096";
         description "BGP Read buffer size in bytes";
       }
     }
@@ -1645,12 +1645,12 @@ module Cisco-IOS-XR-ipv4-bgp-cfg {
         type uint32 {
           range "1..255";
         }
-        default "255";
+        // default "255";
         description "Maximum hop count";
       }
       leaf mpls-deactivation {
         type boolean;
-        default "false";
+        // default "false";
         description "TRUE to not enable MPLS and NULL rewrite.";
       }
     }
@@ -1665,7 +1665,7 @@ module Cisco-IOS-XR-ipv4-bgp-cfg {
         range "1..4095";
       }
       units "second";
-      default "360";
+      // default "360";
       description
         "Maximum time to wait for restart of GR capable
         peer";
@@ -2141,7 +2141,7 @@ module Cisco-IOS-XR-ipv4-bgp-cfg {
       vrf-neighbor, session-group";
     leaf session-open-mode {
       type Bgp-tcp-mode;
-      default "either";
+      // default "either";
       description "TCP mode to be used to establish BGP session";
     }
   }
@@ -2216,7 +2216,7 @@ module Cisco-IOS-XR-ipv4-bgp-cfg {
       type uint32 {
         range "0..128";
       }
-      default "0";
+      // default "0";
       description "Minimum prefix-length for nexthop resolution";
     }
   }
@@ -2397,7 +2397,7 @@ module Cisco-IOS-XR-ipv4-bgp-cfg {
           range "0..16777215";
         }
         units "second";
-        default "0";
+        // default "0";
         description "Max time (seconds)";
       }
       leaf stale-time-accept {
@@ -2405,7 +2405,7 @@ module Cisco-IOS-XR-ipv4-bgp-cfg {
           range "0..16777215";
         }
         units "second";
-        default "0";
+        // default "0";
         description "Max time (seconds)";
       }
     }
@@ -2467,7 +2467,7 @@ module Cisco-IOS-XR-ipv4-bgp-cfg {
           range "4096..131072";
         }
         units "byte";
-        default "24576";
+        // default "24576";
         description "Send socket buffer size in bytes";
       }
       leaf bgp-send-size {
@@ -2475,7 +2475,7 @@ module Cisco-IOS-XR-ipv4-bgp-cfg {
           range "4096..131072";
         }
         units "byte";
-        default "4096";
+        // default "4096";
         description "BGP write buffer size in bytes";
       }
     }
@@ -2589,7 +2589,7 @@ module Cisco-IOS-XR-ipv4-bgp-cfg {
         range "0..10";
       }
       units "minute";
-      default "10";
+      // default "10";
       description
         "Update generation delay (in minutes) after a MED
         change";
@@ -2684,7 +2684,7 @@ module Cisco-IOS-XR-ipv4-bgp-cfg {
       vrf-neighbor-af, af-group-af";
     leaf advertise-orf {
       type Bgp-orf;
-      default "none";
+      // default "none";
       description "Advertise ORF capability to the peer";
     }
   }
@@ -2849,7 +2849,7 @@ module Cisco-IOS-XR-ipv4-bgp-cfg {
           range "512..131072";
         }
         units "byte";
-        default "32768";
+        // default "32768";
         description "Receive socket buffer size in bytes";
       }
       leaf bgp-receive-size {
@@ -2857,7 +2857,7 @@ module Cisco-IOS-XR-ipv4-bgp-cfg {
           range "512..131072";
         }
         units "byte";
-        default "4096";
+        // default "4096";
         description "BGP read buffer size in bytes";
       }
     }
@@ -2916,7 +2916,7 @@ module Cisco-IOS-XR-ipv4-bgp-cfg {
     description "Common node of global, vrf-global";
     leaf router-id {
       type inet:ipv4-address-no-zone;
-      default "0.0.0.0";
+      // default "0.0.0.0";
       description "Configure Router-id";
     }
   }
@@ -3114,19 +3114,19 @@ module Cisco-IOS-XR-ipv4-bgp-cfg {
                       }
                       leaf unequal-cost {
                         type boolean;
-                        default "false";
+                        // default "false";
                         description "UNUSED";
                       }
                       leaf selective {
                         type boolean;
-                        default "false";
+                        // default "false";
                         description
                           "Allow multipaths only from marked
                           neighbors";
                       }
                       leaf order-by-igp-metric {
                         type boolean;
-                        default "false";
+                        // default "false";
                         description
                           "Order candidate multipaths by IGP
                           metric";
@@ -3146,19 +3146,19 @@ module Cisco-IOS-XR-ipv4-bgp-cfg {
                       }
                       leaf unequal-cost {
                         type boolean;
-                        default "false";
+                        // default "false";
                         description "UNUSED";
                       }
                       leaf selective {
                         type boolean;
-                        default "false";
+                        // default "false";
                         description
                           "Allow multipaths only from marked
                           neighbors";
                       }
                       leaf order-by-igp-metric {
                         type boolean;
-                        default "false";
+                        // default "false";
                         description
                           "Order candidate multipaths by IGP
                           metric";
@@ -3178,21 +3178,21 @@ module Cisco-IOS-XR-ipv4-bgp-cfg {
                       }
                       leaf unequal-cost {
                         type boolean;
-                        default "false";
+                        // default "false";
                         description
                           "Allow multipaths to have different IGP
                           metrics";
                       }
                       leaf selective {
                         type boolean;
-                        default "false";
+                        // default "false";
                         description
                           "Allow multipaths only from marked
                           neighbors";
                       }
                       leaf order-by-igp-metric {
                         type boolean;
-                        default "false";
+                        // default "false";
                         description
                           "Order candidate multipaths by IGP
                           metric";
@@ -3830,7 +3830,7 @@ module Cisco-IOS-XR-ipv4-bgp-cfg {
                   type uint32 {
                     range "500..100000000";
                   }
-                  default "50000";
+                  // default "50000";
                   description
                     "Number of messages to be formatted per
                     update group";
@@ -3839,14 +3839,14 @@ module Cisco-IOS-XR-ipv4-bgp-cfg {
                   type uint32 {
                     range "500..100000000";
                   }
-                  default "250000";
+                  // default "250000";
                   description
                     "Number of messages that can be enqueued in
                     total";
                 }
                 leaf desynchronize {
                   type boolean;
-                  default "false";
+                  // default "false";
                   description
                     "TRUE to enable desynchronization, FALSE
                     otherwise.";
@@ -3862,12 +3862,12 @@ module Cisco-IOS-XR-ipv4-bgp-cfg {
                     range "0..3600";
                   }
                   units "second";
-                  default "120";
+                  // default "120";
                   description "Delay value (seconds)";
                 }
                 leaf always {
                   type boolean;
-                  default "false";
+                  // default "false";
                   description
                     "Set to TRUE to disable keepalive trigger
                     bestpath and delay is enforced.";
@@ -3910,12 +3910,12 @@ module Cisco-IOS-XR-ipv4-bgp-cfg {
                     description "RPKI server transport";
                     leaf transport {
                       type Bgp-rpki-transport;
-                      default "ssh";
+                      // default "ssh";
                       description "RPKI server transport";
                     }
                     leaf port {
                       type xr:Cisco-ios-xr-port-number;
-                      default "22";
+                      // default "22";
                       description "port";
                     }
                   }
@@ -3965,7 +3965,7 @@ module Cisco-IOS-XR-ipv4-bgp-cfg {
                   type uint32 {
                     range "1..15000";
                   }
-                  default "10000";
+                  // default "10000";
                   description
                     "Maximum number of neighbors that can be
                     configured";
@@ -4267,19 +4267,19 @@ module Cisco-IOS-XR-ipv4-bgp-cfg {
                     }
                     leaf unequal-cost {
                       type boolean;
-                      default "false";
+                      // default "false";
                       description "UNUSED";
                     }
                     leaf selective {
                       type boolean;
-                      default "false";
+                      // default "false";
                       description
                         "Allow multipaths only from marked
                         neighbors";
                     }
                     leaf order-by-igp-metric {
                       type boolean;
-                      default "false";
+                      // default "false";
                       description
                         "Order candidate multipaths by IGP metric";
                     }
@@ -4297,19 +4297,19 @@ module Cisco-IOS-XR-ipv4-bgp-cfg {
                     }
                     leaf unequal-cost {
                       type boolean;
-                      default "false";
+                      // default "false";
                       description "UNUSED";
                     }
                     leaf selective {
                       type boolean;
-                      default "false";
+                      // default "false";
                       description
                         "Allow multipaths only from marked
                         neighbors";
                     }
                     leaf order-by-igp-metric {
                       type boolean;
-                      default "false";
+                      // default "false";
                       description
                         "Order candidate multipaths by IGP metric";
                     }
@@ -4343,21 +4343,21 @@ module Cisco-IOS-XR-ipv4-bgp-cfg {
                     }
                     leaf unequal-cost {
                       type boolean;
-                      default "false";
+                      // default "false";
                       description
                         "Allow multipaths to have different IGP
                         metrics";
                     }
                     leaf selective {
                       type boolean;
-                      default "false";
+                      // default "false";
                       description
                         "Allow multipaths only from marked
                         neighbors";
                     }
                     leaf order-by-igp-metric {
                       type boolean;
-                      default "false";
+                      // default "false";
                       description
                         "Order candidate multipaths by IGP metric";
                     }
@@ -4404,7 +4404,7 @@ module Cisco-IOS-XR-ipv4-bgp-cfg {
                       range "0..4294967295";
                     }
                     units "millisecond";
-                    default "3000";
+                    // default "3000";
                     description "Next hop Critical Trigger Delay";
                   }
                   leaf next-hop-non-critical-trigger-delay {
@@ -4412,7 +4412,7 @@ module Cisco-IOS-XR-ipv4-bgp-cfg {
                       range "0..4294967295";
                     }
                     units "millisecond";
-                    default "10000";
+                    // default "10000";
                     description
                       "Next hop Non-critical Trigger Delay";
                   }
@@ -4434,7 +4434,7 @@ module Cisco-IOS-XR-ipv4-bgp-cfg {
                       range "5..3600";
                     }
                     units "second";
-                    default "60";
+                    // default "60";
                     description
                       "Configure background scanner interval for
                       this address family";
@@ -4453,7 +4453,7 @@ module Cisco-IOS-XR-ipv4-bgp-cfg {
                       range "1..512";
                     }
                     units "megabyte";
-                    default "32";
+                    // default "32";
                     description
                       "Upper bound on update generation
                       transient memory usage for every EBGP
@@ -4464,7 +4464,7 @@ module Cisco-IOS-XR-ipv4-bgp-cfg {
                       range "4..2048";
                     }
                     units "megabyte";
-                    default "256";
+                    // default "256";
                     description
                       "Upper bound on update generation
                       transient memory usage for the
@@ -4480,7 +4480,7 @@ module Cisco-IOS-XR-ipv4-bgp-cfg {
                       range "1..512";
                     }
                     units "megabyte";
-                    default "32";
+                    // default "32";
                     description
                       "Upper bound on update generation
                       transient memory usage for every IBGP
@@ -4587,7 +4587,7 @@ module Cisco-IOS-XR-ipv4-bgp-cfg {
                   range "0..300";
                 }
                 units "second";
-                default "5";
+                // default "5";
                 description
                   "Set the delay for triggering nexthop
                   recalculations";
@@ -4622,7 +4622,7 @@ module Cisco-IOS-XR-ipv4-bgp-cfg {
                   range "5..3600";
                 }
                 units "second";
-                default "60";
+                // default "60";
                 description
                   "Configure background scanner interval for
                   generic scanner";
@@ -4649,7 +4649,7 @@ module Cisco-IOS-XR-ipv4-bgp-cfg {
                   range "1..6000";
                 }
                 units "second";
-                default "600";
+                // default "600";
                 description "Time before stale routes are purged.";
               }
               leaf enforce-ibgp-out-policy {
@@ -4663,7 +4663,7 @@ module Cisco-IOS-XR-ipv4-bgp-cfg {
                   range "16..2048";
                 }
                 units "megabyte";
-                default "512";
+                // default "512";
                 description
                   "Upper bound on update generation transient
                   memory usage for the process";
@@ -4673,7 +4673,7 @@ module Cisco-IOS-XR-ipv4-bgp-cfg {
                   range "1..4095";
                 }
                 units "second";
-                default "120";
+                // default "120";
                 description "Restart time advertised to neighbors";
               }
               leaf update-error-handling-basic-ibgp-disable {
@@ -4693,7 +4693,7 @@ module Cisco-IOS-XR-ipv4-bgp-cfg {
                   range "1..4095";
                 }
                 units "second";
-                default "360";
+                // default "360";
                 description
                   "Maximum time to wait for restart of GR
                   capable peers";

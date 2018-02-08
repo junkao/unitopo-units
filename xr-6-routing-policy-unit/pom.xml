@@ -6,12 +6,7 @@
   ~ terms of the Eclipse Public License v1.0 which accompanies this distribution,
   ~ and is available at http://www.eclipse.org/legal/epl-v10.html
   -->
-
-<!-- vi: set et smarttab sw=4 tabstop=4: -->
-
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <parent>
         <groupId>io.frinx.unitopo</groupId>
@@ -20,19 +15,14 @@
         <relativePath>../kotlin-unit-parent</relativePath>
     </parent>
 
-    <artifactId>xr-6-network-instance-unit</artifactId>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>io.frinx.unitopo</groupId>
+    <artifactId>xr-6-routing-policy-unit</artifactId>
+    <name>xr-6-bpg-unit-</name>
     <version>3.1.2.rc5-frinx-SNAPSHOT</version>
     <packaging>bundle</packaging>
-    <description>
-        Unified topology unit for XR network instance.
-        Compatible with:
-            IOS XR 6
-              - 6.0.0 - 6.2.2
-        According to: https://github.com/YangModels/yang/tree/master/vendor/cisco/xr
-    </description>
 
     <build>
-        <!-- Configuration necessary to have java+kotlin compilation working -->
         <plugins>
             <plugin>
                 <artifactId>kotlin-maven-plugin</artifactId>
@@ -50,74 +40,52 @@
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>io.fd.honeycomb</groupId>
-            <artifactId>translate-impl</artifactId>
-            <version>${hc.version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>io.frinx.unitopo</groupId>
             <artifactId>translation-registry-spi</artifactId>
-            <version>${project.version}</version>
+            <version>${cli.version}</version>
         </dependency>
         <dependency>
             <groupId>io.frinx.unitopo</groupId>
-            <artifactId>topology-impl</artifactId>
-            <version>${project.version}</version>
+            <artifactId>network-instance-unit</artifactId>
+            <version>${cli.version}</version>
         </dependency>
         <dependency>
             <groupId>io.frinx.unitopo</groupId>
             <artifactId>translation-registry-api</artifactId>
+            <version>${cli.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.frinx.unitopo</groupId>
+            <artifactId>utils-unit</artifactId>
+            <version>${cli.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.frinx.unitopo</groupId>
+            <artifactId>xr-6-network-instance-unit</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-net</groupId>
-            <artifactId>commons-net</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>network-instance-unit</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>xr-6-interface-unit</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>xr-6-bgp-unit</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>xr-6-ospf-unit</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>xr-6-lr-unit</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <!-- Models unified -->
-        <dependency>
-            <groupId>io.frinx.openconfig</groupId>
-            <artifactId>openconfig-network-instance</artifactId>
-            <version>${openconfig.version}</version>
         </dependency>
 
         <dependency>
             <groupId>io.fd.honeycomb</groupId>
             <artifactId>translate-impl</artifactId>
             <version>${hc.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.frinx.openconfig</groupId>
+            <artifactId>openconfig-policy</artifactId>
+            <version>${openconfig.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.frinx.unitopo</groupId>
+            <artifactId>network-instance-unit</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <!-- Testing Dependencies -->
@@ -129,6 +97,21 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Netconf testing dependencies-->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>utils-unit</artifactId>
+            <type>test-jar</type>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.netconf</groupId>
+            <artifactId>sal-netconf-connector</artifactId>
+            <version>${netconf.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

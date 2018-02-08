@@ -119,9 +119,9 @@
                                     <exists></exists>
                                     <route-distinguisher>
                                         <type>four-byte-as</type>
-                                        <as-xx>12323</as-xx>
-                                        <as>4</as>
-                                        <as-index>34</as-index>
+                                        <as-xx>1</as-xx>
+                                        <as>1</as>
+                                        <as-index>1</as-index>
                                     </route-distinguisher>
                                     <vrf-global-afs>
                                         <vrf-global-af>
@@ -145,6 +145,29 @@
                                         </remote-as>
                                     </vrf-neighbor>
                                 </vrf-neighbors>
+                            </vrf>
+                            <vrf>
+                                <vrf-name>def</vrf-name>
+                                <vrf-global>
+                                    <exists></exists>
+                                    <route-distinguisher>
+                                        <type>as</type>
+                                        <as-xx>0</as-xx>
+                                        <as>1</as>
+                                        <as-index>2</as-index>
+                                    </route-distinguisher>
+                                </vrf-global>
+                            </vrf>
+                            <vrf>
+                                <vrf-name>def2</vrf-name>
+                                <vrf-global>
+                                    <exists></exists>
+                                    <route-distinguisher>
+                                        <type>ipv4-address</type>
+                                        <address>1.2.3.4</address>
+                                        <address-index>44</address-index>
+                                    </route-distinguisher>
+                                </vrf-global>
                             </vrf>
                         </vrfs>
                     </four-byte-as>

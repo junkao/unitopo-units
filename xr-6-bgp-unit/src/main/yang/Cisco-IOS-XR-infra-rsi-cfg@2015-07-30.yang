@@ -234,7 +234,7 @@ module Cisco-IOS-XR-infra-rsi-cfg {
           }
           leaf priority {
             type Srlg-priority;
-            default "default";
+            // default "default";
             description "Priority for optical domain values";
           }
         }
@@ -259,7 +259,7 @@ module Cisco-IOS-XR-infra-rsi-cfg {
               }
               leaf srlg-priority {
                 type Srlg-priority;
-                default "default";
+                // default "default";
                 description "SRLG priority";
               }
             }
@@ -291,7 +291,7 @@ module Cisco-IOS-XR-infra-rsi-cfg {
             }
             leaf srlg-priority {
               type Srlg-priority;
-              default "default";
+              // default "default";
               description "SRLG priority";
             }
           }
@@ -372,7 +372,7 @@ module Cisco-IOS-XR-infra-rsi-cfg {
             }
             leaf srlg-priority {
               type Srlg-priority;
-              default "default";
+              // default "default";
               description "SRLG priority";
             }
           }
@@ -418,7 +418,7 @@ module Cisco-IOS-XR-infra-rsi-cfg {
             }
             leaf srlg-priority {
               type Srlg-priority;
-              default "default";
+              // default "default";
               description "SRLG priority";
             }
           }

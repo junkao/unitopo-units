@@ -25,6 +25,7 @@ import io.frinx.unitopo.unit.xr6.network.instance.vrf.VrfTableConnectionConfigWr
 import io.frinx.unitopo.unit.xr6.network.instance.vrf.ifc.VrfInterfaceConfigWriter
 import io.frinx.unitopo.unit.xr6.network.instance.vrf.ifc.VrfInterfaceReader
 import io.frinx.unitopo.unit.xr6.network.instance.vrf.protocol.LocalAggregateConfigReader
+import io.frinx.unitopo.unit.xr6.network.instance.vrf.protocol.LocalAggregateConfigWriter
 import io.frinx.unitopo.unit.xr6.network.instance.vrf.protocol.LocalAggregateReader
 import io.frinx.unitopo.unit.xr6.network.instance.vrf.protocol.ProtocolReader
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.local.routing.rev170515.local.aggregate.top.LocalAggregatesBuilder
@@ -57,6 +58,17 @@ class Unit(private val registry: TranslationUnitCollector) : NetworkInstanceUnit
     )
 
     override fun provideSpecificWriters(wRegistry: ModifiableWriterRegistryBuilder, underlayAccess: UnderlayAccess) {
+        //todo create proper writers once we support routing policies
+        wRegistry.add(GenericWriter(IIDs.NE_NE_INTERINSTANCEPOLICIES, NoopWriter()))
+        wRegistry.add(GenericWriter(IIDs.NE_NE_IN_APPLYPOLICY, NoopWriter()))
+        wRegistry.add(GenericWriter(IIDs.NE_NE_IN_AP_CONFIG, NoopWriter()))
+
+        // Local aggregates
+        wRegistry.add(GenericWriter(IIDs.NE_NE_PR_PR_LO_AGGREGATE, NoopWriter()))
+        wRegistry.addAfter(GenericWriter(IIDs.NE_NE_PR_PR_LO_AG_CONFIG, LocalAggregateConfigWriter(underlayAccess)),
+                Sets.newHashSet(IIDs.NE_NE_CONFIG, IIDs.NE_NE_PR_PR_BG_GL_CONFIG, IIDs.NE_NE_PR_PR_OS_GL_CONFIG,
+                        IIDs.NE_NE_PR_PR_BG_GL_AF_AF_CONFIG, IIDs.NE_NE_PR_PR_BG_NE_NE_AF_AF_CONFIG))
+
         wRegistry.add(GenericWriter(IIDs.NE_NE_IN_INTERFACE, NoopWriter()))
         wRegistry.add(GenericWriter(IIDs.NE_NE_IN_IN_CONFIG, VrfInterfaceConfigWriter(underlayAccess)))
         // FIXME join with bgp writers
@@ -64,7 +76,6 @@ class Unit(private val registry: TranslationUnitCollector) : NetworkInstanceUnit
         wRegistry.add(GenericWriter(IIDs.NE_NE_TA_TA_CONFIG, VrfTableConnectionConfigWriter(underlayAccess)))
         wRegistry.add(GenericWriter(IIDs.NE_NE_TA_TABLE, NoopWriter()))
         wRegistry.add(GenericWriter(IIDs.NET_NET_TAB_TAB_CONFIG, NoopWriter()))
-        wRegistry.add(GenericWriter(IIDs.NE_NE_IN_AP_CONFIG, NoopWriter()))
         wRegistry.addAfter(GenericWriter(IIDs.NE_NE_CONFIG, NetworkInstanceConfigWriter(underlayAccess)),
                 setOf(
                         /*handle after ifc configuration*/ io.frinx.openconfig.openconfig.interfaces.IIDs.IN_IN_CONFIG,

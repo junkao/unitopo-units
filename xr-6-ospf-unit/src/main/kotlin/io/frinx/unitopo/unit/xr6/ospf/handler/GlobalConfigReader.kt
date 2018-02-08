@@ -9,7 +9,6 @@
 package io.frinx.unitopo.unit.xr6.ospf.handler
 
 import io.fd.honeycomb.translate.read.ReadContext
-import io.fd.honeycomb.translate.read.ReadFailedException
 import io.frinx.openconfig.network.instance.NetworInstance
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr6.ospf.common.OspfReader
@@ -36,11 +35,7 @@ class GlobalConfigReader(private val access: UnderlayAccess) : OspfReader.OspfCo
         val vrfName = id.firstKeyOf(NetworkInstance::class.java)
         val protKey = id.firstKeyOf(Protocol::class.java)
 
-        try {
-            readProcess(access, protKey, { builder.fromUnderlay(it, vrfName.name) })
-        } catch (e: MdSalReadFailedException) {
-            throw ReadFailedException(id, e)
-        }
+        readProcess(access, protKey, { builder.fromUnderlay(it, vrfName.name) })
     }
 
     override fun merge(parentBuilder: Builder<out DataObject>, readValue: Config) {

@@ -1,0 +1,244 @@
+/*
+ * Copyright © 2017 Frinx and others. All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ */
+
+package io.frinx.unitopo.unit.xr6.bgp.handler.neighbor
+
+import io.fd.honeycomb.translate.util.RWUtils
+import io.fd.honeycomb.translate.write.WriteContext
+import io.frinx.openconfig.network.instance.NetworInstance
+import io.frinx.unitopo.registry.spi.UnderlayAccess
+import io.frinx.unitopo.unit.xr6.bgp.*
+import io.frinx.unitopo.unit.xr6.bgp.common.As
+import io.frinx.unitopo.unit.xr6.bgp.common.BgpListWriter
+import io.frinx.unitopo.unit.xr6.bgp.handler.GlobalConfigWriter
+import io.frinx.unitopo.unit.xr6.bgp.handler.GlobalConfigWriter.Companion.XR_BGP_INSTANCE_NAME
+import io.frinx.unitopo.unit.xr6.bgp.handler.toUnderlay
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.Instance
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.InstanceKey
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.instance.InstanceAs
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.instance.InstanceAsKey
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.instance.instance.`as`.FourByteAs
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.instance.instance.`as`.FourByteAsKey
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.instance.instance.`as`.four._byte.`as`.DefaultVrf
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.instance.instance.`as`.four._byte.`as`.Vrfs
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.instance.instance.`as`.four._byte.`as`._default.vrf.BgpEntity
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.instance.instance.`as`.four._byte.`as`._default.vrf.bgp.entity.Neighbors
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.instance.instance.`as`.four._byte.`as`._default.vrf.bgp.entity.neighbors.neighbor.NeighborAfsBuilder
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.instance.instance.`as`.four._byte.`as`._default.vrf.bgp.entity.neighbors.neighbor.neighbor.afs.NeighborAfBuilder
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.instance.instance.`as`.four._byte.`as`.vrfs.Vrf
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.instance.instance.`as`.four._byte.`as`.vrfs.VrfKey
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.instance.instance.`as`.four._byte.`as`.vrfs.vrf.VrfNeighbors
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.instance.instance.`as`.four._byte.`as`.vrfs.vrf.vrf.neighbors.VrfNeighbor
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.instance.instance.`as`.four._byte.`as`.vrfs.vrf.vrf.neighbors.vrf.neighbor.VrfNeighborAfsBuilder
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.instance.instance.`as`.four._byte.`as`.vrfs.vrf.vrf.neighbors.vrf.neighbor.vrf.neighbor.afs.VrfNeighborAfBuilder
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.remote.`as`.RemoteAsBuilder
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.datatypes.rev150827.BgpAsRange
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.xr.types.rev150629.CiscoIosXrString
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.xr.types.rev150629.InterfaceName
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.BgpCommonNeighborGroupTransportConfig
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.neighbor.list.Neighbor
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.neighbor.list.NeighborKey
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.top.Bgp
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.top.bgp.Global
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.types.rev170202.AFISAFITYPE
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstanceKey
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.types.inet.rev170403.AsNumber
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.IpAddressNoZone
+import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
+
+class NeighborWriter(private val access: UnderlayAccess) : BgpListWriter<Neighbor, NeighborKey> {
+
+    override fun writeCurrentAttributesForType(instanceIdentifier: InstanceIdentifier<Neighbor>, neighbor: Neighbor,
+                                               writeContext: WriteContext) {
+        val vrfKey = instanceIdentifier.firstKeyOf(NetworkInstance::class.java)
+
+        val bgpGlobal = writeContext.readAfter(RWUtils.cutId(instanceIdentifier, Bgp::class.java)).get().global
+        val bgpAs = bgpGlobal?.config?.`as`!!
+
+        val neighAfiSafi = getAfiSafisForNeighbor(bgpGlobal, neighbor)
+
+        if (vrfKey == NetworInstance.DEFAULT_NETWORK) {
+            val neighborBuilder = UnderlayNeighborBuilder()
+            renderGlobalNeighbor(neighborBuilder, neighbor, neighAfiSafi)
+            access.merge(getGlobalNeighborIdentifier(bgpAs, neighbor.neighborAddress.toNoZone()), neighborBuilder.build())
+        } else {
+            val neighborBuilder = UnderlayVrfNeighborBuilder()
+            renderVrfNeighbor(neighborBuilder, neighbor, neighAfiSafi)
+            access.merge(getVrfNeighborIdentifier(bgpAs, vrfKey, neighbor.neighborAddress.toNoZone()), neighborBuilder.build())
+        }
+    }
+
+    override fun updateCurrentAttributesForType(instanceIdentifier: InstanceIdentifier<Neighbor>, dataBefore: Neighbor, dataAfter: Neighbor,
+                                                writeContext: WriteContext) {
+        val vrfKey = instanceIdentifier.firstKeyOf(NetworkInstance::class.java)
+
+        val bgpGlobal = writeContext.readAfter(RWUtils.cutId(instanceIdentifier, Bgp::class.java)).get().global
+        val bgpAs = bgpGlobal?.config?.`as`!!
+
+        val neighAfiSafi = getAfiSafisForNeighbor(bgpGlobal, dataAfter)
+
+        if (vrfKey == NetworInstance.DEFAULT_NETWORK) {
+            val globalNeighborIdentifier = getGlobalNeighborIdentifier(bgpAs, dataAfter.neighborAddress.toNoZone())
+
+            val neighborBuilder = access.read(globalNeighborIdentifier)
+                    .checkedGet()
+                    .or(UnderlayNeighborBuilder().build())
+                    .let { UnderlayNeighborBuilder(it) }
+
+            renderGlobalNeighbor(neighborBuilder, dataAfter, neighAfiSafi)
+            access.merge(globalNeighborIdentifier, neighborBuilder.build())
+        } else {
+            val vrfNeighborIdentifier = getVrfNeighborIdentifier(bgpAs, vrfKey, dataAfter.neighborAddress.toNoZone())
+
+            val neighborBuilder = access.read(vrfNeighborIdentifier)
+                    .checkedGet()
+                    .or(UnderlayVrfNeighborBuilder().build())
+                    .let { UnderlayVrfNeighborBuilder(it) }
+
+            renderVrfNeighbor(neighborBuilder, dataAfter, neighAfiSafi)
+            access.merge(vrfNeighborIdentifier, neighborBuilder.build())
+        }
+    }
+
+    override fun deleteCurrentAttributesForType(instanceIdentifier: InstanceIdentifier<Neighbor>, neighbor: Neighbor,
+                                                writeContext: WriteContext) {
+        val vrfKey = instanceIdentifier.firstKeyOf(NetworkInstance::class.java)
+
+        val bgpGlobal = writeContext.readBefore(RWUtils.cutId(instanceIdentifier, Bgp::class.java)).get().global
+        val bgpAs = bgpGlobal?.config?.`as`!!
+
+        if (vrfKey == NetworInstance.DEFAULT_NETWORK) {
+            access.delete(getGlobalNeighborIdentifier(bgpAs, neighbor.neighborAddress.toNoZone()))
+        } else {
+            access.delete(getVrfNeighborIdentifier(bgpAs, vrfKey, neighbor.neighborAddress.toNoZone()))
+        }
+    }
+
+    companion object {
+
+        fun getVrfNeighborIdentifier(bgpProcess: AsNumber, vrfName: NetworkInstanceKey, neighbor: IpAddressNoZone): InstanceIdentifier<VrfNeighbor> {
+            val (asXX, asYY) = As.asToDotNotation(bgpProcess)
+
+            return GlobalConfigWriter.XR_BGP_ID
+                    .child(Instance::class.java, InstanceKey(XR_BGP_INSTANCE_NAME))
+                    .child(InstanceAs::class.java, InstanceAsKey(BgpAsRange(asXX)))
+                    .child(FourByteAs::class.java, FourByteAsKey(BgpAsRange(asYY)))
+                    .child(Vrfs::class.java)
+                    .child(Vrf::class.java, VrfKey(CiscoIosXrString(vrfName.name)))
+                    .child(VrfNeighbors::class.java)
+                    .child(VrfNeighbor::class.java, UnderlayVrfNeighborKey(neighbor))
+        }
+
+        fun renderGlobalNeighbor(builder: UnderlayNeighborBuilder, data: Neighbor, neighAfiSafi: List<Class<out AFISAFITYPE>>) {
+            val (asXX, asYY) = As.asToDotNotation(data.config.peerAs)
+
+            builder.setNeighborAddress(data.neighborAddress.toNoZone())
+                    .setUpdateSourceInterface(data.transport?.config?.localAddress?.toIfcName()).remoteAs =
+                    RemoteAsBuilder()
+                            .setAsXx(BgpAsRange(asXX))
+                            .setAsYy(BgpAsRange(asYY))
+                            .build()
+
+            // Get current Afs to map
+            val currentAfs = builder
+                    .neighborAfs
+                    ?.neighborAf.orEmpty()
+                    .map { it.afName to it }
+                    .toMap()
+                    .toMutableMap()
+
+            // Rebuild AFs, use existing configuration if present
+            neighAfiSafi
+                    .map { it.toUnderlay() }
+                    .map { it to currentAfs[it] }
+                    .map { it.second ?: NeighborAfBuilder().setAfName(it.first).build() }
+                    .map {
+                        Pair(it.afName, NeighborAfBuilder(it)
+                                .setRoutePolicyIn(data.applyPolicy?.config?.importPolicy.orEmpty().firstOrNull())
+                                .setRoutePolicyOut(data.applyPolicy?.config?.exportPolicy.orEmpty().firstOrNull())
+                                .setActivate(true)
+                                .build())
+                    }.forEach { currentAfs[it.first] = it.second }
+
+            builder.neighborAfs = NeighborAfsBuilder()
+                    .setNeighborAf(currentAfs.values.toList())
+                    .build()
+        }
+
+        fun getGlobalNeighborIdentifier(bgpProcess: AsNumber, neighbor: IpAddressNoZone): InstanceIdentifier<UnderlayNeighbor> {
+            val (asXX, asYY) = As.asToDotNotation(bgpProcess)
+
+            return GlobalConfigWriter.XR_BGP_ID
+                    .child(Instance::class.java, InstanceKey(XR_BGP_INSTANCE_NAME))
+                    .child(InstanceAs::class.java, InstanceAsKey(BgpAsRange(asXX)))
+                    .child(FourByteAs::class.java, FourByteAsKey(BgpAsRange(asYY)))
+                    .child(DefaultVrf::class.java)
+                    .child(BgpEntity::class.java)
+                    .child(Neighbors::class.java)
+                    .child(UnderlayNeighbor::class.java, UnderlayNeighborKey(neighbor))
+        }
+
+        fun renderVrfNeighbor(builder: UnderlayVrfNeighborBuilder, data: Neighbor, neighAfiSafi: List<Class<out AFISAFITYPE>>) {
+            val (asXX, asYY) = As.asToDotNotation(data.config.peerAs)
+
+            builder.setNeighborAddress(data.neighborAddress.toNoZone())
+                    .setUpdateSourceInterface(data.transport?.config?.localAddress?.toIfcName()).remoteAs =
+                    RemoteAsBuilder()
+                            .setAsXx(BgpAsRange(asXX))
+                            .setAsYy(BgpAsRange(asYY))
+                            .build()
+
+            // Get current Afs to map
+            val currentAfs = builder
+                    .vrfNeighborAfs
+                    ?.vrfNeighborAf.orEmpty()
+                    .map { it.afName to it }
+                    .toMap()
+                    .toMutableMap()
+
+            // Reconfigure those coming as an update
+            neighAfiSafi
+                    .map { it.toUnderlay() }
+                    .map { currentAfs[it] }
+                    .filterNotNull()
+                    .map {
+                        Pair(it.afName, VrfNeighborAfBuilder(it)
+                                .setRoutePolicyIn(data.applyPolicy?.config?.importPolicy.orEmpty().firstOrNull())
+                                .setRoutePolicyOut(data.applyPolicy?.config?.exportPolicy.orEmpty().firstOrNull())
+                                .build())
+                    }.forEach { currentAfs[it.first] = it.second }
+
+            builder.vrfNeighborAfs = VrfNeighborAfsBuilder()
+                    .setVrfNeighborAf(currentAfs.values.toList())
+                    .build()
+        }
+
+        /**
+         * Get neighbor specific afiSafi list or if empty, use BGP instance specific afi safi list
+         */
+        private fun getAfiSafisForNeighbor(bgpGlobal: Global, neighbor: Neighbor): List<Class<out AFISAFITYPE>> {
+            return if (neighbor.afiSafis?.afiSafi.orEmpty().isNotEmpty()) {
+                neighbor.afiSafis?.afiSafi.orEmpty()
+                        .map { it.afiSafiName }
+                        .toList()
+            } else {
+                bgpGlobal.afiSafis.afiSafi.orEmpty()
+                        .map { it.afiSafiName }
+                        .toList()
+            }
+        }
+    }
+}
+
+private fun BgpCommonNeighborGroupTransportConfig.LocalAddress?.toIfcName(): InterfaceName? {
+    return this?.string?.let {
+        InterfaceName(it)
+    }
+}
+

@@ -1,0 +1,147 @@
+<?xml version="1.0"?>
+<!--
+
+<hello xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+    <capabilities>
+        <capability>urn:ietf:params:netconf:base:1.0</capability>
+        <capability>urn:ietf:params:netconf:base:1.1</capability>
+    </capabilities>
+</hello>
+]]>]]>
+
+#243
+<rpc id="a" a="64" xmlnx="a:b:c:d" xmlns="urn:ietf:params:xml:ns:netconf:base:1.0" message-id="102">
+    <get>
+    <filter type="subtree">
+     <vrfs xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rsi-cfg"/>
+    </filter>
+    </get>
+</rpc>
+##
+
+-->
+<rpc-reply message-id="102" id="a" a="64" xmlnx="a:b:c:d" xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+    <data>
+        <vrfs xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rsi-cfg">
+            <vrf>
+                <vrf-name>abcd</vrf-name>
+                <create></create>
+                <afs>
+                    <af>
+                        <af-name>ipv4</af-name>
+                        <saf-name>unicast</saf-name>
+                        <topology-name>default</topology-name>
+                        <create></create>
+                        <bgp xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-ipv4-bgp-cfg">
+                            <import-route-targets>
+                                <route-targets>
+                                    <route-target>
+                                        <type>as</type>
+                                        <as-or-four-byte-as>
+                                            <as-xx>0</as-xx>
+                                            <as>6500</as>
+                                            <as-index>4</as-index>
+                                            <stitching-rt>0</stitching-rt>
+                                        </as-or-four-byte-as>
+                                    </route-target>
+                                    <route-target>
+                                        <type>four-byte-as</type>
+                                        <as-or-four-byte-as>
+                                            <as-xx>0</as-xx>
+                                            <as>5445444</as>
+                                            <as-index>1</as-index>
+                                            <stitching-rt>0</stitching-rt>
+                                        </as-or-four-byte-as>
+                                    </route-target>
+                                </route-targets>
+                            </import-route-targets>
+                            <export-route-targets>
+                                <route-targets>
+                                    <route-target>
+                                        <type>as</type>
+                                        <as-or-four-byte-as>
+                                            <as-xx>0</as-xx>
+                                            <as>1</as>
+                                            <as-index>1</as-index>
+                                            <stitching-rt>0</stitching-rt>
+                                        </as-or-four-byte-as>
+                                        <as-or-four-byte-as>
+                                            <as-xx>0</as-xx>
+                                            <as>8585</as>
+                                            <as-index>4343</as-index>
+                                            <stitching-rt>0</stitching-rt>
+                                        </as-or-four-byte-as>
+                                    </route-target>
+                                </route-targets>
+                            </export-route-targets>
+                        </bgp>
+                    </af>
+                    <af>
+                        <af-name>ipv6</af-name>
+                        <saf-name>unicast</saf-name>
+                        <topology-name>default</topology-name>
+                        <create></create>
+                        <bgp xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-ipv4-bgp-cfg">
+                            <import-route-targets>
+                                <route-targets>
+                                    <route-target>
+                                        <type>as</type>
+                                        <as-or-four-byte-as>
+                                            <as-xx>0</as-xx>
+                                            <as>11</as>
+                                            <as-index>11</as-index>
+                                            <stitching-rt>0</stitching-rt>
+                                        </as-or-four-byte-as>
+                                    </route-target>
+                                </route-targets>
+                            </import-route-targets>
+                        </bgp>
+                    </af>
+                </afs>
+            </vrf>
+
+            <vrf>
+                <vrf-name>abcd3</vrf-name>
+                <create></create>
+                <afs>
+                    <af>
+                        <af-name>ipv4</af-name>
+                        <saf-name>unicast</saf-name>
+                        <topology-name>default</topology-name>
+                        <create></create>
+                        <bgp xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-ipv4-bgp-cfg">
+                            <import-route-targets>
+                                <route-targets>
+                                    <route-target>
+                                        <type>as</type>
+                                        <as-or-four-byte-as>
+                                            <as-xx>0</as-xx>
+                                            <as>6500</as>
+                                            <as-index>4</as-index>
+                                            <stitching-rt>0</stitching-rt>
+                                        </as-or-four-byte-as>
+                                    </route-target>
+                                    <route-target>
+                                        <type>four-byte-as</type>
+                                        <as-or-four-byte-as>
+                                            <as-xx>0</as-xx>
+                                            <as>5445444</as>
+                                            <as-index>1</as-index>
+                                            <stitching-rt>0</stitching-rt>
+                                        </as-or-four-byte-as>
+                                    </route-target>
+                                </route-targets>
+                            </import-route-targets>
+                        </bgp>
+                    </af>
+                </afs>
+            </vrf>
+
+            <vrf>
+                <vrf-name>abcd2</vrf-name>
+                <create></create>
+            </vrf>
+        </vrfs>
+    </data>
+</rpc-reply>
+

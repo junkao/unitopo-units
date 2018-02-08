@@ -3,7 +3,6 @@ package io.frinx.unitopo.unit.xr6.ospf.handler
 import io.fd.honeycomb.translate.read.ReadContext
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr6.ospf.common.OspfReader
-import org.opendaylight.controller.md.sal.common.api.data.ReadFailedException
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev151109.ospf.processes.Process
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.Protocol
@@ -22,11 +21,7 @@ class GlobalStateReader(private val access: UnderlayAccess) : OspfReader.OspfOpe
         val vrfName = id.firstKeyOf(NetworkInstance::class.java)
         val protKey = id.firstKeyOf(Protocol::class.java)
 
-        try {
-            GlobalConfigReader.readProcess(access, protKey, { builder.fromUnderlay(it, vrfName.name) })
-        } catch (e: ReadFailedException) {
-            throw io.fd.honeycomb.translate.read.ReadFailedException(id, e)
-        }
+        GlobalConfigReader.readProcess(access, protKey, { builder.fromUnderlay(it, vrfName.name) })
     }
 
     override fun merge(parentBuilder: Builder<out DataObject>, readValue: State) {

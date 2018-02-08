@@ -32,16 +32,12 @@ class OspfProtocolReader(private val access: UnderlayAccess) :
 
     @Throws(ReadFailedException::class)
     override fun getAllIds(id: IID<Protocol>, context: ReadContext): List<ProtocolKey> {
-        try {
-            return access.read(UNDERLAY_OSPF)
-                    .checkedGet()
-                    .orNull()
-                    // FIXME filter only per VRF
-                    ?.let { it.process.orEmpty().map { ProtocolKey(OspfReader.TYPE, it.processName?.value) }.toList() }
-                    .orEmpty()
-        } catch (e: MdSalReadFailedException) {
-            throw ReadFailedException(id, e)
-        }
+        return access.read(UNDERLAY_OSPF)
+                .checkedGet()
+                .orNull()
+                // FIXME filter only per VRF
+                ?.let { it.process.orEmpty().map { ProtocolKey(OspfReader.TYPE, it.processName?.value) }.toList() }
+                .orEmpty()
     }
 
     @Throws(ReadFailedException::class)
