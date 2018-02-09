@@ -128,7 +128,7 @@ class InterfaceReader(private val underlayAccess: UnderlayAccess) : ConfigListRe
 
         fun parseIfcName(ifcName: String): String? {
             return when (parseIfcType(ifcName)) {
-                Ieee8023adLag::class.java -> LAG_PREFIX + ifcName
+                Ieee8023adLag::class.java -> LAG_PREFIX + ifcName.removePrefix("ae")
                 else -> ifcName
             }
         }
