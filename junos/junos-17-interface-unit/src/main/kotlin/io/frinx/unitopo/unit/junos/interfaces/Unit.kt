@@ -33,10 +33,10 @@ import io.frinx.unitopo.unit.junos.interfaces.handler.subinterfaces.Subinterface
 import io.frinx.unitopo.unit.junos.interfaces.handler.subinterfaces.SubinterfaceConfigWriter
 import io.frinx.unitopo.unit.junos.interfaces.handler.subinterfaces.SubinterfaceReader
 import io.frinx.unitopo.unit.utils.NoopListWriter
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bfd.rev171024.IfLagBfdAug
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bfd.rev171024.IfLagBfdAugBuilder
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bfd.rev171024.bfd.top.Bfd
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bfd.rev171024.bfd.top.BfdBuilder
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.bfd.rev171024.IfLagBfdAug
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.bfd.rev171024.IfLagBfdAugBuilder
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.bfd.rev171024.bfd.top.Bfd
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.bfd.rev171024.bfd.top.BfdBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.damping.rev171024.IfDampAug
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.damping.rev171024.IfDampAugBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.damping.rev171024.damping.top.Damping
@@ -65,8 +65,8 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.lacp.lag.memb
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.lacp.lag.member.rev171109.`$YangModuleInfoImpl` as LacpAugYangInfo
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.lacp.rev170505.`$YangModuleInfoImpl` as LacpYangInfo
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bfd.rev171024.`$YangModuleInfoImpl` as LagBfdYangInfo
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bfd.rev171024.bfd.top.bfd.Config as BfdConfig
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.bfd.rev171024.`$YangModuleInfoImpl` as LagBfdYangInfo
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.bfd.rev171024.bfd.top.bfd.Config as BfdConfig
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.damping.rev171024.`$YangModuleInfoImpl` as DampingYangInfo
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.aggregate.rev161222.Interface1 as AggregateInterface1Aug
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.aggregate.rev161222.Interface1Builder as AggregateInterface1AugBuilder
