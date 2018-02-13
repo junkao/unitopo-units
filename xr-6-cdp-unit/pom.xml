@@ -16,13 +16,13 @@
     <parent>
         <groupId>io.frinx.unitopo</groupId>
         <artifactId>kotlin-unit-parent</artifactId>
-        <version>3.1.2.rc4-frinx-SNAPSHOT</version>
+        <version>3.1.2.rc4-frinx</version>
         <relativePath>../kotlin-unit-parent</relativePath>
     </parent>
 
     <groupId>io.frinx.unitopo</groupId>
     <artifactId>xr-6-cdp-unit</artifactId>
-    <version>3.1.2.rc4-frinx-SNAPSHOT</version>
+    <version>3.1.2.rc4-frinx</version>
     <packaging>bundle</packaging>
     <description>
         Unified topology unit for XR CDP.
