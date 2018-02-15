@@ -22,7 +22,7 @@
 
     <groupId>io.frinx.unitopo</groupId>
     <artifactId>junos-17-models</artifactId>
-    <version>3.1.2.rc5-frinx-SNAPSHOT</version>
+    <version>3.1.2.frinx</version>
     <packaging>bundle</packaging>
     <build>
         <plugins>

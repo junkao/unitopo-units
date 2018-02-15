@@ -18,7 +18,7 @@
 
   <groupId>io.frinx.unitopo</groupId>
   <artifactId>unified-topology-units-features</artifactId>
-  <version>3.1.2.rc5-frinx-SNAPSHOT</version>
+  <version>3.1.2.frinx</version>
   <name>${project.artifactId}</name>
 
   <prerequisites>
@@ -31,9 +31,9 @@
     <mdsal.version>1.5.1-Carbon-SR1.3_1_2-frinxodl</mdsal.version>
     <yangtools.version>1.1.1-Carbon-SR1.3_1_2-frinxodl</yangtools.version>
     <hc.version>1.17.10-Carbon-SR1.3_1_2-frinxodl</hc.version>
-    <cli.version>3.1.2.rc5-frinx-SNAPSHOT</cli.version>
-    <unitopo.version>3.1.2.rc5-frinx-SNAPSHOT</unitopo.version>
-    <openconfig.version>3.1.2.rc5-frinx-SNAPSHOT</openconfig.version>
+    <cli.version>3.1.2.frinx</cli.version>
+    <unitopo.version>3.1.2.frinx</unitopo.version>
+    <openconfig.version>3.1.2.frinx</openconfig.version>
     <kotlin.version>1.1.4</kotlin.version>
     <jgraph.version>0.9.2</jgraph.version>
   </properties>
