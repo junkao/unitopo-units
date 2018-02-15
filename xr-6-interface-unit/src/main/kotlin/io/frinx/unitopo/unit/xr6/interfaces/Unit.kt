@@ -74,10 +74,7 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
             InterfacesYangInfo.getInstance(),
             IpYangInfo.getInstance())
 
-    override fun getUnderlayYangSchemas() = setOf(
-            UnderlayInterfacesYangInfo.getInstance(),
-            UnderlayInterfacesOperYangInfo.getInstance(),
-            UnderlayIpv4YangInfo.getInstance())
+    override fun getUnderlayYangSchemas() = UNDERLAY_SCHEMAS
 
     override fun getRpcs(underlayAccess: UnderlayAccess) = emptySet<RpcService<*, *>>()
 
@@ -128,7 +125,14 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
 
     override fun toString(): String = "XR 6 (2015-07-30) interface translate unit"
 
+    override fun useAutoCommit() = true
+
     companion object {
+        public val UNDERLAY_SCHEMAS = setOf(
+                UnderlayInterfacesYangInfo.getInstance(),
+                UnderlayInterfacesOperYangInfo.getInstance(),
+                UnderlayIpv4YangInfo.getInstance())
+
         private val SUBIFC_IPV4_AUG_ID = IIDs.IN_IN_SU_SUBINTERFACE.augmentation(Subinterface1::class.java)
 
         private val SUBIFC_IPV4_ID = SUBIFC_IPV4_AUG_ID.child(Ipv4::class.java)

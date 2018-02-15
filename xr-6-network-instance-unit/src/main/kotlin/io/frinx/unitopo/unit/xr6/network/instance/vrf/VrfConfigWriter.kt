@@ -20,12 +20,12 @@ import io.fd.honeycomb.translate.spi.write.WriterCustomizer
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.openconfig.network.instance.NetworInstance
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.topology.impl.data.UnderlayTxManager
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.infra.rsi.cfg.rev150730.VrfAddressFamily
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.infra.rsi.cfg.rev150730.VrfSubAddressFamily
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.infra.rsi.cfg.rev150730.Vrfs
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.infra.rsi.cfg.rev150730.af.table.AfsBuilder
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.infra.rsi.cfg.rev150730.af.table.afs.AfBuilder
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.infra.rsi.cfg.rev150730.af.table.afs.AfKey
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.infra.rsi.cfg.rev150730.vrfs.Vrf
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.infra.rsi.cfg.rev150730.vrfs.VrfBuilder
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.infra.rsi.cfg.rev150730.vrfs.VrfKey
@@ -53,10 +53,21 @@ class VrfConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCustom
         underlayAccess.delete(vrfIid)
     }
 
-    private fun commitUnderlay() {
-        val underlayTxManager = underlayAccess as UnderlayTxManager
-        underlayTxManager.commitTransaction().get()
-        underlayTxManager.refreshTransaction()
+    override fun updateCurrentAttributes(id: org.opendaylight.yangtools.yang.binding.InstanceIdentifier<Config>, dataBefore: Config, dataAfter: Config, writeContext: WriteContext) {
+        if (dataAfter.type != L3VRF::class.java) {
+            return
+        }
+
+        if (dataAfter.name == NetworInstance.DEFAULT_NETWORK_NAME)
+            return
+
+        val vrfIid = getVrfIdentifier(dataAfter.name)
+        val vrfBuilder = underlayAccess.read(vrfIid).checkedGet()
+                .or(EMPTY_VRF)
+                .let { VrfBuilder(it) }
+
+        val (_, vrf) = getVrfData(dataAfter, vrfBuilder)
+        underlayAccess.put(vrfIid, vrf)
     }
 
     override fun writeCurrentAttributes(iid: IID<Config>, dataAfter: Config, wtc: WriteContext) {
@@ -67,17 +78,14 @@ class VrfConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCustom
         if (dataAfter.name == NetworInstance.DEFAULT_NETWORK_NAME)
             return
 
-        val (vrfIid, vrf) = getVrfData(dataAfter)
+        val (vrfIid, vrf) = getVrfData(dataAfter, VrfBuilder())
         underlayAccess.merge(vrfIid, vrf)
-        // Need to commit, because creating and touching VRF in a single TX is not possible, VRF has to exist before
-        // e.g. using it in BGP
-        commitUnderlay()
     }
 
-    private fun getVrfData(data: Config): Pair<IID<Vrf>, Vrf> {
+    private fun getVrfData(data: Config, vrfBuilder: VrfBuilder): Pair<IID<Vrf>, Vrf> {
         val vrfIid = getVrfIdentifier(data.name)
 
-        val vrf = VrfBuilder()
+        val vrf = vrfBuilder
                 .setKey(VrfKey(CiscoIosXrString(data.name)))
                 .setVrfName(CiscoIosXrString(data.name))
                 .setCreate(true)
@@ -86,18 +94,26 @@ class VrfConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCustom
                 AfsBuilder()
                         .setAf(data.enabledAddressFamilies.orEmpty()
                                 .mapNotNull { it.toUnderlay() }
-                                .map { AfBuilder()
-                                        .setCreate(true)
-                                        .setAfName(it)
-                                        .setSafName(VrfSubAddressFamily.Unicast)
-                                        .setTopologyName(CiscoIosXrString("default"))
-                                        .build() })
+                                // Reuse existing AF configuration
+                                .map { vrfBuilder
+                                            .afs?.af.orEmpty()
+                                            .find { existIt -> existIt.afName == it && existIt.safName == VrfSubAddressFamily.Unicast && existIt.topologyName == TOPO_NAME }
+                                            ?: AfBuilder().setAfName(it).build() }
+                                .map { AfBuilder(it) }
+                                .map { it.setCreate(true)
+                                            .setSafName(VrfSubAddressFamily.Unicast)
+                                            .setTopologyName(TOPO_NAME)
+                                            .setKey(AfKey(it.afName, it.safName, it.topologyName))
+                                            .build() })
                         .build()
 
         return Pair(vrfIid, vrf.build())
     }
 
     companion object {
+        private val EMPTY_VRF = VrfBuilder().build()
+        private val TOPO_NAME = CiscoIosXrString("default")
+
         public fun getVrfIdentifier(vrfName: String): IID<Vrf> {
             return IID.create(Vrfs::class.java)
                     .child(Vrf::class.java, VrfKey(CiscoIosXrString(vrfName)))

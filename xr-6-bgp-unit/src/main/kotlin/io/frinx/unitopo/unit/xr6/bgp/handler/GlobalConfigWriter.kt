@@ -19,7 +19,6 @@ package io.frinx.unitopo.unit.xr6.bgp.handler
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.openconfig.network.instance.NetworInstance
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.topology.impl.data.UnderlayTxManager
 import io.frinx.unitopo.unit.network.instance.protocol.bgp.common.BgpReader
 import io.frinx.unitopo.unit.xr6.bgp.*
 import io.frinx.unitopo.unit.xr6.bgp.common.As.Companion.asToDotNotation
@@ -92,12 +91,6 @@ class GlobalConfigWriter(private val underlayAccess: UnderlayAccess) : BgpWriter
         }
     }
 
-    private fun commitUnderlay() {
-        val underlayTxManager = underlayAccess as UnderlayTxManager
-        underlayTxManager.commitTransaction().get()
-        underlayTxManager.refreshTransaction()
-    }
-
     override fun writeCurrentAttributesForType(id: IID<Config>, dataAfter: Config, wc: WriteContext) {
         val vrfKey = checkArguments(id)
 
@@ -114,8 +107,6 @@ class GlobalConfigWriter(private val underlayAccess: UnderlayAccess) : BgpWriter
             renderVrfData(bgpBuilder, vrfKey, dataAfter, rd)
             underlayAccess.merge(getVrfId(vrfKey, dataAfter.`as`), bgpBuilder.build())
         }
-
-        commitUnderlay()
     }
 
     private fun checkArguments(id: IID<Config>): NetworkInstanceKey {

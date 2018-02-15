@@ -40,6 +40,7 @@
     <module>utils-unit</module>
     <module>network-instance-unit</module>
     <module>common</module>
+    <module>xr-6-init-unit</module>
     <module>xr-6-interface-unit</module>
     <module>xr-6-ip6-unit</module>
     <module>xr-6-network-instance-unit</module>

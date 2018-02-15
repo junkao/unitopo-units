@@ -20,7 +20,6 @@ import com.google.common.collect.Lists
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.openconfig.openconfig.interfaces.IIDs
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.topology.impl.data.UnderlayTxManager
 import io.frinx.unitopo.unit.xr6.interfaces.handler.InterfaceReader
 import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.SubinterfaceConfigWriter
 import io.frinx.unitopo.unit.xr6.network.instance.common.L2p2pWriter
@@ -242,9 +241,6 @@ class L2P2PConnectionPointsWriter(private val underlayAccess: UnderlayAccess) : 
                 .build()
 
         underlayAccess.delete(underlayIfcId)
-
-        commitUnderlay()
-
         underlayAccess.merge(underlayIfcId, underlaySubifcConfigurationAfter)
     }
 
@@ -305,16 +301,7 @@ class L2P2PConnectionPointsWriter(private val underlayAccess: UnderlayAccess) : 
                 .build()
 
         underlayAccess.delete(underlayIfcId)
-
-        commitUnderlay()
-
         underlayAccess.merge(underlayIfcId, underlaySubifcConfigBefore)
-    }
-
-    private fun commitUnderlay() {
-        val underlayTxManager = underlayAccess as UnderlayTxManager
-        underlayTxManager.commitTransaction().get()
-        underlayTxManager.refreshTransaction()
     }
 
     override fun updateCurrentAttributesForType(id: InstanceIdentifier<ConnectionPoints>,
