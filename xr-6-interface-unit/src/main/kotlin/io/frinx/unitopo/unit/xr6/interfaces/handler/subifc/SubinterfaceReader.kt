@@ -9,7 +9,10 @@ package io.frinx.unitopo.unit.xr6.interfaces.handler.subifc
 
 import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.spi.read.ConfigListReaderCustomizer
+import io.fd.honeycomb.translate.util.RWUtils
 import io.frinx.unitopo.registry.spi.UnderlayAccess
+import io.frinx.unitopo.unit.xr6.interfaces.InterfaceIpv4Augment
+import io.frinx.unitopo.unit.xr6.interfaces.InterfaceIpv6Augment
 import io.frinx.unitopo.unit.xr6.interfaces.handler.InterfaceReader
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.Interface
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.SubinterfacesBuilder
@@ -36,8 +39,17 @@ class SubinterfaceReader(private val underlayAccess: UnderlayAccess) : ConfigLis
                     .filter { it.name.startsWith(ifcName)}
                     .map { InterfaceReader.getSubinterfaceKey(it.name) }
 
-            // Add the 0 subinterface for IP addresses if there is such interface
-            subIfcKeys.plus(SubinterfaceKey(0L)).toMutableList()
+            // Subinterface with ID 0 is reserved for IP addresses of the interface
+            val zeroSubIfaceIid = RWUtils.replaceLastInId(id,
+                    InstanceIdentifier.IdentifiableItem(Subinterface::class.java, SubinterfaceKey(ZERO_SUBINTERFACE_ID)))
+            val hasIpv4Address = context.read(zeroSubIfaceIid.augmentation(InterfaceIpv4Augment::class.java)).isPresent
+            val hasIpv6Address = context.read(zeroSubIfaceIid.augmentation(InterfaceIpv6Augment::class.java)).isPresent
+
+            if (hasIpv4Address || hasIpv6Address) {
+                subIfcKeys.plus(SubinterfaceKey(ZERO_SUBINTERFACE_ID))
+            }
+
+            subIfcKeys.toMutableList();
 
         } else {
             emptyList<SubinterfaceKey>().toMutableList()
@@ -53,4 +65,8 @@ class SubinterfaceReader(private val underlayAccess: UnderlayAccess) : ConfigLis
     }
 
     override fun getBuilder(p0: InstanceIdentifier<Subinterface>): SubinterfaceBuilder = SubinterfaceBuilder()
+
+    companion object {
+        const val ZERO_SUBINTERFACE_ID = 0L
+    }
 }

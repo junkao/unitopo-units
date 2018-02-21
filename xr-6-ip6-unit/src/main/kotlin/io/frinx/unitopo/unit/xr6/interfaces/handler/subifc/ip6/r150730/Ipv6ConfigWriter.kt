@@ -10,18 +10,18 @@ import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cf
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev150730._interface.configurations.InterfaceConfiguration
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev150730._interface.configurations.InterfaceConfigurationKey
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ip.iarm.datatypes.rev150107.Ipv6armPrefixLength
-import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv6.ma.cfg.rev150730._interface.configurations._interface.configuration.ipv6.network.addresses.LinkLocalAddressBuilder
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv6.ma.cfg.rev150730.InterfaceConfiguration1
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv6.ma.cfg.rev150730._interface.configurations._interface.configuration.Ipv6Network
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv6.ma.cfg.rev150730._interface.configurations._interface.configuration.ipv6.network.Addresses
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv6.ma.cfg.rev150730._interface.configurations._interface.configuration.ipv6.network.addresses.LinkLocalAddress
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv6.ma.cfg.rev150730._interface.configurations._interface.configuration.ipv6.network.addresses.LinkLocalAddressBuilder
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv6.ma.cfg.rev150730._interface.configurations._interface.configuration.ipv6.network.addresses.RegularAddresses
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv6.ma.cfg.rev150730._interface.configurations._interface.configuration.ipv6.network.addresses.regular.addresses.RegularAddress
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv6.ma.cfg.rev150730._interface.configurations._interface.configuration.ipv6.network.addresses.regular.addresses.RegularAddressBuilder
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv6.ma.cfg.rev150730._interface.configurations._interface.configuration.ipv6.network.addresses.regular.addresses.RegularAddressKey
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.xr.types.rev150629.InterfaceName
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.Interface
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.ipv6.top.ipv6.addresses.address.Config
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.Interface
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.subinterfaces.Subinterface
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.IpAddressNoZone
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.Ipv6AddressNoZone
@@ -39,10 +39,10 @@ open class Ipv6ConfigWriter(private val underlayAccess: UnderlayAccess) : Writer
         try {
             if (isLinkLocal(dataAfter.ip.value)) {
                 val (underlayId, underlayCfg) = getLinkLocalData(id, dataAfter)
-                underlayAccess.put(underlayId, underlayCfg)
+                underlayAccess.merge(underlayId, underlayCfg)
             } else {
                 val (underlayId, underlayCfg) = getAddressData(id, dataAfter)
-                underlayAccess.put(underlayId, underlayCfg)
+                underlayAccess.merge(underlayId, underlayCfg)
             }
         } catch (e: Exception) {
             throw io.fd.honeycomb.translate.read.ReadFailedException(id, e)

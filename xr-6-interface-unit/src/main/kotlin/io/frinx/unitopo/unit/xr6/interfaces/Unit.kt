@@ -135,4 +135,7 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
     }
 }
 
+typealias InterfaceIpv4Augment = org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.Subinterface1
+typealias InterfaceIpv6Augment = org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.Subinterface2
+
 

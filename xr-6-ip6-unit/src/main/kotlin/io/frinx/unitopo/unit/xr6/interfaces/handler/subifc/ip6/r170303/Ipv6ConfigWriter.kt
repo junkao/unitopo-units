@@ -30,10 +30,10 @@ class Ipv6ConfigWriter(private val underlayAccess: UnderlayAccess) : Ipv6ConfigW
         try {
             if (isLinkLocal(dataAfter.ip.value)) {
                 val (underlayId, underlayCfg) = getLinkLocalData(id, dataAfter)
-                underlayAccess.put(underlayId, underlayCfg)
+                underlayAccess.merge(underlayId, underlayCfg)
             } else {
                 val (underlayId, underlayCfg) = getAddressData(id, dataAfter)
-                underlayAccess.put(underlayId, underlayCfg)
+                underlayAccess.merge(underlayId, underlayCfg)
             }
         } catch (e: Exception) {
             throw io.fd.honeycomb.translate.read.ReadFailedException(id, e)
