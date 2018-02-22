@@ -16,9 +16,11 @@
 
 package io.frinx.unitopo.unit.xr6.network.instance.vrf.ifc
 
+import com.google.common.base.Preconditions
 import io.fd.honeycomb.translate.spi.write.WriterCustomizer
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.openconfig.network.instance.NetworInstance
+import io.frinx.openconfig.openconfig.interfaces.IIDs
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev150730.InterfaceActive
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev150730.InterfaceConfigurations
@@ -56,6 +58,11 @@ class VrfInterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : Wri
         if (vrfName == NetworInstance.DEFAULT_NETWORK_NAME) {
             return
         }
+
+        val ifcExists = wc.readAfter(IIDs.INTERFACES.child(org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.Interface::class.java,
+                org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.InterfaceKey(data.id)))
+                .isPresent
+        Preconditions.checkArgument(ifcExists, "Interface: %s does not exist, cannot add it to VRF", data.id)
 
         val writeIid = getInterfaceConfigurationIdentifier(data.id)
         val ifConfig = InterfaceConfigurationBuilder()
