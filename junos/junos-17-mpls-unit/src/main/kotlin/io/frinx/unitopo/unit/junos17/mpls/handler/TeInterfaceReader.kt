@@ -61,7 +61,7 @@ class TeInterfaceReader(private val underlayAccess: UnderlayAccess) : MplsListRe
         fun parseInterfaceIds(ifaces: Interfaces): List<InterfaceKey> {
             val keys = ArrayList<InterfaceKey>()
             for (iface in ifaces.`interface`.orEmpty()) {
-                iface.unit.orEmpty().firstOrNull { it.family.mpls != null }?.let {
+                iface.unit.orEmpty().firstOrNull { it?.family?.mpls != null }?.let {
                     keys.add(InterfaceKey(InterfaceId(iface.name)))
                 }
             }
