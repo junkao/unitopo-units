@@ -9,9 +9,8 @@
 package io.frinx.unitopo.unit.junos.ospf.handler
 
 import io.fd.honeycomb.translate.read.ReadContext
-import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
+import io.frinx.unitopo.handlers.ospf.OspfReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.junos.ospf.common.OspfReader
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.ospfv2.rev170228.ospfv2.global.structural.global.timers.MaxMetricBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.ospfv2.rev170228.ospfv2.global.structural.global.timers.max.metric.Config
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.ospfv2.rev170228.ospfv2.global.structural.global.timers.max.metric.ConfigBuilder

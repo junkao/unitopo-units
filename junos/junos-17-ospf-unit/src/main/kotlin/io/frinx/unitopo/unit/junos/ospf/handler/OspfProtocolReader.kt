@@ -10,8 +10,8 @@ package io.frinx.unitopo.unit.junos.ospf.handler
 
 import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.spi.read.ListReaderCustomizer
+import io.frinx.unitopo.handlers.ospf.OspfReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.junos.ospf.common.OspfReader
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.ProtocolsBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.Protocol
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.ProtocolBuilder
@@ -34,8 +34,6 @@ class OspfProtocolReader(private val underlayAccess: UnderlayAccess) :
         OspfReader.OspfConfigReader<Protocol, ProtocolBuilder>,
         ListReaderCustomizer<Protocol, ProtocolKey, ProtocolBuilder> {
 
-    private val OSPF_INSTANCE_DEFAULT = "default"
-
     override fun getBuilder(id: IID<Protocol>): ProtocolBuilder = ProtocolBuilder()
 
     override fun merge(builder: Builder<out DataObject>, protocols: List<Protocol>) {
@@ -43,32 +41,34 @@ class OspfProtocolReader(private val underlayAccess: UnderlayAccess) :
     }
 
     override fun readCurrentAttributesForType(id: IID<Protocol>, proto: ProtocolBuilder, readContext: ReadContext) {
-        proto.key = ProtocolKey(OSPF::class.java, OSPF_INSTANCE_DEFAULT)
+        proto.key = ProtocolKey(OSPF::class.java, Companion.OSPF_INSTANCE_DEFAULT)
     }
 
     override fun getAllIds(id: IID<Protocol>, readContext: ReadContext): List<ProtocolKey> {
         val ospf = underlayAccess.read(getOspfId()).checkedGet()
         if (ospf.isPresent) {
-            return Collections.singletonList(ProtocolKey(OSPF::class.java, OSPF_INSTANCE_DEFAULT))
+            return Collections.singletonList(ProtocolKey(OSPF::class.java, Companion.OSPF_INSTANCE_DEFAULT))
         }
         return emptyList()
     }
 
     companion object {
-        public fun getOspfId(): IID<Ospf> {
+        fun getOspfId(): IID<Ospf> {
             return IID.create(Configuration::class.java)
                     .child(Protocols::class.java)
                     .child(Ospf::class.java)
         }
 
-        public fun getAreaId(area: String): IID<JunosArea> {
+        fun getAreaId(area: String): IID<JunosArea> {
             return getOspfId()
                     .child(JunosArea::class.java, AreaKey(Areaid(area)))
         }
 
-        public fun getInterfaceId(area: String, iface: String): IID<JunosInterface> {
+        fun getInterfaceId(area: String, iface: String): IID<JunosInterface> {
             return getAreaId(area)
                     .child(JunosInterface::class.java, JunosInterfaceKey(JunosInterface.Name(iface)))
         }
+
+        private val OSPF_INSTANCE_DEFAULT = "default"
     }
 }

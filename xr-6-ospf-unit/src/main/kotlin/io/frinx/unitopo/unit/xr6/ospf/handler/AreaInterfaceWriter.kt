@@ -8,8 +8,8 @@
 package io.frinx.unitopo.unit.xr6.ospf.handler
 
 import io.fd.honeycomb.translate.write.WriteContext
+import io.frinx.unitopo.handlers.ospf.OspfListWriter
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.xr6.ospf.common.OspfListWriter
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev151109.area.table.AreaAddresses
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev151109.area.table.area.addresses.AreaAreaId
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev151109.area.table.area.addresses.AreaAreaIdKey
@@ -76,14 +76,14 @@ class AreaInterfaceWriter(private val underlayAccess: UnderlayAccess) : OspfList
     }
 
     companion object {
-        public fun getNameScopeIdentifier(processIid: IID<Process>, vrfName: String, iid: IID<Interface>): IID<NameScope> {
+        fun getNameScopeIdentifier(processIid: IID<Process>, vrfName: String, iid: IID<Interface>): IID<NameScope> {
             val areaId = iid.firstKeyOf(Area::class.java).identifier.uint32.toInt()
             val ifName = iid.firstKeyOf(Interface::class.java).id
             return getAreaIdIdentifier(processIid, vrfName, areaId).child(NameScopes::class.java)
                     .child(NameScope::class.java, NameScopeKey(InterfaceName(ifName)))
         }
 
-        public fun getAreaIdIdentifier(processIid: IID<Process>, vrfName: String, areaId: Int)
+        fun getAreaIdIdentifier(processIid: IID<Process>, vrfName: String, areaId: Int)
             :IID<AreaAreaId>{
             return processIid.let {
                 if (GlobalConfigWriter.DEFAULT_VRF.equals(vrfName)) {

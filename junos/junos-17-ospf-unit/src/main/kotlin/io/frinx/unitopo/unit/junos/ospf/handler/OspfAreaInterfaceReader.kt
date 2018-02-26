@@ -9,9 +9,8 @@
 package io.frinx.unitopo.unit.junos.ospf.handler
 
 import io.fd.honeycomb.translate.read.ReadContext
-import io.fd.honeycomb.translate.spi.read.ConfigListReaderCustomizer
+import io.frinx.unitopo.handlers.ospf.OspfListReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.junos.ospf.common.OspfReader
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.ospfv2.rev170228.ospfv2.area.interfaces.structure.InterfacesBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.ospfv2.rev170228.ospfv2.area.interfaces.structure.interfaces.Interface
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.ospfv2.rev170228.ospfv2.area.interfaces.structure.interfaces.InterfaceBuilder
@@ -23,7 +22,7 @@ import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
 class OspfAreaInterfaceReader(private val underlayAccess: UnderlayAccess):
-        OspfReader.OspfConfigListReader<Interface, InterfaceKey, InterfaceBuilder> {
+        OspfListReader.OspfConfigListReader<Interface, InterfaceKey, InterfaceBuilder> {
 
     override fun getBuilder(id: IID<Interface>): InterfaceBuilder = InterfaceBuilder()
 
@@ -35,9 +34,9 @@ class OspfAreaInterfaceReader(private val underlayAccess: UnderlayAccess):
         iface.key = InterfaceKey(id.firstKeyOf(Interface::class.java).id)
     }
 
-    override fun getAllIds(id: IID<Interface>, readContext: ReadContext): List<InterfaceKey> {
-        val id = OspfProtocolReader.getAreaId(String(id.firstKeyOf(Area::class.java).identifier.value))
-        val optArea = underlayAccess.read(id).checkedGet()
+    override fun getAllIdsForType(id: IID<Interface>, readContext: ReadContext): List<InterfaceKey> {
+        val areaId = OspfProtocolReader.getAreaId(String(id.firstKeyOf(Area::class.java).identifier.value))
+        val optArea = underlayAccess.read(areaId).checkedGet()
         if (!optArea.isPresent) {
             return emptyList()
         }

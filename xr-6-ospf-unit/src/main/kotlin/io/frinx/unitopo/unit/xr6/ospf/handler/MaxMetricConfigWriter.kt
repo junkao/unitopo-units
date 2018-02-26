@@ -9,8 +9,8 @@
 package io.frinx.unitopo.unit.xr6.ospf.handler
 
 import io.fd.honeycomb.translate.write.WriteContext
+import io.frinx.unitopo.handlers.ospf.OspfWriter
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.xr6.ospf.common.OspfWriter
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev151109.max.metric.MaxMetric
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev151109.max.metric.max.metric.MaxMetricOnStartup
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev151109.max.metric.max.metric.MaxMetricOnStartupBuilder
@@ -57,9 +57,9 @@ class MaxMetricConfigWriter(private val underlayAccess: UnderlayAccess) : OspfWr
 
 
     companion object {
-        public fun getInterfaceIdentifier(processIid: IID<Process>, vrfName: String): IID<MaxMetricOnStartup> {
+        fun getInterfaceIdentifier(processIid: IID<Process>, vrfName: String): IID<MaxMetricOnStartup> {
             return processIid.let {
-                if (GlobalConfigWriter.DEFAULT_VRF.equals(vrfName)) {
+                if (GlobalConfigWriter.DEFAULT_VRF == vrfName) {
                     it.child(DefaultVrf::class.java)
                             .child(MaxMetric::class.java)
                 } else {
@@ -70,12 +70,12 @@ class MaxMetricConfigWriter(private val underlayAccess: UnderlayAccess) : OspfWr
             }.child(MaxMetricOnStartup::class.java)
         }
 
-        public fun getData(id: IID<Config>, data: Config): Pair<IID<MaxMetricOnStartup>, MaxMetricOnStartup> {
+        fun getData(id: IID<Config>, data: Config): Pair<IID<MaxMetricOnStartup>, MaxMetricOnStartup> {
             val (processIid, vrfName) = GlobalConfigWriter.getIdentifiers(id)
             val metricIid = getInterfaceIdentifier(processIid, vrfName)
-            val includeStub = data.include?.any {it.equals(MAXMETRICINCLUDESTUB::class.java)}
-            val includeExternal = data.include?.any {it.equals(MAXMETRICINCLUDETYPE2EXTERNAL::class.java)}
-            val includeSumLsa = data.include?.any {it.equals(MAXMETRICSUMMARYLSA::class.java)}
+            val includeStub = data.include?.any {it == MAXMETRICINCLUDESTUB::class.java}
+            val includeExternal = data.include?.any {it == MAXMETRICINCLUDETYPE2EXTERNAL::class.java}
+            val includeSumLsa = data.include?.any {it == MAXMETRICSUMMARYLSA::class.java}
 
             val metric = MaxMetricOnStartupBuilder()
                     .setIncludeStub(includeStub)

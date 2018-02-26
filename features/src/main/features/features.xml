@@ -24,6 +24,7 @@
         <bundle>mvn:org.jgrapht/jgrapht-core/{{VERSION}}</bundle>
         <bundle>wrap:mvn:io.fd.honeycomb/translate-utils/${hc.version}</bundle>
         <bundle>wrap:mvn:io.fd.honeycomb/translate-impl/${hc.version}</bundle>
+        <bundle>wrap:mvn:io.frinx.unitopo/common-handlers/{{VERSION}}</bundle>
     </feature>
 
     <feature name='unified-topology-unit-xr-6' version='${project.version}'>

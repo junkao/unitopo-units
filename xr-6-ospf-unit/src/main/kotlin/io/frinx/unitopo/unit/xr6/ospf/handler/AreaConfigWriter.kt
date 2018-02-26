@@ -8,8 +8,8 @@
 package io.frinx.unitopo.unit.xr6.ospf.handler
 
 import io.fd.honeycomb.translate.write.WriteContext
+import io.frinx.unitopo.handlers.ospf.OspfWriter
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.xr6.ospf.common.OspfWriter
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev151109.area.table.AreaAddresses
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev151109.area.table.area.addresses.AreaAreaId
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev151109.area.table.area.addresses.AreaAreaIdBuilder
@@ -67,7 +67,7 @@ class AreaConfigWriter(private val underlayAccess: UnderlayAccess) : OspfWriter<
     }
 
     companion object {
-        public fun getAreaIdentifier(processIid: IID<Process>, vrfName: String, areaId: Int): IID<AreaAreaId> {
+        fun getAreaIdentifier(processIid: IID<Process>, vrfName: String, areaId: Int): IID<AreaAreaId> {
             return processIid.let {
                 if (GlobalConfigWriter.DEFAULT_VRF.equals(vrfName)) {
                     it.child(DefaultVrf::class.java)

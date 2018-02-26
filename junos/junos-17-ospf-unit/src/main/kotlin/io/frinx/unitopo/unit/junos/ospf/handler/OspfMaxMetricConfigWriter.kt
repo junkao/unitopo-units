@@ -8,9 +8,9 @@
 
 package io.frinx.unitopo.unit.junos.ospf.handler
 
-import io.fd.honeycomb.translate.spi.write.WriterCustomizer
 import io.fd.honeycomb.translate.write.WriteContext
 import io.fd.honeycomb.translate.write.WriteFailedException
+import io.frinx.unitopo.handlers.ospf.OspfWriter
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.ospfv2.rev170228.ospfv2.global.structural.global.timers.max.metric.Config
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.protocols.Ospf
@@ -19,13 +19,13 @@ import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configur
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.protocols.ospf.OverloadBuilder
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
-class OspfMaxMetricConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCustomizer<Config> {
+class OspfMaxMetricConfigWriter(private val underlayAccess: UnderlayAccess) : OspfWriter<Config> {
 
-    override fun writeCurrentAttributes(id: IID<Config>, dataAfter: Config, writeContext: WriteContext) {
+    override fun writeCurrentAttributesForType(id: IID<Config>, dataAfter: Config, writeContext: WriteContext) {
         writeData(id, dataAfter)
     }
 
-    override fun deleteCurrentAttributes(id: IID<Config>, dataBefore: Config, writeContext: WriteContext) {
+    override fun deleteCurrentAttributesForType(id: IID<Config>, dataBefore: Config, writeContext: WriteContext) {
         val ospfOld = underlayAccess.read(OspfProtocolReader.getOspfId()).checkedGet().get()
 
         val ospfNew = OspfBuilder(ospfOld)
@@ -41,7 +41,7 @@ class OspfMaxMetricConfigWriter(private val underlayAccess: UnderlayAccess) : Wr
         }
     }
 
-    override fun updateCurrentAttributes(id: IID<Config>, dataBefore: Config, dataAfter: Config, writeContext: WriteContext) {
+    override fun updateCurrentAttributesForType(id: IID<Config>, dataBefore: Config, dataAfter: Config, writeContext: WriteContext) {
         writeData(id, dataAfter)
     }
 

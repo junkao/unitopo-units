@@ -8,8 +8,8 @@
 package io.frinx.unitopo.unit.xr6.ospf.handler
 
 import io.fd.honeycomb.translate.write.WriteContext
+import io.frinx.unitopo.handlers.ospf.OspfWriter
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.xr6.ospf.common.OspfWriter
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev151109.Ospf
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev151109.ospf.Processes
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev151109.ospf.processes.Process
@@ -50,7 +50,7 @@ class GlobalConfigWriter(private val underlayAccess: UnderlayAccess) : OspfWrite
         val vrfName = id.firstKeyOf(NetworkInstance::class.java).name
         val vrfIid = IID.create(Ospf::class.java).child(Processes::class.java).child(Process::class.java,
                 ProcessKey(CiscoIosXrString(processName))).let {
-            if (DEFAULT_VRF.equals(vrfName)) {
+            if (DEFAULT_VRF == vrfName) {
                 it.child(DefaultVrf::class.java)
             } else {
                 it.child(Vrfs::class.java).child(Vrf::class.java,
@@ -69,7 +69,7 @@ class GlobalConfigWriter(private val underlayAccess: UnderlayAccess) : OspfWrite
                 .setKey(ProcessKey(CiscoIosXrString(processName)))
                 .setStart(true)
                 .let {
-                    if (DEFAULT_VRF.equals(vrfName)) {
+                    if (DEFAULT_VRF == vrfName) {
                         it.defaultVrf = DefaultVrfBuilder().setRouterId(Ipv4AddressNoZone(routerId)).build()
                     } else {
                         it.vrfs = VrfsBuilder()
@@ -91,7 +91,7 @@ class GlobalConfigWriter(private val underlayAccess: UnderlayAccess) : OspfWrite
     companion object {
         val DEFAULT_VRF = "default"
 
-        public fun getIdentifiers(id: IID<out DataObject>): Pair<IID<Process>, String> {
+        fun getIdentifiers(id: IID<out DataObject>): Pair<IID<Process>, String> {
             val processName = id.firstKeyOf(Protocol::class.java).name
             val vrfName = id.firstKeyOf(NetworkInstance::class.java).name
             val processIid = IID.create(Ospf::class.java).child(Processes::class.java).child(Process::class.java,
