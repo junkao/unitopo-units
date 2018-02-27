@@ -16,12 +16,11 @@
 package io.frinx.unitopo.unit.xr6.ospf.handler
 
 import io.fd.honeycomb.translate.write.WriteContext
+import io.frinx.openconfig.network.instance.NetworInstance.DEFAULT_NETWORK_NAME
 import io.frinx.unitopo.handlers.ospf.OspfWriter
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev151109.area.table.AreaAddresses
-import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev151109.area.table.area.addresses.AreaAreaId
-import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev151109.area.table.area.addresses.AreaAreaIdBuilder
-import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev151109.area.table.area.addresses.AreaAreaIdKey
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev151109.area.table.area.addresses.*
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev151109.ospf.processes.Process
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev151109.ospf.processes.process.DefaultVrf
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev151109.ospf.processes.process.Vrfs
@@ -30,6 +29,8 @@ import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.osp
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.xr.types.rev150629.CiscoIosXrString
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.ospfv2.rev170228.ospfv2.area.structure.Config
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.ospfv2.rev170228.ospfv2.top.ospfv2.areas.Area
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.Ipv4AddressNoZone
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.yang.types.rev130715.DottedQuad
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
 class AreaConfigWriter(private val underlayAccess: UnderlayAccess) : OspfWriter<Config> {
@@ -40,44 +41,60 @@ class AreaConfigWriter(private val underlayAccess: UnderlayAccess) : OspfWriter<
     }
 
     override fun writeCurrentAttributesForType(id: IID<Config>, dataAfter: Config, wtx: WriteContext) {
-        val (underlayId, underlayData) = getData(id)
+        val areaId = id.firstKeyOf(Area::class.java).identifier
 
-        try {
+        if (areaId.uint32 != null) {
+            val (underlayId, underlayData) = getAreaIdData(id)
             underlayAccess.merge(underlayId, underlayData)
-        } catch (e: Exception) {
-            throw io.fd.honeycomb.translate.write.WriteFailedException(id, e)
+        } else {
+            val (underlayId, underlayData) = getAreaAddressData(id)
+            underlayAccess.merge(underlayId, underlayData)
         }
     }
 
     override fun deleteCurrentAttributesForType(id: IID<Config>, dataBefore: Config, wtx: WriteContext) {
         val (processIid, vrfName) = GlobalConfigWriter.getIdentifiers(id)
-        val areaId = id.firstKeyOf(Area::class.java).identifier.uint32.toInt()
-        val areaIid = getAreaIdentifier(processIid, vrfName, areaId)
+        val areaId = id.firstKeyOf(Area::class.java).identifier
 
-        try {
+        if (areaId.uint32 != null) {
+            val areaIid = getAreaIdIdentifier(processIid, vrfName, areaId.uint32.toInt())
             underlayAccess.delete(areaIid)
-        } catch (e: Exception) {
-            throw io.fd.honeycomb.translate.write.WriteFailedException(id, e)
+        } else {
+            val areaIid = getAreaAddressIdentifier(processIid, vrfName, areaId.dottedQuad)
+            underlayAccess.delete(areaIid)
         }
     }
 
-    private fun getData(id: IID<Config>): Pair<IID<AreaAreaId>, AreaAreaId> {
-        val (processIid, vrfName) = GlobalConfigWriter.getIdentifiers(id)
-        val areaId = id.firstKeyOf(Area::class.java).identifier.uint32.toInt()
-        val areaIid = getAreaIdentifier(processIid, vrfName, areaId)
-
-        val area = AreaAreaIdBuilder()
-                .setKey(AreaAreaIdKey(areaId))
-                .setAreaId(areaId)
-                .setRunning(true)
-
-        return Pair(areaIid, area.build())
-    }
-
     companion object {
-        fun getAreaIdentifier(processIid: IID<Process>, vrfName: String, areaId: Int): IID<AreaAreaId> {
+        fun getAreaIdData(id: IID<Config>): Pair<IID<AreaAreaId>, AreaAreaId> {
+            val (processIid, vrfName) = GlobalConfigWriter.getIdentifiers(id)
+            val areaId = id.firstKeyOf(Area::class.java).identifier.uint32.toInt()
+            val areaIid = getAreaIdIdentifier(processIid, vrfName, areaId)
+
+            val area = AreaAreaIdBuilder()
+                    .setKey(AreaAreaIdKey(areaId))
+                    .setAreaId(areaId)
+                    .setRunning(true)
+
+            return Pair(areaIid, area.build())
+        }
+
+        fun getAreaAddressData(id: IID<Config>): Pair<IID<AreaAddress>, AreaAddress> {
+            val (processIid, vrfName) = GlobalConfigWriter.getIdentifiers(id)
+            val areaId = id.firstKeyOf(Area::class.java).identifier.dottedQuad
+            val areaIid = getAreaAddressIdentifier(processIid, vrfName, areaId)
+
+            val area = AreaAddressBuilder()
+                    .setKey(AreaAddressKey(areaId.toIpv4NoZone()))
+                    .setAddress(areaId.toIpv4NoZone())
+                    .setRunning(true)
+
+            return Pair(areaIid, area.build())
+        }
+
+        fun getAreaIdIdentifier(processIid: IID<Process>, vrfName: String, areaId: Int): IID<AreaAreaId> {
             return processIid.let {
-                if (GlobalConfigWriter.DEFAULT_VRF.equals(vrfName)) {
+                if (DEFAULT_NETWORK_NAME == vrfName) {
                     it.child(DefaultVrf::class.java)
                             .child(AreaAddresses::class.java)
                             .child(AreaAreaId::class.java, AreaAreaIdKey(areaId))
@@ -89,5 +106,22 @@ class AreaConfigWriter(private val underlayAccess: UnderlayAccess) : OspfWriter<
                 }
             }
         }
+
+        fun getAreaAddressIdentifier(processIid: IID<Process>, vrfName: String, areaId: DottedQuad): IID<AreaAddress> {
+            return processIid.let {
+                if (DEFAULT_NETWORK_NAME == vrfName) {
+                    it.child(DefaultVrf::class.java)
+                            .child(AreaAddresses::class.java)
+                            .child(AreaAddress::class.java, AreaAddressKey(areaId.toIpv4NoZone()))
+                } else {
+                    it.child(Vrfs::class.java).child(Vrf::class.java,
+                            VrfKey(CiscoIosXrString(vrfName)))
+                            .child(AreaAddresses::class.java)
+                            .child(AreaAddress::class.java, AreaAddressKey(areaId.toIpv4NoZone()))
+                }
+            }
+        }
     }
 }
+
+private fun DottedQuad.toIpv4NoZone() = Ipv4AddressNoZone(value)

@@ -85,6 +85,13 @@
             <version>${openconfig.version}</version>
         </dependency>
 
+        <!-- init unit -->
+        <dependency>
+            <groupId>io.frinx.unitopo</groupId>
+            <artifactId>xr-6-init-unit</artifactId>
+            <version>${openconfig.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>io.fd.honeycomb</groupId>
             <artifactId>translate-impl</artifactId>

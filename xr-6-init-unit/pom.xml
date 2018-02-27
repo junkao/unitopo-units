@@ -49,11 +49,6 @@
         </dependency>
         <dependency>
             <groupId>io.frinx.unitopo</groupId>
-            <artifactId>xr-6-interface-unit</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.frinx.unitopo</groupId>
             <artifactId>translation-registry-spi</artifactId>
             <version>${project.version}</version>
         </dependency>

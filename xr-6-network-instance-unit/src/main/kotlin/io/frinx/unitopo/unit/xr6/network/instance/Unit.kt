@@ -32,10 +32,7 @@ import io.frinx.unitopo.unit.xr6.interfaces.Unit
 import io.frinx.unitopo.unit.xr6.network.instance.vrf.VrfTableConnectionConfigWriter
 import io.frinx.unitopo.unit.xr6.network.instance.vrf.ifc.VrfInterfaceConfigWriter
 import io.frinx.unitopo.unit.xr6.network.instance.vrf.ifc.VrfInterfaceReader
-import io.frinx.unitopo.unit.xr6.network.instance.vrf.protocol.LocalAggregateConfigReader
-import io.frinx.unitopo.unit.xr6.network.instance.vrf.protocol.LocalAggregateConfigWriter
-import io.frinx.unitopo.unit.xr6.network.instance.vrf.protocol.LocalAggregateReader
-import io.frinx.unitopo.unit.xr6.network.instance.vrf.protocol.ProtocolReader
+import io.frinx.unitopo.unit.xr6.network.instance.vrf.protocol.*
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.local.routing.rev170515.local.aggregate.top.LocalAggregatesBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.Config
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.ConfigBuilder
@@ -70,6 +67,8 @@ class Unit(private val registry: TranslationUnitCollector) : NetworkInstanceUnit
         wRegistry.add(GenericWriter(IIDs.NE_NE_INTERINSTANCEPOLICIES, NoopWriter()))
         wRegistry.add(GenericWriter(IIDs.NE_NE_IN_APPLYPOLICY, NoopWriter()))
         wRegistry.add(GenericWriter(IIDs.NE_NE_IN_AP_CONFIG, NoopWriter()))
+
+        wRegistry.add(GenericWriter(IIDs.NE_NE_PR_PR_CONFIG, ProtocolConfigWriter(underlayAccess)))
 
         // Local aggregates
         wRegistry.add(GenericWriter(IIDs.NE_NE_PR_PR_LO_AGGREGATE, NoopWriter()))

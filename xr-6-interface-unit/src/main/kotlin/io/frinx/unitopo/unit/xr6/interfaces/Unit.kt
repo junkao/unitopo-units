@@ -26,8 +26,8 @@ import io.fd.honeycomb.translate.read.registry.ModifiableReaderRegistryBuilder
 import io.fd.honeycomb.translate.write.registry.ModifiableWriterRegistryBuilder
 import io.frinx.openconfig.openconfig.interfaces.IIDs
 import io.frinx.unitopo.registry.api.TranslationUnitCollector
-import io.frinx.unitopo.registry.spi.TranslateUnit
 import io.frinx.unitopo.registry.spi.UnderlayAccess
+import io.frinx.unitopo.unit.xr6.init.Unit
 import io.frinx.unitopo.unit.xr6.interfaces.handler.*
 import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.*
 import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.vlan.SubinterfaceVlanConfigReader
@@ -59,7 +59,7 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.re
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.vlan.rev170714.Subinterface1 as VlanAug
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.vlan.rev170714.Subinterface1Builder as VlanAugBuilder
 
-class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
+class Unit(private val registry: TranslationUnitCollector) : Unit() {
     private var reg: TranslationUnitCollector.Registration? = null
 
     fun init() {
@@ -124,8 +124,6 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
     }
 
     override fun toString(): String = "XR 6 (2015-07-30) interface translate unit"
-
-    override fun useAutoCommit() = true
 
     companion object {
         public val UNDERLAY_SCHEMAS = setOf(

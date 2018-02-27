@@ -54,7 +54,6 @@ abstract class NetworkInstanceUnit : TranslateUnit {
         // FIXME noop
         wRegistry.add(GenericWriter(IIDs.NE_NETWORKINSTANCE, NoopWriter()))
         wRegistry.add(GenericWriter(IIDs.NE_NE_PR_PROTOCOL, NoopWriter()))
-        wRegistry.add(GenericWriter(IIDs.NE_NE_PR_PR_CONFIG, NoopWriter()))
     }
 
     private fun provideReaders(rRegistry: ModifiableReaderRegistryBuilder) {

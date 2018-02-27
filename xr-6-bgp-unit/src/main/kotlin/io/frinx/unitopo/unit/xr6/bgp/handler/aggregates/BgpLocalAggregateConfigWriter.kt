@@ -92,7 +92,6 @@ class BgpLocalAggregateConfigWriter(private val access: UnderlayAccess) : BgpWri
 
     private fun deleteGlobalNetworkForAfi(it: BgpAddressFamily, asNumber: AsNumber, prefix: IpPrefix) {
         val ipPrefix = prefix.getNetAddress()
-
         if (ipPrefix.ipv4Address != null && it == BgpAddressFamily.Ipv4Unicast ||
                 ipPrefix.ipv6Address != null && it == BgpAddressFamily.Ipv6Unicast ) {
 

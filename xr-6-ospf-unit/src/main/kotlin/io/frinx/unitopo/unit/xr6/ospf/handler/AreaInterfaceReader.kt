@@ -49,17 +49,6 @@ class AreaInterfaceReader(private val access: UnderlayAccess) : OspfListReader.O
                 .toList()
     }
 
-    private fun findAreaNameScopes(areas: AreaAddresses?, areaKey: AreaKey): NameScopes? {
-        return if (areaKey.identifier.uint32 != null) {
-            areas?.areaAreaId.orEmpty()
-                    .find { areaKey.identifier.uint32 == it.areaId?.toLong() }
-                    ?.nameScopes
-        } else {
-            areas?.areaAddress.orEmpty()
-                    .find { areaKey.identifier.dottedQuad.value == it.address?.value }
-                    ?.nameScopes
-        }
-    }
 
     override fun merge(builder: Builder<out DataObject>, readData: List<Interface>) {
         (builder as InterfacesBuilder).`interface` = readData
@@ -73,5 +62,19 @@ class AreaInterfaceReader(private val access: UnderlayAccess) : OspfListReader.O
     override fun readCurrentAttributesForType(id: InstanceIdentifier<Interface>, builder: InterfaceBuilder, ctx: ReadContext) {
         val interfaceKey = id.firstKeyOf(Interface::class.java)
         builder.id = interfaceKey.id
+    }
+
+    companion object {
+        fun findAreaNameScopes(areas: AreaAddresses?, areaKey: AreaKey): NameScopes? {
+            return if (areaKey.identifier.uint32 != null) {
+                areas?.areaAreaId.orEmpty()
+                        .find { areaKey.identifier.uint32 == it.areaId?.toLong() }
+                        ?.nameScopes
+            } else {
+                areas?.areaAddress.orEmpty()
+                        .find { areaKey.identifier.dottedQuad.value == it.address?.value }
+                        ?.nameScopes
+            }
+        }
     }
 }

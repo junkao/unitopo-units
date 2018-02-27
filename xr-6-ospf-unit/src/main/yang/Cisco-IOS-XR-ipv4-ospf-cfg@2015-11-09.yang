@@ -590,21 +590,21 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
           type uint32 {
             range "1..255";
           }
-          default "110";
+// default "110";
           description "Distance for intra-area routes";
         }
         leaf inter-area {
           type uint32 {
             range "1..255";
           }
-          default "110";
+// default "110";
           description "Distance for inter-area routes";
         }
         leaf external-routes {
           type uint32 {
             range "1..255";
           }
-          default "110";
+// default "110";
           description
             "Distance for external type 5 and type 7 routes";
         }
@@ -632,7 +632,7 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
             type uint32 {
               range "1..255";
             }
-            default "110";
+// default "110";
             description "Administrative distance";
           }
           leaf access-list-name {
@@ -645,7 +645,7 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
         type uint32 {
           range "1..255";
         }
-        default "110";
+// default "110";
         description "Define an administrative distance";
       }
     }
@@ -663,7 +663,7 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
           configuration";
         leaf wait-for-bgp {
           type boolean;
-          default "false";
+// default "false";
           description
             "Let BGP decide when to originate router-LSA
             with normal metric";
@@ -717,7 +717,7 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
         description "Set maximum metric on-startup configuration";
         leaf wait-for-bgp {
           type boolean;
-          default "false";
+// default "false";
           description
             "Let BGP decide when to originate router-LSA
             with normal metric";
@@ -773,7 +773,7 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
           configuration";
         leaf wait-for-bgp {
           type boolean;
-          default "false";
+// default "false";
           description
             "Let BGP decide when to originate router-LSA
             with normal metric";
@@ -827,7 +827,7 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
         description "Set maximum metric always configuration";
         leaf include-stub {
           type boolean;
-          default "false";
+// default "false";
           description
             "Set maximum metric for stub links in
             router-LSAs";
@@ -867,7 +867,7 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
           "Set maximum metric on-switchover configuration";
         leaf wait-for-bgp {
           type boolean;
-          default "false";
+// default "false";
           description
             "Let BGP decide when to originate router-LSA
             with normal metric";
@@ -931,7 +931,7 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
       name-scope";
     leaf demand-circuit {
       type boolean;
-      default "false";
+// default "false";
       description "Enable/Disable OSPF demand circuit";
     }
   }
@@ -942,7 +942,7 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
       type uint32 {
         range "1..4294967295";
       }
-      default "1024";
+// default "1024";
       description
         "Max number of interfaces allowed to be
         configured";
@@ -1014,7 +1014,7 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
         range "1..65535";
       }
       units "second";
-      default "1";
+// default "1";
       description "Number of seconds to delay transmission of LSAs";
     }
   }
@@ -1055,7 +1055,7 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
       type Ospf-segment-routing;
       description
         "segment-routing configuration Applicable only in
-        Default VRF";
+// default VRF";
     }
   }
 
@@ -1087,7 +1087,7 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
       multi-area-interface-scope";
     leaf passive {
       type boolean;
-      default "false";
+// default "false";
       description
         "When enabled, prevent sending HELLO packets over
         link";
@@ -1203,7 +1203,7 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
               }
               leaf explicit-null {
                 type boolean;
-                default "false";
+// default "false";
                 description
                   "Force Penultimate Hop To Send Explicit-Null
                   Label";
@@ -1215,7 +1215,7 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
               }
               leaf n-flag-clear {
                 type boolean;
-                default "false";
+// default "false";
                 description "Not a node SID";
               }
             }
@@ -1233,7 +1233,7 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
               }
               leaf explicit-null {
                 type boolean;
-                default "false";
+// default "false";
                 description
                   "Force Penultimate Hop To Send Explicit-Null
                   Label";
@@ -1245,7 +1245,7 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
               }
               leaf n-flag-clear {
                 type boolean;
-                default "false";
+// default "false";
                 description "Not a node SID";
               }
             }
@@ -1341,17 +1341,17 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
           description "Specify area as a NSSA area";
           leaf no-redistribution {
             type boolean;
-            default "false";
+// default "false";
             description "No redistribution into this NSSA area";
           }
           leaf default-info-originate {
             type boolean;
-            default "false";
+// default "false";
             description "Originate Type 7 default into NSSA area";
           }
           leaf no-summary {
             type boolean;
-            default "false";
+// default "false";
             description "Do not send summary LSA into NSSA";
           }
           leaf nssa-def-metric {
@@ -1362,7 +1362,7 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
           }
           leaf metric-type {
             type Ospf-link-state-metric;
-            default "type2";
+// default "type2";
             description "OSPF External metric type";
           }
         }
@@ -1376,7 +1376,7 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
           type uint32 {
             range "1..16777215";
           }
-          default "1";
+// default "1";
           description
             "Set the summary default-cost of a NSSA/stub
             area";
@@ -1434,7 +1434,7 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
       description "Controls automatic cost based on bandwidth";
       leaf disable {
         type boolean;
-        default "false";
+// default "false";
         description "Disabling auto costing";
       }
       leaf bandwidth {
@@ -1442,7 +1442,7 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
           range "1..4294967";
         }
         units "Mbit/s";
-        default "100";
+// default "100";
         description
           "The reference bandwidth in terms of Mbits per
           second";
@@ -1463,7 +1463,7 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
             range "1..600000";
           }
           units "millisecond";
-          default "5000";
+// default "5000";
           description "Number of milliseconds before first SPF run";
         }
         leaf backoff-increment {
@@ -1471,7 +1471,7 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
             range "1..600000";
           }
           units "millisecond";
-          default "10000";
+// default "10000";
           description
             "Number of milliseconds delay between
             successive SPF runs";
@@ -1481,7 +1481,7 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
             range "1..600000";
           }
           units "millisecond";
-          default "10000";
+// default "10000";
           description
             "Max number of milliseconds between consecutive
             SPF calculations";
@@ -1495,7 +1495,7 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
             range "0..600000";
           }
           units "millisecond";
-          default "50";
+// default "50";
           description
             "Number of milliseconds before generating first
             LSA";
@@ -1505,7 +1505,7 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
             range "1..600000";
           }
           units "millisecond";
-          default "200";
+// default "200";
           description
             "Number of milliseconds delay between
             successive LSA builds";
@@ -1515,7 +1515,7 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
             range "1..600000";
           }
           units "millisecond";
-          default "200";
+// default "200";
           description
             "Max number of milliseconds between consecutive
             LSA builds ";
@@ -1535,7 +1535,7 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
           range "50..600000";
         }
         units "millisecond";
-        default "500";
+// default "500";
         description
           "Number of ms between end of SPF and start of
           IPFRR computation";
@@ -1545,7 +1545,7 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
           range "1800..2700";
         }
         units "second";
-        default "1800";
+// default "1800";
         description
           "How often self-originated LSAs should be
           refreshed";
@@ -1555,7 +1555,7 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
           range "10..1800";
         }
         units "second";
-        default "240";
+// default "240";
         description
           "LSA group pacing timer (Seconds between group
           of LSAs being refreshed or maxaged)";
@@ -1565,7 +1565,7 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
           range "0..600000";
         }
         units "millisecond";
-        default "100";
+// default "100";
         description
           "MinLSArrival timer (minimum interval in
           milliseconds between accepting the same LSA)";
@@ -1609,7 +1609,7 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
             description "REDISTRIBUTE CONTENT";
             leaf classful {
               type boolean;
-              default "false";
+// default "false";
               description "Disallow subnetting";
             }
             leaf default-redistributed-route-metric {
@@ -1661,11 +1661,11 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
               type boolean;
               description
                 "Preserve Metric and Metric Type of BGP
-                Default Route";
+// default Route";
             }
             leaf ospf-redist-lsa-type {
               type Ospf-redist-lsa;
-              default "external";
+// default "external";
               description "LSA type for redistributed routes";
             }
             leaf ospfnssa-only {
@@ -1818,19 +1818,19 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
       description "Control distribution of default information";
       leaf always-advertise {
         type boolean;
-        default "false";
+// default "false";
         description "Always advertise default route";
       }
       leaf metric {
         type uint32 {
           range "1..16777214";
         }
-        default "1";
+// default "1";
         description "OSPF metric";
       }
       leaf metric-type {
         type Ospf-link-state-metric;
-        default "type2";
+// default "type2";
         description "OSPF External metric type";
       }
       leaf route-policy-name {
@@ -1846,7 +1846,7 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
       name-scope";
     leaf prefix-suppression-secondary {
       type boolean;
-      default "false";
+// default "false";
       description
         "Enable/Disable prefix suppression for secondary
         addresses";
@@ -1871,7 +1871,7 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
       name-scope, multi-area-interface-scope";
     leaf database-filter {
       type boolean;
-      default "false";
+// default "false";
       description
         "Filter OSPF LSA during synchronization and
         flooding";
@@ -1884,7 +1884,7 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
       name-scope";
     leaf link-down-fast-detect {
       type boolean;
-      default "false";
+// default "false";
       description
         "Enable/Disable registration for early interface
         down notifications";
@@ -1911,7 +1911,7 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
         description "Microloop avoidance configuration";
         leaf enable {
           type Ospf-uloop-avoidance;
-          default "all";
+// default "all";
           description
             "MicroLoop avoidance feature enable
             configuration";
@@ -1921,7 +1921,7 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
             range "1..600000";
           }
           units "millisecond";
-          default "5000";
+// default "5000";
           description
             "Delay to introduce between SPF and RIB update
             in msecs";
@@ -2008,7 +2008,7 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
         type uint32 {
           range "30..3000";
         }
-        default "150";
+// default "150";
         description
           "Maximum number of continuous rate-limited LSAs
           processed for FLUSH";
@@ -2017,7 +2017,7 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
         type uint32 {
           range "1000..30000";
         }
-        default "9500";
+// default "9500";
         description
           "Hello events are dropped when incoming event
           queue exceeds this";
@@ -2026,7 +2026,7 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
         type uint32 {
           range "30..3000";
         }
-        default "150";
+// default "150";
         description
           "Maximum number of continuous summary or
           external LSAs processed";
@@ -2035,7 +2035,7 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
         type uint32 {
           range "1000..30000";
         }
-        default "8000";
+// default "8000";
         description
           "DBDs/Updates are dropped when incoming event
           queue exceeds this";
@@ -2044,7 +2044,7 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
         type uint32 {
           range "30..3000";
         }
-        default "150";
+// default "150";
         description
           "Maximum number of continuous rate-limited LSAs
           processed";
@@ -2053,7 +2053,7 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
         type uint32 {
           range "1000..30000";
         }
-        default "9000";
+// default "9000";
         description
           "LSA ACKs are dropped when incoming event queue
           exceeds this";
@@ -2062,7 +2062,7 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
         type uint32 {
           range "30..3000";
         }
-        default "300";
+// default "300";
         description
           "Maximum number of continuous incoming
           packet-related events processed";
@@ -2341,7 +2341,7 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
         description "Content grouping.";
         leaf not-advertise {
           type boolean;
-          default "false";
+// default "false";
           description
             "Do not advertise when translating OSPF type-7
             LSA";
@@ -2551,7 +2551,7 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
           type uint32 {
             range "101..10000";
           }
-          default "200";
+// default "200";
           description "Value of variance";
         }
         leaf prefix-list-name {
@@ -2564,7 +2564,7 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
           range "1..5000";
         }
         units "millisecond";
-        default "100";
+// default "100";
         description
           "Delay in msecs between primary SPF and UCMP
           computation";
@@ -2583,7 +2583,7 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
           range "90..1800";
         }
         units "second";
-        default "90";
+// default "90";
         description
           "Maximum route lifetime following restart in
           seconds";
@@ -2607,7 +2607,7 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
           range "90..3600";
         }
         units "second";
-        default "90";
+// default "90";
         description
           "Minimum interval between Non Stop Forwarding
           restarts in seconds";
@@ -2617,7 +2617,7 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
           range "1..3600";
         }
         units "second";
-        default "60";
+// default "60";
         description
           "Maximum time allowed for external route
           learning (seconds)";
@@ -2635,7 +2635,7 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
       name-scope, multi-area-interface-scope";
     leaf mtu-ignore {
       type boolean;
-      default "false";
+// default "false";
       description "Enable/Disable ignoring of MTU in DBD packets";
     }
   }
@@ -2644,7 +2644,7 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
     description "Common node of per-link, per-prefix";
     leaf fast-reroute-use-candidate-only {
       type boolean;
-      default "false";
+// default "false";
       description
         "Use only interfaces on the candidate list as a
         backup path";
@@ -2657,7 +2657,7 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
       per-link, per-prefix";
     leaf fast-reroute-use-candidate-only {
       type boolean;
-      default "false";
+// default "false";
       description
         "Use only interfaces on the candidate list as a
         backup path";
@@ -2701,7 +2701,7 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
       area-scope, name-scope";
     leaf loopback-stub-network {
       type boolean;
-      default "false";
+      // default "false";
       description
         "Enable/Disable advertising loopback as a stub
         network";
@@ -2714,7 +2714,7 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
       name-scope";
     leaf prefix-suppression-primary {
       type boolean;
-      default "false";
+      // default "false";
       description
         "Enable/Disable prefix suppression for primary
         addresses";
@@ -2727,7 +2727,7 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
       name-scope";
     leaf flood-reduction {
       type boolean;
-      default "false";
+      // default "false";
       description "Enable/Disable OSPF flood reduction";
     }
   }
@@ -2873,7 +2873,7 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
           type uint32 {
             range "0..255";
           }
-          default "0";
+// default "0";
           description "OSPF priority of non-broadcast neighbor";
         }
         leaf poll-interval {
@@ -2881,19 +2881,19 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
             range "0..65535";
           }
           units "second";
-          default "40";
+// default "40";
           description "OSPF dead router poll-interval in seconds";
         }
         leaf cost {
           type uint32 {
             range "1..65535";
           }
-          default "1";
+// default "1";
           description "OSPF cost for point-to-multipoint neighbor";
         }
         leaf database-filter {
           type boolean;
-          default "false";
+// default "false";
           description
             "Database filter: Filter OSPF LSA during
             synchronization and flooding for
@@ -2942,7 +2942,7 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
   grouping ADJACENCY-STAGGER {
     description
       "Common node of default-vrf, vrfCommon node of
-      default-vrf, vrf";
+// default-vrf, vrf";
 
     container adjacency-stagger {
       description "Staggering OSPF adjacency bring up";
@@ -2954,7 +2954,7 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
         type uint32 {
           range "1..65535";
         }
-        default "2";
+// default "2";
         description
           "Adjacency Stagger: Initial number of neighbors
           to bring up per area";
@@ -2963,7 +2963,7 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
         type uint32 {
           range "1..65535";
         }
-        default "64";
+// default "64";
         description
           "Adjacency Stagger: Subsequent simultaneous
           number of neighbors to bring up";
@@ -2977,7 +2977,7 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
       type uint32 {
         range "1..16777214";
       }
-      default "1";
+// default "1";
       description "Set default metric of redistributed routes";
     }
   }
@@ -2992,7 +2992,7 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
         range "1..65535";
       }
       units "second";
-      default "5";
+// default "5";
       description
         "Time in seconds between retransmitting lost link
         state advertisements";
@@ -3017,7 +3017,7 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
       type uint32 {
         range "0..255";
       }
-      default "1";
+// default "1";
       description "Router priority for DR and BDR election";
     }
   }
@@ -3122,7 +3122,7 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
             }
             leaf snmp-trap-enabled {
               type boolean;
-              default "false";
+// default "false";
               description "Enable/disable OSPF SNMP trap";
             }
             leaf domain-tag {
@@ -3320,7 +3320,7 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
         }
         leaf nsr {
           type Nsr;
-          default "true";
+// default "true";
           description "Enable non-stop routing";
         }
         leaf protocol-shutdown {

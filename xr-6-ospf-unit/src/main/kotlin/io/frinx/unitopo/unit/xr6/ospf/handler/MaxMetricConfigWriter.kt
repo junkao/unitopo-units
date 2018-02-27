@@ -17,6 +17,7 @@
 package io.frinx.unitopo.unit.xr6.ospf.handler
 
 import io.fd.honeycomb.translate.write.WriteContext
+import io.frinx.openconfig.network.instance.NetworInstance
 import io.frinx.unitopo.handlers.ospf.OspfWriter
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev151109.max.metric.MaxMetric
@@ -44,30 +45,20 @@ class MaxMetricConfigWriter(private val underlayAccess: UnderlayAccess) : OspfWr
     override fun writeCurrentAttributesForType(id: IID<Config>, dataAfter: Config, wtx: WriteContext) {
         val (underlayId, underlayData) = getData(id, dataAfter)
 
-        try {
-            underlayAccess.merge(underlayId, underlayData)
-        } catch (e: Exception) {
-            throw io.fd.honeycomb.translate.write.WriteFailedException(id, e)
-        }
+        underlayAccess.merge(underlayId, underlayData)
     }
 
     override fun deleteCurrentAttributesForType(id: IID<Config>, dataBefore: Config, wtx: WriteContext) {
         val (processIid, vrfName) = GlobalConfigWriter.getIdentifiers(id)
         val metricIid = getInterfaceIdentifier(processIid, vrfName)
 
-        try {
-            underlayAccess.delete(metricIid)
-        } catch (e: Exception) {
-            throw io.fd.honeycomb.translate.write.WriteFailedException(id, e)
-        }
+        underlayAccess.delete(metricIid)
     }
 
-
-
     companion object {
-        fun getInterfaceIdentifier(processIid: IID<Process>, vrfName: String): IID<MaxMetricOnStartup> {
+        public fun getInterfaceIdentifier(processIid: IID<Process>, vrfName: String): IID<MaxMetricOnStartup> {
             return processIid.let {
-                if (GlobalConfigWriter.DEFAULT_VRF == vrfName) {
+                if (NetworInstance.DEFAULT_NETWORK_NAME == vrfName) {
                     it.child(DefaultVrf::class.java)
                             .child(MaxMetric::class.java)
                 } else {
@@ -78,12 +69,12 @@ class MaxMetricConfigWriter(private val underlayAccess: UnderlayAccess) : OspfWr
             }.child(MaxMetricOnStartup::class.java)
         }
 
-        fun getData(id: IID<Config>, data: Config): Pair<IID<MaxMetricOnStartup>, MaxMetricOnStartup> {
+        public fun getData(id: IID<Config>, data: Config): Pair<IID<MaxMetricOnStartup>, MaxMetricOnStartup> {
             val (processIid, vrfName) = GlobalConfigWriter.getIdentifiers(id)
             val metricIid = getInterfaceIdentifier(processIid, vrfName)
-            val includeStub = data.include?.any {it == MAXMETRICINCLUDESTUB::class.java}
-            val includeExternal = data.include?.any {it == MAXMETRICINCLUDETYPE2EXTERNAL::class.java}
-            val includeSumLsa = data.include?.any {it == MAXMETRICSUMMARYLSA::class.java}
+            val includeStub = data.include?.any { it == MAXMETRICINCLUDESTUB::class.java }
+            val includeExternal = data.include?.any { it == MAXMETRICINCLUDETYPE2EXTERNAL::class.java }
+            val includeSumLsa = data.include?.any { it == MAXMETRICSUMMARYLSA::class.java }
 
             val metric = MaxMetricOnStartupBuilder()
                     .setIncludeStub(includeStub)
