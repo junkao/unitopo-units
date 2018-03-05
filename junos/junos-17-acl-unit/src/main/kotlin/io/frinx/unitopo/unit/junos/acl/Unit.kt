@@ -19,13 +19,7 @@ import io.frinx.openconfig.openconfig.acl.IIDs
 import io.frinx.unitopo.registry.api.TranslationUnitCollector
 import io.frinx.unitopo.registry.spi.TranslateUnit
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.junos.acl.handler.AclInterfaceReader
-import io.frinx.unitopo.unit.junos.acl.handler.EgressAclSetConfigReader
-import io.frinx.unitopo.unit.junos.acl.handler.EgressAclSetConfigWriter
-import io.frinx.unitopo.unit.junos.acl.handler.EgressAclSetReader
-import io.frinx.unitopo.unit.junos.acl.handler.IngressAclSetConfigReader
-import io.frinx.unitopo.unit.junos.acl.handler.IngressAclSetConfigWriter
-import io.frinx.unitopo.unit.junos.acl.handler.IngressAclSetReader
+import io.frinx.unitopo.unit.junos.acl.handler.*
 import io.frinx.unitopo.unit.utils.NoopListWriter
 import io.frinx.unitopo.unit.utils.NoopWriter
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.acl.rev170526._interface.egress.acl.top.EgressAclSets
@@ -87,6 +81,7 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
         rRegistry.addStructuralReader(IIDs.ACL, AclBuilder::class.java)
         rRegistry.addStructuralReader(IIDs.AC_INTERFACES, InterfacesBuilder::class.java)
         rRegistry.add(GenericConfigListReader(IIDs.AC_IN_INTERFACE, AclInterfaceReader(underlayAccess)))
+        rRegistry.add(GenericConfigReader(IIDs.AC_IN_IN_CONFIG, AclInterfaceConfigReader()))
         rRegistry.addStructuralReader(IIDs.AC_IN_IN_INGRESSACLSETS, IngressAclSetsBuilder::class.java)
         rRegistry.add(GenericConfigListReader(IIDs.AC_IN_IN_IN_INGRESSACLSET, IngressAclSetReader(underlayAccess)))
         rRegistry.add(GenericConfigReader(IIDs.AC_IN_IN_IN_IN_CONFIG, IngressAclSetConfigReader(underlayAccess)))
