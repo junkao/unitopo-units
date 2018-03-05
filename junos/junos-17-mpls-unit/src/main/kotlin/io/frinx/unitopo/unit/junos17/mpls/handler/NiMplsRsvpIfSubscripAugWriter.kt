@@ -37,11 +37,10 @@ class NiMplsRsvpIfSubscripAugWriter (private val underlayAccess: UnderlayAccess)
     private fun getData(id: InstanceIdentifier<NiMplsRsvpIfSubscripAug>, data: NiMplsRsvpIfSubscripAug):
             Pair<InstanceIdentifier<Interface>, Interface> {
         val ifcName = RsvpInterfaceConfigWriter.formatIfcName(id.firstKeyOf(OcInterface::class.java).interfaceId.value)
-        val underlayIfcCfg = InterfaceBuilder()
-            .setName(Interface.Name(ifcName))
+        val underlayIfcCfg = InterfaceBuilder().setName(Interface.Name(ifcName))
         data.bandwidth?.let {
             // we can safely ignore string value
-            underlayIfcCfg.setBandwidth(data.bandwidth.uint32.toString())
+            underlayIfcCfg.setBandwidth(data.bandwidth.uint32?.toString())
         }
         return Pair(RsvpInterfaceConfigWriter.getId(ifcName), underlayIfcCfg.build())
     }
