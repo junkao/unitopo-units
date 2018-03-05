@@ -73,14 +73,14 @@ class InterfaceIfAggregateConfigWriter(private val underlayAccess: UnderlayAcces
 
         val gigEthIeee8023adBuilder = JunosGigEthIeee8023adBuilder()
 
-                .setBundle(JunosGigEthIeee8023adBundle(dataAfter.aggregateId.removePrefix(InterfaceReader.LAG_PREFIX)))
+                .setBundle(JunosGigEthIeee8023adBundle(dataAfter.aggregateId))
                 .build()
 
         return Pair(underlayGigEthIeee8023adId, gigEthIeee8023adBuilder)
     }
 
     private fun getUnderlayId(id: InstanceIdentifier<Config1>): Pair<String, InstanceIdentifier<JunosGigEthIeee8023ad>> {
-        val ifcName = id.firstKeyOf(Interface::class.java).name.removePrefix(InterfaceReader.LAG_PREFIX)
+        val ifcName = id.firstKeyOf(Interface::class.java).name
         val underlayGigEthIeee8023adId = InterfaceReader.IFCS.child(JunosInterface::class.java, JunosInterfaceKey(ifcName))
                 .child(JunosGigEthOptions::class.java).child(JunosGigEthIeee8023ad::class.java)
 

@@ -39,7 +39,7 @@ class InterfaceLacpConfigWriter(private val underlayAccess: UnderlayAccess) : Wr
     }
 
     override fun deleteCurrentAttributes(id: InstanceIdentifier<LacpEthConfigAug>, config: LacpEthConfigAug, context: WriteContext) {
-        val bundleId = context.readBefore(RWUtils.cutId(id, Config::class.java)).get()?.getAugmentation(Config1::class.java)?.aggregateId?.removePrefix(InterfaceReader.LAG_PREFIX)
+        val bundleId = context.readBefore(RWUtils.cutId(id, Config::class.java)).get()?.getAugmentation(Config1::class.java)?.aggregateId
         try {
             underlayAccess.delete(InterfaceReader.IFCS.child(Interface::class.java, InterfaceKey(bundleId))
                     .child(AggregatedEtherOptions::class.java).child(Lacp::class.java))
@@ -82,7 +82,7 @@ class InterfaceLacpConfigWriter(private val underlayAccess: UnderlayAccess) : Wr
     }
 
     private fun getUnderlayId(id: InstanceIdentifier<LacpEthConfigAug>, context: WriteContext): InstanceIdentifier<Lacp> {
-        val bundleId = context.readAfter(RWUtils.cutId(id, Config::class.java)).get()?.getAugmentation(Config1::class.java)?.aggregateId?.removePrefix(InterfaceReader.LAG_PREFIX)
+        val bundleId = context.readAfter(RWUtils.cutId(id, Config::class.java)).get()?.getAugmentation(Config1::class.java)?.aggregateId
         return InterfaceReader.IFCS.child(Interface::class.java, InterfaceKey(bundleId))
             .child(AggregatedEtherOptions::class.java).child(Lacp::class.java)
     }

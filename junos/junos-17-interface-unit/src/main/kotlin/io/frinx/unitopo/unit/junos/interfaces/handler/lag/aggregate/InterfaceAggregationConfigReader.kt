@@ -36,7 +36,7 @@ class InterfaceAggregationConfigReader(private val underlayAccess: UnderlayAcces
     @Throws(ReadFailedException::class)
     override fun readCurrentAttributes(iid: IID<Config>, builder: ConfigBuilder, context: ReadContext) {
         try {
-            val name = iid.firstKeyOf(Interface::class.java).name.removePrefix(InterfaceReader.LAG_PREFIX)
+            val name = iid.firstKeyOf(Interface::class.java).name
             InterfaceReader.readAggregationCfg(underlayAccess, name, { builder.fromUnderlay(it) })
         } catch (e: MDSalReadFailed) {
             throw ReadFailedException(iid, e)

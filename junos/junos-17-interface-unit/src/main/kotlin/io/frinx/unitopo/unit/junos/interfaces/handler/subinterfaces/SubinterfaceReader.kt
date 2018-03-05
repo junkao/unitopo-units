@@ -43,7 +43,7 @@ class SubinterfaceReader(private val underlayAccess: UnderlayAccess) : ConfigLis
 
     private fun getSubInterfaceIds(underlayAccess: UnderlayAccess, ifcName: String): List<SubinterfaceKey> {
         val instanceIdentifier = InterfaceReader.IFCS.child(JunosInterface::class.java,
-                JunosInterfaceKey(ifcName.removePrefix(InterfaceReader.LAG_PREFIX)))
+                JunosInterfaceKey(ifcName))
 
         return underlayAccess.read(instanceIdentifier, LogicalDatastoreType.CONFIGURATION)
                 .checkedGet()
@@ -58,7 +58,7 @@ class SubinterfaceReader(private val underlayAccess: UnderlayAccess) : ConfigLis
 
     override fun readCurrentAttributes(iid: InstanceIdentifier<Subinterface>, builder: SubinterfaceBuilder, context: ReadContext) {
         try {
-            val name = iid.firstKeyOf(Interface::class.java).name.removePrefix(InterfaceReader.LAG_PREFIX)
+            val name = iid.firstKeyOf(Interface::class.java).name
             builder.key = SubinterfaceKey(iid.firstKeyOf(Subinterface::class.java).index)
 
             InterfaceReader.readUnitCfg(underlayAccess,

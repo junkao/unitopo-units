@@ -13,7 +13,6 @@ import io.fd.honeycomb.translate.read.ReadFailedException
 import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.junos.interfaces.handler.InterfaceReader
-import io.frinx.unitopo.unit.junos.interfaces.handler.InterfaceReader.Companion.LAG_PREFIX
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.Interface
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.subinterfaces.Subinterface
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.subinterfaces.SubinterfaceBuilder
@@ -36,7 +35,7 @@ class SubinterfaceConfigReader(private val underlayAccess: UnderlayAccess) : Con
                                        configBuilder: ConfigBuilder,
                                        readContext: ReadContext) {
         try {
-            val name = instanceIdentifier.firstKeyOf(Interface::class.java).name.removePrefix(LAG_PREFIX)
+            val name = instanceIdentifier.firstKeyOf(Interface::class.java).name
             val unitId = instanceIdentifier.firstKeyOf(Subinterface::class.java).index
             InterfaceReader.readUnitCfg(underlayAccess, name, unitId, { configBuilder.fromUnderlay(it) })
         } catch (e: MDSalReadFailed) {

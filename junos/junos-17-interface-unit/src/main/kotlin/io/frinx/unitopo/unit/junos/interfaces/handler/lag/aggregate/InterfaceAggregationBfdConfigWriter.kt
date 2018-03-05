@@ -14,7 +14,6 @@ import io.fd.honeycomb.translate.write.WriteContext
 import io.fd.honeycomb.translate.write.WriteFailedException
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.junos.interfaces.handler.InterfaceReader
-import io.frinx.unitopo.unit.junos.interfaces.handler.InterfaceReader.Companion.LAG_PREFIX
 import io.frinx.unitopo.unit.junos.interfaces.handler.parseIfcType
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.bfd.rev171024.bfd.top.bfd.Config
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.Interface
@@ -89,7 +88,7 @@ class InterfaceAggregationBfdConfigWriter(private val underlayAccess: UnderlayAc
     }
 
     private fun getUnderlayId(id: InstanceIdentifier<Config>): InstanceIdentifier<JunosBfdLivenessDetection> {
-        val ifcName = id.firstKeyOf(Interface::class.java).name.removePrefix(LAG_PREFIX)
+        val ifcName = id.firstKeyOf(Interface::class.java).name
 
         return InterfaceReader.IFCS.child(JunosInterface::class.java, JunosInterfaceKey(ifcName))
                 .child(JunosAggregEthOptions::class.java)

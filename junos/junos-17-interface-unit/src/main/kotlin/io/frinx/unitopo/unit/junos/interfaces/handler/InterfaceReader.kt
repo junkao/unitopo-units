@@ -20,7 +20,6 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.re
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.InterfaceBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.InterfaceKey
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.Configuration
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.iana._if.type.rev140508.Ieee8023adLag
 import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.AggregatedEtherOptions as JunosAggregatedEtherOptions
@@ -62,7 +61,7 @@ class InterfaceReader(private val underlayAccess: UnderlayAccess) : ConfigListRe
         try {
             // Just set the name (if there is such interface)
             if (interfaceExists(underlayAccess, instanceIdentifier)) {
-                interfaceBuilder.name = parseIfcName(instanceIdentifier.firstKeyOf(Interface::class.java).name)
+                interfaceBuilder.name = instanceIdentifier.firstKeyOf(Interface::class.java).name
             }
         } catch (e: org.opendaylight.controller.md.sal.common.api.data.ReadFailedException) {
             throw ReadFailedException(instanceIdentifier, e)
@@ -72,7 +71,6 @@ class InterfaceReader(private val underlayAccess: UnderlayAccess) : ConfigListRe
     companion object {
         val JUNOS_CFG = IID.create(Configuration::class.java)!!
         val IFCS = JUNOS_CFG.child(JunosInterfaces::class.java)!!
-        val LAG_PREFIX = "Bundle-Ether"
 
         fun interfaceExists(underlayAccess: UnderlayAccess, name: IID<out DataObject>) =
                 getInterfaceIds(underlayAccess).contains(name.firstKeyOf(Interface::class.java)!!)
@@ -88,12 +86,12 @@ class InterfaceReader(private val underlayAccess: UnderlayAccess) : ConfigListRe
         private fun parseInterfaceIds(it: JunosInterfaces): List<InterfaceKey> {
             return it.`interface`.orEmpty()
                     .map { it.key }
-                    .map { InterfaceKey(parseIfcName(it.name)) }
+                    .map { InterfaceKey(it.name) }
                     .toList()
         }
 
         private fun interfaceExists(underlayAccess: UnderlayAccess, name: String) =
-                getInterfaceIds(underlayAccess).contains(InterfaceKey(parseIfcName(name)))
+                getInterfaceIds(underlayAccess).contains(InterfaceKey(name))
 
         fun createBuilderFromExistingInterface(underlayAccess: UnderlayAccess, name: String): JunosInterfaceBuilder {
             val existingInterface = readInterface(underlayAccess, name)
@@ -124,13 +122,6 @@ class InterfaceReader(private val underlayAccess: UnderlayAccess) : ConfigListRe
             readInterface(underlayAccess, name)
                     // Invoke handler with read HoldTimeConfig or use default
                     .let { it?.holdTime?.let { it1 -> handler(it1) } }
-        }
-
-        fun parseIfcName(ifcName: String): String? {
-            return when (parseIfcType(ifcName)) {
-                Ieee8023adLag::class.java -> LAG_PREFIX + ifcName
-                else -> ifcName
-            }
         }
 
         fun readDampingCfg(underlayAccess: UnderlayAccess, name: String, handler: (JunosDamping) -> Unit) {

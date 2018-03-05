@@ -102,7 +102,7 @@ class InterfaceDampingConfigWriter(private val underlayAccess: UnderlayAccess) :
     }
 
     private fun getUnderlayId(id: InstanceIdentifier<Config>): Pair<String, InstanceIdentifier<JunosDamping>> {
-        val ifcName = id.firstKeyOf(Interface::class.java).name.removePrefix(InterfaceReader.LAG_PREFIX)
+        val ifcName = id.firstKeyOf(Interface::class.java).name
         val underlayId = InterfaceReader.IFCS.child(JunosInterface::class.java, JunosInterfaceKey(ifcName)).child(JunosDamping::class.java)
 
         return Pair(ifcName, underlayId)

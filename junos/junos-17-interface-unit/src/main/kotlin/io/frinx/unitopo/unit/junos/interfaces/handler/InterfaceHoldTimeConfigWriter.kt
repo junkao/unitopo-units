@@ -79,7 +79,7 @@ class InterfaceHoldTimeConfigWriter(private val underlayAccess: UnderlayAccess) 
     }
 
     private fun getUnderlayId(id: InstanceIdentifier<Config>): Pair<String, InstanceIdentifier<JunosHoldTime>> {
-        val ifcName = id.firstKeyOf(Interface::class.java).name.removePrefix(InterfaceReader.LAG_PREFIX)
+        val ifcName = id.firstKeyOf(Interface::class.java).name
         val underlayId = InterfaceReader.IFCS
                 .child(JunosInterface::class.java, JunosInterfaceKey(ifcName))
                 .child(JunosHoldTime::class.java)

@@ -38,7 +38,7 @@ class SubinterfaceAddressReader(private val underlayAccess: UnderlayAccess) : Co
 
     @Throws(ReadFailedException::class)
     override fun getAllIds(iid: InstanceIdentifier<Address>, context: ReadContext): List<AddressKey> {
-        val ifcName = iid.firstKeyOf(Interface::class.java).name.removePrefix(InterfaceReader.LAG_PREFIX)
+        val ifcName = iid.firstKeyOf(Interface::class.java).name
         val unitId = iid.firstKeyOf(Subinterface::class.java).index
         try {
             return getSubInterfaceAddressIds(underlayAccess, ifcName, unitId.toString())
@@ -88,7 +88,7 @@ private fun AddressBuilder.fromUnderlay(address: JunosInterfaceUnitAddress) {
 }
 
 internal fun resolveKeys(iid: InstanceIdentifier<Address>): Triple<String, Long, AddressKey> {
-    val ifcName = iid.firstKeyOf(Interface::class.java).name.removePrefix(InterfaceReader.LAG_PREFIX)
+    val ifcName = iid.firstKeyOf(Interface::class.java).name
     val subIfcId = iid.firstKeyOf(Subinterface::class.java).index
     val addressKey = AddressKey(iid.firstKeyOf(Address::class.java).ip)
 

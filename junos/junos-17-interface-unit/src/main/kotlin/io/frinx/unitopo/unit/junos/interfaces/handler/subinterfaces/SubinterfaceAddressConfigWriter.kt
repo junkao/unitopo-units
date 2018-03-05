@@ -8,13 +8,11 @@
 
 package io.frinx.unitopo.unit.junos.interfaces.handler.subinterfaces
 
-import io.fd.honeycomb.translate.read.ReadFailedException
 import io.fd.honeycomb.translate.spi.write.WriterCustomizer
 import io.fd.honeycomb.translate.write.WriteContext
 import io.fd.honeycomb.translate.write.WriteFailedException
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.junos.interfaces.handler.InterfaceReader
-import io.frinx.unitopo.unit.junos.interfaces.handler.InterfaceReader.Companion.LAG_PREFIX
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.ipv4.top.ipv4.addresses.address.Config
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.Interface
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.subinterfaces.Subinterface
@@ -81,7 +79,7 @@ class SubinterfaceAddressConfigWriter(private val underlayAccess: UnderlayAccess
     }
 
     private fun getUnderlayId(id: InstanceIdentifier<Config>, ipPrefix: Ipv4prefix): InstanceIdentifier<JunosInterfaceUnitFamilyInetAddress> {
-        val ifcName = id.firstKeyOf(Interface::class.java).name.removePrefix(LAG_PREFIX)
+        val ifcName = id.firstKeyOf(Interface::class.java).name
         val underlayUnitName = id.firstKeyOf(Subinterface::class.java).index.toString()
 
         return InterfaceReader.IFCS.child(JunosInterface::class.java, JunosInterfaceKey(ifcName))

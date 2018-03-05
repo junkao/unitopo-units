@@ -13,7 +13,6 @@ import io.fd.honeycomb.translate.read.ReadFailedException
 import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.junos.interfaces.handler.InterfaceReader
-import io.frinx.unitopo.unit.junos.interfaces.handler.InterfaceReader.Companion.LAG_PREFIX
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.bfd.rev171024.bfd.top.BfdBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.bfd.rev171024.bfd.top.bfd.Config
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.bfd.rev171024.bfd.top.bfd.ConfigBuilder
@@ -35,7 +34,7 @@ class InterfaceAggregationBfdConfigReader(private val underlayAccess: UnderlayAc
     @Throws(ReadFailedException::class)
     override fun readCurrentAttributes(iid: IID<Config>, builder: ConfigBuilder, context: ReadContext) {
         try {
-            val name = iid.firstKeyOf(Interface::class.java).name.removePrefix(LAG_PREFIX)
+            val name = iid.firstKeyOf(Interface::class.java).name
             InterfaceReader.readAggregationBfdCfg(underlayAccess, name, { builder.fromUnderlay(it) })
         } catch (e: MDSalReadFailed) {
             throw ReadFailedException(iid, e)

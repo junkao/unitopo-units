@@ -12,7 +12,6 @@ import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.read.ReadFailedException
 import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.junos.interfaces.handler.InterfaceReader.Companion.parseIfcName
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.aggregate.rev161222.Config1
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.aggregate.rev161222.Config1Builder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ethernet.rev161222.ethernet.top.ethernet.ConfigBuilder
@@ -47,6 +46,6 @@ class InterfaceIfAggregateConfigReader(private val underlayAccess: UnderlayAcces
 internal fun Config1Builder.fromUnderlay(underlay: JunosGigEthIeee8023ad?) {
     aggregateId = when (underlay?.bundle?.interfaceDevice?.value) {
         null -> null
-        else -> parseIfcName(underlay.bundle?.interfaceDevice?.value!!)
+        else -> underlay.bundle?.interfaceDevice?.value!!
     }
 }
