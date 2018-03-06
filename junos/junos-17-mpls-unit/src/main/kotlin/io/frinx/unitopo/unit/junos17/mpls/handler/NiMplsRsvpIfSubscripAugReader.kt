@@ -36,11 +36,20 @@ class NiMplsRsvpIfSubscripAugReader(private val underlayAccess: UnderlayAccess) 
         try {
             RsvpInterfaceConfigReader.readInterface(underlayAccess, name)?.let {
                 it.bandwidth?.let {
-                    configBuilder.bandwidth = MplsRsvpSubscriptionConfig.Bandwidth(it.toLong())
+                    configBuilder.bandwidth = MplsRsvpSubscriptionConfig.Bandwidth(translateBw(it))
                 }
             }
         } catch (e: MdSalReadFailedException) {
             throw ReadFailedException(instanceIdentifier, e)
+        }
+    }
+
+    private fun translateBw(bandwidth : String) : Long {
+        return when {
+            bandwidth.endsWith('k') -> bandwidth.removeSuffix("k").toLong() * 1000
+            bandwidth.endsWith('m') -> bandwidth.removeSuffix("m").toLong() * 1000000
+            bandwidth.endsWith('g') -> bandwidth.removeSuffix("g").toLong() * 1000000000
+            else -> bandwidth.toLong()
         }
     }
 }
