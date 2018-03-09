@@ -55,6 +55,6 @@ class OspfProtocolReader(private val access: UnderlayAccess) :
     }
 
     companion object {
-        private val UNDERLAY_OSPF = IID.create(Ospf::class.java).child(Processes::class.java)
+        val UNDERLAY_OSPF = IID.create(Ospf::class.java).child(Processes::class.java)
     }
 }

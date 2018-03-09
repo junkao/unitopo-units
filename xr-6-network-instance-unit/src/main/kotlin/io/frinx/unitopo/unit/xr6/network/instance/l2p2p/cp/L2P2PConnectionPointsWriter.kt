@@ -195,6 +195,8 @@ class L2P2PConnectionPointsWriter(private val underlayAccess: UnderlayAccess) : 
     private fun configureUnderlayL2Interface(writeContext: WriteContext, underlayIfcName: String) {
         checkIfcExists(writeContext, underlayIfcName)
         checkIfcNoIp(writeContext, underlayIfcName)
+        // FIXME add a check whether subinterface is present. XR does not allow subinterfaces to exist when configuring
+        // parent interface with L2P2P
         val underlayIfcId = getUnderlayIfcId(underlayIfcName)
         val underlayL2TransportIfcAugId = underlayIfcId.augmentation(UnderlayIfcL2TransportAug::class.java)
 

@@ -19,9 +19,9 @@ package io.frinx.unitopo.unit.xr6.bgp.handler
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.openconfig.network.instance.NetworInstance
 import io.frinx.unitopo.registry.spi.UnderlayAccess
+import io.frinx.unitopo.unit.network.instance.As.Companion.asToDotNotation
 import io.frinx.unitopo.unit.network.instance.protocol.bgp.common.BgpReader
 import io.frinx.unitopo.unit.xr6.bgp.*
-import io.frinx.unitopo.unit.xr6.bgp.common.As.Companion.asToDotNotation
 import io.frinx.unitopo.unit.xr6.bgp.common.BgpWriter
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.BgpRouteDistinguisher
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.Instance

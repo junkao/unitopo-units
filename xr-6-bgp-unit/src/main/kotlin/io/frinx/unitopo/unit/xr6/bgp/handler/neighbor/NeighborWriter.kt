@@ -21,7 +21,7 @@ import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.openconfig.network.instance.NetworInstance
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr6.bgp.*
-import io.frinx.unitopo.unit.xr6.bgp.common.As
+import io.frinx.unitopo.unit.network.instance.As
 import io.frinx.unitopo.unit.xr6.bgp.common.BgpListWriter
 import io.frinx.unitopo.unit.xr6.bgp.handler.GlobalConfigWriter
 import io.frinx.unitopo.unit.xr6.bgp.handler.GlobalConfigWriter.Companion.XR_BGP_INSTANCE_NAME

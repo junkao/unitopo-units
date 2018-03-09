@@ -60,6 +60,12 @@
             <artifactId>translation-registry-api</artifactId>
             <version>${project.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>io.frinx.unitopo</groupId>
+            <artifactId>network-instance-unit</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <dependency>
             <groupId>io.frinx.unitopo</groupId>
             <artifactId>utils-unit</artifactId>
@@ -70,12 +76,18 @@
             <artifactId>common-handlers</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>io.frinx.unitopo</groupId>
+            <artifactId>network-instance-unit</artifactId>
+            <version>${cli.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>io.fd.honeycomb</groupId>
             <artifactId>translate-impl</artifactId>
             <version>${hc.version}</version>
         </dependency>
+
 
         <dependency>
             <groupId>io.frinx.openconfig</groupId>

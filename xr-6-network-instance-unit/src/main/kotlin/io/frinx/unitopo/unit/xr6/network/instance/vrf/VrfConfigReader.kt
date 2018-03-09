@@ -21,7 +21,7 @@ import io.fd.honeycomb.translate.read.ReadFailedException
 import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
 import io.frinx.cli.registry.common.CompositeReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.xr6.bgp.common.As
+import io.frinx.unitopo.unit.network.instance.As
 import io.frinx.unitopo.unit.xr6.bgp.handler.BgpProtocolReader
 import io.frinx.unitopo.unit.xr6.bgp.handler.GlobalConfigWriter.Companion.XR_BGP_INSTANCE_NAME
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.infra.rsi.cfg.rev150730.VrfAddressFamily
@@ -122,7 +122,7 @@ private fun ConfigBuilder.fromUnderlay(underlay: Vrf, rd: RouteDistinguisher?) {
     enabledAddressFamilies = underlay.afs?.af.orEmpty().mapNotNull { it.toOpenconfig() }
 }
 
-private fun Af.toOpenconfig(): Class<out ADDRESSFAMILY>? {
+fun Af.toOpenconfig(): Class<out ADDRESSFAMILY>? {
     return when (afName) {
         VrfAddressFamily.Ipv4 -> IPV4::class.java
         VrfAddressFamily.Ipv6 -> IPV6::class.java

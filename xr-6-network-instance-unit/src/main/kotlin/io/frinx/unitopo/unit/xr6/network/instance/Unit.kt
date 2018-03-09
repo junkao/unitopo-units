@@ -27,16 +27,20 @@ import io.frinx.openconfig.openconfig.network.instance.IIDs
 import io.frinx.unitopo.registry.api.TranslationUnitCollector
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.network.instance.NetworkInstanceUnit
+import io.frinx.unitopo.unit.utils.NoopListWriter
 import io.frinx.unitopo.unit.utils.NoopWriter
 import io.frinx.unitopo.unit.xr6.interfaces.Unit
-import io.frinx.unitopo.unit.xr6.network.instance.vrf.VrfTableConnectionConfigWriter
 import io.frinx.unitopo.unit.xr6.network.instance.vrf.ifc.VrfInterfaceConfigWriter
 import io.frinx.unitopo.unit.xr6.network.instance.vrf.ifc.VrfInterfaceReader
 import io.frinx.unitopo.unit.xr6.network.instance.vrf.protocol.*
+import io.frinx.unitopo.unit.xr6.network.instance.vrf.table.TableConnectionConfigWriter
+import io.frinx.unitopo.unit.xr6.network.instance.vrf.table.TableConnectionReader
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.local.routing.rev170515.local.aggregate.top.LocalAggregatesBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.Config
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.ConfigBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.ConnectionPoints
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.TableConnectionsBuilder
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.table.connections.TableConnection
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev150730.`$YangModuleInfoImpl` as UnderlayInterfacesYangInfo
@@ -68,7 +72,8 @@ class Unit(private val registry: TranslationUnitCollector) : NetworkInstanceUnit
         wRegistry.add(GenericWriter(IIDs.NE_NE_IN_APPLYPOLICY, NoopWriter()))
         wRegistry.add(GenericWriter(IIDs.NE_NE_IN_AP_CONFIG, NoopWriter()))
 
-        wRegistry.add(GenericWriter(IIDs.NE_NE_PR_PR_CONFIG, ProtocolConfigWriter(underlayAccess)))
+        wRegistry.addAfter(GenericWriter(IIDs.NE_NE_PR_PR_CONFIG, ProtocolConfigWriter(underlayAccess)),
+                IIDs.NE_NE_IN_INTERFACE)
 
         // Local aggregates
         wRegistry.add(GenericWriter(IIDs.NE_NE_PR_PR_LO_AGGREGATE, NoopWriter()))
@@ -77,12 +82,16 @@ class Unit(private val registry: TranslationUnitCollector) : NetworkInstanceUnit
                         IIDs.NE_NE_PR_PR_BG_GL_AF_AF_CONFIG, IIDs.NE_NE_PR_PR_BG_NE_NE_AF_AF_CONFIG))
 
         wRegistry.add(GenericWriter(IIDs.NE_NE_IN_INTERFACE, NoopWriter()))
-        wRegistry.add(GenericWriter(IIDs.NE_NE_IN_IN_CONFIG, VrfInterfaceConfigWriter(underlayAccess)))
-        // FIXME join with bgp writers
-        wRegistry.add(GenericWriter(IIDs.NE_NE_TA_TABLECONNECTION, NoopWriter()))
-        wRegistry.add(GenericWriter(IIDs.NE_NE_TA_TA_CONFIG, VrfTableConnectionConfigWriter(underlayAccess)))
-        wRegistry.add(GenericWriter(IIDs.NE_NE_TA_TABLE, NoopWriter()))
-        wRegistry.add(GenericWriter(IIDs.NET_NET_TAB_TAB_CONFIG, NoopWriter()))
+        wRegistry.addAfter(GenericWriter(IIDs.NE_NE_IN_IN_CONFIG, VrfInterfaceConfigWriter(underlayAccess)),
+                IIDs.NE_NE_CONFIG)
+
+        // Table connections for VRF
+        wRegistry.add(GenericWriter(IIDs.NE_NE_TABLECONNECTIONS, NoopWriter()))
+        wRegistry.add(GenericWriter(IIDs.NE_NE_TA_TABLECONNECTION, NoopListWriter()))
+        wRegistry.addAfter(GenericWriter(IIDs.NE_NE_TA_TA_CONFIG, TableConnectionConfigWriter(underlayAccess)),
+                /*add after protocol writers*/
+                Sets.newHashSet(IIDs.NE_NE_PR_PR_CONFIG, IIDs.NE_NE_PR_PR_BG_GL_CONFIG, IIDs.NE_NE_PR_PR_OS_GL_CONFIG))
+
         wRegistry.addAfter(GenericWriter(IIDs.NE_NE_CONFIG, NetworkInstanceConfigWriter(underlayAccess)),
                 setOf(
                         /*handle after ifc configuration*/ io.frinx.openconfig.openconfig.interfaces.IIDs.IN_IN_CONFIG,
@@ -115,6 +124,11 @@ class Unit(private val registry: TranslationUnitCollector) : NetworkInstanceUnit
         rRegistry.addStructuralReader(IIDs.NE_NE_PR_PR_LOCALAGGREGATES, LocalAggregatesBuilder::class.java)
         rRegistry.add(GenericConfigListReader(IIDs.NE_NE_PR_PR_LO_AGGREGATE, LocalAggregateReader(underlayAccess)))
         rRegistry.add(GenericConfigReader(IIDs.NE_NE_PR_PR_LO_AG_CONFIG, LocalAggregateConfigReader(underlayAccess)))
+
+        // Table connections for VRF
+        rRegistry.addStructuralReader(IIDs.NE_NE_TABLECONNECTIONS, TableConnectionsBuilder::class.java)
+        rRegistry.subtreeAdd(setOf(RWUtils.cutIdFromStart<TableConnection>(IIDs.NE_NE_TA_TA_CONFIG, InstanceIdentifier.create(TableConnection::class.java))),
+                GenericConfigListReader(IIDs.NE_NE_TA_TABLECONNECTION, TableConnectionReader(underlayAccess)))
 
         // Connection points for L2P2p
         rRegistry.subtreeAdd(Sets.newHashSet<InstanceIdentifier<*>>(

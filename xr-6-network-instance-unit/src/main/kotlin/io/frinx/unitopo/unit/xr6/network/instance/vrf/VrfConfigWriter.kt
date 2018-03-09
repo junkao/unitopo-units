@@ -121,7 +121,7 @@ class VrfConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCustom
     }
 }
 
-private fun Class<out ADDRESSFAMILY>.toUnderlay(): VrfAddressFamily? {
+fun Class<out ADDRESSFAMILY>.toUnderlay(): VrfAddressFamily? {
     return when (this) {
         IPV4::class.java -> VrfAddressFamily.Ipv4
         IPV6::class.java -> VrfAddressFamily.Ipv6
