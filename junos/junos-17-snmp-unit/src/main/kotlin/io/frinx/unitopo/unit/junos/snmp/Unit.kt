@@ -31,6 +31,7 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.snmp.rev17102
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.snmp.rev171024.`$YangModuleInfoImpl` as SnmpYangInfo
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.`$YangModuleInfoImpl` as UnderlayInterfacesYangInfo
+import io.frinx.openconfig.openconfig.interfaces.IIDs as InterfacesIIDs
 
 class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
     private var reg: TranslationUnitCollector.Registration? = null
@@ -62,8 +63,8 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
         wRegistry.add(GenericWriter(IIDs.SNMP, NoopWriter()))
         wRegistry.add(GenericWriter(IIDs.SN_INTERFACES, NoopWriter()))
         wRegistry.add(GenericListWriter(IIDs.SN_IN_INTERFACE, NoopListWriter()))
-        wRegistry.subtreeAdd(setOf(InstanceIdentifier.create(Config::class.java).child(EnabledTrapForEvent::class.java)),
-                GenericWriter(IIDs.SN_IN_IN_CONFIG, SnmpConfigWriter(underlayAccess)))
+        wRegistry.subtreeAddAfter(setOf(InstanceIdentifier.create(Config::class.java).child(EnabledTrapForEvent::class.java)),
+                GenericWriter(IIDs.SN_IN_IN_CONFIG, SnmpConfigWriter(underlayAccess)), InterfacesIIDs.IN_IN_CONFIG)
     }
 
     private fun provideReaders(rRegistry: ModifiableReaderRegistryBuilder, underlayAccess: UnderlayAccess) {
