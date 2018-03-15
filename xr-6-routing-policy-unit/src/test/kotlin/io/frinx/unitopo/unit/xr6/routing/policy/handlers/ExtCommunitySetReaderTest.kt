@@ -53,7 +53,7 @@ class ExtCommunitySetReaderTest : AbstractNetconfHandlerTest() {
                         .setExtCommunitySetName("abcd-route-target-export-set")
                         .setConfig(ConfigBuilder()
                                 .setExtCommunitySetName("abcd-route-target-export-set")
-                                .setExtCommunityMember(listOf("8585:4343").map { ExtCommunitySetConfig.ExtCommunityMember(BgpExtCommunityType(it)) })
+                                .setExtCommunityMember(listOf("8585:4343", "1:1").map { ExtCommunitySetConfig.ExtCommunityMember(BgpExtCommunityType(it)) })
                                 .build())
                         .build(),
                 builder.build())

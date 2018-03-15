@@ -20,6 +20,7 @@ import io.frinx.openconfig.network.instance.NetworInstance
 import io.frinx.unitopo.unit.utils.AbstractNetconfHandlerTest
 import org.junit.Assert
 import org.junit.Test
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.BgpNeighborState
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.neighbor.base.StateBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.neighbor.list.NeighborKey
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstanceKey
@@ -49,6 +50,7 @@ class NeighborStateReaderTest : AbstractNetconfHandlerTest() {
                         .setEnabled(true)
                         .setNeighborAddress(IpAddress(Ipv4Address("10.1.0.4")))
                         .setPeerAs(AsNumber(123))
+                        .setSessionState(BgpNeighborState.SessionState.IDLE)
                         .build(),
                 stateBuilder.build())
     }
@@ -67,6 +69,7 @@ class NeighborStateReaderTest : AbstractNetconfHandlerTest() {
                         .setEnabled(true)
                         .setNeighborAddress(IpAddress(Ipv6Address("4444::1111")))
                         .setPeerAs(AsNumber(65537))
+                        .setSessionState(BgpNeighborState.SessionState.IDLE)
                         .build(),
                 stateBuilder.build())
     }
