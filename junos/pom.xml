@@ -44,6 +44,7 @@
     <module>junos-17-acl-unit</module>
     <module>junos-17-policy-forwarding-unit</module>
     <module>junos-17-ospf-unit</module>
+    <module>junos-17-configuration-metadata-unit</module>
   </modules>
 
   <build>
