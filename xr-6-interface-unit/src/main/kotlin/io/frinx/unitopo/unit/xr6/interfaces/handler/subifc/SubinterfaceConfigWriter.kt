@@ -20,6 +20,7 @@ import io.fd.honeycomb.translate.spi.write.WriterCustomizer
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr6.interfaces.handler.InterfaceReader
+import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.SubinterfaceReader.Companion.ZERO_SUBINTERFACE_ID
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev150730.InterfaceActive
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev150730.InterfaceModeEnum
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev150730._interface.configurations.InterfaceConfiguration
@@ -35,12 +36,19 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 class SubinterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCustomizer<Config> {
 
     override fun deleteCurrentAttributes(id: InstanceIdentifier<Config>, dataBefore: Config, writeContext: WriteContext) {
+        if (id.firstKeyOf(Subinterface::class.java).index == ZERO_SUBINTERFACE_ID) {
+            return
+        }
+
         val (_, _, underlayId) = getId(id)
         underlayAccess.delete(underlayId)
     }
 
     override fun writeCurrentAttributes(id: InstanceIdentifier<Config>, dataAfter: Config, writeContext: WriteContext) {
-        // TODO What about subinterface .0. Should we treat it differently?
+        if (id.firstKeyOf(Subinterface::class.java).index == ZERO_SUBINTERFACE_ID) {
+            return
+        }
+
         val (underlayId, underlayIfcCfg) = getData(id, dataAfter)
 
         underlayAccess.put(underlayId, underlayIfcCfg)
