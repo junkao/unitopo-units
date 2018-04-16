@@ -45,6 +45,7 @@ class SubinterfaceConfigReader(private val underlayAccess: UnderlayAccess) : Con
 
         // Only parse configuration for non 0 subifc
         if (subifcIndex == ZERO_SUBINTERFACE_ID) {
+            builder.index = ZERO_SUBINTERFACE_ID
             return
         }
 

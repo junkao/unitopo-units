@@ -54,11 +54,9 @@ class SubinterfaceReader(private val underlayAccess: UnderlayAccess) : ConfigLis
             val hasIpv4Address = context.read(zeroSubIfaceIid.augmentation(InterfaceIpv4Augment::class.java)).isPresent
             val hasIpv6Address = context.read(zeroSubIfaceIid.augmentation(InterfaceIpv6Augment::class.java)).isPresent
 
-            if (hasIpv4Address || hasIpv6Address) {
-                subIfcKeys.plus(SubinterfaceKey(ZERO_SUBINTERFACE_ID))
-            }
-
-            subIfcKeys.toMutableList();
+            return if (hasIpv4Address || hasIpv6Address)
+                subIfcKeys.plus(SubinterfaceKey(ZERO_SUBINTERFACE_ID)).toMutableList() else
+                subIfcKeys.toMutableList()
 
         } else {
             emptyList<SubinterfaceKey>().toMutableList()
