@@ -28,6 +28,7 @@ import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.ip6.r150730.Unit
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.Subinterface2Builder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.ipv6.top.Ipv6Builder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.ipv6.top.ipv6.AddressesBuilder
+import io.frinx.openconfig.openconfig.network.instance.IIDs as NetworkInstanceIIDs
 
 class Unit(registry: TranslationUnitCollector) : Unit(registry) {
 
@@ -36,7 +37,8 @@ class Unit(registry: TranslationUnitCollector) : Unit(registry) {
 
     override fun provideWriters(wRegistry: ModifiableWriterRegistryBuilder, underlayAccess: UnderlayAccess) {
         wRegistry.add(GenericWriter(SUBIFC_IPV6_ADDRESS_ID, Ipv6AddressWriter()))
-        wRegistry.add(GenericWriter(SUBIFC_IPV6_CFG_ID, Ipv6ConfigWriter(underlayAccess)))
+        wRegistry.addAfter(GenericWriter(SUBIFC_IPV6_CFG_ID, Ipv6ConfigWriter(underlayAccess)),
+                NetworkInstanceIIDs.NE_NE_IN_IN_CONFIG)
     }
 
     override fun provideReaders(rRegistry: ModifiableReaderRegistryBuilder, underlayAccess: UnderlayAccess) {

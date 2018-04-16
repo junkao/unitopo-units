@@ -58,6 +58,7 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.re
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.subinterfaces.subinterface.State as SubinterfaceState
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.vlan.rev170714.Subinterface1 as VlanAug
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.vlan.rev170714.Subinterface1Builder as VlanAugBuilder
+import io.frinx.openconfig.openconfig.network.instance.IIDs as NetworkInstanceIIDs
 
 class Unit(private val registry: TranslationUnitCollector) : Unit() {
     private var reg: TranslationUnitCollector.Registration? = null
@@ -98,7 +99,8 @@ class Unit(private val registry: TranslationUnitCollector) : Unit() {
                 IIDs.IN_IN_SU_SU_CONFIG)
 
         wRegistry.add(GenericWriter(SUBIFC_IPV4_ADDRESS_ID, Ipv4AddressWriter()))
-        wRegistry.add(GenericWriter(SUBIFC_IPV4_CFG_ID, Ipv4AddressConfigWriter(underlayAccess)))
+        wRegistry.addAfter(GenericWriter(SUBIFC_IPV4_CFG_ID, Ipv4AddressConfigWriter(underlayAccess)),
+                NetworkInstanceIIDs.NE_NE_IN_IN_CONFIG)
     }
 
     private fun provideReaders(rRegistry: ModifiableReaderRegistryBuilder, underlayAccess: UnderlayAccess) {
@@ -136,7 +138,7 @@ class Unit(private val registry: TranslationUnitCollector) : Unit() {
         private val SUBIFC_IPV4_ID = SUBIFC_IPV4_AUG_ID.child(Ipv4::class.java)
         private val SUBIFC_IPV4_ADDRESSES_ID = SUBIFC_IPV4_ID.child(Addresses::class.java)
         private val SUBIFC_IPV4_ADDRESS_ID = SUBIFC_IPV4_ADDRESSES_ID.child(Address::class.java)
-        private val SUBIFC_IPV4_CFG_ID = SUBIFC_IPV4_ADDRESS_ID.child(Ipv4AddressConfig::class.java)
+        val SUBIFC_IPV4_CFG_ID = SUBIFC_IPV4_ADDRESS_ID.child(Ipv4AddressConfig::class.java)
 
         private val SUBIFC_VLAN_AUG_ID = IIDs.IN_IN_SU_SUBINTERFACE.augmentation(VlanAug::class.java)
 
