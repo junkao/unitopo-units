@@ -33,7 +33,7 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 class InterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCustomizer<Config> {
 
     override fun writeCurrentAttributes(id: InstanceIdentifier<Config>, dataAfter: Config, writeContext: WriteContext) {
-        val (underlayId, underlayIfcCfg) = getData(id, dataAfter)
+        val (underlayId, underlayIfcCfg) = getData(id, dataAfter, null)
 
         underlayAccess.put(underlayId, underlayIfcCfg)
     }
@@ -47,30 +47,24 @@ class InterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : Writer
     override fun updateCurrentAttributes(id: InstanceIdentifier<Config>,
                                          dataBefore: Config, dataAfter: Config,
                                          writeContext: WriteContext) {
-        val (underlayId, underlayIfcCfg) = getData(id, dataAfter)
-
+        val (_, _, underlayId) = getId(id)
         val before = underlayAccess.read(underlayId)
                 .checkedGet()
                 .orNull()
 
-        // Check if enabling the interface from disabled state
-        // since shutdown is an empty leaf, enabling an interface cannot be done with merge
-        if (before != null &&
-                before.isShutdown != null &&
-                !dataAfter.shutdown()) {
+        val (_, underlayIfcCfg) = getData(id, dataAfter, before)
 
-            val previousStateWithoutShut = InterfaceConfigurationBuilder(before).setShutdown(null).build()
-            underlayAccess.put(underlayId, previousStateWithoutShut)
-        }
-
-        underlayAccess.merge(underlayId, underlayIfcCfg)
+        underlayAccess.put(underlayId, underlayIfcCfg)
     }
 
-    private fun getData(id: InstanceIdentifier<Config>, dataAfter: Config):
+    private fun getData(id: InstanceIdentifier<Config>, dataAfter: Config, underlayBefore: InterfaceConfiguration?):
             Pair<InstanceIdentifier<InterfaceConfiguration>, InterfaceConfiguration> {
         val (interfaceActive, ifcName, underlayId) = getId(id)
 
-        val ifcCfgBuilder = InterfaceConfigurationBuilder()
+        val ifcCfgBuilder =
+                if (underlayBefore != null) InterfaceConfigurationBuilder(underlayBefore)
+                else InterfaceConfigurationBuilder()
+
         if (dataAfter.shutdown()) ifcCfgBuilder.isShutdown = true
         if (isVirtualInterface(dataAfter.type)) ifcCfgBuilder.isInterfaceVirtual = true
 
@@ -78,6 +72,7 @@ class InterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : Writer
                 .setInterfaceName(ifcName)
                 .setActive(interfaceActive)
                 .setDescription(dataAfter.description)
+                .setInterfaceModeNonPhysical(null)
                 .build()
         return Pair(underlayId, underlayIfcCfg)
     }
