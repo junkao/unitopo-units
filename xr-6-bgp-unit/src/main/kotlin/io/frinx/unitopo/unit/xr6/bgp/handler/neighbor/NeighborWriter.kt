@@ -213,12 +213,14 @@ class NeighborWriter(private val access: UnderlayAccess) : BgpListWriter<Neighbo
             // Reconfigure those coming as an update
             neighAfiSafi
                     .map { it.toUnderlay() }
-                    .map { currentAfs[it] }
-                    .filterNotNull()
+                    .mapNotNull { currentAfs.getOrPut(it, { VrfNeighborAfBuilder()
+                            .setAfName(it)
+                            .build() }) }
                     .map {
                         Pair(it.afName, VrfNeighborAfBuilder(it)
                                 .setRoutePolicyIn(data.applyPolicy?.config?.importPolicy.orEmpty().firstOrNull())
                                 .setRoutePolicyOut(data.applyPolicy?.config?.exportPolicy.orEmpty().firstOrNull())
+                                .setActivate(true)
                                 .build())
                     }.forEach { currentAfs[it.first] = it.second }
 
