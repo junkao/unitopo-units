@@ -62,10 +62,12 @@ class InterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : Writer
         val (interfaceActive, ifcName, underlayId) = getId(id)
 
         val ifcCfgBuilder =
-                if (underlayBefore != null) InterfaceConfigurationBuilder(underlayBefore)
-                else InterfaceConfigurationBuilder()
+                if (underlayBefore != null) InterfaceConfigurationBuilder(underlayBefore) else
+                    InterfaceConfigurationBuilder()
 
-        if (dataAfter.shutdown()) ifcCfgBuilder.isShutdown = true
+        if (dataAfter.shutdown()) ifcCfgBuilder.isShutdown = true else
+            ifcCfgBuilder.isShutdown = null
+
         if (isVirtualInterface(dataAfter.type)) ifcCfgBuilder.isInterfaceVirtual = true
 
         val underlayIfcCfg = ifcCfgBuilder
@@ -74,6 +76,7 @@ class InterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : Writer
                 .setDescription(dataAfter.description)
                 .setInterfaceModeNonPhysical(null)
                 .build()
+
         return Pair(underlayId, underlayIfcCfg)
     }
 
