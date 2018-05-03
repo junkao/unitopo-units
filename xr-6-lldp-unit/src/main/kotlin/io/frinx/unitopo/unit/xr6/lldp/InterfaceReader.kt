@@ -16,7 +16,7 @@
 package io.frinx.unitopo.unit.xr6.lldp
 
 import io.fd.honeycomb.translate.read.ReadContext
-import io.fd.honeycomb.translate.spi.read.ConfigListReaderCustomizer
+import io.fd.honeycomb.translate.spi.read.OperListReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ethernet.lldp.oper.rev151109.Lldp
@@ -29,7 +29,7 @@ import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ethernet.lldp.oper.rev151109.lldp.nodes.node.interfaces.Interface as UnderlayLldpInterface
 
-class InterfaceReader(private val underlayAccess: UnderlayAccess) : ConfigListReaderCustomizer<Interface, InterfaceKey, InterfaceBuilder> {
+class InterfaceReader(private val underlayAccess: UnderlayAccess) : OperListReaderCustomizer<Interface, InterfaceKey, InterfaceBuilder> {
 
     override fun getAllIds(id: InstanceIdentifier<Interface>, context: ReadContext) = getInterfaceIds(underlayAccess)
 

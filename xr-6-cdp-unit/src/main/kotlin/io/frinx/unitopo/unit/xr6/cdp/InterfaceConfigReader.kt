@@ -17,8 +17,7 @@
 package io.frinx.unitopo.unit.xr6.cdp
 
 import io.fd.honeycomb.translate.read.ReadContext
-import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
-import io.fd.honeycomb.translate.spi.read.ReaderCustomizer
+import io.fd.honeycomb.translate.spi.read.OperReaderCustomizer
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.lldp.rev160516.lldp._interface.top.interfaces.Interface
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.lldp.rev160516.lldp._interface.top.interfaces.InterfaceBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.lldp.rev160516.lldp._interface.top.interfaces._interface.Config
@@ -27,7 +26,7 @@ import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class InterfaceConfigReader : ConfigReaderCustomizer<Config, ConfigBuilder> {
+class InterfaceConfigReader : OperReaderCustomizer<Config, ConfigBuilder> {
 
     override fun merge(parentBuilder: Builder<out DataObject>, readValue: Config) {
         (parentBuilder as InterfaceBuilder).config = readValue

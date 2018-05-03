@@ -17,7 +17,8 @@
 package io.frinx.unitopo.unit.xr6.cdp
 
 import io.fd.honeycomb.rpc.RpcService
-import io.fd.honeycomb.translate.impl.read.*
+import io.fd.honeycomb.translate.impl.read.GenericOperListReader
+import io.fd.honeycomb.translate.impl.read.GenericOperReader
 import io.fd.honeycomb.translate.read.registry.ModifiableReaderRegistryBuilder
 import io.fd.honeycomb.translate.write.registry.ModifiableWriterRegistryBuilder
 import io.frinx.openconfig.openconfig.cdp.IIDs
@@ -73,9 +74,8 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
     private fun provideReaders(rRegistry: ModifiableReaderRegistryBuilder, underlayAccess: UnderlayAccess) {
         rRegistry.addStructuralReader(IIDs.CDP, CdpBuilder::class.java)
         rRegistry.addStructuralReader(IIDs.CD_INTERFACES, InterfacesBuilder::class.java)
-        rRegistry.add(GenericConfigListReader(IIDs.CD_IN_INTERFACE, InterfaceReader(underlayAccess)))
-        rRegistry.add(GenericConfigReader(IIDs.CD_IN_IN_CONFIG, InterfaceConfigReader()))
-        rRegistry.add(GenericOperReader(IIDs.CD_IN_IN_STATE, InterfaceStateReader(underlayAccess)))
+        rRegistry.add(GenericOperListReader(IIDs.CD_IN_INTERFACE, InterfaceReader(underlayAccess)))
+        rRegistry.add(GenericOperReader(IIDs.CD_IN_IN_CONFIG, InterfaceConfigReader()))
         rRegistry.addStructuralReader(IIDs.CD_IN_IN_NEIGHBORS, NeighborsBuilder::class.java)
         rRegistry.add(GenericOperListReader(IIDs.CD_IN_IN_NE_NEIGHBOR, NeighborReader(underlayAccess)))
         rRegistry.add(GenericOperReader(IIDs.CD_IN_IN_NE_NE_STATE, NeighborStateReader(underlayAccess)))
