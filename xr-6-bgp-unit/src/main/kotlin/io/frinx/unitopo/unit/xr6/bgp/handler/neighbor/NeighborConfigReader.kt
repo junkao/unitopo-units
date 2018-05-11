@@ -19,10 +19,10 @@ package io.frinx.unitopo.unit.xr6.bgp.handler.neighbor
 import io.fd.honeycomb.translate.read.ReadContext
 import io.frinx.openconfig.network.instance.NetworInstance
 import io.frinx.unitopo.registry.spi.UnderlayAccess
+import io.frinx.unitopo.unit.network.instance.As.Companion.asFromDotNotation
 import io.frinx.unitopo.unit.network.instance.protocol.bgp.common.BgpReader
 import io.frinx.unitopo.unit.xr6.bgp.UnderlayNeighbor
 import io.frinx.unitopo.unit.xr6.bgp.UnderlayVrfNeighbor
-import io.frinx.unitopo.unit.network.instance.As.Companion.asFromDotNotation
 import io.frinx.unitopo.unit.xr6.bgp.handler.BgpProtocolReader
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.REMOTEAS
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.SHUTDOWN
@@ -100,10 +100,12 @@ private fun <T> ConfigBuilder.fromCommonUnderlay(neighbor: T?)
               T : SHUTDOWN {
     neighbor?.let {
         isEnabled = true
-        neighbor.isShutdown?.let {
+        it.isShutdown?.let {
             isEnabled = false
         }
-        peerAs = asFromDotNotation(neighbor.remoteAs.asXx.value, neighbor.remoteAs.asYy.value)
+        it.remoteAs?.let {
+            peerAs = asFromDotNotation(neighbor.remoteAs.asXx.value, neighbor.remoteAs.asYy.value)
+        }
     }
 }
 
