@@ -56,13 +56,26 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>io.frinx.openconfig</groupId>
+            <artifactId>openconfig-if-ip</artifactId>
+            <version>${openconfig.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.fd.honeycomb</groupId>
+            <artifactId>translate-impl</artifactId>
+            <version>${hc.version}</version>
+        </dependency>
         <dependency>
             <groupId>io.frinx.unitopo</groupId>
-            <artifactId>xr-6-interface-unit</artifactId>
+            <artifactId>translation-registry-spi</artifactId>
             <version>${project.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>io.frinx.unitopo</groupId>
+            <artifactId>translation-registry-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <dependency>
             <groupId>io.frinx.openconfig</groupId>
             <artifactId>openconfig-network-instance</artifactId>

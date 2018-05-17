@@ -60,22 +60,23 @@ class Ipv4AddressReader(private val underlayAccess: UnderlayAccess) : ConfigList
         return keys
     }
 
-    private fun extractAddresses(ifcCfg: InterfaceConfiguration, keys: MutableList<AddressKey>) {
-        ifcCfg.getAugmentation(Ipv4IfcAugment::class.java)?.let {
-            it.ipv4Network?.let {
-                it.addresses?.let {
-                    it.primary?.let {
-                        keys.add(AddressKey(it.address))
-                    }
+    companion object {
+        fun extractAddresses(ifcCfg: InterfaceConfiguration, keys: MutableList<AddressKey>) {
+            ifcCfg.getAugmentation(Ipv4IfcAugment::class.java)?.let {
+                it.ipv4Network?.let {
+                    it.addresses?.let {
+                        it.primary?.let {
+                            keys.add(AddressKey(it.address))
+                        }
 //                    Only parse primary address - Openconfig does not distinguish bewheen primary and secondary addrs
 //                    and this would make the output confusing. Either rely on ordering (1st is primary) or add a flag
 
 //                    it.secondaries?.let {
 //                        it.secondary.forEach { keys.add(AddressKey(it.address)) }
 //                    }
+                    }
                 }
             }
         }
     }
-
 }
