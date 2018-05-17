@@ -27,16 +27,17 @@ class Ipv6AddressReader(underlayAccess: UnderlayAccess) : Ipv6AddressReader(unde
     override fun getHandler(keys: MutableList<AddressKey>): (InterfaceConfiguration) -> kotlin.Unit =
             { extractAddresses(it, keys) }
 
-    private fun extractAddresses(ifcCfg: InterfaceConfiguration, keys: MutableList<AddressKey>) {
-        ifcCfg.getAugmentation(UnderlayIpv6Augment::class.java)
-                ?.ipv6Network
-                ?.addresses
-                ?.let {
-                    it.linkLocalAddress?.let { keys.add(AddressKey(it.address.ipv6AddressNoZone)) }
-                    it.regularAddresses
-                            ?.regularAddress.orEmpty()
-                            .forEach { keys.add(AddressKey(it.address.ipv6AddressNoZone)) }
-                }
+    companion object {
+        fun extractAddresses(ifcCfg: InterfaceConfiguration, keys: MutableList<AddressKey>) {
+            ifcCfg.getAugmentation(UnderlayIpv6Augment::class.java)
+                    ?.ipv6Network
+                    ?.addresses
+                    ?.let {
+                        it.linkLocalAddress?.let { keys.add(AddressKey(it.address.ipv6AddressNoZone)) }
+                        it.regularAddresses
+                                ?.regularAddress.orEmpty()
+                                .forEach { keys.add(AddressKey(it.address.ipv6AddressNoZone)) }
+                    }
+        }
     }
-
 }

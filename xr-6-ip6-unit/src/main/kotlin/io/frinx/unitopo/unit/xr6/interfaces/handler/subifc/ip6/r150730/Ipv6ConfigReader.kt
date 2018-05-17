@@ -19,7 +19,6 @@ package io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.ip6.r150730
 import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.xr6.interfaces.handler.InterfaceReader
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev150730._interface.configurations.InterfaceConfiguration
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.ipv6.top.ipv6.addresses.Address
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.ipv6.top.ipv6.addresses.AddressBuilder
@@ -44,7 +43,7 @@ open class Ipv6ConfigReader(private val underlayAccess: UnderlayAccess) : Config
 
         val name = id.firstKeyOf(Interface::class.java).name
         builder.ip = id.firstKeyOf(Address::class.java).ip
-        InterfaceReader.readInterfaceCfg(underlayAccess, name, getHandler(builder))
+        Ipv6AddressReader.readInterfaceCfg(underlayAccess, name, getHandler(builder))
     }
 
     open fun getHandler(builder: ConfigBuilder): (InterfaceConfiguration) -> kotlin.Unit =

@@ -18,10 +18,7 @@ package io.frinx.unitopo.unit.xr6.interfaces.handler.subifc
 
 import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.spi.read.ConfigListReaderCustomizer
-import io.fd.honeycomb.translate.util.RWUtils
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.xr6.interfaces.InterfaceIpv4Augment
-import io.frinx.unitopo.unit.xr6.interfaces.InterfaceIpv6Augment
 import io.frinx.unitopo.unit.xr6.interfaces.handler.InterfaceReader
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.Interface
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.SubinterfacesBuilder
@@ -31,6 +28,10 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.re
 import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.ipv4.top.ipv4.addresses.AddressKey as Ipv4AddressKey
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.ipv6.top.ipv6.addresses.AddressKey as Ipv6AddressKey
+import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.ip6.r150730.Ipv6AddressReader as Ipv6AddressRev150730Reader
+import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.ip6.r170303.Ipv6AddressReader as Ipv6AddressRev170303Reader
 
 class SubinterfaceReader(private val underlayAccess: UnderlayAccess) : ConfigListReaderCustomizer<Subinterface, SubinterfaceKey, SubinterfaceBuilder> {
 
@@ -48,13 +49,14 @@ class SubinterfaceReader(private val underlayAccess: UnderlayAccess) : ConfigLis
                     .filter { it.name.startsWith(ifcName)}
                     .map { InterfaceReader.getSubinterfaceKey(it.name) }
 
-            // Subinterface with ID 0 is reserved for IP addresses of the interface
-            val zeroSubIfaceIid = RWUtils.replaceLastInId(id,
-                    InstanceIdentifier.IdentifiableItem(Subinterface::class.java, SubinterfaceKey(ZERO_SUBINTERFACE_ID)))
-            val hasIpv4Address = context.read(zeroSubIfaceIid.augmentation(InterfaceIpv4Augment::class.java)).isPresent
-            val hasIpv6Address = context.read(zeroSubIfaceIid.augmentation(InterfaceIpv6Augment::class.java)).isPresent
+            val ipv4Keys = mutableListOf<Ipv4AddressKey>()
+            InterfaceReader.readInterfaceCfg(underlayAccess, ifcName, { Ipv4AddressReader.extractAddresses(it, ipv4Keys) })
 
-            return if (hasIpv4Address || hasIpv6Address)
+            val ipv6Keys = mutableListOf<Ipv6AddressKey>()
+            InterfaceReader.readInterfaceCfg(underlayAccess, ifcName, { Ipv6AddressRev150730Reader.extractAddresses(it, ipv6Keys) })
+            InterfaceReader.readInterfaceCfg(underlayAccess, ifcName, { Ipv6AddressRev170303Reader.extractAddresses(it, ipv6Keys) })
+
+            return if (!ipv4Keys.isEmpty() || !ipv6Keys.isEmpty())
                 subIfcKeys.plus(SubinterfaceKey(ZERO_SUBINTERFACE_ID)).toMutableList() else
                 subIfcKeys.toMutableList()
 
