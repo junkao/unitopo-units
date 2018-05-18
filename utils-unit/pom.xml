@@ -29,7 +29,7 @@
     </parent>
 
     <properties>
-        <netconf.version>1.5.1-Carbon-SR1.3_1_3-frinxodl</netconf.version>
+        <netconf.version>1.5.1-Carbon-SR1.3_1_4_rc1-frinxodl-SNAPSHOT</netconf.version>
     </properties>
 
     <groupId>io.frinx.unitopo</groupId>
