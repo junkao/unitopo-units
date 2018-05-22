@@ -23,14 +23,14 @@ import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.InterfaceId
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.snmp.rev171024.snmp.interfaces.structural.InterfacesBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.snmp.rev171024.snmp.interfaces.structural.interfaces.InterfaceBuilder
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.snmp.rev171024.snmp.interfaces.structural.interfaces.Interface as SnmpInterface
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.snmp.rev171024.snmp.interfaces.structural.interfaces.InterfaceBuilder as SnmpInterfaceBuilder
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.snmp.rev171024.snmp.interfaces.structural.interfaces.InterfaceKey as SnmpInterfaceKey
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.Configuration
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.traps.choice.Traps
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.config.Interfaces
 import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.snmp.rev171024.snmp.interfaces.structural.interfaces.Interface as SnmpInterface
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.snmp.rev171024.snmp.interfaces.structural.interfaces.InterfaceBuilder as SnmpInterfaceBuilder
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.snmp.rev171024.snmp.interfaces.structural.interfaces.InterfaceKey as SnmpInterfaceKey
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
 class SnmpInterfaceReader(private val underlayAccess: UnderlayAccess) : ConfigListReaderCustomizer<SnmpInterface, SnmpInterfaceKey, SnmpInterfaceBuilder> {
@@ -42,7 +42,7 @@ class SnmpInterfaceReader(private val underlayAccess: UnderlayAccess) : ConfigLi
     }
 
     override fun getAllIds(id: IID<SnmpInterface>, readContext: ReadContext): List<SnmpInterfaceKey> {
-        return readInterfaceIds()
+        return readInterfaceIds(underlayAccess).map { it.first }
     }
 
     override fun readCurrentAttributes(id: IID<SnmpInterface>, builder: InterfaceBuilder, readContext: ReadContext) {
@@ -50,19 +50,26 @@ class SnmpInterfaceReader(private val underlayAccess: UnderlayAccess) : ConfigLi
         builder.key = SnmpInterfaceKey(ifcId)
     }
 
-    private fun readInterfaceIds(): List<SnmpInterfaceKey> {
+    companion object {
 
-        return underlayAccess.read(IID.create(Configuration::class.java)
-                .child(Interfaces::class.java), LogicalDatastoreType.CONFIGURATION)
-                .checkedGet().orNull()
-                ?.`interface`
-                ?.filter {
-                    it.trapsChoice != null && it.trapsChoice is Traps
-                }
-                ?.map {
-                    SnmpInterfaceKey(InterfaceId(it.name))
-                }
-                ?.toList().orEmpty()
+        val UNDERLAY_IFC_ID = IID.create(Configuration::class.java).child(Interfaces::class.java)!!
+
+        fun readInterfaceIds(underlayAccess: UnderlayAccess): List<Pair<SnmpInterfaceKey, Boolean>> {
+            val readIfcs = underlayAccess.read(UNDERLAY_IFC_ID, LogicalDatastoreType.CONFIGURATION)
+                    .checkedGet().orNull()
+            return parseInterfaceIds(readIfcs)
+        }
+
+        fun parseInterfaceIds(readIfcs: Interfaces?): List<Pair<SnmpInterfaceKey, Boolean>> {
+            return readIfcs
+                    ?.`interface`
+                    ?.asSequence()
+                    ?.filter { it.trapsChoice != null }
+                    ?.map {
+                        SnmpInterfaceKey(InterfaceId(it.name)) to (it.trapsChoice is Traps)
+                    }
+                    ?.toList().orEmpty()
+        }
     }
 
 }

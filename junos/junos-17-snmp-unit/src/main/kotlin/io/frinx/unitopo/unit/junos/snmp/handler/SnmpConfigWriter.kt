@@ -23,9 +23,12 @@ import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.openconfig.openconfig.interfaces.IIDs
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.event.types.rev171024.LINKUPDOWN
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.snmp.rev171024.snmp.interfaces.structural.interfaces._interface.Config
+import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.Configuration
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.traps.choice.NoTrapsBuilder
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.traps.choice.TrapsBuilder
+import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.config.Interfaces
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.config.interfaces.Interface
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.config.interfaces.InterfaceBuilder
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.config.interfaces.InterfaceKey
@@ -62,28 +65,37 @@ class SnmpConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCusto
         underlayAccess.put(underlayId, underlayIfcCfg)
     }
 
-    private fun getData(id: IID<Config>, dataAfter: Config?):
-            Pair<IID<Interface>, Interface> {
-        val (ifcName, underlayId) = SnmpConfigReader.getUnderlayId(id)
-        val ifcOpt = underlayAccess.read(underlayId, LogicalDatastoreType.CONFIGURATION).checkedGet()
-        val ifcBuilder = if (ifcOpt.isPresent) {
-            InterfaceBuilder(ifcOpt.get())
+    private fun getData(id: IID<Config>, dataAfter: Config?): Pair<IID<Interface>, Interface> {
+        val (ifcName, underlayId) = getUnderlayId(id)
+        val ifcOpt = underlayAccess.read(underlayId, LogicalDatastoreType.CONFIGURATION).checkedGet().orNull()
+
+        val ifcBuilder = InterfaceBuilder()
+        ifcOpt?.let { ifcBuilder.fieldsFrom(it) }
+
+        ifcBuilder.key = InterfaceKey(ifcName)
+        val isLinkUpDown = dataAfter?.enabledTrapForEvent?.firstOrNull()?.eventName == LINKUPDOWN::class.java
+        val isEnabled = dataAfter?.enabledTrapForEvent?.firstOrNull()?.isEnabled ?: false
+
+        if (isLinkUpDown) {
+            if (isEnabled) {
+                ifcBuilder.trapsChoice = TrapsBuilder().setTraps(true).build()
+            } else {
+                ifcBuilder.trapsChoice = NoTrapsBuilder().setNoTraps(true).build()
+            }
         } else {
-            InterfaceBuilder()
+            ifcBuilder.trapsChoice = null
         }
 
-        ifcBuilder.setKey(InterfaceKey(ifcName))
-                .let {
-                    if (dataAfter != null
-                            && dataAfter.enabledTrapForEvent != null
-                            && !dataAfter.enabledTrapForEvent!!.isEmpty()) {
-                        it.setTrapsChoice(TrapsBuilder().setTraps(true).build())
-                    } else {
-                        it.setTrapsChoice(NoTrapsBuilder().setNoTraps(true).build())
-                    }
-                }
-                .build()
         return Pair(underlayId, ifcBuilder.build())
     }
 
+    companion object {
+        fun getUnderlayId(id: IID<Config>): Pair<String, IID<Interface>> {
+            val ifcName = id.firstKeyOf(SnmpInterface::class.java).interfaceId.value
+            val iid = IID.create(Configuration::class.java)
+                    .child(Interfaces::class.java)
+                    .child(Interface::class.java, InterfaceKey(ifcName))
+            return Pair(ifcName, iid)
+        }
+    }
 }

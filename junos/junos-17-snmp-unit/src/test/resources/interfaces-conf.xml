@@ -1,0 +1,110 @@
+<?xml version="1.0"?>
+<!--
+  ~ Copyright © 2018 Frinx and others.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<!--
+
+<hello xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+    <capabilities>
+        <capability>urn:ietf:params:netconf:base:1.0</capability>
+    </capabilities>
+</hello>
+]]>]]>
+<rpc id="a" xmlns="urn:ietf:params:xml:ns:netconf:base:1.0" message-id="101">
+    <get-config>
+        <source>
+            <running/>
+        </source>
+    </get-config>
+</rpc>
+]]>]]>
+
+-->
+<nc:rpc-reply xmlns:nc="urn:ietf:params:xml:ns:netconf:base:1.0" xmlns:junos="http://xml.juniper.net/junos/17.3R1/junos" id="a" xmlns="urn:ietf:params:xml:ns:netconf:base:1.0" message-id="101">
+    <nc:data>
+        <configuration xmlns="http://yang.juniper.net/yang/1.1/jc/configuration/junos/17.3R1.10" junos:commit-seconds="1526972691" junos:commit-localtime="2018-05-22 07:04:51 UTC" junos:commit-user="root">
+            <version>17.3R1.10</version>
+            <interfaces>
+                <interface>
+                    <name>ge-0/0/0</name>
+                    <disable/>
+                    <no-traps/>
+                    <unit>
+                        <name>0</name>
+                        <family>
+                            <inet>
+                            </inet>
+                        </family>
+                    </unit>
+                </interface>
+                <interface>
+                    <name>ge-0/0/1</name>
+                    <disable/>
+                    <traps/>
+                    <unit>
+                        <name>0</name>
+                        <family>
+                            <inet>
+                            </inet>
+                        </family>
+                    </unit>
+                </interface>
+                <interface>
+                    <name>ge-0/0/2</name>
+                    <disable/>
+                    <unit>
+                        <name>0</name>
+                        <family>
+                            <inet>
+                            </inet>
+                        </family>
+                    </unit>
+                </interface>
+                <interface>
+                    <name>ae656</name>
+                    <traps/>
+                    <unit>
+                        <name>0</name>
+                    </unit>
+                </interface>
+                <interface>
+                    <name>fxp0</name>
+                    <unit>
+                        <name>0</name>
+                        <family>
+                            <inet>
+                                <address>
+                                    <name>147.175.15.91/24</name>
+                                </address>
+                            </inet>
+                        </family>
+                    </unit>
+                </interface>
+                <interface>
+                    <name>lo0</name>
+                    <unit>
+                        <name>0</name>
+                        <family>
+                            <inet>
+                            </inet>
+                        </family>
+                    </unit>
+                </interface>
+            </interfaces>
+        </configuration>
+    </nc:data>
+</nc:rpc-reply>
+
