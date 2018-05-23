@@ -19,7 +19,7 @@
     <parent>
         <groupId>io.frinx.unitopo</groupId>
         <artifactId>kotlin-unit-parent</artifactId>
-        <version>3.1.4.rc1-frinx</version>
+        <version>3.1.4.rc2-frinx-SNAPSHOT</version>
         <relativePath>../kotlin-unit-parent</relativePath>
     </parent>
 
@@ -27,7 +27,7 @@
     <groupId>io.frinx.unitopo</groupId>
     <artifactId>xr-6-bgp-unit</artifactId>
     <name>xr-6-bpg-unit-</name>
-    <version>3.1.4.rc1-frinx</version>
+    <version>3.1.4.rc2-frinx-SNAPSHOT</version>
     <packaging>bundle</packaging>
 
     <build>
