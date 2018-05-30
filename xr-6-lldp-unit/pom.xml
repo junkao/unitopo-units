@@ -24,13 +24,13 @@
     <parent>
         <groupId>io.frinx.unitopo</groupId>
         <artifactId>kotlin-unit-parent</artifactId>
-        <version>3.1.4.rc3-frinx</version>
+        <version>3.1.4.rc4-frinx-SNAPSHOT</version>
         <relativePath>../kotlin-unit-parent</relativePath>
     </parent>
 
     <groupId>io.frinx.unitopo</groupId>
     <artifactId>xr-6-lldp-unit</artifactId>
-    <version>3.1.4.rc3-frinx</version>
+    <version>3.1.4.rc4-frinx-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <description>
         Unified topology unit for XR LLDP.
