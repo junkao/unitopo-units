@@ -21,13 +21,13 @@
   <parent>
     <groupId>io.frinx.distribution</groupId>
     <artifactId>karaf-parent</artifactId>
-    <version>3.1.4.rc3-frinx-SNAPSHOT</version>
+    <version>3.1.4.rc3-frinx</version>
     <relativePath/>
   </parent>
 
   <groupId>io.frinx.unitopo</groupId>
   <artifactId>unified-topology-karaf</artifactId>
-  <version>3.1.4.rc3-frinx-SNAPSHOT</version>
+  <version>3.1.4.rc3-frinx</version>
   <name>${project.artifactId}</name>
   <packaging>pom</packaging>
 
@@ -37,10 +37,10 @@
 
   <properties>
     <restconf.version>1.5.1-Carbon-SR1.3_1_4_rc3-frinxodl</restconf.version>
-    <openconfig.version>3.1.4.rc3-frinx-SNAPSHOT</openconfig.version>
-    <cli.version>3.1.4.rc3-frinx-SNAPSHOT</cli.version>
-    <cli.units.version>3.1.4.rc3-frinx-SNAPSHOT</cli.units.version>
-    <unitopo.version>3.1.4.rc3-frinx-SNAPSHOT</unitopo.version>
+    <openconfig.version>3.1.4.rc3-frinx</openconfig.version>
+    <cli.version>3.1.4.rc3-frinx</cli.version>
+    <cli.units.version>3.1.4.rc3-frinx</cli.units.version>
+    <unitopo.version>3.1.4.rc3-frinx</unitopo.version>
     <netconf.version>1.2.1-Carbon-SR1.3_1_4_rc3-frinxodl</netconf.version>
   </properties>
 
