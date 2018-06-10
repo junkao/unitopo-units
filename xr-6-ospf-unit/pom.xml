@@ -20,14 +20,14 @@
     <parent>
         <groupId>io.frinx.unitopo</groupId>
         <artifactId>kotlin-unit-parent</artifactId>
-        <version>3.1.5.rc1-frinx</version>
+        <version>3.1.5.rc2-frinx-SNAPSHOT</version>
         <relativePath>../kotlin-unit-parent</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>xr-6-ospf-unit</artifactId>
     <name>xr-6-ospf-unit-</name>
-    <version>3.1.5.rc1-frinx</version>
+    <version>3.1.5.rc2-frinx-SNAPSHOT</version>
     <packaging>bundle</packaging>
 
     <build>
