@@ -24,12 +24,12 @@
     <parent>
         <groupId>io.frinx.unitopo</groupId>
         <artifactId>kotlin-unit-parent</artifactId>
-        <version>3.1.5.rc2-frinx</version>
+        <version>3.1.5.rc3-frinx-SNAPSHOT</version>
         <relativePath>../../kotlin-unit-parent</relativePath>
     </parent>
 
     <artifactId>junos-17-mpls-unit</artifactId>
-    <version>3.1.5.rc2-frinx</version>
+    <version>3.1.5.rc3-frinx-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <description>
         Unified topology unit for Junos MPLS.

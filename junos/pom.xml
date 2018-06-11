@@ -27,7 +27,7 @@
 
   <groupId>io.frinx.unitopo</groupId>
   <artifactId>unitopo-units-junos</artifactId>
-  <version>3.1.5.rc2-frinx</version>
+  <version>3.1.5.rc3-frinx-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <prerequisites>
