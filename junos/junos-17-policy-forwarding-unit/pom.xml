@@ -29,7 +29,6 @@
     </parent>
 
     <artifactId>junos-17-policy-forwarding-unit</artifactId>
-    <version>3.1.5.rc5-frinx-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <description>
         Unified topology unit for Junos Policy Fow.
@@ -37,44 +36,15 @@
             Junos 17.3.R1.10
     </description>
 
-    <build>
-        <!-- Configuration necessary to have java+kotlin compilation working -->
-        <plugins>
-            <plugin>
-                <artifactId>kotlin-maven-plugin</artifactId>
-                <groupId>org.jetbrains.kotlin</groupId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
-
     <dependencies>
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-stdlib</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>io.frinx.unitopo</groupId>
-            <artifactId>translation-registry-spi</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.frinx.unitopo</groupId>
-            <artifactId>translation-registry-api</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.frinx.unitopo</groupId>
-            <artifactId>network-instance-unit</artifactId>
-            <version>${project.version}</version>
-        </dependency>
         <dependency>
             <groupId>io.frinx.unitopo</groupId>
             <artifactId>junos-17-models</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.frinx.unitopo</groupId>
+            <artifactId>utils-unit</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -94,23 +64,9 @@
             <artifactId>openconfig-interfaces</artifactId>
             <version>${openconfig.version}</version>
         </dependency>
-
         <dependency>
-            <groupId>io.fd.honeycomb</groupId>
-            <artifactId>translate-impl</artifactId>
-            <version>${hc.version}</version>
-        </dependency>
-
-        <!-- Testing Dependencies -->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <scope>test</scope>
+            <groupId>org.opendaylight.mdsal</groupId>
+            <artifactId>yang-binding</artifactId>
         </dependency>
     </dependencies>
 </project>

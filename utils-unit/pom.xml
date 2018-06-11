@@ -28,25 +28,11 @@
         <relativePath>../kotlin-unit-parent</relativePath>
     </parent>
 
-    <properties>
-        <netconf.version>1.5.1-Carbon-SR1.3_1_5_rc5-frinxodl-SNAPSHOT</netconf.version>
-    </properties>
-
-    <groupId>io.frinx.unitopo</groupId>
     <artifactId>utils-unit</artifactId>
-    <version>3.1.5.rc5-frinx-SNAPSHOT</version>
     <packaging>bundle</packaging>
 
     <build>
         <plugins>
-            <plugin>
-                <artifactId>kotlin-maven-plugin</artifactId>
-                <groupId>org.jetbrains.kotlin</groupId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -63,29 +49,39 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-stdlib</artifactId>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>yang-data-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>yang-model-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>yang-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.mdsal</groupId>
+            <artifactId>yang-binding</artifactId>
         </dependency>
 
         <!-- Testing Dependencies -->
         <dependency>
             <groupId>org.opendaylight.netconf</groupId>
             <artifactId>sal-netconf-connector</artifactId>
+            <version>${mdsal-old.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.netconf</groupId>
+            <artifactId>netconf-api</artifactId>
             <version>${netconf.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
+            <groupId>org.opendaylight.controller</groupId>
+            <artifactId>config-util</artifactId>
+            <version>${config.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -95,9 +91,21 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>io.fd.honeycomb</groupId>
-            <artifactId>translate-spi</artifactId>
-            <version>${hc.version}</version>
+            <groupId>org.opendaylight.controller</groupId>
+            <artifactId>sal-core-api</artifactId>
+            <version>${controller.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.controller</groupId>
+            <artifactId>sal-binding-broker-impl</artifactId>
+            <version>${controller.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.mdsal</groupId>
+            <artifactId>mdsal-binding-generator-impl</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

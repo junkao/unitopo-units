@@ -16,7 +16,6 @@
 
 package io.frinx.unitopo.unit.junos17.configmetadata.handler
 
-import com.google.common.base.Optional
 import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.spi.read.OperReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess

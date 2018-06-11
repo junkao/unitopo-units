@@ -22,15 +22,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.opendaylight.controller</groupId>
-        <artifactId>config-parent</artifactId>
-        <version>0.6.1-Carbon-SR1.3_1_5_rc5-frinxodl-SNAPSHOT</version>
+        <groupId>io.frinx.unitopo</groupId>
+        <artifactId>kotlin-unit-parent</artifactId>
+        <version>3.1.5.rc5-frinx-SNAPSHOT</version>
         <relativePath>../../kotlin-unit-parent</relativePath>
     </parent>
 
-    <groupId>io.frinx.unitopo</groupId>
     <artifactId>junos-17-models</artifactId>
-    <version>3.1.5.rc5-frinx-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <build>
         <plugins>
@@ -46,4 +44,10 @@
             </plugin>
         </plugins>
    </build>
+    <dependencies>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>yang-common</artifactId>
+        </dependency>
+    </dependencies>
 </project>

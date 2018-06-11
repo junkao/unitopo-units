@@ -22,9 +22,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>io.frinx.cli</groupId>
-        <artifactId>unit-parent</artifactId>
-        <version>3.1.5.rc5-frinx-SNAPSHOT</version>
+        <groupId>org.opendaylight.mdsal</groupId>
+        <artifactId>binding-parent</artifactId>
+        <version>0.10.1-Carbon-SR1.3_1_5_rc5-frinxodl-SNAPSHOT</version>
         <relativePath/>
     </parent>
 
@@ -38,13 +38,14 @@
         <openconfig.version>3.1.5.rc5-frinx-SNAPSHOT</openconfig.version>
         <hc.version>1.17.10-Carbon-SR1.3_1_5_rc5-frinxodl-SNAPSHOT</hc.version>
         <kotlin.version>1.1.4</kotlin.version>
-        <netconf.version>1.5.1-Carbon-SR1.3_1_5_rc5-frinxodl-SNAPSHOT</netconf.version>
-        <!--<kotlin.compiler.incremental>true</kotlin.compiler.incremental>-->
+        <netconf.version>1.2.1-Carbon-SR1.3_1_5_rc5-frinxodl-SNAPSHOT</netconf.version>
+        <mdsal-old.version>1.5.1-Carbon-SR1.3_1_5_rc5-frinxodl-SNAPSHOT</mdsal-old.version>
+        <controller.version>1.5.1-Carbon-SR1.3_1_5_rc5-frinxodl-SNAPSHOT</controller.version>
+        <config.version>0.6.1-Carbon-SR1.3_1_5_rc5-frinxodl-SNAPSHOT</config.version>
     </properties>
 
     <build>
         <!-- Configuration necessary to have java+kotlin compilation working -->
-        <pluginManagement>
             <plugins>
                 <plugin>
                     <artifactId>kotlin-maven-plugin</artifactId>
@@ -110,6 +111,9 @@
                         </execution>
                     </executions>
                 </plugin>
+            </plugins>
+        <pluginManagement>
+            <plugins>
                 <plugin>
                     <artifactId>maven-checkstyle-plugin</artifactId>
                     <executions>
@@ -122,6 +126,7 @@
                             <configuration>
                                 <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
                                 <includes>**\/*.java, **\/*.xtend, **\/*.kt</includes>
+                                <headerLocation>Regex.txt</headerLocation>
                             </configuration>
                         </execution>
                     </executions>
@@ -130,13 +135,67 @@
         </pluginManagement>
     </build>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.jetbrains.kotlin</groupId>
-                <artifactId>kotlin-stdlib</artifactId>
-                <version>${kotlin.version}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-stdlib</artifactId>
+            <version>${kotlin.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>13.0</version>
+        </dependency>
+
+        <!-- Unitopo -->
+        <dependency>
+            <groupId>io.frinx.unitopo</groupId>
+            <artifactId>translation-registry-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.frinx.unitopo</groupId>
+            <artifactId>translation-registry-spi</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- Honeycomb -->
+        <dependency>
+            <groupId>io.fd.honeycomb</groupId>
+            <artifactId>translate-api</artifactId>
+            <version>${hc.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.fd.honeycomb</groupId>
+            <artifactId>translate-spi</artifactId>
+            <version>${hc.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.fd.honeycomb</groupId>
+            <artifactId>translate-impl</artifactId>
+            <version>${hc.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.fd.honeycomb</groupId>
+            <artifactId>rpc-api</artifactId>
+            <version>${hc.version}</version>
+        </dependency>
+
+        <!-- Opendaylight -->
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>concepts</artifactId>
+            <version>${yangtools.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.controller</groupId>
+            <artifactId>sal-common-api</artifactId>
+            <version>${controller.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+    </dependencies>
 </project>

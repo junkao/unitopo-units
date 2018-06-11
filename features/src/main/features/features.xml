@@ -27,24 +27,25 @@
     <repository>mvn:io.frinx.unitopo/unified-topology-features/{{VERSION}}/xml/features</repository>
 
     <feature name='unified-topology-unit-base' version='${project.version}'>
+        <feature version='${openconfig.version}'>openconfig-models</feature>
         <feature version='${unitopo.version}'>unified-topology</feature>
         <bundle>mvn:org.jetbrains.kotlin/kotlin-osgi-bundle/{{VERSION}}</bundle>
-        <bundle>wrap:mvn:io.fd.honeycomb/translate-spi/${hc.version}</bundle>
+        <bundle>wrap:mvn:io.fd.honeycomb/rpc-api/${hc.version}</bundle>
+        <bundle>wrap:mvn:org.tinyjee.jgraphx/jgraphx/{{VERSION}}</bundle>
         <bundle>mvn:org.jgrapht/jgrapht-core/{{VERSION}}</bundle>
+        <bundle>mvn:org.jgrapht/jgrapht-ext/{{VERSION}}</bundle>
         <bundle>wrap:mvn:io.fd.honeycomb/translate-utils/${hc.version}</bundle>
-        <bundle>wrap:mvn:io.fd.honeycomb/translate-impl/${hc.version}</bundle>
         <bundle>wrap:mvn:io.frinx.unitopo/common-handlers/{{VERSION}}</bundle>
     </feature>
 
     <feature name='unified-topology-unit-xr-6' version='${project.version}'>
-        <feature version='${unitopo.version}'>unified-topology</feature>
         <feature version='${project.version}'>unified-topology-unit-base</feature>
         <bundle>mvn:commons-net/commons-net/{{VERSION}}</bundle>
+        <bundle>mvn:io.frinx.unitopo/network-instance-unit/{{VERSION}}</bundle>
         <bundle>mvn:io.frinx.unitopo/utils-unit/{{VERSION}}</bundle>
         <bundle>mvn:io.frinx.unitopo/xr-6-init-unit/{{VERSION}}</bundle>
         <bundle>mvn:io.frinx.unitopo/xr-6-interface-unit/{{VERSION}}</bundle>
         <bundle>mvn:io.frinx.unitopo/xr-6-ip6-unit/{{VERSION}}</bundle>
-        <bundle>mvn:io.frinx.unitopo/network-instance-unit/{{VERSION}}</bundle>
         <bundle>mvn:io.frinx.unitopo/xr-6-network-instance-unit/{{VERSION}}</bundle>
         <bundle>mvn:io.frinx.unitopo/xr-6-bgp-unit/{{VERSION}}</bundle>
         <bundle>mvn:io.frinx.unitopo/xr-6-routing-policy-unit/{{VERSION}}</bundle>
@@ -56,16 +57,13 @@
     </feature>
 
     <feature name='unified-topology-all-units' version='${project.version}'>
-        <feature version='${project.version}'>unified-topology-unit-base</feature>
         <feature version='${project.version}'>unified-topology-unit-xr-6</feature>
         <feature version='${project.version}'>unified-topology-unit-junos-17-3</feature>
     </feature>
 
     <feature name='unified-topology-unit-junos-17-3' version='${project.version}'>
-        <feature version='${unitopo.version}'>unified-topology</feature>
         <feature version='${project.version}'>unified-topology-unit-base</feature>
         <bundle>mvn:commons-net/commons-net/{{VERSION}}</bundle>
-        <bundle>mvn:io.frinx.unitopo/utils-unit/{{VERSION}}</bundle>
         <bundle>mvn:io.frinx.unitopo/network-instance-unit/{{VERSION}}</bundle>
         <bundle>mvn:io.frinx.unitopo/utils-unit/{{VERSION}}</bundle>
         <bundle>mvn:io.frinx.unitopo/junos-17-models/{{VERSION}}</bundle>

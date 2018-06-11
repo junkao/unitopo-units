@@ -24,73 +24,55 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>io.frinx.unitopo</groupId>
     <artifactId>xr-6-bgp-unit</artifactId>
     <name>xr-6-bpg-unit-</name>
-    <version>3.1.5.rc5-frinx-SNAPSHOT</version>
     <packaging>bundle</packaging>
-
-    <build>
-        <plugins>
-            <plugin>
-                <artifactId>kotlin-maven-plugin</artifactId>
-                <groupId>org.jetbrains.kotlin</groupId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
 
     <dependencies>
         <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-stdlib</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>io.frinx.unitopo</groupId>
-            <artifactId>translation-registry-spi</artifactId>
-            <version>${cli.version}</version>
-        </dependency>
-        <dependency>
             <groupId>io.frinx.unitopo</groupId>
             <artifactId>network-instance-unit</artifactId>
-            <version>${cli.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.frinx.unitopo</groupId>
-            <artifactId>translation-registry-api</artifactId>
-            <version>${cli.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>io.frinx.unitopo</groupId>
             <artifactId>utils-unit</artifactId>
-            <version>${cli.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>io.frinx.unitopo</groupId>
             <artifactId>xr-6-interface-unit</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>io.frinx.unitopo</groupId>
+            <artifactId>xr-6-ip6-unit</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.frinx.cli</groupId>
+            <artifactId>translation-registry-common</artifactId>
+            <version>${cli.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>io.fd.honeycomb</groupId>
-            <artifactId>translate-impl</artifactId>
+            <artifactId>translate-utils</artifactId>
             <version>${hc.version}</version>
         </dependency>
 
+        <!-- Openconfig models -->
+        <dependency>
+            <groupId>io.frinx.openconfig</groupId>
+            <artifactId>openconfig-bgp</artifactId>
+            <version>${openconfig.version}</version>
+        </dependency>
         <dependency>
             <groupId>io.frinx.openconfig</groupId>
             <artifactId>openconfig-local-routing</artifactId>
             <version>${openconfig.version}</version>
         </dependency>
-
         <dependency>
             <groupId>io.frinx.openconfig</groupId>
             <artifactId>openconfig-network-instance</artifactId>
@@ -98,24 +80,37 @@
         </dependency>
         <dependency>
             <groupId>io.frinx.openconfig</groupId>
-            <artifactId>openconfig-rib</artifactId>
+            <artifactId>openconfig-policy</artifactId>
             <version>${openconfig.version}</version>
         </dependency>
         <dependency>
-            <groupId>io.frinx.unitopo</groupId>
-            <artifactId>network-instance-unit</artifactId>
-            <version>${project.version}</version>
+            <groupId>io.frinx.openconfig</groupId>
+            <artifactId>openconfig-extensions</artifactId>
+            <version>${openconfig.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.frinx.openconfig</groupId>
+            <artifactId>openconfig-types</artifactId>
+            <version>${openconfig.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.opendaylight.mdsal.model</groupId>
+            <artifactId>ietf-yang-types-20130715</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.mdsal.model</groupId>
+            <artifactId>ietf-inet-types-2013-07-15</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>yang-common</artifactId>
         </dependency>
 
         <!-- Testing Dependencies -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
             <scope>test</scope>
         </dependency>
 
@@ -130,7 +125,7 @@
         <dependency>
             <groupId>org.opendaylight.netconf</groupId>
             <artifactId>sal-netconf-connector</artifactId>
-            <version>${netconf.version}</version>
+            <version>${mdsal-old.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

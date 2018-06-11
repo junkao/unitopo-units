@@ -31,10 +31,6 @@
   <version>3.1.5.rc5-frinx-SNAPSHOT</version>
   <packaging>pom</packaging>
 
-  <prerequisites>
-    <maven>3.1.1</maven>
-  </prerequisites>
-
   <modules>
     <module>kotlin-unit-parent</module>
     <module>utils-unit</module>

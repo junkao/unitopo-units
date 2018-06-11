@@ -29,7 +29,6 @@
     </parent>
 
     <artifactId>junos-17-snmp-unit</artifactId>
-    <version>3.1.5.rc5-frinx-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <description>
         Unified topology unit for Junos 17.3 snmp.
@@ -38,25 +37,7 @@
         According to: https://github.com/Juniper/yang/tree/master/17.3/17.3R1/junos
     </description>
 
-    <build>
-        <plugins>
-            <plugin>
-                <artifactId>kotlin-maven-plugin</artifactId>
-                <groupId>org.jetbrains.kotlin</groupId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
-
     <dependencies>
-        <dependency>
-            <groupId>io.fd.honeycomb</groupId>
-            <artifactId>translate-impl</artifactId>
-            <version>${hc.version}</version>
-        </dependency>
         <dependency>
             <groupId>io.frinx.unitopo</groupId>
             <artifactId>utils-unit</artifactId>
@@ -82,14 +63,14 @@
             <version>${openconfig.version}</version>
         </dependency>
         <dependency>
-            <groupId>io.frinx.unitopo</groupId>
-            <artifactId>translation-registry-spi</artifactId>
-            <version>${project.version}</version>
+            <groupId>io.frinx.openconfig</groupId>
+            <artifactId>openconfig-types</artifactId>
+            <version>${openconfig.version}</version>
         </dependency>
+
         <dependency>
-            <groupId>io.frinx.unitopo</groupId>
-            <artifactId>translation-registry-api</artifactId>
-            <version>${project.version}</version>
+            <groupId>org.opendaylight.mdsal</groupId>
+            <artifactId>yang-binding</artifactId>
         </dependency>
 
         <!-- Netconf testing dependencies-->
@@ -103,7 +84,7 @@
         <dependency>
             <groupId>org.opendaylight.netconf</groupId>
             <artifactId>sal-netconf-connector</artifactId>
-            <version>${netconf.version}</version>
+            <version>${mdsal-old.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

@@ -29,10 +29,6 @@
   <version>3.1.5.rc5-frinx-SNAPSHOT</version>
   <name>${project.artifactId}</name>
 
-  <prerequisites>
-    <maven>3.1.1</maven>
-  </prerequisites>
-
   <properties>
     <configfile.directory>etc/opendaylight/karaf</configfile.directory>
     <mdsal.model.version>0.10.1-Carbon-SR1.3_1_5_rc5-frinxodl-SNAPSHOT</mdsal.model.version>
@@ -106,80 +102,16 @@
       <scope>runtime</scope>
     </dependency>
 
-    <!-- Honeycomb -->
-    <dependency>
-      <groupId>io.fd.honeycomb</groupId>
-      <artifactId>translate-api</artifactId>
-      <version>${hc.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.jgrapht</groupId>
-      <artifactId>jgrapht-core</artifactId>
-      <version>${jgraph.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>io.frinx.cli</groupId>
-      <artifactId>honeycomb-rpcs</artifactId>
-      <version>${cli.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>commons-net</groupId>
-      <artifactId>commons-net</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>io.frinx.unitopo</groupId>
-      <artifactId>topology-api</artifactId>
-      <version>${unitopo.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>io.frinx.unitopo</groupId>
-      <artifactId>topology-impl</artifactId>
-      <version>${unitopo.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>io.frinx.cli</groupId>
-      <artifactId>utils</artifactId>
-      <version>${cli.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>io.frinx.cli</groupId>
-      <artifactId>translation-registry-common</artifactId>
-      <version>${cli.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>io.frinx.unitopo</groupId>
-      <artifactId>translation-registry-model</artifactId>
-      <version>${unitopo.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>io.frinx.unitopo</groupId>
-      <artifactId>translation-registry-spi</artifactId>
-      <version>${unitopo.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>io.frinx.unitopo</groupId>
-      <artifactId>translation-registry-api</artifactId>
-      <version>${unitopo.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>io.frinx.unitopo</groupId>
-      <artifactId>translation-registry</artifactId>
-      <version>${unitopo.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>io.frinx.unitopo</groupId>
-      <artifactId>utils-unit</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
       <artifactId>kotlin-osgi-bundle</artifactId>
       <version>${kotlin.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>io.frinx.unitopo</groupId>
+      <artifactId>utils-unit</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>io.frinx.unitopo</groupId>
