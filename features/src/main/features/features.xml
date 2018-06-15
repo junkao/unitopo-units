@@ -30,10 +30,14 @@
         <feature version='${openconfig.version}'>openconfig-models</feature>
         <feature version='${unitopo.version}'>unified-topology</feature>
         <bundle>mvn:org.jetbrains.kotlin/kotlin-osgi-bundle/{{VERSION}}</bundle>
-        <bundle>wrap:mvn:io.fd.honeycomb/rpc-api/${hc.version}</bundle>
+        
+        <bundle>wrap:mvn:net.javacrumbs.future-converter/future-converter-common/0.3.0</bundle>
+        <bundle>wrap:mvn:net.javacrumbs.future-converter/future-converter-java8-guava/0.3.0</bundle>
         <bundle>wrap:mvn:org.tinyjee.jgraphx/jgraphx/{{VERSION}}</bundle>
         <bundle>mvn:org.jgrapht/jgrapht-core/{{VERSION}}</bundle>
         <bundle>mvn:org.jgrapht/jgrapht-ext/{{VERSION}}</bundle>
+        <bundle>mvn:io.frinx.cli/honeycomb-rpcs/{{VERSION}}</bundle>
+
         <bundle>wrap:mvn:io.fd.honeycomb/translate-utils/${hc.version}</bundle>
         <bundle>wrap:mvn:io.frinx.unitopo/common-handlers/{{VERSION}}</bundle>
     </feature>
