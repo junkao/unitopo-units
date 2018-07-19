@@ -51,14 +51,19 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.policy.re
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstanceKey
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.openconfig.types.rev170113.IPV4
-import java.util.*
+import java.util.Arrays
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
 class ExtCommunitySetConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCustomizer<Config> {
 
-    override fun updateCurrentAttributes(iid: IID<Config>, dataBefore: Config, dataAfter: Config, writeContext: WriteContext) {
+    override fun updateCurrentAttributes(
+        iid: IID<Config>,
+        dataBefore: Config,
+        dataAfter: Config,
+        writeContext: WriteContext
+    ) {
         deleteCurrentAttributes(iid, dataBefore, writeContext)
         writeCurrentAttributes(iid, dataAfter, writeContext)
     }
@@ -115,11 +120,13 @@ class ExtCommunitySetConfigWriter(private val underlayAccess: UnderlayAccess) : 
         val exportMatcher = EXPORT_TARGET_PATTERN.matcher(data.extCommunitySetName)
 
         require(importMatcher.matches() || exportMatcher.matches(),
-                { "Invalid ext community: ${data.extCommunitySetName}. Expected communities are in format: $IMPORT_TARGET_PATTERN or $EXPORT_TARGET_PATTERN" })
+                { "Invalid ext community: ${data.extCommunitySetName}. Expected communities are in format: " +
+                    "$IMPORT_TARGET_PATTERN or $EXPORT_TARGET_PATTERN" })
 
         val vrfName = if (importMatcher.matches()) importMatcher.group("vrf") else exportMatcher.group("vrf")
 
-        val enabledAfis = wtc.readAfter(IIDs.NETWORKINSTANCES.child(NetworkInstance::class.java, NetworkInstanceKey(vrfName)))
+        val enabledAfis = wtc.readAfter(IIDs.NETWORKINSTANCES.child(NetworkInstance::class.java,
+            NetworkInstanceKey(vrfName)))
                 .orNull()
                 ?.config
                 ?.enabledAddressFamilies.orEmpty()
@@ -147,7 +154,8 @@ class ExtCommunitySetConfigWriter(private val underlayAccess: UnderlayAccess) : 
                                 .setRouteTargets(RouteTargetsBuilder()
                                         .setRouteTarget(Arrays.asList(RouteTargetBuilder()
                                                 .setKey(RouteTargetKey(BgpVrfRouteTarget.As))
-                                                .setAsOrFourByteAs(extCommunityMemberToAsOrFourByteAs(data.extCommunityMember!!))
+                                                .setAsOrFourByteAs(extCommunityMemberToAsOrFourByteAs(
+                                                    data.extCommunityMember!!))
                                                 .build())
                                         )
                                         .build())
@@ -157,7 +165,8 @@ class ExtCommunitySetConfigWriter(private val underlayAccess: UnderlayAccess) : 
                                 .setRouteTargets(RouteTargetsBuilder()
                                         .setRouteTarget(Arrays.asList(RouteTargetBuilder()
                                                 .setKey(RouteTargetKey(BgpVrfRouteTarget.As))
-                                                .setAsOrFourByteAs(extCommunityMemberToAsOrFourByteAs(data.extCommunityMember!!))
+                                                .setAsOrFourByteAs(extCommunityMemberToAsOrFourByteAs(
+                                                    data.extCommunityMember!!))
                                                 .build())
                                         )
                                         .build())
@@ -169,7 +178,9 @@ class ExtCommunitySetConfigWriter(private val underlayAccess: UnderlayAccess) : 
         return bgp.build()
     }
 
-    private fun extCommunityMemberToAsOrFourByteAs(members: List<ExtCommunitySetConfig.ExtCommunityMember>): List<AsOrFourByteAs> {
+    private fun extCommunityMemberToAsOrFourByteAs(
+        members: List<ExtCommunitySetConfig.ExtCommunityMember>
+    ): List<AsOrFourByteAs> {
         return members
                 .map { ROUTE_TARGET.matcher(String(it.value)) }
                 .filter { it.matches() }
@@ -196,7 +207,8 @@ class ExtCommunitySetConfigWriter(private val underlayAccess: UnderlayAccess) : 
             return IID.create(Vrfs::class.java)
                     .child(Vrf::class.java, VrfKey(CiscoIosXrString(vrfName)))
                     .child(Afs::class.java)
-                    .child(Af::class.java, AfKey(VrfAddressFamily.Ipv4, VrfSubAddressFamily.Unicast, CiscoIosXrString("default")))
+                    .child(Af::class.java, AfKey(VrfAddressFamily.Ipv4, VrfSubAddressFamily.Unicast,
+                        CiscoIosXrString("default")))
                     .augmentation(Af1::class.java)
                     .child(Bgp::class.java)
         }

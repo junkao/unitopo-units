@@ -40,9 +40,15 @@ import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class ExtCommunitySetReader(private val underlayAccess: UnderlayAccess) : ConfigListReaderCustomizer<ExtCommunitySet, ExtCommunitySetKey, ExtCommunitySetBuilder> {
+class ExtCommunitySetReader(
+    private val underlayAccess: UnderlayAccess
+) : ConfigListReaderCustomizer<ExtCommunitySet, ExtCommunitySetKey, ExtCommunitySetBuilder> {
 
-    override fun readCurrentAttributes(id: InstanceIdentifier<ExtCommunitySet>, builder: ExtCommunitySetBuilder, ctx: ReadContext) {
+    override fun readCurrentAttributes(
+        id: InstanceIdentifier<ExtCommunitySet>,
+        builder: ExtCommunitySetBuilder,
+        ctx: ReadContext
+    ) {
         val vrfs = underlayAccess.read(VRFS_ID, LogicalDatastoreType.CONFIGURATION)
                 .checkedGet()
                 .or(EMPTY_VRFS)
@@ -71,14 +77,12 @@ class ExtCommunitySetReader(private val underlayAccess: UnderlayAccess) : Config
         val ROUTE_TARGET_EXPORT_SET = "-route-target-export-set"
         val ROUTE_TARGET_IMPORT_SET = "-route-target-import-set"
 
-
         fun parseAllIds(or: Vrfs): List<ExtCommunitySetKey> {
             return or
                     .vrf.orEmpty()
                     .flatMap { it.toCommunitySets() }
                     .map { ExtCommunitySetKey(it.extCommunitySetName) }
         }
-
 
         fun parseCurrentAttributes(vrfs: Vrfs, builder: ExtCommunitySetBuilder, setName: String) {
             vrfs
@@ -112,7 +116,6 @@ private fun Vrf.toCommunitySets(): List<ExtCommunitySet> {
 
     // TODO Only ipv4 supported
     //    val ipv6Af = afs?.af.orEmpty().find { it.afName == VrfAddressFamily.Ipv6 }
-
 }
 
 private fun ROUTETARGETTABLE.toExtCommunitySet(vrfName: String, suffix: String): ExtCommunitySet? {
@@ -139,4 +142,3 @@ private fun ROUTETARGETTABLE.toExtCommunitySet(vrfName: String, suffix: String):
                     .build())
             .build()
 }
-

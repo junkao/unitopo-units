@@ -36,7 +36,8 @@ class ExtCommunitySetReaderTest : AbstractNetconfHandlerTest() {
 
         val vrfs = parseGetCfgResponse(DATA_NODES, InstanceIdentifier.create(Vrfs::class.java))
 
-        assertEquals(listOf("abcd-route-target-export-set", "abcd-route-target-import-set", "abcd3-route-target-import-set")
+        assertEquals(listOf("abcd-route-target-export-set", "abcd-route-target-import-set",
+            "abcd3-route-target-import-set")
                 .map { ExtCommunitySetKey(it) },
 
                 ExtCommunitySetReader.parseAllIds(vrfs))
@@ -53,7 +54,8 @@ class ExtCommunitySetReaderTest : AbstractNetconfHandlerTest() {
                         .setExtCommunitySetName("abcd-route-target-export-set")
                         .setConfig(ConfigBuilder()
                                 .setExtCommunitySetName("abcd-route-target-export-set")
-                                .setExtCommunityMember(listOf("8585:4343", "1:1").map { ExtCommunitySetConfig.ExtCommunityMember(BgpExtCommunityType(it)) })
+                                .setExtCommunityMember(listOf("8585:4343", "1:1").map {
+                                    ExtCommunitySetConfig.ExtCommunityMember(BgpExtCommunityType(it)) })
                                 .build())
                         .build(),
                 builder.build())
@@ -65,11 +67,11 @@ class ExtCommunitySetReaderTest : AbstractNetconfHandlerTest() {
                         .setExtCommunitySetName("abcd-route-target-import-set")
                         .setConfig(ConfigBuilder()
                                 .setExtCommunitySetName("abcd-route-target-import-set")
-                                .setExtCommunityMember(listOf("6500:4", "5445444:1").map { ExtCommunitySetConfig.ExtCommunityMember(BgpExtCommunityType(it)) })
+                                .setExtCommunityMember(listOf("6500:4", "5445444:1").map {
+                                    ExtCommunitySetConfig.ExtCommunityMember(BgpExtCommunityType(it)) })
                                 .build())
                         .build(),
                 builder.build())
-
 
         val builder2 = ExtCommunitySetBuilder()
         ExtCommunitySetReader.parseCurrentAttributes(vrfs, builder2, "NONEXISTING")
