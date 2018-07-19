@@ -32,8 +32,8 @@ import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
-class AreaInterfaceConfigReader(private val access: UnderlayAccess) :
-        OspfReader.OspfConfigReader<Config, ConfigBuilder> {
+class AreaInterfaceConfigReader(private val access: UnderlayAccess)
+    : OspfReader.OspfConfigReader<Config, ConfigBuilder> {
 
     override fun getBuilder(id: IID<Config>): ConfigBuilder = ConfigBuilder()
 

@@ -57,14 +57,24 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
 class OspfTableConnectionWriter(private val access: UnderlayAccess) : L3VrfWriter<Config> {
 
-    override fun updateCurrentAttributesForType(id: InstanceIdentifier<Config>, dataBefore: Config, dataAfter: Config, writeContext: WriteContext) {
+    override fun updateCurrentAttributesForType(
+        id: InstanceIdentifier<Config>,
+        dataBefore: Config,
+        dataAfter: Config,
+        writeContext: WriteContext
+    ) {
         deleteCurrentAttributesForType(id, dataBefore, writeContext)
         writeCurrentAttributesForType(id, dataAfter, writeContext)
     }
 
-    override fun deleteCurrentAttributesForType(instanceIdentifier: InstanceIdentifier<Config>, config: Config, writeContext: WriteContext) {
+    override fun deleteCurrentAttributesForType(
+        instanceIdentifier: InstanceIdentifier<Config>,
+        config: Config,
+        writeContext: WriteContext
+    ) {
         if (config.dstProtocol == OSPF::class.java) {
-            val allProtocols = writeContext.readBefore(RWUtils.cutId(instanceIdentifier, IIDs.NE_NETWORKINSTANCE).child(Protocols::class.java))
+            val allProtocols = writeContext.readBefore(RWUtils.cutId(instanceIdentifier, IIDs.NE_NETWORKINSTANCE)
+                .child(Protocols::class.java))
                     .or(ProtocolsBuilder().setProtocol(emptyList()).build())
                     .protocol.orEmpty()
 
@@ -74,10 +84,15 @@ class OspfTableConnectionWriter(private val access: UnderlayAccess) : L3VrfWrite
         }
     }
 
-    override fun writeCurrentAttributesForType(instanceIdentifier: InstanceIdentifier<Config>, config: Config, writeContext: WriteContext) {
+    override fun writeCurrentAttributesForType(
+        instanceIdentifier: InstanceIdentifier<Config>,
+        config: Config,
+        writeContext: WriteContext
+    ) {
         if (config.dstProtocol == OSPF::class.java) {
 
-            val allProtocols = writeContext.readAfter(RWUtils.cutId(instanceIdentifier, IIDs.NE_NETWORKINSTANCE).child(Protocols::class.java))
+            val allProtocols = writeContext.readAfter(RWUtils.cutId(instanceIdentifier, IIDs.NE_NETWORKINSTANCE)
+                .child(Protocols::class.java))
                     .or(ProtocolsBuilder().setProtocol(emptyList()).build())
                     .protocol.orEmpty()
 
@@ -87,11 +102,13 @@ class OspfTableConnectionWriter(private val access: UnderlayAccess) : L3VrfWrite
         }
     }
 
-    private fun writeCurrentAttributesForOspf(id: InstanceIdentifier<Config>,
-                                              config: Config,
-                                              dstProtocol: Protocol,
-                                              protocols: List<Protocol>,
-                                              add: Boolean) {
+    private fun writeCurrentAttributesForOspf(
+        id: InstanceIdentifier<Config>,
+        config: Config,
+        dstProtocol: Protocol,
+        protocols: List<Protocol>,
+        add: Boolean
+    ) {
         val vrfKey = id.firstKeyOf(NetworkInstance::class.java)
 
         val srcProtocols = protocols
@@ -107,7 +124,7 @@ class OspfTableConnectionWriter(private val access: UnderlayAccess) : L3VrfWrite
 
         srcProtocols.forEach {
 
-            val globalId = getId(id, config, dstProtocol, vrfKey)
+            val globalId = getId(config, dstProtocol, vrfKey)
 
             if (add) {
                 val globalData = getData(it, importPolicy)
@@ -125,15 +142,19 @@ class OspfTableConnectionWriter(private val access: UnderlayAccess) : L3VrfWrite
 
     companion object {
 
-        private fun getId(id: InstanceIdentifier<Config>, config: Config, dstProtocol: Protocol, vrfKey: NetworkInstanceKey): InstanceIdentifier<Redistribute> {
+        private fun getId(
+            config: Config,
+            dstProtocol: Protocol,
+            vrfKey: NetworkInstanceKey
+        ): InstanceIdentifier<Redistribute> {
             return if (vrfKey == NetworInstance.DEFAULT_NETWORK) {
-                getGlobalId(id, dstProtocol, config)
+                getGlobalId(dstProtocol, config)
             } else {
-                getVrfId(vrfKey, id, dstProtocol, config)
+                getVrfId(vrfKey, dstProtocol, config)
             }
         }
 
-        private fun getGlobalId(id: InstanceIdentifier<Config>, dstProtocol: Protocol, config: Config): InstanceIdentifier<Redistribute> {
+        private fun getGlobalId(dstProtocol: Protocol, config: Config): InstanceIdentifier<Redistribute> {
             requireNotNull(config.addressFamily == IPV4::class.java,
                     { "Unsupported redistribution address family: ${config.addressFamily}" })
 
@@ -150,7 +171,11 @@ class OspfTableConnectionWriter(private val access: UnderlayAccess) : L3VrfWrite
                     .child(Redistribute::class.java, RedistributeKey(srcProtocol))
         }
 
-        private fun getVrfId(vrfKey: NetworkInstanceKey, id: InstanceIdentifier<Config>, dstProtocol: Protocol, config: Config): InstanceIdentifier<Redistribute> {
+        private fun getVrfId(
+            vrfKey: NetworkInstanceKey,
+            dstProtocol: Protocol,
+            config: Config
+        ): InstanceIdentifier<Redistribute> {
             requireNotNull(config.addressFamily == IPV4::class.java,
                     { "Unsupported redistribution address family: ${config.addressFamily}" })
 

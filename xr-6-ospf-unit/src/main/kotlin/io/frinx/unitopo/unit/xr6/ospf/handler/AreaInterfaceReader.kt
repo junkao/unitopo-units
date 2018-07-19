@@ -34,7 +34,8 @@ import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class AreaInterfaceReader(private val access: UnderlayAccess) : OspfListReader.OspfConfigListReader<Interface, InterfaceKey, InterfaceBuilder> {
+class AreaInterfaceReader(private val access: UnderlayAccess)
+    : OspfListReader.OspfConfigListReader<Interface, InterfaceKey, InterfaceBuilder> {
 
     @Throws(ReadFailedException::class)
     override fun getAllIdsForType(id: InstanceIdentifier<Interface>, context: ReadContext): List<InterfaceKey> {
@@ -49,7 +50,6 @@ class AreaInterfaceReader(private val access: UnderlayAccess) : OspfListReader.O
                 .toList()
     }
 
-
     override fun merge(builder: Builder<out DataObject>, readData: List<Interface>) {
         (builder as InterfacesBuilder).`interface` = readData
     }
@@ -59,7 +59,11 @@ class AreaInterfaceReader(private val access: UnderlayAccess) : OspfListReader.O
     }
 
     @Throws(ReadFailedException::class)
-    override fun readCurrentAttributesForType(id: InstanceIdentifier<Interface>, builder: InterfaceBuilder, ctx: ReadContext) {
+    override fun readCurrentAttributesForType(
+        id: InstanceIdentifier<Interface>,
+        builder: InterfaceBuilder,
+        ctx: ReadContext
+    ) {
         val interfaceKey = id.firstKeyOf(Interface::class.java)
         builder.id = interfaceKey.id
     }

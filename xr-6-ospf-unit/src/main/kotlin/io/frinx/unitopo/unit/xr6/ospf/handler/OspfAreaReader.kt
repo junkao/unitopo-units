@@ -36,7 +36,8 @@ import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.controller.md.sal.common.api.data.ReadFailedException as MdSalReadFailedException
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
-class OspfAreaReader(private val access: UnderlayAccess) : OspfListReader.OspfConfigListReader<Area, AreaKey, AreaBuilder> {
+class OspfAreaReader(private val access: UnderlayAccess)
+    : OspfListReader.OspfConfigListReader<Area, AreaKey, AreaBuilder> {
 
     @Throws(ReadFailedException::class)
     override fun getAllIdsForType(id: IID<Area>, context: ReadContext): List<AreaKey> {

@@ -37,7 +37,12 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
 class MaxMetricConfigWriter(private val underlayAccess: UnderlayAccess) : OspfWriter<Config> {
 
-    override fun updateCurrentAttributesForType(iid: IID<Config>, dataBefore: Config, dataAfter: Config, writeContext: WriteContext) {
+    override fun updateCurrentAttributesForType(
+        iid: IID<Config>,
+        dataBefore: Config,
+        dataAfter: Config,
+        writeContext: WriteContext
+    ) {
         deleteCurrentAttributesForType(iid, dataBefore, writeContext)
         writeCurrentAttributesForType(iid, dataAfter, writeContext)
     }

@@ -35,7 +35,11 @@ class AreaStateReader : OspfReader.OspfOperReader<State, StateBuilder> {
     override fun getBuilder(instanceIdentifier: InstanceIdentifier<State>) = StateBuilder()
 
     @Throws(ReadFailedException::class)
-    override fun readCurrentAttributesForType(instanceIdentifier: InstanceIdentifier<State>, configBuilder: StateBuilder, readContext: ReadContext) {
+    override fun readCurrentAttributesForType(
+        instanceIdentifier: InstanceIdentifier<State>,
+        configBuilder: StateBuilder,
+        readContext: ReadContext
+    ) {
         configBuilder.identifier = instanceIdentifier.firstKeyOf<Area, AreaKey>(Area::class.java).identifier
     }
 

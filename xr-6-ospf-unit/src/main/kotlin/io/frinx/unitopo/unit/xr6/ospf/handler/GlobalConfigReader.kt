@@ -32,7 +32,6 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.ospfv2.rev170
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.yang.types.rev130715.DottedQuad
 import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
-import org.opendaylight.controller.md.sal.common.api.data.ReadFailedException as MdSalReadFailedException
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
 class GlobalConfigReader(private val access: UnderlayAccess) : OspfReader.OspfConfigReader<Config, ConfigBuilder> {
@@ -86,4 +85,3 @@ private fun ConfigBuilder.fromUnderlay(p: Process, vrfName: String) {
         routerId = it
     }
 }
-

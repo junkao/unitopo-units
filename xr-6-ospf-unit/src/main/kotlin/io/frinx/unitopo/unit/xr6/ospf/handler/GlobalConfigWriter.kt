@@ -37,14 +37,18 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.insta
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.ospfv2.rev170228.ospfv2.global.structural.global.Config
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.Ipv4AddressNoZone
 import org.opendaylight.yangtools.yang.binding.DataObject
-import java.util.*
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.protocol.Config as ProtoConfig
+import java.util.Collections
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
 class GlobalConfigWriter(private val underlayAccess: UnderlayAccess) : OspfWriter<Config> {
 
-    override fun updateCurrentAttributesForType(id: IID<Config>, dataBefore: Config, dataAfter: Config, writeContext: WriteContext) {
-        val (identifier, vrfName) = getIdentifiers(id)
+    override fun updateCurrentAttributesForType(
+        id: IID<Config>,
+        dataBefore: Config,
+        dataAfter: Config,
+        writeContext: WriteContext
+    ) {
+        val (identifier, _) = getIdentifiers(id)
 
         val processBuilder = underlayAccess.read(identifier)
                 .checkedGet()
@@ -83,7 +87,11 @@ class GlobalConfigWriter(private val underlayAccess: UnderlayAccess) : OspfWrite
 
         val XR_EMPTY_OSPF = ProcessBuilder().build()!!
 
-        private fun getData(id: org.opendaylight.yangtools.yang.binding.InstanceIdentifier<Config>, data: Config, processBuilder: ProcessBuilder):
+        private fun getData(
+            id: org.opendaylight.yangtools.yang.binding.InstanceIdentifier<Config>,
+            data: Config,
+            processBuilder: ProcessBuilder
+        ):
                 Pair<IID<Process>, Process> {
             val processName = id.firstKeyOf(Protocol::class.java).name
             val routerId = data.routerId.value
@@ -95,7 +103,8 @@ class GlobalConfigWriter(private val underlayAccess: UnderlayAccess) : OspfWrite
                     .apply {
                         if (NetworInstance.DEFAULT_NETWORK_NAME == vrfName) {
                             // reuse existing configuration if present
-                            val builder = if (processBuilder.defaultVrf != null) DefaultVrfBuilder(processBuilder.defaultVrf) else DefaultVrfBuilder()
+                            val builder = if (processBuilder.defaultVrf != null)
+                                DefaultVrfBuilder(processBuilder.defaultVrf) else DefaultVrfBuilder()
 
                             defaultVrf = builder.setRouterId(Ipv4AddressNoZone(routerId)).build()
                         } else {

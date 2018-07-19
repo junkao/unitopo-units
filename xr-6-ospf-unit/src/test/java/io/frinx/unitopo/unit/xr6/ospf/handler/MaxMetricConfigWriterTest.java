@@ -16,19 +16,13 @@
 
 package io.frinx.unitopo.unit.xr6.ospf.handler;
 
-import static org.junit.Assert.assertEquals;
-
-import com.google.common.collect.Lists;
-
 import java.math.BigInteger;
-import java.util.*;
-
+import java.util.Arrays;
 import kotlin.Pair;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev151109.max.metric.max.metric.MaxMetricOnStartup;
-import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.xr.types.rev150629.CiscoIosXrString;
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.NetworkInstances;
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance;
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstanceKey;
@@ -50,11 +44,13 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 @RunWith(MockitoJUnitRunner.class)
 public class MaxMetricConfigWriterTest {
 
-    private static  final Config data = new ConfigBuilder()
+    private static  final Config DATA = new ConfigBuilder()
             .setTimeout(new BigInteger("10"))
-            .setInclude(Arrays.asList(MAXMETRICINCLUDESTUB.class, MAXMETRICSUMMARYLSA.class, MAXMETRICINCLUDETYPE2EXTERNAL.class))
+            .setInclude(Arrays.asList(MAXMETRICINCLUDESTUB.class,
+                    MAXMETRICSUMMARYLSA.class,
+                    MAXMETRICINCLUDETYPE2EXTERNAL.class))
             .build();
-    private static  final InstanceIdentifier<Config> iid = InstanceIdentifier.create(NetworkInstances.class)
+    private static  final InstanceIdentifier<Config> IID = InstanceIdentifier.create(NetworkInstances.class)
             .child(NetworkInstance.class, new NetworkInstanceKey("vrf1"))
             .child(Protocols.class)
             .child(Protocol.class, new ProtocolKey(OSPF.class, "100"))
@@ -68,6 +64,6 @@ public class MaxMetricConfigWriterTest {
     public void testGetData() {
 
         Pair<InstanceIdentifier<MaxMetricOnStartup>, MaxMetricOnStartup> data =
-                MaxMetricConfigWriter.Companion.getData(iid, MaxMetricConfigWriterTest.data);
+                MaxMetricConfigWriter.Companion.getData(IID, MaxMetricConfigWriterTest.DATA);
     }
 }

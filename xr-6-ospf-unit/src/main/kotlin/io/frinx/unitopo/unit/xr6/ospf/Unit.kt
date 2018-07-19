@@ -29,7 +29,17 @@ import io.frinx.unitopo.registry.spi.TranslateUnit
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.utils.NoopListWriter
 import io.frinx.unitopo.unit.utils.NoopWriter
-import io.frinx.unitopo.unit.xr6.ospf.handler.*
+import io.frinx.unitopo.unit.xr6.ospf.handler.AreaConfigReader
+import io.frinx.unitopo.unit.xr6.ospf.handler.AreaConfigWriter
+import io.frinx.unitopo.unit.xr6.ospf.handler.AreaInterfaceConfigReader
+import io.frinx.unitopo.unit.xr6.ospf.handler.AreaInterfaceConfigWriter
+import io.frinx.unitopo.unit.xr6.ospf.handler.AreaInterfaceReader
+import io.frinx.unitopo.unit.xr6.ospf.handler.AreaStateReader
+import io.frinx.unitopo.unit.xr6.ospf.handler.GlobalConfigReader
+import io.frinx.unitopo.unit.xr6.ospf.handler.GlobalConfigWriter
+import io.frinx.unitopo.unit.xr6.ospf.handler.GlobalStateReader
+import io.frinx.unitopo.unit.xr6.ospf.handler.MaxMetricConfigWriter
+import io.frinx.unitopo.unit.xr6.ospf.handler.OspfAreaReader
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.ospfv2.rev170228.ospfv2.area.interfaces.structure.InterfacesBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.ospfv2.rev170228.ospfv2.global.structural.GlobalBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.ospfv2.rev170228.ospfv2.top.Ospfv2Builder
@@ -59,8 +69,11 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
 
     override fun getRpcs(context: UnderlayAccess) = emptySet<RpcService<out DataObject, out DataObject>>()
 
-    override fun provideHandlers(rRegistry: ModifiableReaderRegistryBuilder, wRegistry: ModifiableWriterRegistryBuilder,
-                                 access: UnderlayAccess) {
+    override fun provideHandlers(
+        rRegistry: ModifiableReaderRegistryBuilder,
+        wRegistry: ModifiableWriterRegistryBuilder,
+        access: UnderlayAccess
+    ) {
         provideReaders(rRegistry, access)
         provideWriters(wRegistry, access)
     }

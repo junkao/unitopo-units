@@ -29,7 +29,11 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
 class AreaConfigReader : OspfReader.OspfConfigReader<Config, ConfigBuilder> {
 
-    override fun readCurrentAttributesForType(instanceIdentifier: InstanceIdentifier<Config>, configBuilder: ConfigBuilder, readContext: ReadContext) {
+    override fun readCurrentAttributesForType(
+        instanceIdentifier: InstanceIdentifier<Config>,
+        configBuilder: ConfigBuilder,
+        readContext: ReadContext
+    ) {
         configBuilder.identifier = instanceIdentifier.firstKeyOf<Area, AreaKey>(Area::class.java).identifier
     }
 
