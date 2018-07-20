@@ -31,7 +31,6 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.local.routing
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.local.routing.rev170515.local._static.top._static.routes.StaticKey
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstanceKey
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.Protocol
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.types.inet.rev170403.IpPrefix
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.types.inet.rev170403.Ipv4Prefix
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.types.inet.rev170403.Ipv6Prefix
@@ -39,7 +38,8 @@ import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class StaticRouteReader(private val access: UnderlayAccess) : LrListReader.LrConfigListReader<Static, StaticKey, StaticBuilder> {
+class StaticRouteReader(private val access: UnderlayAccess) : LrListReader.LrConfigListReader<Static, StaticKey,
+    StaticBuilder> {
 
     override fun getAllIdsForType(id: InstanceIdentifier<Static>, context: ReadContext): List<StaticKey> {
         val vrfName = id.firstKeyOf<NetworkInstance, NetworkInstanceKey>(NetworkInstance::class.java).`name`
@@ -52,8 +52,11 @@ class StaticRouteReader(private val access: UnderlayAccess) : LrListReader.LrCon
 
     override fun getBuilder(id: InstanceIdentifier<Static>): StaticBuilder = StaticBuilder()
 
-    override fun readCurrentAttributesForType(id: InstanceIdentifier<Static>, builder: StaticBuilder, ctx: ReadContext) {
-        val protKey = id.firstKeyOf(Protocol::class.java)
+    override fun readCurrentAttributesForType(
+        id: InstanceIdentifier<Static>,
+        builder: StaticBuilder,
+        ctx: ReadContext
+    ) {
         val prefix = id.firstKeyOf(Static::class.java).prefix
         builder.prefix = prefix
     }
@@ -76,9 +79,9 @@ class StaticRouteReader(private val access: UnderlayAccess) : LrListReader.LrCon
         }
 
         @VisibleForTesting
-        fun getStaticKeys(family: AddressFamily?) : List<StaticKey> {
-           val keys = ArrayList<StaticKey>()
-           family?.let {
+        fun getStaticKeys(family: AddressFamily?): List<StaticKey> {
+            val keys = ArrayList<StaticKey>()
+            family?.let {
                 findKeys(keys, it.vrfipv4?.vrfUnicast?.vrfPrefixes)
                 findKeys(keys, it.vrfipv4?.vrfMulticast?.vrfPrefixes)
                 findKeys(keys, it.vrfipv6?.vrfUnicast?.vrfPrefixes)
@@ -95,10 +98,11 @@ class StaticRouteReader(private val access: UnderlayAccess) : LrListReader.LrCon
     }
 }
 
-
-fun VrfPrefix.ipAddressToPrefix() : IpPrefix {
+fun VrfPrefix.ipAddressToPrefix(): IpPrefix {
     prefix.ipv4AddressNoZone?.let {
-        return IpPrefix(Ipv4Prefix(StringBuilder(prefix.ipv4AddressNoZone.value).append("/").append(prefixLength).toString()))
+        return IpPrefix(Ipv4Prefix(StringBuilder(prefix.ipv4AddressNoZone.value).append("/").append(prefixLength)
+            .toString()))
     }
-    return IpPrefix(Ipv6Prefix(StringBuilder(prefix.ipv6AddressNoZone.value).append("/").append(prefixLength).toString()))
+    return IpPrefix(Ipv6Prefix(StringBuilder(prefix.ipv6AddressNoZone.value).append("/").append(prefixLength)
+        .toString()))
 }

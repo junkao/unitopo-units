@@ -26,7 +26,11 @@ import io.frinx.openconfig.openconfig.network.instance.IIDs
 import io.frinx.unitopo.registry.api.TranslationUnitCollector
 import io.frinx.unitopo.registry.spi.TranslateUnit
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.xr6.lr.handler.*
+import io.frinx.unitopo.unit.xr6.lr.handler.InterfaceConfigReader
+import io.frinx.unitopo.unit.xr6.lr.handler.NextHopReader
+import io.frinx.unitopo.unit.xr6.lr.handler.StaticConfigReader
+import io.frinx.unitopo.unit.xr6.lr.handler.StaticRouteReader
+import io.frinx.unitopo.unit.xr6.lr.handler.StaticStateReader
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222._interface.ref.InterfaceRefBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.local.routing.rev170515.local._static.top.StaticRoutesBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.local.routing.rev170515.local._static.top._static.routes._static.NextHopsBuilder
@@ -39,7 +43,6 @@ import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ip._static.cfg.rev150910.`$YangModuleInfoImpl` as UnderlayLocalRoutingYangModule
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.local.routing.rev170515.`$YangModuleInfoImpl` as OpenconfigLocalRoutingYangModule
-
 
 class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
     private var reg: TranslationUnitCollector.Registration? = null
@@ -60,8 +63,11 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
 
     override fun getRpcs(context: UnderlayAccess) = emptySet<RpcService<out DataObject, out DataObject>>()
 
-    override fun provideHandlers(rRegistry: ModifiableReaderRegistryBuilder, wRegistry: ModifiableWriterRegistryBuilder,
-                                 access: UnderlayAccess) {
+    override fun provideHandlers(
+        rRegistry: ModifiableReaderRegistryBuilder,
+        wRegistry: ModifiableWriterRegistryBuilder,
+        access: UnderlayAccess
+    ) {
         provideReaders(rRegistry, access)
         provideWriters(wRegistry, access)
     }
@@ -81,7 +87,8 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
         rRegistry.subtreeAdd(setOf(
                 InstanceIdentifier.create(NextHop::class.java).child(Config::class.java),
                 InstanceIdentifier.create(NextHop::class.java).child(State::class.java)),
-                GenericListReader<NextHop, NextHopKey, NextHopBuilder>(IIDs.NE_NE_PR_PR_ST_ST_NE_NEXTHOP, NextHopReader(access)))
+                GenericListReader<NextHop, NextHopKey, NextHopBuilder>(IIDs.NE_NE_PR_PR_ST_ST_NE_NEXTHOP,
+                    NextHopReader(access)))
         rRegistry.addStructuralReader(IIDs.NE_NE_PR_PR_ST_ST_NE_NE_INTERFACEREF, InterfaceRefBuilder::class.java)
         // FIXME after next hop reader is split, mark this config instead of oper
         rRegistry.add(GenericOperReader(IIDs.NE_NE_PR_PR_ST_ST_NE_NE_IN_CONFIG, InterfaceConfigReader(access)))

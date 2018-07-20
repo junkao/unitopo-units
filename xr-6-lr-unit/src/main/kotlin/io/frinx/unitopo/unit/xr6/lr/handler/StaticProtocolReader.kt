@@ -35,7 +35,8 @@ class StaticProtocolReader :
     }
 
     @Throws(ReadFailedException::class)
-    override fun getAllIds(id: IID<Protocol>, context: ReadContext): List<ProtocolKey> = listOf(ProtocolKey(LrReader.TYPE, NetworInstance.DEFAULT_NETWORK_NAME))
+    override fun getAllIds(id: IID<Protocol>, context: ReadContext): List<ProtocolKey> = listOf(ProtocolKey(
+        LrReader.TYPE, NetworInstance.DEFAULT_NETWORK_NAME))
 
     @Throws(ReadFailedException::class)
     override fun readCurrentAttributesForType(id: IID<Protocol>, builder: ProtocolBuilder, ctx: ReadContext) {

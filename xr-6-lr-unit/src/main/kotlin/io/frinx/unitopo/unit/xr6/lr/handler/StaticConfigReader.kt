@@ -32,9 +32,11 @@ class StaticConfigReader : LrReader.LrConfigReader<Config, ConfigBuilder> {
     override fun getBuilder(instanceIdentifier: InstanceIdentifier<Config>) = ConfigBuilder()
 
     @Throws(ReadFailedException::class)
-    override fun readCurrentAttributesForType(instanceIdentifier: InstanceIdentifier<Config>,
-                                     configBuilder: ConfigBuilder,
-                                     readContext: ReadContext) {
+    override fun readCurrentAttributesForType(
+        instanceIdentifier: InstanceIdentifier<Config>,
+        configBuilder: ConfigBuilder,
+        readContext: ReadContext
+    ) {
         val ipPrefix = instanceIdentifier.firstKeyOf<Static, StaticKey>(Static::class.java).prefix
         configBuilder.prefix = ipPrefix
     }

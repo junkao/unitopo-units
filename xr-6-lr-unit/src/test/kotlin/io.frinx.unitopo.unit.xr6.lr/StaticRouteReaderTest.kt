@@ -46,7 +46,6 @@ class StaticRouteReaderTest : AbstractNetconfHandlerTest() {
                         .toSet(),
                 StaticRouteReader.getStaticKeys(defaultFamily).toSet())
 
-
         // vrf Cust_A
         val customFamily = parseGetCfgResponse(staticData, customAfIid)
 
@@ -58,7 +57,8 @@ class StaticRouteReaderTest : AbstractNetconfHandlerTest() {
     }
 
     companion object {
-        val defaultAfIId = StaticRouteReader.ROUTE_STATIC_IID.child(DefaultVrf::class.java).child(AddressFamily::class.java)!!
+        val defaultAfIId = StaticRouteReader.ROUTE_STATIC_IID.child(DefaultVrf::class.java)
+            .child(AddressFamily::class.java)!!
         val customAfIid = StaticRouteReader.ROUTE_STATIC_IID.child(Vrfs::class.java)
                 .child(Vrf::class.java, VrfKey(CiscoIosXrString("Cust_A"))).child(AddressFamily::class.java)!!
     }
