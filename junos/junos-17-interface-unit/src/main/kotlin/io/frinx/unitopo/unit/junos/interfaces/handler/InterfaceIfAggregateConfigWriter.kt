@@ -34,9 +34,14 @@ import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configur
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.config.interfaces.Interface as JunosInterface
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.config.interfaces.InterfaceKey as JunosInterfaceKey
 
-class InterfaceIfAggregateConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCustomizer<Config1> {
+class InterfaceIfAggregateConfigWriter(private val underlayAccess: UnderlayAccess) :
+    WriterCustomizer<Config1> {
 
-    override fun writeCurrentAttributes(id: InstanceIdentifier<Config1>, dataAfter: Config1, writeContext: WriteContext) {
+    override fun writeCurrentAttributes(
+        id: InstanceIdentifier<Config1>,
+        dataAfter: Config1,
+        writeContext: WriteContext
+    ) {
         val (underlayGigEthIeee8023adId, underlayGigEthIeee8023ad) = getData(id, dataAfter)
         Preconditions.checkArgument(isSupportedForInterface(underlayGigEthIeee8023adId),
                 "Write: Ethernet configuration is not supported for: %s", id)
@@ -48,9 +53,11 @@ class InterfaceIfAggregateConfigWriter(private val underlayAccess: UnderlayAcces
         }
     }
 
-    override fun deleteCurrentAttributes(id: InstanceIdentifier<Config1>,
-                                         dataBefore: Config1,
-                                         writeContext: WriteContext) {
+    override fun deleteCurrentAttributes(
+        id: InstanceIdentifier<Config1>,
+        dataBefore: Config1,
+        writeContext: WriteContext
+    ) {
         val (_, underlayGigEthIeee8023adId) = getUnderlayId(id)
         Preconditions.checkArgument(isSupportedForInterface(underlayGigEthIeee8023adId),
                 "Delete: Ethernet configuration is not supported for: %s", id)
@@ -62,9 +69,12 @@ class InterfaceIfAggregateConfigWriter(private val underlayAccess: UnderlayAcces
         }
     }
 
-    override fun updateCurrentAttributes(id: InstanceIdentifier<Config1>,
-                                         dataBefore: Config1, dataAfter: Config1,
-                                         writeContext: WriteContext) {
+    override fun updateCurrentAttributes(
+        id: InstanceIdentifier<Config1>,
+        dataBefore: Config1,
+        dataAfter: Config1,
+        writeContext: WriteContext
+    ) {
         val (underlayGigEthIeee8023adId, underlayGigEthIeee8023ad) = getData(id, dataAfter)
         Preconditions.checkArgument(isSupportedForInterface(underlayGigEthIeee8023adId),
                 "Update: Ethernet configuration is not supported for: %s", id)
@@ -76,7 +86,8 @@ class InterfaceIfAggregateConfigWriter(private val underlayAccess: UnderlayAcces
         }
     }
 
-    private fun getData(id: InstanceIdentifier<Config1>, dataAfter: Config1): Pair<InstanceIdentifier<JunosGigEthIeee8023ad>, JunosGigEthIeee8023ad> {
+    private fun getData(id: InstanceIdentifier<Config1>, dataAfter: Config1):
+        Pair<InstanceIdentifier<JunosGigEthIeee8023ad>, JunosGigEthIeee8023ad> {
         val (_, underlayGigEthIeee8023adId) = getUnderlayId(id)
 
         val gigEthIeee8023adBuilder = JunosGigEthIeee8023adBuilder()
@@ -87,9 +98,11 @@ class InterfaceIfAggregateConfigWriter(private val underlayAccess: UnderlayAcces
         return Pair(underlayGigEthIeee8023adId, gigEthIeee8023adBuilder)
     }
 
-    private fun getUnderlayId(id: InstanceIdentifier<Config1>): Pair<String, InstanceIdentifier<JunosGigEthIeee8023ad>> {
+    private fun getUnderlayId(id: InstanceIdentifier<Config1>): Pair<String,
+        InstanceIdentifier<JunosGigEthIeee8023ad>> {
         val ifcName = id.firstKeyOf(Interface::class.java).name
-        val underlayGigEthIeee8023adId = InterfaceReader.IFCS.child(JunosInterface::class.java, JunosInterfaceKey(ifcName))
+        val underlayGigEthIeee8023adId = InterfaceReader.IFCS.child(JunosInterface::class.java,
+            JunosInterfaceKey(ifcName))
                 .child(JunosGigEthOptions::class.java).child(JunosGigEthIeee8023ad::class.java)
 
         return Pair(ifcName, underlayGigEthIeee8023adId)

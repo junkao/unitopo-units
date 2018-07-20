@@ -38,11 +38,11 @@ import org.opendaylight.controller.md.sal.common.api.data.ReadFailedException as
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.Unit as JunosInterfaceUnit
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.UnitKey as JunosInterfaceUnitKey
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.unit.family.inet.Address as JunosInterfaceUnitAddress
-import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.config.Interfaces as JunosInterfaces
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.config.interfaces.Interface as JunosInterface
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.config.interfaces.InterfaceKey as JunosInterfaceKey
 
-class SubinterfaceAddressReader(private val underlayAccess: UnderlayAccess) : ConfigListReaderCustomizer<Address, AddressKey, AddressBuilder> {
+class SubinterfaceAddressReader(private val underlayAccess: UnderlayAccess) :
+    ConfigListReaderCustomizer<Address, AddressKey, AddressBuilder> {
 
     @Throws(ReadFailedException::class)
     override fun getAllIds(iid: InstanceIdentifier<Address>, context: ReadContext): List<AddressKey> {
@@ -55,7 +55,8 @@ class SubinterfaceAddressReader(private val underlayAccess: UnderlayAccess) : Co
         }
     }
 
-    private fun getSubInterfaceAddressIds(underlayAccess: UnderlayAccess, ifcName: String, unitId: String): List<AddressKey> {
+    private fun getSubInterfaceAddressIds(underlayAccess: UnderlayAccess, ifcName: String, unitId: String):
+        List<AddressKey> {
         val instanceIdentifier = InterfaceReader.IFCS.child(JunosInterface::class.java, JunosInterfaceKey(ifcName))
                 .child(JunosInterfaceUnit::class.java, JunosInterfaceUnitKey(unitId))
 
@@ -73,8 +74,8 @@ class SubinterfaceAddressReader(private val underlayAccess: UnderlayAccess) : Co
         try {
             val (ifcName, subIfcId, addressKey) = resolveKeys(iid)
 
-            InterfaceReader.readUnitAddress(underlayAccess, ifcName, subIfcId, addressKey, { builder.fromUnderlay(it) })
-
+            InterfaceReader.readUnitAddress(underlayAccess, ifcName, subIfcId, addressKey,
+                { builder.fromUnderlay(it) })
         } catch (e: MdSalReadFailedException) {
             throw ReadFailedException(iid, e)
         }
@@ -87,7 +88,6 @@ class SubinterfaceAddressReader(private val underlayAccess: UnderlayAccess) : Co
     override fun getBuilder(iid: InstanceIdentifier<Address>): AddressBuilder {
         return AddressBuilder()
     }
-
 }
 private const val DEFAULT_MASK: Short = 24
 

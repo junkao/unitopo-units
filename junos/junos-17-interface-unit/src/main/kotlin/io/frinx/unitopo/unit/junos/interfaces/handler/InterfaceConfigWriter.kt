@@ -36,7 +36,11 @@ import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configur
 
 class InterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCustomizer<Config> {
 
-    override fun writeCurrentAttributes(id: InstanceIdentifier<Config>, dataAfter: Config, writeContext: WriteContext) {
+    override fun writeCurrentAttributes(
+        id: InstanceIdentifier<Config>,
+        dataAfter: Config,
+        writeContext: WriteContext
+    ) {
         val (underlayId, underlayIfcCfg) = getData(id, dataAfter)
 
         try {
@@ -46,9 +50,11 @@ class InterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : Writer
         }
     }
 
-    override fun deleteCurrentAttributes(id: InstanceIdentifier<Config>,
-                                         dataBefore: Config,
-                                         writeContext: WriteContext) {
+    override fun deleteCurrentAttributes(
+        id: InstanceIdentifier<Config>,
+        dataBefore: Config,
+        writeContext: WriteContext
+    ) {
         val (_, underlayId) = getUnderlayId(id)
 
         try {
@@ -58,9 +64,12 @@ class InterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : Writer
         }
     }
 
-    override fun updateCurrentAttributes(id: InstanceIdentifier<Config>,
-                                         dataBefore: Config, dataAfter: Config,
-                                         writeContext: WriteContext) {
+    override fun updateCurrentAttributes(
+        id: InstanceIdentifier<Config>,
+        dataBefore: Config,
+        dataAfter: Config,
+        writeContext: WriteContext
+    ) {
         // same as write - preserve existing data and override changed.
         writeCurrentAttributes(id, dataAfter, writeContext)
     }
@@ -74,7 +83,11 @@ class InterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : Writer
         return Pair(underlayId, ifcBuilder.build())
     }
 
-    private fun setJunosInterfaceBuilder(dataAfter: Config, id: InstanceIdentifier<Config>, ifcBuilder: JunosInterfaceBuilder) {
+    private fun setJunosInterfaceBuilder(
+        dataAfter: Config,
+        id: InstanceIdentifier<Config>,
+        ifcBuilder: JunosInterfaceBuilder
+    ) {
         val (ifcName, _) = getUnderlayId(id)
         if (dataAfter.shutdown())
             ifcBuilder.enableDisable = Case1Builder().setDisable(true).build()
@@ -97,7 +110,7 @@ class InterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : Writer
     }
 
     private fun isIfaceNameAndTypeValid(ifcName: String, type: Class<out InterfaceType>?): Boolean {
-        return when(type){
+        return when (type) {
             EthernetCsmacd::class.java -> isEthernetCsmaCd(ifcName)
             SoftwareLoopback::class.java -> ifcName.startsWith("lo")
             Ieee8023adLag::class.java -> ifcName.startsWith("ae")
@@ -116,11 +129,11 @@ class InterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : Writer
     private fun Config.shutdown() = isEnabled == null || !isEnabled
 
     private fun isEthernetCsmaCd(ifcName: String): Boolean {
-        return ifcName.startsWith("em")         // Management and internal Ethernet interfaces.
-                || ifcName.startsWith("et")     // 100-Gigabit Ethernet interfaces.
-                || ifcName.startsWith("fe")     // Fast Ethernet interface.
-                || ifcName.startsWith("fxp")    // Management and internal Ethernet interfaces.
-                || ifcName.startsWith("ge")     // Gigabit Ethernet interface.
-                || ifcName.startsWith("xe")     // 10-Gigabit Ethernet interface.
+        return ifcName.startsWith("em") ||  // Management and internal Ethernet interfaces.
+            ifcName.startsWith("et") ||     // 100-Gigabit Ethernet interfaces.
+            ifcName.startsWith("fe") ||     // Fast Ethernet interface.
+            ifcName.startsWith("fxp") ||    // Management and internal Ethernet interfaces.
+            ifcName.startsWith("ge") ||     // Gigabit Ethernet interface.
+            ifcName.startsWith("xe") // 10-Gigabit Ethernet interface.
     }
 }

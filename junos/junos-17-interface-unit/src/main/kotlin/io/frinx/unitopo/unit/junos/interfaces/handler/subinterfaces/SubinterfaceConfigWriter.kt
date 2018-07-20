@@ -29,13 +29,15 @@ import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configur
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.UnitBuilder as JunosInterfaceUnitBuilder
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.UnitKey as JunosInterfaceUnitKey
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.config.interfaces.Interface as JunosInterface
-import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.config.interfaces.InterfaceBuilder as JunosInterfaceBuilder
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.config.interfaces.InterfaceKey as JunosInterfaceKey
-
 
 class SubinterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCustomizer<Config> {
 
-    override fun writeCurrentAttributes(id: InstanceIdentifier<Config>, dataAfter: Config, writeContext: WriteContext) {
+    override fun writeCurrentAttributes(
+        id: InstanceIdentifier<Config>,
+        dataAfter: Config,
+        writeContext: WriteContext
+    ) {
         val (underlayIfcUnitId, underlayIfcUnit) = getData(id, dataAfter)
 
         try {
@@ -45,9 +47,11 @@ class SubinterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : Wri
         }
     }
 
-    override fun deleteCurrentAttributes(id: InstanceIdentifier<Config>,
-                                         dataBefore: Config,
-                                         writeContext: WriteContext) {
+    override fun deleteCurrentAttributes(
+        id: InstanceIdentifier<Config>,
+        dataBefore: Config,
+        writeContext: WriteContext
+    ) {
         val (_, underlayIfcUnitId) = getUnderlayId(id)
 
         try {
@@ -57,13 +61,16 @@ class SubinterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : Wri
         }
     }
 
-    override fun updateCurrentAttributes(id: InstanceIdentifier<Config>,
-                                         dataBefore: Config, dataAfter: Config,
-                                         writeContext: WriteContext) {
+    override fun updateCurrentAttributes(
+        id: InstanceIdentifier<Config>,
+        dataBefore: Config,
+        dataAfter: Config,
+        writeContext: WriteContext
+    ) {
         val (underlayIfcUnitId, underlayIfcUnit) = getData(id, dataAfter)
 
         try {
-             underlayAccess.merge(underlayIfcUnitId, underlayIfcUnit)
+            underlayAccess.merge(underlayIfcUnitId, underlayIfcUnit)
         } catch (e: Exception) {
             throw WriteFailedException(id, e)
         }

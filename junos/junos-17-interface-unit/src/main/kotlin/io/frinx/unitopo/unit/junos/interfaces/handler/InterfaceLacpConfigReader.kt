@@ -36,13 +36,18 @@ import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configur
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.aggregated.ether.options.Lacp
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.gigether.options.Ieee8023ad
 
-class InterfaceLacpConfigReader (private val underlayAccess: UnderlayAccess) : ConfigReaderCustomizer<Config1, Config1Builder> {
+class InterfaceLacpConfigReader(private val underlayAccess: UnderlayAccess) :
+    ConfigReaderCustomizer<Config1, Config1Builder> {
     override fun getBuilder(iid: InstanceIdentifier<Config1>): Config1Builder {
         return Config1Builder()
     }
 
     @Throws(ReadFailedException::class)
-    override fun readCurrentAttributes(iid: InstanceIdentifier<Config1>, builder: Config1Builder, context: ReadContext) {
+    override fun readCurrentAttributes(
+        iid: InstanceIdentifier<Config1>,
+        builder: Config1Builder,
+        context: ReadContext
+    ) {
         try {
             val name = iid.firstKeyOf(Interface::class.java).name
             InterfaceReader.readEthernetCfg(underlayAccess, name, {
@@ -62,7 +67,7 @@ class InterfaceLacpConfigReader (private val underlayAccess: UnderlayAccess) : C
     }
 
     companion object {
-        fun parseBundleId(ethIface: Ieee8023ad) : String? {
+        fun parseBundleId(ethIface: Ieee8023ad): String? {
             return ethIface.bundle?.interfaceDevice?.value!!
         }
     }

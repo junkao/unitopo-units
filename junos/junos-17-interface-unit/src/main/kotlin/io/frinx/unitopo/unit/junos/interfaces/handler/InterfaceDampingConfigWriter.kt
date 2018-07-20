@@ -36,9 +36,14 @@ import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configur
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.config.interfaces.Interface as JunosInterface
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.config.interfaces.InterfaceKey as JunosInterfaceKey
 
-class InterfaceDampingConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCustomizer<Config> {
+class InterfaceDampingConfigWriter(private val underlayAccess: UnderlayAccess)
+    : WriterCustomizer<Config> {
 
-    override fun writeCurrentAttributes(id: InstanceIdentifier<Config>, dataAfter: Config, writeContext: WriteContext) {
+    override fun writeCurrentAttributes(
+        id: InstanceIdentifier<Config>,
+        dataAfter: Config,
+        writeContext: WriteContext
+    ) {
         val (underlayId, underlayDamping) = getData(id, dataAfter)
         Preconditions.checkArgument(isSupportedForInterface(underlayId),
                 "Write: Damping configuration is not supported for: %s", id)
@@ -50,9 +55,11 @@ class InterfaceDampingConfigWriter(private val underlayAccess: UnderlayAccess) :
         }
     }
 
-    override fun deleteCurrentAttributes(id: InstanceIdentifier<Config>,
-                                         dataBefore: Config,
-                                         writeContext: WriteContext) {
+    override fun deleteCurrentAttributes(
+        id: InstanceIdentifier<Config>,
+        dataBefore: Config,
+        writeContext: WriteContext
+    ) {
         val (_, underlayId) = getUnderlayId(id)
         Preconditions.checkArgument(isSupportedForInterface(underlayId),
                 "Delete: Damping configuration is not supported for: %s", id)
@@ -64,18 +71,21 @@ class InterfaceDampingConfigWriter(private val underlayAccess: UnderlayAccess) :
         }
     }
 
-    override fun updateCurrentAttributes(id: InstanceIdentifier<Config>,
-                                         dataBefore: Config, dataAfter: Config,
-                                         writeContext: WriteContext) {
+    override fun updateCurrentAttributes(
+        id: InstanceIdentifier<Config>,
+        dataBefore: Config,
+        dataAfter: Config,
+        writeContext: WriteContext
+    ) {
         val (underlayId, underlayDamping) = getData(id, dataAfter)
         Preconditions.checkArgument(isSupportedForInterface(underlayId),
                 "Update: Damping configuration is not supported for: %s", id)
 
         try {
-            if(underlayDamping.isEnable == null) {
+            if (underlayDamping.isEnable == null) {
                 // Check if disabling damping
                 // since enable is an empty leaf, it cannot be done with merge
-                val (_ ,before) = getData(id, dataBefore)
+                val (_, before) = getData(id, dataBefore)
                 if (before.isEnable != null) {
                     val previousStateWithoutShut = JunosDampingBuilder(before).setEnable(null).build()
                     underlayAccess.put(underlayId, previousStateWithoutShut)
@@ -87,7 +97,8 @@ class InterfaceDampingConfigWriter(private val underlayAccess: UnderlayAccess) :
         }
     }
 
-    private fun getData(id: InstanceIdentifier<Config>, dataAfter: Config): Pair<InstanceIdentifier<JunosDamping>, JunosDamping> {
+    private fun getData(id: InstanceIdentifier<Config>, dataAfter: Config):
+        Pair<InstanceIdentifier<JunosDamping>, JunosDamping> {
         val (_, underlayId) = getUnderlayId(id)
 
         val damping = JunosDampingBuilder()
@@ -110,7 +121,8 @@ class InterfaceDampingConfigWriter(private val underlayAccess: UnderlayAccess) :
 
     private fun getUnderlayId(id: InstanceIdentifier<Config>): Pair<String, InstanceIdentifier<JunosDamping>> {
         val ifcName = id.firstKeyOf(Interface::class.java).name
-        val underlayId = InterfaceReader.IFCS.child(JunosInterface::class.java, JunosInterfaceKey(ifcName)).child(JunosDamping::class.java)
+        val underlayId = InterfaceReader.IFCS.child(JunosInterface::class.java, JunosInterfaceKey(ifcName))
+            .child(JunosDamping::class.java)
 
         return Pair(ifcName, underlayId)
     }

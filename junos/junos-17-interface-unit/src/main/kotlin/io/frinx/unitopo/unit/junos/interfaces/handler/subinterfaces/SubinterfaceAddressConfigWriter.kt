@@ -27,7 +27,6 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.re
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.Ipv4prefix
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.Unit as JunosInterfaceUnit
-import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.UnitBuilder as JunosInterfaceUnitBuilder
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.UnitKey as JunosInterfaceUnitKey
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.unit.Family as JunosInterfaceUnitFamily
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.unit.family.Inet as JunosInterfaceUnitFamilyInet
@@ -35,13 +34,15 @@ import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configur
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.unit.family.inet.AddressBuilder as JunosInterfaceUnitFamilyInetAddressBuilder
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.unit.family.inet.AddressKey as JunosInterfaceUnitFamilyInetAddressKey
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.config.interfaces.Interface as JunosInterface
-import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.config.interfaces.InterfaceBuilder as JunosInterfaceBuilder
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.config.interfaces.InterfaceKey as JunosInterfaceKey
-
 
 class SubinterfaceAddressConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCustomizer<Config> {
 
-    override fun writeCurrentAttributes(id: InstanceIdentifier<Config>, dataAfter: Config, writeContext: WriteContext) {
+    override fun writeCurrentAttributes(
+        id: InstanceIdentifier<Config>,
+        dataAfter: Config,
+        writeContext: WriteContext
+    ) {
         val (underlayIfcUnitFamilyInetAddressId, underlayIfcUnitFamilyInetAddress) = getData(id, dataAfter)
 
         try {
@@ -63,13 +64,16 @@ class SubinterfaceAddressConfigWriter(private val underlayAccess: UnderlayAccess
         }
     }
 
-    override fun updateCurrentAttributes(id: InstanceIdentifier<Config>,
-                                         dataBefore: Config, dataAfter: Config,
-                                         writeContext: WriteContext) {
+    override fun updateCurrentAttributes(
+        id: InstanceIdentifier<Config>,
+        dataBefore: Config,
+        dataAfter: Config,
+        writeContext: WriteContext
+    ) {
         val (underlayIfcUnitFamilyInetAddressId, underlayIfcUnitFamilyInetAddress) = getData(id, dataAfter)
 
         try {
-             underlayAccess.merge(underlayIfcUnitFamilyInetAddressId, underlayIfcUnitFamilyInetAddress)
+            underlayAccess.merge(underlayIfcUnitFamilyInetAddressId, underlayIfcUnitFamilyInetAddress)
         } catch (e: Exception) {
             throw WriteFailedException(id, e)
         }
@@ -86,7 +90,8 @@ class SubinterfaceAddressConfigWriter(private val underlayAccess: UnderlayAccess
         return Pair(underlayIfcUnitFamilyInetAddressId, ifcUnitFamilyInetAddressBuilder.build())
     }
 
-    private fun getUnderlayId(id: InstanceIdentifier<Config>, ipPrefix: Ipv4prefix): InstanceIdentifier<JunosInterfaceUnitFamilyInetAddress> {
+    private fun getUnderlayId(id: InstanceIdentifier<Config>, ipPrefix: Ipv4prefix):
+        InstanceIdentifier<JunosInterfaceUnitFamilyInetAddress> {
         val ifcName = id.firstKeyOf(Interface::class.java).name
         val underlayUnitName = id.firstKeyOf(Subinterface::class.java).index.toString()
 

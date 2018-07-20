@@ -33,9 +33,14 @@ import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configur
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.config.interfaces.Interface as JunosInterface
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.config.interfaces.InterfaceKey as JunosInterfaceKey
 
-class InterfaceHoldTimeConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCustomizer<Config> {
+class InterfaceHoldTimeConfigWriter(private val underlayAccess: UnderlayAccess) :
+    WriterCustomizer<Config> {
 
-    override fun writeCurrentAttributes(id: InstanceIdentifier<Config>, dataAfter: Config, writeContext: WriteContext) {
+    override fun writeCurrentAttributes(
+        id: InstanceIdentifier<Config>,
+        dataAfter: Config,
+        writeContext: WriteContext
+    ) {
         val (underlayId, underlayHoldTime) = getData(id, dataAfter)
         Preconditions.checkArgument(isSupportedForInterface(underlayId),
                 "Write: HoldTime configuration is not supported for: %s", id)
@@ -47,9 +52,11 @@ class InterfaceHoldTimeConfigWriter(private val underlayAccess: UnderlayAccess) 
         }
     }
 
-    override fun deleteCurrentAttributes(id: InstanceIdentifier<Config>,
-                                         dataBefore: Config,
-                                         writeContext: WriteContext) {
+    override fun deleteCurrentAttributes(
+        id: InstanceIdentifier<Config>,
+        dataBefore: Config,
+        writeContext: WriteContext
+    ) {
         val (_, underlayId) = getUnderlayId(id)
         Preconditions.checkArgument(isSupportedForInterface(underlayId),
                 "Delete: HoldTime configuration is not supported for: %s", id)
@@ -61,9 +68,12 @@ class InterfaceHoldTimeConfigWriter(private val underlayAccess: UnderlayAccess) 
         }
     }
 
-    override fun updateCurrentAttributes(id: InstanceIdentifier<Config>,
-                                         dataBefore: Config, dataAfter: Config,
-                                         writeContext: WriteContext) {
+    override fun updateCurrentAttributes(
+        id: InstanceIdentifier<Config>,
+        dataBefore: Config,
+        dataAfter: Config,
+        writeContext: WriteContext
+    ) {
         val (underlayId, underlayHoldTime) = getData(id, dataAfter)
         Preconditions.checkArgument(isSupportedForInterface(underlayId),
                 "Update: HoldTime configuration is not supported for: %s", id)
@@ -75,7 +85,8 @@ class InterfaceHoldTimeConfigWriter(private val underlayAccess: UnderlayAccess) 
         }
     }
 
-    private fun getData(id: InstanceIdentifier<Config>, dataAfter: Config): Pair<InstanceIdentifier<JunosHoldTime>, JunosHoldTime> {
+    private fun getData(id: InstanceIdentifier<Config>, dataAfter: Config):
+        Pair<InstanceIdentifier<JunosHoldTime>, JunosHoldTime> {
         val (_, underlayId) = getUnderlayId(id)
 
         val holdTime = JunosHoldTimeBuilder()

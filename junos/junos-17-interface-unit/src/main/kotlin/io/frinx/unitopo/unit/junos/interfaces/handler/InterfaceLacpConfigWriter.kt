@@ -35,9 +35,14 @@ import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configur
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.aggregated.ether.options.LacpBuilder
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class InterfaceLacpConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCustomizer<LacpEthConfigAug> {
+class InterfaceLacpConfigWriter(private val underlayAccess: UnderlayAccess) :
+    WriterCustomizer<LacpEthConfigAug> {
 
-    override fun writeCurrentAttributes(id: InstanceIdentifier<LacpEthConfigAug>, dataAfter: LacpEthConfigAug, writeContext: WriteContext) {
+    override fun writeCurrentAttributes(
+        id: InstanceIdentifier<LacpEthConfigAug>,
+        dataAfter: LacpEthConfigAug,
+        writeContext: WriteContext
+    ) {
         val (underlayAggrEthOptId, underlayAggrEthOpt) = getData(id, dataAfter, writeContext)
         try {
             underlayAccess.put(underlayAggrEthOptId, underlayAggrEthOpt)
@@ -46,8 +51,13 @@ class InterfaceLacpConfigWriter(private val underlayAccess: UnderlayAccess) : Wr
         }
     }
 
-    override fun deleteCurrentAttributes(id: InstanceIdentifier<LacpEthConfigAug>, config: LacpEthConfigAug, context: WriteContext) {
-        val bundleId = context.readBefore(RWUtils.cutId(id, Config::class.java)).get()?.getAugmentation(Config1::class.java)?.aggregateId
+    override fun deleteCurrentAttributes(
+        id: InstanceIdentifier<LacpEthConfigAug>,
+        config: LacpEthConfigAug,
+        context: WriteContext
+    ) {
+        val bundleId = context.readBefore(RWUtils.cutId(id, Config::class.java)).get()
+            ?.getAugmentation(Config1::class.java)?.aggregateId
         try {
             underlayAccess.delete(InterfaceReader.IFCS.child(Interface::class.java, InterfaceKey(bundleId))
                     .child(AggregatedEtherOptions::class.java).child(Lacp::class.java))
@@ -56,9 +66,12 @@ class InterfaceLacpConfigWriter(private val underlayAccess: UnderlayAccess) : Wr
         }
     }
 
-    override fun updateCurrentAttributes(id: InstanceIdentifier<LacpEthConfigAug>,
-                                         dataBefore: LacpEthConfigAug, dataAfter: LacpEthConfigAug,
-                                         writeContext: WriteContext) {
+    override fun updateCurrentAttributes(
+        id: InstanceIdentifier<LacpEthConfigAug>,
+        dataBefore: LacpEthConfigAug,
+        dataAfter: LacpEthConfigAug,
+        writeContext: WriteContext
+    ) {
         val (underlayAggrEthOptId, underlayAggrEthOpt) = getData(id, dataAfter, writeContext)
         try {
             underlayAccess.merge(underlayAggrEthOptId, underlayAggrEthOpt)
@@ -67,7 +80,11 @@ class InterfaceLacpConfigWriter(private val underlayAccess: UnderlayAccess) : Wr
         }
     }
 
-    private fun getData(id: InstanceIdentifier<LacpEthConfigAug>, dataAfter: LacpEthConfigAug, context: WriteContext):
+    private fun getData(
+        id: InstanceIdentifier<LacpEthConfigAug>,
+        dataAfter: LacpEthConfigAug,
+        context: WriteContext
+    ):
             Pair<InstanceIdentifier<Lacp>, Lacp> {
         val underlayAggrEthOptId = getUnderlayId(id, context)
 
@@ -89,8 +106,10 @@ class InterfaceLacpConfigWriter(private val underlayAccess: UnderlayAccess) : Wr
         return Pair(underlayAggrEthOptId, lacpBuilder.build())
     }
 
-    private fun getUnderlayId(id: InstanceIdentifier<LacpEthConfigAug>, context: WriteContext): InstanceIdentifier<Lacp> {
-        val bundleId = context.readAfter(RWUtils.cutId(id, Config::class.java)).get()?.getAugmentation(Config1::class.java)?.aggregateId
+    private fun getUnderlayId(id: InstanceIdentifier<LacpEthConfigAug>, context: WriteContext):
+        InstanceIdentifier<Lacp> {
+        val bundleId = context.readAfter(RWUtils.cutId(id, Config::class.java)).get()
+            ?.getAugmentation(Config1::class.java)?.aggregateId
         return InterfaceReader.IFCS.child(Interface::class.java, InterfaceKey(bundleId))
             .child(AggregatedEtherOptions::class.java).child(Lacp::class.java)
     }

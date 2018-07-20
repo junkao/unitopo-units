@@ -32,12 +32,11 @@ import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 import org.opendaylight.controller.md.sal.common.api.data.ReadFailedException as MdSalReadFailedException
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.Unit as JunosInterfaceUnit
-import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.UnitKey as JunosInterfaceUnitKey
-import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.config.Interfaces as JunosInterfaces
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.config.interfaces.Interface as JunosInterface
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.config.interfaces.InterfaceKey as JunosInterfaceKey
 
-class SubinterfaceReader(private val underlayAccess: UnderlayAccess) : ConfigListReaderCustomizer<Subinterface, SubinterfaceKey, SubinterfaceBuilder> {
+class SubinterfaceReader(private val underlayAccess: UnderlayAccess) :
+    ConfigListReaderCustomizer<Subinterface, SubinterfaceKey, SubinterfaceBuilder> {
 
     @Throws(ReadFailedException::class)
     override fun getAllIds(iid: InstanceIdentifier<Subinterface>, context: ReadContext): List<SubinterfaceKey> {
@@ -63,8 +62,11 @@ class SubinterfaceReader(private val underlayAccess: UnderlayAccess) : ConfigLis
         return it.unit.orEmpty().map { it.key }.map { SubinterfaceKey(it.name?.toLong()) }.toList()
     }
 
-
-    override fun readCurrentAttributes(iid: InstanceIdentifier<Subinterface>, builder: SubinterfaceBuilder, context: ReadContext) {
+    override fun readCurrentAttributes(
+        iid: InstanceIdentifier<Subinterface>,
+        builder: SubinterfaceBuilder,
+        context: ReadContext
+    ) {
         try {
             val name = iid.firstKeyOf(Interface::class.java).name
             builder.key = SubinterfaceKey(iid.firstKeyOf(Subinterface::class.java).index)
@@ -73,7 +75,6 @@ class SubinterfaceReader(private val underlayAccess: UnderlayAccess) : ConfigLis
                                         name,
                                         iid.firstKeyOf(Subinterface::class.java).index,
                                         { builder.fromUnderlay(it) })
-
         } catch (e: MdSalReadFailedException) {
             throw ReadFailedException(iid, e)
         }
@@ -86,10 +87,8 @@ class SubinterfaceReader(private val underlayAccess: UnderlayAccess) : ConfigLis
     override fun getBuilder(p0: InstanceIdentifier<Subinterface>): SubinterfaceBuilder {
         return SubinterfaceBuilder()
     }
-
 }
 
 private fun SubinterfaceBuilder.fromUnderlay(junosUnit: JunosInterfaceUnit) {
     key = SubinterfaceKey(junosUnit.name.toLong())
 }
-
