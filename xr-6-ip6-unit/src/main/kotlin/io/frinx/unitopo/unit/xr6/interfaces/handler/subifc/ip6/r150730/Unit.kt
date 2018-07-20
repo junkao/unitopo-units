@@ -50,16 +50,20 @@ open class Unit(private val registry: TranslationUnitCollector) : TranslateUnit 
 
     override fun getYangSchemas() = setOf(
             `$YangModuleInfoImpl`.getInstance(),
-            org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.`$YangModuleInfoImpl`.getInstance())
+            org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang
+                .interfaces.ip.rev161222.`$YangModuleInfoImpl`.getInstance())
 
     override fun getUnderlayYangSchemas() = setOf(
-            org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv6.ma.cfg.rev150730.`$YangModuleInfoImpl`.getInstance())
+            org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios
+                .xr.ipv6.ma.cfg.rev150730.`$YangModuleInfoImpl`.getInstance())
 
     override fun getRpcs(underlayAccess: UnderlayAccess) = emptySet<RpcService<*, *>>()
 
-    override fun provideHandlers(rRegistry: ModifiableReaderRegistryBuilder,
-                                 wRegistry: ModifiableWriterRegistryBuilder,
-                                 underlayAccess: UnderlayAccess) {
+    override fun provideHandlers(
+        rRegistry: ModifiableReaderRegistryBuilder,
+        wRegistry: ModifiableWriterRegistryBuilder,
+        underlayAccess: UnderlayAccess
+    ) {
         provideReaders(rRegistry, underlayAccess)
         provideWriters(wRegistry, underlayAccess)
     }

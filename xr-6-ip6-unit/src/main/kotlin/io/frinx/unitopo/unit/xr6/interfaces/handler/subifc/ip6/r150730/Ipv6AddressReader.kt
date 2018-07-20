@@ -39,9 +39,9 @@ import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 import java.util.regex.Pattern
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv6.ma.cfg.rev150730.InterfaceConfiguration1 as UnderlayIpv6Augment
-import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.oper.rev150730._interface.table.interfaces.Interface as UnderlayInterface
 
-open class Ipv6AddressReader(private val underlayAccess: UnderlayAccess) : ConfigListReaderCustomizer<Address, AddressKey, AddressBuilder> {
+open class Ipv6AddressReader(private val underlayAccess: UnderlayAccess)
+    : ConfigListReaderCustomizer<Address, AddressKey, AddressBuilder> {
 
     override fun merge(builder: Builder<out DataObject>, readData: MutableList<Address>) {
         (builder as AddressesBuilder).address = readData
@@ -72,7 +72,6 @@ open class Ipv6AddressReader(private val underlayAccess: UnderlayAccess) : Confi
     open fun getHandler(keys: MutableList<AddressKey>): (InterfaceConfiguration) -> kotlin.Unit =
             { extractAddresses(it, keys) }
 
-
     companion object {
         val IFC_CFGS = InstanceIdentifier.create(InterfaceConfigurations::class.java)!!
         val DATA_NODES_ID = InstanceIdentifier.create(InterfaceProperties::class.java).child(DataNodes::class.java)!!
@@ -93,7 +92,11 @@ open class Ipv6AddressReader(private val underlayAccess: UnderlayAccess) : Confi
         /**
          * Read interface configuration
          */
-        fun readInterfaceCfg(underlayAccess: UnderlayAccess, name: String, handler: (InterfaceConfiguration) -> kotlin.Unit) {
+        fun readInterfaceCfg(
+            underlayAccess: UnderlayAccess,
+            name: String,
+            handler: (InterfaceConfiguration) -> kotlin.Unit
+        ) {
 
             // Check if reading existing interface because later we use default value for existing interfaces that
             // have no configuration
@@ -143,6 +146,5 @@ open class Ipv6AddressReader(private val underlayAccess: UnderlayAccess) : Confi
                     .map { InterfaceKey(it.interfaceName.value) }
                     .toList()
         }
-
     }
 }
