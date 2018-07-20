@@ -35,9 +35,11 @@ class ComponentStateReader(private val access: UnderlayAccess) : OperReaderCusto
 
     override fun getBuilder(id: InstanceIdentifier<State>) = StateBuilder()
 
-
-    override fun readCurrentAttributes(id: InstanceIdentifier<State>, builder: StateBuilder,
-                                       ctx: ReadContext) {
+    override fun readCurrentAttributes(
+        id: InstanceIdentifier<State>,
+        builder: StateBuilder,
+        ctx: ReadContext
+    ) {
 
         access.read(RACKS_ID).checkedGet().orNull()
                 ?.let {
