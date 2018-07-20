@@ -30,7 +30,6 @@ import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configur
 import java.util.Collections
 import org.opendaylight.controller.md.sal.common.api.data.ReadFailedException as MdSalReadFailedEx
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.protocols.Bgp as JunosBgp
-import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.protocols.bgp.Group as JunosGroup
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.routing.options.AutonomousSystem as JunosAutonomousSystem
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
@@ -67,6 +66,5 @@ class BgpProtocolReader(private val access: UnderlayAccess) :
 
         val UNDERLAY_RT_OPT = UNDERLAY.child(RoutingOptions::class.java)!!
         val UNDERLAY_RT_OPT_AS = UNDERLAY_RT_OPT.child(JunosAutonomousSystem::class.java)!!
-
     }
 }

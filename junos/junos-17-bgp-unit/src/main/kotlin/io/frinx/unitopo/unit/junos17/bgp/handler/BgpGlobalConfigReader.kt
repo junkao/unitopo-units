@@ -34,7 +34,11 @@ class BgpGlobalConfigReader(private val access: UnderlayAccess) : BgpReader.BgpC
 
     override fun getBuilder(id: InstanceIdentifier<Config>) = ConfigBuilder()
 
-    override fun readCurrentAttributesForType(id: InstanceIdentifier<Config>, builder: ConfigBuilder, ctx: ReadContext) {
+    override fun readCurrentAttributesForType(
+        id: InstanceIdentifier<Config>,
+        builder: ConfigBuilder,
+        ctx: ReadContext
+    ) {
 
         try {
             access.read(BgpProtocolReader.UNDERLAY_RT_OPT_AS).checkedGet().orNull()

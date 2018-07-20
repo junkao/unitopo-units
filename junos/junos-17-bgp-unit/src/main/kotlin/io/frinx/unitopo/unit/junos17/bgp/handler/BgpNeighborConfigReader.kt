@@ -41,15 +41,18 @@ class BgpNeighborConfigReader(private val access: UnderlayAccess) : BgpReader.Bg
 
     override fun getBuilder(id: InstanceIdentifier<Config>) = ConfigBuilder()
 
-    override fun readCurrentAttributesForType(id: InstanceIdentifier<Config>, builder: ConfigBuilder, ctx: ReadContext) {
+    override fun readCurrentAttributesForType(
+        id: InstanceIdentifier<Config>,
+        builder: ConfigBuilder,
+        ctx: ReadContext
+    ) {
         try {
             val neighborAddress = id.firstKeyOf(Neighbor::class.java).neighborAddress.ipv4Address.value
             access.read(BgpProtocolReader.UNDERLAY_PROTOCOL_BGP).checkedGet().orNull()
                     ?.group.orEmpty()
                         .forEach { group: JunosGroup? -> group?.neighbor
-                            ?.find { neighbor -> neighbor.name.value == neighborAddress}
+                            ?.find { neighbor -> neighbor.name.value == neighborAddress }
                                 ?.let { builder.fromUnderlay(it, group) } }
-
         } catch (e: MdSalReadFailedException) {
             throw ReadFailedException(id, e)
         }
@@ -62,7 +65,7 @@ class BgpNeighborConfigReader(private val access: UnderlayAccess) : BgpReader.Bg
 
 @VisibleForTesting
 fun ConfigBuilder.fromUnderlay(underlay: JunosNeighbor, group: JunosGroup) {
-    isEnabled = true //neighbor must exist if this function is called
+    isEnabled = true // neighbor must exist if this function is called
     neighborAddress = IpAddress(Ipv4Address(underlay.name?.value))
     peerAs = AsNumber(underlay.peerAs?.toLongOrNull())
     peerGroup = group.name
@@ -70,7 +73,7 @@ fun ConfigBuilder.fromUnderlay(underlay: JunosNeighbor, group: JunosGroup) {
 }
 
 fun parsePeerType(type: JunosGroupType?): PeerType? {
-    return when(type){
+    return when (type) {
         JunosGroupType.Internal -> PeerType.INTERNAL
         JunosGroupType.External -> PeerType.EXTERNAL
         else -> null

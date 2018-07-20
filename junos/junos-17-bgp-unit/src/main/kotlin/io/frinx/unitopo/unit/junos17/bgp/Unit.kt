@@ -36,7 +36,6 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.top.bgp.NeighborsBuilder
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.`$YangModuleInfoImpl` as OpenconfigBgp
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.`$YangModuleInfoImpl` as NetInstanceYangInfo
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.`$YangModuleInfoImpl` as OpenconfigNetworkInstances
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.`$YangModuleInfoImpl` as JunosYangInfo
 
@@ -50,9 +49,11 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
         OpenconfigNetworkInstances.getInstance()
     )
 
-    override fun provideHandlers(rRegistry: ModifiableReaderRegistryBuilder,
-                                 wRegistry: ModifiableWriterRegistryBuilder,
-                                 underlayAccess: UnderlayAccess) {
+    override fun provideHandlers(
+        rRegistry: ModifiableReaderRegistryBuilder,
+        wRegistry: ModifiableWriterRegistryBuilder,
+        underlayAccess: UnderlayAccess
+    ) {
         provideReaders(rRegistry, underlayAccess)
         provideWriters(wRegistry, underlayAccess)
     }
@@ -72,7 +73,8 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
     private fun provideWriters(wRegistry: ModifiableWriterRegistryBuilder, underlayAccess: UnderlayAccess) {
         wRegistry.add(GenericWriter(IIDs.NE_NE_PR_PR_BGP, NoopWriter()))
         wRegistry.add(GenericWriter(IIDs.NE_NE_PR_PR_BG_GLOBAL, NoopWriter()))
-        wRegistry.addAfter(GenericWriter(IIDs.NE_NE_PR_PR_BG_GL_CONFIG, BgpGlobalConfigWriter(underlayAccess)), IIDs.NE_NE_PR_PR_BG_GLOBAL)
+        wRegistry.addAfter(GenericWriter(IIDs.NE_NE_PR_PR_BG_GL_CONFIG, BgpGlobalConfigWriter(underlayAccess)),
+            IIDs.NE_NE_PR_PR_BG_GLOBAL)
 
         wRegistry.add(GenericWriter(IIDs.NE_NE_PR_PR_BG_NEIGHBORS, NoopWriter()))
         wRegistry.add(GenericWriter(IIDs.NE_NE_PR_PR_BG_NE_NEIGHBOR, NoopWriter()))
@@ -91,5 +93,3 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
 
     override fun toString(): String = "Junos 17.3 BGP translate unit"
 }
-
-
