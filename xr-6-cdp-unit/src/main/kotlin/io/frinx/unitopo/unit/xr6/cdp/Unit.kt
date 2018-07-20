@@ -31,15 +31,6 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.lldp.rev16051
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.cdp.cfg.rev150730.`$YangModuleInfoImpl` as UnderlayCdpCfgYangInfo
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.cdp.oper.rev150730.`$YangModuleInfoImpl` as UnderlayCdpOperYangInfo
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.cdp.rev171024.`$YangModuleInfoImpl` as CdpYangInfo
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.`$YangModuleInfoImpl` as IpYangInfo
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.ipv4.top.ipv4.addresses.address.Config as Ipv4AddressConfig
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.ipv6.top.ipv6.Addresses as Ipv6Addresses
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.ipv6.top.ipv6.AddressesBuilder as Ipv6AddressesBuilder
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.ipv6.top.ipv6.addresses.Address as Ipv6Address
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.ipv6.top.ipv6.addresses.address.Config as Ipv6AddressConfig
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.`$YangModuleInfoImpl` as InterfacesYangInfo
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.subinterfaces.subinterface.Config as SubinterfaceConfig
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.subinterfaces.subinterface.State as SubinterfaceState
 
 class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
     private var reg: TranslationUnitCollector.Registration? = null
@@ -60,15 +51,16 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
 
     override fun getRpcs(underlayAccess: UnderlayAccess) = emptySet<RpcService<*, *>>()
 
-    override fun provideHandlers(rRegistry: ModifiableReaderRegistryBuilder,
-                                 wRegistry: ModifiableWriterRegistryBuilder,
-                                 underlayAccess: UnderlayAccess) {
+    override fun provideHandlers(
+        rRegistry: ModifiableReaderRegistryBuilder,
+        wRegistry: ModifiableWriterRegistryBuilder,
+        underlayAccess: UnderlayAccess
+    ) {
         provideReaders(rRegistry, underlayAccess)
         provideWriters(wRegistry, underlayAccess)
     }
 
     private fun provideWriters(wRegistry: ModifiableWriterRegistryBuilder, underlayAccess: UnderlayAccess) {
-
     }
 
     private fun provideReaders(rRegistry: ModifiableReaderRegistryBuilder, underlayAccess: UnderlayAccess) {
@@ -83,5 +75,3 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
 
     override fun toString(): String = "XR 6 (2015-07-30) CDP translate unit"
 }
-
-

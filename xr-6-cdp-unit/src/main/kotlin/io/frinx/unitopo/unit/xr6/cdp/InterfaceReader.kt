@@ -31,7 +31,8 @@ import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.cdp.oper.rev150730.cdp.nodes.node.interfaces.Interface as UnderlayCdpInterface
 
-class InterfaceReader(private val underlayAccess: UnderlayAccess) : OperListReaderCustomizer<Interface, InterfaceKey, InterfaceBuilder> {
+class InterfaceReader(private val underlayAccess: UnderlayAccess) :
+    OperListReaderCustomizer<Interface, InterfaceKey, InterfaceBuilder> {
 
     override fun getAllIds(id: InstanceIdentifier<Interface>, context: ReadContext): List<InterfaceKey> {
         return getInterfaceIds(underlayAccess)
@@ -47,7 +48,6 @@ class InterfaceReader(private val underlayAccess: UnderlayAccess) : OperListRead
     }
 
     override fun getBuilder(id: InstanceIdentifier<Interface>) = InterfaceBuilder()
-
 
     companion object {
         val CDP_OPER = InstanceIdentifier.create(Cdp::class.java)!!
@@ -80,7 +80,11 @@ class InterfaceReader(private val underlayAccess: UnderlayAccess) : OperListRead
                     .flatMap { it.interfaces?.`interface`.orEmpty() }
         }
 
-        fun readInterface(underlayAccess: UnderlayAccess, name: String, handler: (UnderlayCdpInterface) -> kotlin.Unit) {
+        fun readInterface(
+            underlayAccess: UnderlayAccess,
+            name: String,
+            handler: (UnderlayCdpInterface) -> kotlin.Unit
+        ) {
             getInterfaces(underlayAccess)
                     .find { it.interfaceName.value == name }
                     ?.let { handler(it) }
@@ -98,5 +102,4 @@ class InterfaceReader(private val underlayAccess: UnderlayAccess) : OperListRead
                     .filter { it.interfaceName.value == name }
         }
     }
-
 }
