@@ -26,7 +26,7 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.insta
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.policy.types.rev160512.BGP
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
-import java.util.*
+import java.util.AbstractMap
 
 interface BgpWriter<O : DataObject> : TypedWriter<O>, WriterCustomizer<O> {
 
@@ -34,7 +34,7 @@ interface BgpWriter<O : DataObject> : TypedWriter<O>, WriterCustomizer<O> {
         return ProtocolKey(TYPE, null)
     }
 
-    override fun getParentCheck(id: InstanceIdentifier<O>) =  AbstractMap.SimpleEntry(
+    override fun getParentCheck(id: InstanceIdentifier<O>) = AbstractMap.SimpleEntry(
                 RWUtils.cutId(id, NetworkInstance::class.java).child(Config::class.java),
                 L3VrfReader.L3VRF_CHECK)
 

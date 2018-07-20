@@ -38,7 +38,12 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
 class NeighborApplyPolicyConfigWriter(private val underlayAccess: UnderlayAccess) : BgpWriter<Config> {
 
-    override fun updateCurrentAttributesForType(iid: IID<Config>, dataBefore: Config, dataAfter: Config, writeContext: WriteContext) {
+    override fun updateCurrentAttributesForType(
+        iid: IID<Config>,
+        dataBefore: Config,
+        dataAfter: Config,
+        writeContext: WriteContext
+    ) {
         deleteCurrentAttributesForType(iid, dataBefore, writeContext)
         writeCurrentAttributesForType(iid, dataAfter, writeContext)
     }
@@ -49,7 +54,7 @@ class NeighborApplyPolicyConfigWriter(private val underlayAccess: UnderlayAccess
         val neighborAddress = iid.firstKeyOf(Neighbor::class.java).neighborAddress.value
         val iid: IID<out DataObject>
 
-        if(vrfName.equals("default")) {
+        if (vrfName.equals("default")) {
             iid = getDefaultVrfNeighborAfIdentifier(bgpProcess, IpAddressNoZone(neighborAddress))
         } else {
             iid = getVrfNeighborAfIdentifier(vrfName, bgpProcess, IpAddressNoZone(neighborAddress))
@@ -80,7 +85,6 @@ class NeighborApplyPolicyConfigWriter(private val underlayAccess: UnderlayAccess
                 throw io.fd.honeycomb.translate.write.WriteFailedException(iid, e)
             }
         }
-
     }
 
     private fun getDefautVrfNeighborAf(bgpProcess: Long, neighbor: CharArray, data: Config):
@@ -104,7 +108,7 @@ class NeighborApplyPolicyConfigWriter(private val underlayAccess: UnderlayAccess
                 .setRoutePolicyIn(data.importPolicy?.get(0))
                 .setRoutePolicyOut(data.exportPolicy?.get(0))
                 .build()
-        return Pair(iid,neighborAf)
+        return Pair(iid, neighborAf)
     }
 
     companion object {
@@ -114,7 +118,8 @@ class NeighborApplyPolicyConfigWriter(private val underlayAccess: UnderlayAccess
                     .child(NeighborAf::class.java, NeighborAfKey(BgpAddressFamily.Ipv4Unicast))
         }
 
-        public fun getVrfNeighborAfIdentifier(vrfName: String, bgpProcess: Long, neighbor: IpAddressNoZone): IID<VrfNeighborAf> {
+        public fun getVrfNeighborAfIdentifier(vrfName: String, bgpProcess: Long, neighbor: IpAddressNoZone):
+            IID<VrfNeighborAf> {
             return NeighborConfigWriter.getVrfNeighborIdentifier(bgpProcess, vrfName, neighbor)
                     .child(VrfNeighborAfs::class.java)
                     .child(VrfNeighborAf::class.java, VrfNeighborAfKey(BgpAddressFamily.Ipv4Unicast))

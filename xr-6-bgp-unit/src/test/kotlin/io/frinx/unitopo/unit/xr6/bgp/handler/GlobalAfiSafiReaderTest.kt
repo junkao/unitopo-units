@@ -29,23 +29,27 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.types.rev
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.types.rev170202.L3VPNIPV6UNICAST
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstanceKey
 
-class GlobalAfiSafiReaderTest: AbstractNetconfHandlerTest() {
+class GlobalAfiSafiReaderTest : AbstractNetconfHandlerTest() {
 
     private val DATA_NODES = getResourceAsString("/bgp-conf2.xml")
 
     @Test
     fun testGlobal() {
         val afiSafi = GlobalAfiSafiReader.parseAfiSafi(parseGetCfgResponse(DATA_NODES,
-                BgpProtocolReader.UNDERLAY_BGP.child(Instance::class.java, InstanceKey(CiscoIosXrString("default")))), NetworkInstanceKey("default"))
-        Assert.assertEquals(listOf(IPV4UNICAST::class.java, IPV6UNICAST::class.java, L3VPNIPV6UNICAST::class.java, L3VPNIPV4UNICAST::class.java)
+                BgpProtocolReader.UNDERLAY_BGP.child(Instance::class.java, InstanceKey(CiscoIosXrString("default")))),
+            NetworkInstanceKey("default"))
+        Assert.assertEquals(listOf(IPV4UNICAST::class.java, IPV6UNICAST::class.java, L3VPNIPV6UNICAST::class.java,
+            L3VPNIPV4UNICAST::class.java)
                 .map { AfiSafiKey(it) }, afiSafi)
 
         val afiSafiVrf = GlobalAfiSafiReader.parseAfiSafi(parseGetCfgResponse(DATA_NODES,
-                BgpProtocolReader.UNDERLAY_BGP.child(Instance::class.java, InstanceKey(CiscoIosXrString("default")))), NetworkInstanceKey("abcd"))
+                BgpProtocolReader.UNDERLAY_BGP.child(Instance::class.java, InstanceKey(CiscoIosXrString("default")))),
+            NetworkInstanceKey("abcd"))
         Assert.assertEquals(listOf(IPV4UNICAST::class.java).map { AfiSafiKey(it) }, afiSafiVrf)
 
         val afiSafiVrfEmpty = GlobalAfiSafiReader.parseAfiSafi(parseGetCfgResponse(DATA_NODES,
-                BgpProtocolReader.UNDERLAY_BGP.child(Instance::class.java, InstanceKey(CiscoIosXrString("default")))), NetworkInstanceKey("NONEXISTING"))
+                BgpProtocolReader.UNDERLAY_BGP.child(Instance::class.java, InstanceKey(CiscoIosXrString("default")))),
+            NetworkInstanceKey("NONEXISTING"))
         Assert.assertEquals(emptyList<AfiSafiKey>(), afiSafiVrfEmpty)
     }
 }

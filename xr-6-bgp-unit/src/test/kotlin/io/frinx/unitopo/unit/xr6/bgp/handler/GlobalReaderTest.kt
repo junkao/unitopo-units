@@ -26,7 +26,6 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.ProtocolKey
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.policy.types.rev160512.BGP
 
-
 class GlobalReaderTest : AbstractNetconfHandlerTest() {
 
     private val DATA_NODES = getResourceAsString("/bgp-conf.xml")
@@ -35,11 +34,12 @@ class GlobalReaderTest : AbstractNetconfHandlerTest() {
     @Test
     fun testGlobal() {
         val ids = BgpProtocolReader.parseIds(parseGetCfgResponse(DATA_NODES, BgpProtocolReader.UNDERLAY_BGP))
-        Assert.assertEquals(listOf(ProtocolKey(BGP::class.java,"default")), ids)
+        Assert.assertEquals(listOf(ProtocolKey(BGP::class.java, "default")), ids)
 
         val cBuilder = ConfigBuilder()
         cBuilder.fromUnderlay(parseGetCfgResponse(DATA_NODES,
-                BgpProtocolReader.UNDERLAY_BGP.child(Instance::class.java, InstanceKey(CiscoIosXrString("default")))), "default")
+                BgpProtocolReader.UNDERLAY_BGP.child(Instance::class.java, InstanceKey(CiscoIosXrString("default")))),
+            "default")
 
         Assert.assertEquals(65000, cBuilder.`as`.value)
         Assert.assertEquals("10.0.0.1", cBuilder.routerId.value)
@@ -48,11 +48,12 @@ class GlobalReaderTest : AbstractNetconfHandlerTest() {
     @Test
     fun testGlobal2() {
         val ids = BgpProtocolReader.parseIds(parseGetCfgResponse(DATA_NODES, BgpProtocolReader.UNDERLAY_BGP))
-        Assert.assertEquals(listOf(ProtocolKey(BGP::class.java,"default")), ids)
+        Assert.assertEquals(listOf(ProtocolKey(BGP::class.java, "default")), ids)
 
         val cBuilder = ConfigBuilder()
         cBuilder.fromUnderlay(parseGetCfgResponse(DATA_NODES2,
-                BgpProtocolReader.UNDERLAY_BGP.child(Instance::class.java, InstanceKey(CiscoIosXrString("default")))), "default")
+                BgpProtocolReader.UNDERLAY_BGP.child(Instance::class.java, InstanceKey(CiscoIosXrString("default")))),
+            "default")
 
         Assert.assertEquals(720919, cBuilder.`as`.value)
         Assert.assertEquals("1.1.1.1", cBuilder.routerId.value)
@@ -62,17 +63,17 @@ class GlobalReaderTest : AbstractNetconfHandlerTest() {
     fun testGlobal2Vrf() {
         val cBuilder = ConfigBuilder()
         cBuilder.fromUnderlay(parseGetCfgResponse(DATA_NODES2,
-                BgpProtocolReader.UNDERLAY_BGP.child(Instance::class.java, InstanceKey(CiscoIosXrString("default")))), "abcd")
+                BgpProtocolReader.UNDERLAY_BGP.child(Instance::class.java, InstanceKey(CiscoIosXrString("default")))),
+            "abcd")
 
         Assert.assertEquals(720919, cBuilder.`as`.value)
-
 
         val cBuilder2 = ConfigBuilder()
         val cBuilderVerify = ConfigBuilder()
         cBuilder.fromUnderlay(parseGetCfgResponse(DATA_NODES2,
-                BgpProtocolReader.UNDERLAY_BGP.child(Instance::class.java, InstanceKey(CiscoIosXrString("default")))), "NOTEXISTING")
+                BgpProtocolReader.UNDERLAY_BGP.child(Instance::class.java, InstanceKey(CiscoIosXrString("default")))),
+            "NOTEXISTING")
 
         Assert.assertEquals(cBuilderVerify.build(), cBuilder2.build())
     }
-
 }

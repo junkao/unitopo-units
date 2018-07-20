@@ -57,5 +57,4 @@ class AsCommonTest : AbstractNetconfHandlerTest() {
         Assert.assertEquals(asToDotNotation(AsNumber(7274497)).first, 111)
         Assert.assertEquals(asToDotNotation(AsNumber(7274497)).second, 1)
     }
-
 }

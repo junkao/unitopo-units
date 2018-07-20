@@ -16,7 +16,6 @@
 
 package io.frinx.unitopo.unit.xr6.bgp.handler.table
 
-
 import io.fd.honeycomb.translate.read.ReadContext
 import io.frinx.cli.registry.common.CompositeListReader
 import io.frinx.openconfig.network.instance.NetworInstance
@@ -40,9 +39,15 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.policy.types.
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.policy.types.rev160512.OSPF
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class BgpTableConnectionReader(private val access: UnderlayAccess) : L3VrfListReader.L3VrfConfigListReader<TableConnection, TableConnectionKey, TableConnectionBuilder>, CompositeListReader.Child<TableConnection, TableConnectionKey, TableConnectionBuilder> {
+class BgpTableConnectionReader(private val access: UnderlayAccess) :
+    L3VrfListReader.L3VrfConfigListReader<TableConnection, TableConnectionKey, TableConnectionBuilder>,
+    CompositeListReader.Child<TableConnection, TableConnectionKey, TableConnectionBuilder> {
 
-    override fun readCurrentAttributesForType(id: InstanceIdentifier<TableConnection>, b: TableConnectionBuilder, readContext: ReadContext) {
+    override fun readCurrentAttributesForType(
+        id: InstanceIdentifier<TableConnection>,
+        b: TableConnectionBuilder,
+        readContext: ReadContext
+    ) {
         val tcKey = id.firstKeyOf(TableConnection::class.java)
         val vrfKey = id.firstKeyOf(NetworkInstance::class.java)
 
@@ -60,7 +65,8 @@ class BgpTableConnectionReader(private val access: UnderlayAccess) : L3VrfListRe
 
     override fun getBuilder(id: InstanceIdentifier<TableConnection>) = TableConnectionBuilder()
 
-    override fun getAllIdsForType(id: InstanceIdentifier<TableConnection>, readContext: ReadContext): List<TableConnectionKey> {
+    override fun getAllIdsForType(id: InstanceIdentifier<TableConnection>, readContext: ReadContext):
+        List<TableConnectionKey> {
         val vrfKey = id.firstKeyOf(NetworkInstance::class.java)
 
         val data = readData(access)
@@ -102,7 +108,8 @@ class BgpTableConnectionReader(private val access: UnderlayAccess) : L3VrfListRe
                                         .setAddressFamily(it.first.toOpenconfig())
                                         .setDstProtocol(BGP::class.java)
                                         .setSrcProtocol(OSPF::class.java)
-                                        .setImportPolicy(it.second.mapNotNull { it.routePolicyName }.filter { it.isNotBlank() })
+                                        .setImportPolicy(it.second.mapNotNull { it.routePolicyName }.filter
+                                        { it.isNotBlank() })
                                         .build()
                     }
         }

@@ -46,10 +46,15 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
 class BgpTableConnectionWriter(private val access: UnderlayAccess) : L3VrfWriter<Config> {
 
-    override fun writeCurrentAttributesForType(instanceIdentifier: IID<Config>, config: Config, writeContext: WriteContext) {
+    override fun writeCurrentAttributesForType(
+        instanceIdentifier: IID<Config>,
+        config: Config,
+        writeContext: WriteContext
+    ) {
         if (config.dstProtocol == BGP::class.java) {
 
-            val allProtocols = writeContext.readAfter(RWUtils.cutId(instanceIdentifier, IIDs.NE_NETWORKINSTANCE).child(Protocols::class.java))
+            val allProtocols = writeContext.readAfter(RWUtils.cutId(instanceIdentifier, IIDs.NE_NETWORKINSTANCE)
+                .child(Protocols::class.java))
                     .or(ProtocolsBuilder().setProtocol(emptyList()).build())
                     .protocol.orEmpty()
 
@@ -62,13 +67,23 @@ class BgpTableConnectionWriter(private val access: UnderlayAccess) : L3VrfWriter
         }
     }
 
-    override fun updateCurrentAttributesForType(instanceIdentifier: IID<Config>, dataBefore: Config, dataAfter: Config, writeContext: WriteContext) {
+    override fun updateCurrentAttributesForType(
+        instanceIdentifier: IID<Config>,
+        dataBefore: Config,
+        dataAfter: Config,
+        writeContext: WriteContext
+    ) {
         deleteCurrentAttributesForType(instanceIdentifier, dataBefore, writeContext)
         writeCurrentAttributesForType(instanceIdentifier, dataAfter, writeContext)
-
     }
 
-    private fun writeCurrentAttributesForBgp(id: IID<Config>, bgpProtocol: Protocol, config: Config, protocols: List<Protocol>, add: Boolean) {
+    private fun writeCurrentAttributesForBgp(
+        id: IID<Config>,
+        bgpProtocol: Protocol,
+        config: Config,
+        protocols: List<Protocol>,
+        add: Boolean
+    ) {
         val vrfKey = id.firstKeyOf(NetworkInstance::class.java)
 
         Preconditions.checkArgument(config.srcProtocol == OSPF::class.java,
@@ -98,10 +113,15 @@ class BgpTableConnectionWriter(private val access: UnderlayAccess) : L3VrfWriter
         }
     }
 
-    override fun deleteCurrentAttributesForType(instanceIdentifier: InstanceIdentifier<Config>, config: Config, writeContext: WriteContext) {
+    override fun deleteCurrentAttributesForType(
+        instanceIdentifier: InstanceIdentifier<Config>,
+        config: Config,
+        writeContext: WriteContext
+    ) {
         if (config.dstProtocol == BGP::class.java) {
 
-            val allProtocols = writeContext.readAfter(RWUtils.cutId(instanceIdentifier, IIDs.NE_NETWORKINSTANCE).child(Protocols::class.java))
+            val allProtocols = writeContext.readAfter(RWUtils.cutId(instanceIdentifier, IIDs.NE_NETWORKINSTANCE)
+                .child(Protocols::class.java))
                     .or(ProtocolsBuilder().setProtocol(emptyList()).build())
                     .protocol.orEmpty()
 
@@ -116,7 +136,8 @@ class BgpTableConnectionWriter(private val access: UnderlayAccess) : L3VrfWriter
 
     companion object {
 
-        private fun getId(vrfKey: NetworkInstanceKey, bgpProtocol: Protocol, config: Config, it: Protocol): InstanceIdentifier<OspfRoute> {
+        private fun getId(vrfKey: NetworkInstanceKey, bgpProtocol: Protocol, config: Config, it: Protocol):
+            InstanceIdentifier<OspfRoute> {
             return if (vrfKey == NetworInstance.DEFAULT_NETWORK) {
                 getGlobalId(bgpProtocol, config, it)
             } else {
@@ -124,7 +145,8 @@ class BgpTableConnectionWriter(private val access: UnderlayAccess) : L3VrfWriter
             }
         }
 
-        private fun getGlobalId(bgpProtocol: Protocol, config: Config, srcProto: Protocol): InstanceIdentifier<OspfRoute> {
+        private fun getGlobalId(bgpProtocol: Protocol, config: Config, srcProto: Protocol):
+            InstanceIdentifier<OspfRoute> {
             val bgpAs = bgpProtocol.bgp.global.config.`as`
             val afi = config.addressFamily.toUnderlay()
             requireNotNull(afi, { "Unsupported redistribution address family: ${config.addressFamily}" })
@@ -134,7 +156,8 @@ class BgpTableConnectionWriter(private val access: UnderlayAccess) : L3VrfWriter
                     .child(OspfRoute::class.java, OspfRouteKey(CiscoIosXrString(srcProto.name)))
         }
 
-        private fun getVrfId(vrfKey: NetworkInstanceKey, bgpProtocol: Protocol, config: Config, srcProto: Protocol): InstanceIdentifier<OspfRoute> {
+        private fun getVrfId(vrfKey: NetworkInstanceKey, bgpProtocol: Protocol, config: Config, srcProto: Protocol):
+            InstanceIdentifier<OspfRoute> {
             val bgpAs = bgpProtocol.bgp.global.config.`as`
             val afi = config.addressFamily.toUnderlay()
             requireNotNull(afi, { "Unsupported redistribution address family: ${config.addressFamily}" })

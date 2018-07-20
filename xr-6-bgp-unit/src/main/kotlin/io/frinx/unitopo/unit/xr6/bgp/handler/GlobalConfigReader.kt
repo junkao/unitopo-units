@@ -20,8 +20,8 @@ import com.google.common.annotations.VisibleForTesting
 import io.fd.honeycomb.translate.read.ReadContext
 import io.frinx.openconfig.network.instance.NetworInstance
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.network.instance.protocol.bgp.common.BgpReader
 import io.frinx.unitopo.unit.network.instance.As.Companion.asFromDotNotation
+import io.frinx.unitopo.unit.network.instance.protocol.bgp.common.BgpReader
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.Bgp
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.Instance
@@ -40,7 +40,11 @@ class GlobalConfigReader(private val access: UnderlayAccess) : BgpReader.BgpConf
 
     override fun getBuilder(id: InstanceIdentifier<Config>) = ConfigBuilder()
 
-    override fun readCurrentAttributesForType(id: InstanceIdentifier<Config>, builder: ConfigBuilder, ctx: ReadContext) {
+    override fun readCurrentAttributesForType(
+        id: InstanceIdentifier<Config>,
+        builder: ConfigBuilder,
+        ctx: ReadContext
+    ) {
         val protKey = id.firstKeyOf<Protocol, ProtocolKey>(Protocol::class.java)
         val vrfName = id.firstKeyOf(NetworkInstance::class.java).name
 
@@ -88,4 +92,3 @@ fun ConfigBuilder.fromUnderlay(underlayInstance: Instance, vrfName: String) {
                 }
             }
 }
-

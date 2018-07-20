@@ -52,7 +52,12 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
 class NeighborConfigWriter(private val underlayAccess: UnderlayAccess) : BgpWriter<Config> {
 
-    override fun updateCurrentAttributesForType(iid: IID<Config>, dataBefore: Config, dataAfter: Config, writeContext: WriteContext) {
+    override fun updateCurrentAttributesForType(
+        iid: IID<Config>,
+        dataBefore: Config,
+        dataAfter: Config,
+        writeContext: WriteContext
+    ) {
         deleteCurrentAttributesForType(iid, dataBefore, writeContext)
         writeCurrentAttributesForType(iid, dataAfter, writeContext)
     }
@@ -61,17 +66,16 @@ class NeighborConfigWriter(private val underlayAccess: UnderlayAccess) : BgpWrit
         val vrfName = iid.firstKeyOf(NetworkInstance::class.java).name
         val bgpProcess = iid.firstKeyOf(Protocol::class.java).name.toLong()
         val iid: IID<out DataObject>
-        if(vrfName == "default") {
-            iid = getDefaultVrfNeighborIdentifier(bgpProcess,IpAddressNoZone(dataBefore.neighborAddress.value))
+        if (vrfName == "default") {
+            iid = getDefaultVrfNeighborIdentifier(bgpProcess, IpAddressNoZone(dataBefore.neighborAddress.value))
         } else {
-            iid = getDefaultVrfNeighborIdentifier(bgpProcess,IpAddressNoZone(dataBefore.neighborAddress.value))
+            iid = getDefaultVrfNeighborIdentifier(bgpProcess, IpAddressNoZone(dataBefore.neighborAddress.value))
         }
         try {
             underlayAccess.delete(iid)
         } catch (e: Exception) {
             throw io.fd.honeycomb.translate.write.WriteFailedException(iid, e)
         }
-
     }
 
     override fun writeCurrentAttributesForType(configIid: IID<Config>, dataAfter: Config, wtc: WriteContext) {
@@ -121,7 +125,8 @@ class NeighborConfigWriter(private val underlayAccess: UnderlayAccess) : BgpWrit
     }
 
     companion object {
-        public fun getVrfNeighborIdentifier(bgpProcess: Long, vrfName: String, neighbor: IpAddressNoZone): IID<VrfNeighbor> {
+        public fun getVrfNeighborIdentifier(bgpProcess: Long, vrfName: String, neighbor: IpAddressNoZone):
+            IID<VrfNeighbor> {
             return IID.create(Bgp::class.java)
                     .child(Instance::class.java, InstanceKey(CiscoIosXrString("default")))
                     .child(InstanceAs::class.java, InstanceAsKey(BgpAsRange(0)))
@@ -141,7 +146,6 @@ class NeighborConfigWriter(private val underlayAccess: UnderlayAccess) : BgpWrit
                     .child(BgpEntity::class.java)
                     .child(Neighbors::class.java)
                     .child(Neighbor::class.java, NeighborKey(neighbor))
-
         }
     }
 }

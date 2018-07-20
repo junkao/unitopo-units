@@ -33,7 +33,8 @@ class BgpProtocolReader(private val access: UnderlayAccess) :
         BgpReader.BgpConfigReader<Protocol, ProtocolBuilder>,
         CompositeListReader.Child<Protocol, ProtocolKey, ProtocolBuilder> {
 
-    override fun getBuilder(p0: org.opendaylight.yangtools.yang.binding.InstanceIdentifier<Protocol>): ProtocolBuilder {
+    override fun getBuilder(p0: org.opendaylight.yangtools.yang.binding.InstanceIdentifier<Protocol>):
+        ProtocolBuilder {
         // NOOP
         throw UnsupportedOperationException("Should not be invoked")
     }
@@ -68,6 +69,5 @@ class BgpProtocolReader(private val access: UnderlayAccess) :
                                 .map { ProtocolKey(BgpReader.TYPE, it.instanceName.value) }
                     }.orEmpty()
         }
-
     }
 }

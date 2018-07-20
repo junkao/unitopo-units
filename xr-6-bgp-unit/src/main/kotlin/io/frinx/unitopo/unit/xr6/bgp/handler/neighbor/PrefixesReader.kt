@@ -27,7 +27,11 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.neighbor.afi.safi.state.Prefixes
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.neighbor.afi.safi.state.PrefixesBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.neighbor.list.Neighbor
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.types.rev170202.*
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.types.rev170202.AFISAFITYPE
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.types.rev170202.IPV4UNICAST
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.types.rev170202.IPV6UNICAST
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.types.rev170202.L3VPNIPV4UNICAST
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.types.rev170202.L3VPNIPV6UNICAST
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.Protocol
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.ProtocolKey
@@ -43,7 +47,11 @@ class PrefixesReader(private val access: UnderlayAccess) : BgpReader.BgpOperRead
 
     override fun getBuilder(p0: InstanceIdentifier<Prefixes>) = PrefixesBuilder()
 
-    override fun readCurrentAttributesForType(id: InstanceIdentifier<Prefixes>, builder: PrefixesBuilder, readContext: ReadContext) {
+    override fun readCurrentAttributesForType(
+        id: InstanceIdentifier<Prefixes>,
+        builder: PrefixesBuilder,
+        readContext: ReadContext
+    ) {
         val neighborKey = id.firstKeyOf(Neighbor::class.java)
         val protKey = id.firstKeyOf<Protocol, ProtocolKey>(Protocol::class.java)
         val vrfKey = id.firstKeyOf(NetworkInstance::class.java)

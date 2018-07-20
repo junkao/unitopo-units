@@ -20,8 +20,12 @@ import io.fd.honeycomb.translate.util.RWUtils
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.openconfig.network.instance.NetworInstance
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.xr6.bgp.*
 import io.frinx.unitopo.unit.network.instance.As
+import io.frinx.unitopo.unit.xr6.bgp.UnderlayNeighbor
+import io.frinx.unitopo.unit.xr6.bgp.UnderlayNeighborBuilder
+import io.frinx.unitopo.unit.xr6.bgp.UnderlayNeighborKey
+import io.frinx.unitopo.unit.xr6.bgp.UnderlayVrfNeighborBuilder
+import io.frinx.unitopo.unit.xr6.bgp.UnderlayVrfNeighborKey
 import io.frinx.unitopo.unit.xr6.bgp.common.BgpListWriter
 import io.frinx.unitopo.unit.xr6.bgp.handler.GlobalConfigWriter
 import io.frinx.unitopo.unit.xr6.bgp.handler.GlobalConfigWriter.Companion.XR_BGP_INSTANCE_NAME
@@ -62,11 +66,15 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
 class NeighborWriter(private val access: UnderlayAccess) : BgpListWriter<Neighbor, NeighborKey> {
 
-    override fun writeCurrentAttributesForType(instanceIdentifier: InstanceIdentifier<Neighbor>, neighbor: Neighbor,
-                                               writeContext: WriteContext) {
+    override fun writeCurrentAttributesForType(
+        instanceIdentifier: InstanceIdentifier<Neighbor>,
+        neighbor: Neighbor,
+        writeContext: WriteContext
+    ) {
         val vrfKey = instanceIdentifier.firstKeyOf(NetworkInstance::class.java)
 
-        val bgpGlobal = writeContext.readAfter(RWUtils.cutId(instanceIdentifier, Bgp::class.java)).get().global
+        val bgpGlobal = writeContext.readAfter(RWUtils.cutId(instanceIdentifier, Bgp::class.java))
+            .get().global
         val bgpAs = bgpGlobal?.config?.`as`!!
 
         val neighAfiSafi = getAfiSafisForNeighbor(bgpGlobal, neighbor)
@@ -74,16 +82,22 @@ class NeighborWriter(private val access: UnderlayAccess) : BgpListWriter<Neighbo
         if (vrfKey == NetworInstance.DEFAULT_NETWORK) {
             val neighborBuilder = UnderlayNeighborBuilder()
             renderGlobalNeighbor(neighborBuilder, neighbor, neighAfiSafi)
-            access.merge(getGlobalNeighborIdentifier(bgpAs, neighbor.neighborAddress.toNoZone()), neighborBuilder.build())
+            access.merge(getGlobalNeighborIdentifier(bgpAs, neighbor.neighborAddress.toNoZone()),
+                neighborBuilder.build())
         } else {
             val neighborBuilder = UnderlayVrfNeighborBuilder()
             renderVrfNeighbor(neighborBuilder, neighbor, neighAfiSafi)
-            access.merge(getVrfNeighborIdentifier(bgpAs, vrfKey, neighbor.neighborAddress.toNoZone()), neighborBuilder.build())
+            access.merge(getVrfNeighborIdentifier(bgpAs, vrfKey, neighbor.neighborAddress.toNoZone()),
+                neighborBuilder.build())
         }
     }
 
-    override fun updateCurrentAttributesForType(instanceIdentifier: InstanceIdentifier<Neighbor>, dataBefore: Neighbor, dataAfter: Neighbor,
-                                                writeContext: WriteContext) {
+    override fun updateCurrentAttributesForType(
+        instanceIdentifier: InstanceIdentifier<Neighbor>,
+        dataBefore: Neighbor,
+        dataAfter: Neighbor,
+        writeContext: WriteContext
+    ) {
         val vrfKey = instanceIdentifier.firstKeyOf(NetworkInstance::class.java)
 
         val bgpGlobal = writeContext.readAfter(RWUtils.cutId(instanceIdentifier, Bgp::class.java)).get().global
@@ -114,8 +128,11 @@ class NeighborWriter(private val access: UnderlayAccess) : BgpListWriter<Neighbo
         }
     }
 
-    override fun deleteCurrentAttributesForType(instanceIdentifier: InstanceIdentifier<Neighbor>, neighbor: Neighbor,
-                                                writeContext: WriteContext) {
+    override fun deleteCurrentAttributesForType(
+        instanceIdentifier: InstanceIdentifier<Neighbor>,
+        neighbor: Neighbor,
+        writeContext: WriteContext
+    ) {
         val vrfKey = instanceIdentifier.firstKeyOf(NetworkInstance::class.java)
 
         val bgpGlobal = writeContext.readBefore(RWUtils.cutId(instanceIdentifier, Bgp::class.java)).get().global
@@ -130,7 +147,8 @@ class NeighborWriter(private val access: UnderlayAccess) : BgpListWriter<Neighbo
 
     companion object {
 
-        fun getVrfNeighborIdentifier(bgpProcess: AsNumber, vrfName: NetworkInstanceKey, neighbor: IpAddressNoZone): InstanceIdentifier<VrfNeighbor> {
+        fun getVrfNeighborIdentifier(bgpProcess: AsNumber, vrfName: NetworkInstanceKey, neighbor: IpAddressNoZone):
+            InstanceIdentifier<VrfNeighbor> {
             val (asXX, asYY) = As.asToDotNotation(bgpProcess)
 
             return GlobalConfigWriter.XR_BGP_ID
@@ -143,7 +161,11 @@ class NeighborWriter(private val access: UnderlayAccess) : BgpListWriter<Neighbo
                     .child(VrfNeighbor::class.java, UnderlayVrfNeighborKey(neighbor))
         }
 
-        fun renderGlobalNeighbor(builder: UnderlayNeighborBuilder, data: Neighbor, neighAfiSafi: List<Class<out AFISAFITYPE>>) {
+        fun renderGlobalNeighbor(
+            builder: UnderlayNeighborBuilder,
+            data: Neighbor,
+            neighAfiSafi: List<Class<out AFISAFITYPE>>
+        ) {
             val (asXX, asYY) = As.asToDotNotation(data.config.peerAs)
 
             builder.setNeighborAddress(data.neighborAddress.toNoZone())
@@ -179,7 +201,8 @@ class NeighborWriter(private val access: UnderlayAccess) : BgpListWriter<Neighbo
                     .build()
         }
 
-        fun getGlobalNeighborIdentifier(bgpProcess: AsNumber, neighbor: IpAddressNoZone): InstanceIdentifier<UnderlayNeighbor> {
+        fun getGlobalNeighborIdentifier(bgpProcess: AsNumber, neighbor: IpAddressNoZone):
+            InstanceIdentifier<UnderlayNeighbor> {
             val (asXX, asYY) = As.asToDotNotation(bgpProcess)
 
             return GlobalConfigWriter.XR_BGP_ID
@@ -192,7 +215,11 @@ class NeighborWriter(private val access: UnderlayAccess) : BgpListWriter<Neighbo
                     .child(UnderlayNeighbor::class.java, UnderlayNeighborKey(neighbor))
         }
 
-        fun renderVrfNeighbor(builder: UnderlayVrfNeighborBuilder, data: Neighbor, neighAfiSafi: List<Class<out AFISAFITYPE>>) {
+        fun renderVrfNeighbor(
+            builder: UnderlayVrfNeighborBuilder,
+            data: Neighbor,
+            neighAfiSafi: List<Class<out AFISAFITYPE>>
+        ) {
             val (asXX, asYY) = As.asToDotNotation(data.config.peerAs)
 
             builder.setNeighborAddress(data.neighborAddress.toNoZone())
@@ -251,4 +278,3 @@ private fun BgpCommonNeighborGroupTransportConfig.LocalAddress?.toIfcName(): Int
         InterfaceName(it)
     }
 }
-

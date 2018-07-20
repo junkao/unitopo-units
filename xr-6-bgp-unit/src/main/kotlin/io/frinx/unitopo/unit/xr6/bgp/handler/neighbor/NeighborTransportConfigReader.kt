@@ -39,7 +39,8 @@ import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class NeighborTransportConfigReader(private val access: UnderlayAccess) : BgpReader.BgpConfigReader<Config, ConfigBuilder> {
+class NeighborTransportConfigReader(private val access: UnderlayAccess) :
+    BgpReader.BgpConfigReader<Config, ConfigBuilder> {
 
     override fun merge(parentBuilder: Builder<out DataObject>, config: Config) {
         (parentBuilder as TransportBuilder).config = config
@@ -47,12 +48,17 @@ class NeighborTransportConfigReader(private val access: UnderlayAccess) : BgpRea
 
     override fun getBuilder(p0: InstanceIdentifier<Config>) = ConfigBuilder()
 
-    override fun readCurrentAttributesForType(id: InstanceIdentifier<Config>, builder: ConfigBuilder, readContext: ReadContext) {
+    override fun readCurrentAttributesForType(
+        id: InstanceIdentifier<Config>,
+        builder: ConfigBuilder,
+        readContext: ReadContext
+    ) {
         val neighborKey = id.firstKeyOf(Neighbor::class.java)
         val protKey = id.firstKeyOf<Protocol, ProtocolKey>(Protocol::class.java)
         val vrfKey = id.firstKeyOf(NetworkInstance::class.java)
 
-        val data = access.read(BgpProtocolReader.UNDERLAY_BGP.child(Instance::class.java, InstanceKey(CiscoIosXrString(protKey.name))))
+        val data = access.read(BgpProtocolReader.UNDERLAY_BGP.child(Instance::class.java,
+            InstanceKey(CiscoIosXrString(protKey.name))))
                 .checkedGet()
                 .orNull()
 
@@ -60,7 +66,12 @@ class NeighborTransportConfigReader(private val access: UnderlayAccess) : BgpRea
     }
 
     companion object {
-        fun parseNeighbor(underlayInstance: Instance?, vrfKey: NetworkInstanceKey, neighborKey: NeighborKey, builder: ConfigBuilder) {
+        fun parseNeighbor(
+            underlayInstance: Instance?,
+            vrfKey: NetworkInstanceKey,
+            neighborKey: NeighborKey,
+            builder: ConfigBuilder
+        ) {
             val fourByteAs = BgpProtocolReader.getFirst4ByteAs(underlayInstance)
             if (vrfKey == NetworInstance.DEFAULT_NETWORK) {
                 NeighborConfigReader.getNeighbor(fourByteAs, neighborKey)

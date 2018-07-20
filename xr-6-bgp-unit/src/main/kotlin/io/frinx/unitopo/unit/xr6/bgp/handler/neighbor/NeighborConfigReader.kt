@@ -51,14 +51,19 @@ class NeighborConfigReader(private val access: UnderlayAccess) : BgpReader.BgpCo
 
     override fun getBuilder(p0: InstanceIdentifier<Config>) = ConfigBuilder()
 
-    override fun readCurrentAttributesForType(id: InstanceIdentifier<Config>, builder: ConfigBuilder, readContext: ReadContext) {
+    override fun readCurrentAttributesForType(
+        id: InstanceIdentifier<Config>,
+        builder: ConfigBuilder,
+        readContext: ReadContext
+    ) {
         val neighborKey = id.firstKeyOf(Neighbor::class.java)
         builder.neighborAddress = neighborKey.neighborAddress
 
         val protKey = id.firstKeyOf<Protocol, ProtocolKey>(Protocol::class.java)
         val vrfKey = id.firstKeyOf(NetworkInstance::class.java)
 
-        val data = access.read(BgpProtocolReader.UNDERLAY_BGP.child(Instance::class.java, InstanceKey(CiscoIosXrString(protKey.name))))
+        val data = access.read(BgpProtocolReader.UNDERLAY_BGP.child(Instance::class.java,
+            InstanceKey(CiscoIosXrString(protKey.name))))
                 .checkedGet()
                 .orNull()
 
@@ -66,7 +71,12 @@ class NeighborConfigReader(private val access: UnderlayAccess) : BgpReader.BgpCo
     }
 
     companion object {
-        fun parseNeighbor(underlayInstance: Instance?, vrfKey: NetworkInstanceKey, neighborKey: NeighborKey, builder: ConfigBuilder) {
+        fun parseNeighbor(
+            underlayInstance: Instance?,
+            vrfKey: NetworkInstanceKey,
+            neighborKey: NeighborKey,
+            builder: ConfigBuilder
+        ) {
             val fourByteAs = BgpProtocolReader.getFirst4ByteAs(underlayInstance)
 
             if (vrfKey == NetworInstance.DEFAULT_NETWORK) {

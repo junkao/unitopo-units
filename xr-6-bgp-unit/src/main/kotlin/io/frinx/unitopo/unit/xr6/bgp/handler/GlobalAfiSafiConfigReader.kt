@@ -35,7 +35,11 @@ class GlobalAfiSafiConfigReader(private val access: UnderlayAccess) : BgpReader.
 
     override fun getBuilder(p0: InstanceIdentifier<Config>) = ConfigBuilder()
 
-    override fun readCurrentAttributesForType(instanceIdentifier: InstanceIdentifier<Config>, builder: ConfigBuilder, readContext: ReadContext) {
+    override fun readCurrentAttributesForType(
+        instanceIdentifier: InstanceIdentifier<Config>,
+        builder: ConfigBuilder,
+        readContext: ReadContext
+    ) {
         val afiSafiKey = instanceIdentifier.firstKeyOf(AfiSafi::class.java)
         builder.afiSafiName = afiSafiKey.afiSafiName
     }

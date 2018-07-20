@@ -31,8 +31,20 @@ import io.frinx.unitopo.registry.api.TranslationUnitCollector
 import io.frinx.unitopo.registry.spi.TranslateUnit
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.utils.NoopWriter
-import io.frinx.unitopo.unit.xr6.bgp.handler.*
-import io.frinx.unitopo.unit.xr6.bgp.handler.neighbor.*
+import io.frinx.unitopo.unit.xr6.bgp.handler.GlobalAfiSafiConfigReader
+import io.frinx.unitopo.unit.xr6.bgp.handler.GlobalAfiSafiConfigWriter
+import io.frinx.unitopo.unit.xr6.bgp.handler.GlobalAfiSafiReader
+import io.frinx.unitopo.unit.xr6.bgp.handler.GlobalConfigReader
+import io.frinx.unitopo.unit.xr6.bgp.handler.GlobalConfigWriter
+import io.frinx.unitopo.unit.xr6.bgp.handler.GlobalStateReader
+import io.frinx.unitopo.unit.xr6.bgp.handler.neighbor.NeighborAfiSafiReader
+import io.frinx.unitopo.unit.xr6.bgp.handler.neighbor.NeighborConfigReader
+import io.frinx.unitopo.unit.xr6.bgp.handler.neighbor.NeighborPolicyConfigReader
+import io.frinx.unitopo.unit.xr6.bgp.handler.neighbor.NeighborReader
+import io.frinx.unitopo.unit.xr6.bgp.handler.neighbor.NeighborStateReader
+import io.frinx.unitopo.unit.xr6.bgp.handler.neighbor.NeighborTransportConfigReader
+import io.frinx.unitopo.unit.xr6.bgp.handler.neighbor.NeighborWriter
+import io.frinx.unitopo.unit.xr6.bgp.handler.neighbor.PrefixesReader
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.global.base.AfiSafisBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.neighbor.afi.safi.list.AfiSafi
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.neighbor.afi.safi.list.afi.safi.Config
@@ -47,9 +59,7 @@ import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.`$YangModuleInfoImpl` as UnderlayIpv4BgpConfigYangModule
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.policy.rev170730.ext.community.set.top.ext.community.sets.ext.community.set.Config as ExtCommunityConfig
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.`$YangModuleInfoImpl` as OpenconfigBGPYangModule
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.global.afi.safi.list.afi.safi.Config as AfiSafiConfig
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.neighbor.base.AfiSafisBuilder as NeighborAfiSafisBuilder
 
 class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
@@ -72,8 +82,11 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
 
     override fun getRpcs(context: UnderlayAccess) = emptySet<RpcService<out DataObject, out DataObject>>()
 
-    override fun provideHandlers(rRegistry: ModifiableReaderRegistryBuilder, wRegistry: ModifiableWriterRegistryBuilder,
-                                 access: UnderlayAccess) {
+    override fun provideHandlers(
+        rRegistry: ModifiableReaderRegistryBuilder,
+        wRegistry: ModifiableWriterRegistryBuilder,
+        access: UnderlayAccess
+    ) {
         provideReaders(rRegistry, access)
         provideWriters(wRegistry, access)
     }
@@ -88,14 +101,22 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
 
         wRegistry.subtreeAddAfter(
                 Sets.newHashSet<InstanceIdentifier<out DataObject>>(
-                        RWUtils.cutIdFromStart(IIDs.NE_NE_PR_PR_BG_NE_NE_CONFIG, InstanceIdentifier.create(Neighbor::class.java)),
-                        RWUtils.cutIdFromStart(IIDs.NE_NE_PR_PR_BG_NE_NE_TRANSPORT, InstanceIdentifier.create(Neighbor::class.java)),
-                        RWUtils.cutIdFromStart(IIDs.NE_NE_PR_PR_BG_NE_NE_TR_CONFIG, InstanceIdentifier.create(Neighbor::class.java)),
-                        RWUtils.cutIdFromStart(IIDs.NE_NE_PR_PR_BG_NE_NE_APPLYPOLICY, InstanceIdentifier.create(Neighbor::class.java)),
-                        RWUtils.cutIdFromStart(IIDs.NE_NE_PR_PR_BG_NE_NE_AP_CONFIG, InstanceIdentifier.create(Neighbor::class.java)),
-                        RWUtils.cutIdFromStart(IIDs.NE_NE_PR_PR_BG_NE_NE_AFISAFIS, InstanceIdentifier.create(Neighbor::class.java)),
-                        RWUtils.cutIdFromStart(IIDs.NE_NE_PR_PR_BG_NE_NE_AF_AFISAFI, InstanceIdentifier.create(Neighbor::class.java)),
-                        RWUtils.cutIdFromStart(IIDs.NE_NE_PR_PR_BG_NE_NE_AF_AF_CONFIG, InstanceIdentifier.create(Neighbor::class.java))),
+                        RWUtils.cutIdFromStart(IIDs.NE_NE_PR_PR_BG_NE_NE_CONFIG,
+                            InstanceIdentifier.create(Neighbor::class.java)),
+                        RWUtils.cutIdFromStart(IIDs.NE_NE_PR_PR_BG_NE_NE_TRANSPORT,
+                            InstanceIdentifier.create(Neighbor::class.java)),
+                        RWUtils.cutIdFromStart(IIDs.NE_NE_PR_PR_BG_NE_NE_TR_CONFIG,
+                            InstanceIdentifier.create(Neighbor::class.java)),
+                        RWUtils.cutIdFromStart(IIDs.NE_NE_PR_PR_BG_NE_NE_APPLYPOLICY,
+                            InstanceIdentifier.create(Neighbor::class.java)),
+                        RWUtils.cutIdFromStart(IIDs.NE_NE_PR_PR_BG_NE_NE_AP_CONFIG,
+                            InstanceIdentifier.create(Neighbor::class.java)),
+                        RWUtils.cutIdFromStart(IIDs.NE_NE_PR_PR_BG_NE_NE_AFISAFIS,
+                            InstanceIdentifier.create(Neighbor::class.java)),
+                        RWUtils.cutIdFromStart(IIDs.NE_NE_PR_PR_BG_NE_NE_AF_AFISAFI,
+                            InstanceIdentifier.create(Neighbor::class.java)),
+                        RWUtils.cutIdFromStart(IIDs.NE_NE_PR_PR_BG_NE_NE_AF_AF_CONFIG,
+                            InstanceIdentifier.create(Neighbor::class.java))),
                 GenericListWriter(IIDs.NE_NE_PR_PR_BG_NE_NEIGHBOR, NeighborWriter(access)),
                 Sets.newHashSet(IIDs.NE_NE_CONFIG, IIDs.NE_NE_PR_PR_BG_GL_AF_AF_CONFIG))
     }
@@ -115,7 +136,8 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
         rRegistry.add(GenericConfigReader(IIDs.NE_NE_PR_PR_BG_NE_NE_CONFIG, NeighborConfigReader(access)))
         rRegistry.add(GenericOperReader(IIDs.NE_NE_PR_PR_BG_NE_NE_STATE, NeighborStateReader(access)))
         rRegistry.addStructuralReader(IIDs.NE_NE_PR_PR_BG_NE_NE_AFISAFIS, NeighborAfiSafisBuilder::class.java)
-        rRegistry.subtreeAdd(Sets.newHashSet<InstanceIdentifier<*>>(InstanceIdentifier.create(AfiSafi::class.java).child(Config::class.java)),
+        rRegistry.subtreeAdd(Sets.newHashSet<InstanceIdentifier<*>>(InstanceIdentifier.create(AfiSafi::class.java)
+            .child(Config::class.java)),
                 GenericConfigListReader(IIDs.NE_NE_PR_PR_BG_NE_NE_AF_AFISAFI, NeighborAfiSafiReader(access)))
 
         rRegistry.addStructuralReader(IIDs.NE_NE_PR_PR_BG_NE_NE_TRANSPORT, TransportBuilder::class.java)
@@ -135,21 +157,44 @@ typealias IID<T> = org.opendaylight.yangtools.yang.binding.InstanceIdentifier<T>
 
 // CFG
 typealias UnderlayBgp = org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.Bgp
-typealias UnderlayBgpBuilder = org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.BgpBuilder
-typealias UnderlayVrfNeighbor = org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.instance.instance.`as`.four._byte.`as`.vrfs.vrf.vrf.neighbors.VrfNeighbor
-typealias UnderlayVrfNeighborBuilder = org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.instance.instance.`as`.four._byte.`as`.vrfs.vrf.vrf.neighbors.VrfNeighborBuilder
-typealias UnderlayVrfNeighborKey = org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.instance.instance.`as`.four._byte.`as`.vrfs.vrf.vrf.neighbors.VrfNeighborKey
-typealias UnderlayNeighbor = org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.instance.instance.`as`.four._byte.`as`._default.vrf.bgp.entity.neighbors.Neighbor
-typealias UnderlayNeighborBuilder = org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.instance.instance.`as`.four._byte.`as`._default.vrf.bgp.entity.neighbors.NeighborBuilder
-typealias UnderlayNeighborKey = org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.instance.instance.`as`.four._byte.`as`._default.vrf.bgp.entity.neighbors.NeighborKey
-typealias UnderlayDefaultVrfGlobal = org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.instance.instance.`as`.four._byte.`as`._default.vrf.Global
-typealias UnderlayVrfGlobal = org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.instance.instance.`as`.four._byte.`as`.vrfs.vrf.VrfGlobal
+typealias UnderlayBgpBuilder = org.opendaylight.yang.gen.v1.http.cisco
+.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.BgpBuilder
+typealias UnderlayVrfNeighbor = org.opendaylight.yang.gen.v1.http.cisco
+.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.instance.instance
+.`as`.four._byte.`as`.vrfs.vrf.vrf.neighbors.VrfNeighbor
+typealias UnderlayVrfNeighborBuilder = org.opendaylight.yang.gen.v1.http
+.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.instance.instance
+.`as`.four._byte.`as`.vrfs.vrf.vrf.neighbors.VrfNeighborBuilder
+typealias UnderlayVrfNeighborKey = org.opendaylight.yang.gen.v1.http
+.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.instance.instance
+.`as`.four._byte.`as`.vrfs.vrf.vrf.neighbors.VrfNeighborKey
+typealias UnderlayNeighbor = org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang
+.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.instance.instance
+.`as`.four._byte.`as`._default.vrf.bgp.entity.neighbors.Neighbor
+typealias UnderlayNeighborBuilder = org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang
+.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.instance.instance
+.`as`.four._byte.`as`._default.vrf.bgp.entity.neighbors.NeighborBuilder
+typealias UnderlayNeighborKey = org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang
+.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.instance.instance
+.`as`.four._byte.`as`._default.vrf.bgp.entity.neighbors.NeighborKey
+typealias UnderlayDefaultVrfGlobal = org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang
+.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.instance.instance.`as`.four._byte.`as`._default.vrf.Global
+typealias UnderlayVrfGlobal = org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang
+.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.instance.instance.`as`.four._byte.`as`.vrfs.vrf.VrfGlobal
 // OPER
-typealias UnderlayOperNeighbor = org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.oper.rev150827.neighbor.Neighbor
-typealias UnderlayOperBgpInstance = org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.oper.rev150827.bgp.instances.Instance
-typealias UnderlayOperBgpInstanceKey = org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.oper.rev150827.bgp.instances.InstanceKey
-typealias UnderlayOperNeighborKey = org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.oper.rev150827.neighbor.NeighborKey
-typealias UnderlayOperNeighbors = org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.oper.rev150827.neighbor.table.Neighbors
+typealias UnderlayOperNeighbor = org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang
+.cisco.ios.xr.ipv4.bgp.oper.rev150827.neighbor.Neighbor
+typealias UnderlayOperBgpInstance = org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang
+.cisco.ios.xr.ipv4.bgp.oper.rev150827.bgp.instances.Instance
+typealias UnderlayOperBgpInstanceKey = org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang
+.cisco.ios.xr.ipv4.bgp.oper.rev150827.bgp.instances.InstanceKey
+typealias UnderlayOperNeighborKey = org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang
+.cisco.ios.xr.ipv4.bgp.oper.rev150827.neighbor.NeighborKey
+typealias UnderlayOperNeighbors = org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang
+.cisco.ios.xr.ipv4.bgp.oper.rev150827.neighbor.table.Neighbors
 // Types
-typealias UnderlayRouteDistinguisher = org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.instance.instance.`as`.four._byte.`as`.vrfs.vrf.vrf.global.RouteDistinguisher
-typealias UnderlayRouteDistinguisherBuilder = org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.instance.instance.`as`.four._byte.`as`.vrfs.vrf.vrf.global.RouteDistinguisherBuilder
+typealias UnderlayRouteDistinguisher = org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang
+.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.instance.instance.`as`.four._byte.`as`.vrfs.vrf.vrf.global.RouteDistinguisher
+typealias UnderlayRouteDistinguisherBuilder = org.opendaylight.yang.gen.v1.http
+.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.instance.instance
+.`as`.four._byte.`as`.vrfs.vrf.vrf.global.RouteDistinguisherBuilder

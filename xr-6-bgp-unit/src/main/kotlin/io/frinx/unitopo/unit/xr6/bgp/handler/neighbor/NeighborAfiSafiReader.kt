@@ -40,14 +40,16 @@ import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class NeighborAfiSafiReader(private val access: UnderlayAccess) : BgpListReader.BgpConfigListReader<AfiSafi, AfiSafiKey, AfiSafiBuilder> {
+class NeighborAfiSafiReader(private val access: UnderlayAccess) :
+    BgpListReader.BgpConfigListReader<AfiSafi, AfiSafiKey, AfiSafiBuilder> {
 
     override fun getAllIdsForType(id: InstanceIdentifier<AfiSafi>, readContext: ReadContext): List<AfiSafiKey> {
         val protKey = id.firstKeyOf<Protocol, ProtocolKey>(Protocol::class.java)
         val vrfKey = id.firstKeyOf(NetworkInstance::class.java)
         val neighborKey = id.firstKeyOf(Neighbor::class.java)
 
-        val data = access.read(BgpProtocolReader.UNDERLAY_BGP.child(Instance::class.java, InstanceKey(CiscoIosXrString(protKey.name))))
+        val data = access.read(BgpProtocolReader.UNDERLAY_BGP.child(Instance::class.java,
+            InstanceKey(CiscoIosXrString(protKey.name))))
                 .checkedGet()
                 .orNull()
 
@@ -58,7 +60,11 @@ class NeighborAfiSafiReader(private val access: UnderlayAccess) : BgpListReader.
         (builder as AfiSafisBuilder).afiSafi = list
     }
 
-    override fun readCurrentAttributesForType(id: InstanceIdentifier<AfiSafi>, afiSafiBuilder: AfiSafiBuilder, readContext: ReadContext) {
+    override fun readCurrentAttributesForType(
+        id: InstanceIdentifier<AfiSafi>,
+        afiSafiBuilder: AfiSafiBuilder,
+        readContext: ReadContext
+    ) {
         afiSafiBuilder.afiSafiName = id.firstKeyOf(AfiSafi::class.java).afiSafiName
         afiSafiBuilder.config = ConfigBuilder()
                 .setAfiSafiName(afiSafiBuilder.afiSafiName)
@@ -76,7 +82,6 @@ class NeighborAfiSafiReader(private val access: UnderlayAccess) : BgpListReader.
                         ?.neighborAfs
                         ?.neighborAf.orEmpty()
                         .map { it.afName }
-
             } else {
                 NeighborConfigReader.getVrfNeighbor(fourByteAs, vrfKey, neighborKey)
                         ?.vrfNeighborAfs
