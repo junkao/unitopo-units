@@ -31,15 +31,18 @@ import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class SubinterfaceConfigReader(private val underlayAccess: UnderlayAccess) : ConfigReaderCustomizer<Config, ConfigBuilder> {
+class SubinterfaceConfigReader(private val underlayAccess: UnderlayAccess) :
+    ConfigReaderCustomizer<Config, ConfigBuilder> {
 
     override fun merge(builder: Builder<out DataObject>, config: Config) {
         (builder as SubinterfaceBuilder).config = config
     }
 
-    override fun readCurrentAttributes(id: InstanceIdentifier<Config>,
-                                       builder: ConfigBuilder,
-                                       readContext: ReadContext) {
+    override fun readCurrentAttributes(
+        id: InstanceIdentifier<Config>,
+        builder: ConfigBuilder,
+        readContext: ReadContext
+    ) {
         val ifcName = id.firstKeyOf(Interface::class.java).name
         val subifcIndex = id.firstKeyOf(Subinterface::class.java).index
 

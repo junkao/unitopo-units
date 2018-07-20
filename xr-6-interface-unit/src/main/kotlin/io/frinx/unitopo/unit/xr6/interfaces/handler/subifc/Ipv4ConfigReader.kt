@@ -82,9 +82,8 @@ class Ipv4ConfigReader(private val underlayAccess: UnderlayAccess) : ConfigReade
                     .reduce { acc, i -> (acc + i).toShort() }
         }
     }
-
 }
 
-fun String.occurrences(substring: String) : Int {
+fun String.occurrences(substring: String): Int {
     return this.split(substring).count() - 1
 }
