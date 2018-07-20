@@ -26,21 +26,13 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.acl.rev170526
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.acl.rev170526._interface.ingress.acl.top.ingress.acl.sets.IngressAclSetBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.acl.rev170526._interface.ingress.acl.top.ingress.acl.sets.IngressAclSetKey
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.acl.rev170526.acl.interfaces.top.interfaces.Interface as AclInterface
-import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.Configuration
-import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.Unit as JunosUnit
-import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.UnitKey
-import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.unit.Family
-import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.unit.family.Inet
-import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.unit.family.inet.Filter
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.unit.family.inet.filter.input_choice.Case1
-import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.config.Interfaces
-import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.config.interfaces.Interface
-import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.config.interfaces.InterfaceKey
 import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
-class IngressAclSetReader(private val underlayAccess: UnderlayAccess) : ConfigListReaderCustomizer<IngressAclSet, IngressAclSetKey, IngressAclSetBuilder> {
+class IngressAclSetReader(private val underlayAccess: UnderlayAccess) :
+    ConfigListReaderCustomizer<IngressAclSet, IngressAclSetKey, IngressAclSetBuilder> {
 
     override fun getBuilder(id: IID<IngressAclSet>): IngressAclSetBuilder = IngressAclSetBuilder()
 
@@ -52,17 +44,23 @@ class IngressAclSetReader(private val underlayAccess: UnderlayAccess) : ConfigLi
         return readSetsIds(id.firstKeyOf(AclInterface::class.java).id.value)
     }
 
-    override fun readCurrentAttributes(id: IID<IngressAclSet>, builder: IngressAclSetBuilder, readContext: ReadContext) {
+    override fun readCurrentAttributes(
+        id: IID<IngressAclSet>,
+        builder: IngressAclSetBuilder,
+        readContext: ReadContext
+    ) {
         val setKey = id.firstKeyOf(IngressAclSet::class.java)
         builder.key = setKey
     }
 
     private fun readSetsIds(ifcName: String): List<IngressAclSetKey> {
-        val filter = underlayAccess.read(AclInterfaceReader.getUnderlayFilterId(ifcName), LogicalDatastoreType.CONFIGURATION)
+        val filter = underlayAccess.read(AclInterfaceReader.getUnderlayFilterId(ifcName),
+            LogicalDatastoreType.CONFIGURATION)
                 .checkedGet().orNull()
         if (filter?.inputChoice != null) {
-            //TODO add support for family inet6
-            return Collections.singletonList(IngressAclSetKey((filter.inputChoice as Case1).input?.filterName, ACLIPV4::class.java))
+            // TODO add support for family inet6
+            return Collections.singletonList(IngressAclSetKey((filter.inputChoice as Case1)
+                .input?.filterName, ACLIPV4::class.java))
         }
         return emptyList()
     }

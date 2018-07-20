@@ -68,7 +68,4 @@ class IngressAclSetConfigWriter(private val underlayAccess: UnderlayAccess) : Wr
                 .build()
         return Pair(underlayId, filterData)
     }
-
-
-
 }

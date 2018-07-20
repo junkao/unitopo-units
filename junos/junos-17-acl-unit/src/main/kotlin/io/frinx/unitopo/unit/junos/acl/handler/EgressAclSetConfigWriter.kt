@@ -68,5 +68,4 @@ class EgressAclSetConfigWriter(private val underlayAccess: UnderlayAccess) : Wri
                 .build()
         return Pair(underlayId, filterData)
     }
-
 }
