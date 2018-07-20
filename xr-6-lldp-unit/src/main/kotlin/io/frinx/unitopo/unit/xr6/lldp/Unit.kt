@@ -31,7 +31,7 @@ import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ethernet
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ethernet.lldp.oper.rev151109.`$YangModuleInfoImpl` as UnderlayLldpOperYangInfo
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.lldp.rev160516.`$YangModuleInfoImpl` as LldpYangInfo
 
-class Unit (private val registry: TranslationUnitCollector) : TranslateUnit {
+class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
     private var reg: TranslationUnitCollector.Registration? = null
 
     fun init() {
@@ -50,15 +50,16 @@ class Unit (private val registry: TranslationUnitCollector) : TranslateUnit {
 
     override fun getRpcs(underlayAccess: UnderlayAccess) = emptySet<RpcService<*, *>>()
 
-    override fun provideHandlers(rRegistry: ModifiableReaderRegistryBuilder,
-                                 wRegistry: ModifiableWriterRegistryBuilder,
-                                 underlayAccess: UnderlayAccess) {
+    override fun provideHandlers(
+        rRegistry: ModifiableReaderRegistryBuilder,
+        wRegistry: ModifiableWriterRegistryBuilder,
+        underlayAccess: UnderlayAccess
+    ) {
         provideReaders(rRegistry, underlayAccess)
         provideWriters(wRegistry, underlayAccess)
     }
 
     private fun provideWriters(wRegistry: ModifiableWriterRegistryBuilder, underlayAccess: UnderlayAccess) {
-
     }
 
     private fun provideReaders(rRegistry: ModifiableReaderRegistryBuilder, underlayAccess: UnderlayAccess) {
@@ -67,11 +68,9 @@ class Unit (private val registry: TranslationUnitCollector) : TranslateUnit {
         rRegistry.add(GenericOperListReader(IIDs.LL_IN_INTERFACE, InterfaceReader(underlayAccess)))
         rRegistry.add(GenericOperReader(IIDs.LL_IN_IN_CONFIG, InterfaceConfigReader()))
         rRegistry.addStructuralReader(IIDs.LL_IN_IN_NEIGHBORS, NeighborsBuilder::class.java)
-        rRegistry.add(GenericOperListReader(IIDs.LL_IN_IN_NE_NEIGHBOR,  NeighborReader(underlayAccess)))
-        rRegistry.add(GenericOperReader(IIDs.LL_IN_IN_NE_NE_STATE,  NeighborStateReader(underlayAccess)))
+        rRegistry.add(GenericOperListReader(IIDs.LL_IN_IN_NE_NEIGHBOR, NeighborReader(underlayAccess)))
+        rRegistry.add(GenericOperReader(IIDs.LL_IN_IN_NE_NE_STATE, NeighborStateReader(underlayAccess)))
     }
 
     override fun toString(): String = "XR 6 (2015-11-09) LLDP translate unit"
 }
-
-
