@@ -30,8 +30,10 @@ import java.util.function.Function
 
 interface MplsReader<O : DataObject, B : Builder<O>> : TypedReader<O, B> {
 
-    override fun getParentCheck(id: InstanceIdentifier<O>?): AbstractMap.SimpleEntry<InstanceIdentifier<out DataObject>, Function<DataObject, Boolean>>? {
-        return AbstractMap.SimpleEntry(RWUtils.cutId(id!!, NetworkInstance::class.java).child(Config::class.java), MPLS_CHECK)
+    override fun getParentCheck(id: InstanceIdentifier<O>?):
+        AbstractMap.SimpleEntry<InstanceIdentifier<out DataObject>, Function<DataObject, Boolean>>? {
+        return AbstractMap.SimpleEntry(RWUtils.cutId(id!!, NetworkInstance::class.java).child(Config::class.java),
+            MPLS_CHECK)
     }
 
     interface MplsConfigReader<O : DataObject, B : Builder<O>> : MplsReader<O, B>, ConfigReaderCustomizer<O, B>
@@ -40,6 +42,6 @@ interface MplsReader<O : DataObject, B : Builder<O>> : TypedReader<O, B> {
 
     companion object {
 
-        val MPLS_CHECK = Function { config : DataObject -> (config as Config).type == DEFAULTINSTANCE::class.java }
+        val MPLS_CHECK = Function { config: DataObject -> (config as Config).type == DEFAULTINSTANCE::class.java }
     }
 }

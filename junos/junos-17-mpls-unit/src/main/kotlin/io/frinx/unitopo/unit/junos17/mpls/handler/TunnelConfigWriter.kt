@@ -67,7 +67,8 @@ class TunnelConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCus
 
     private fun getData(id: InstanceIdentifier<Config>, dataAfter: Config, writeContext: WriteContext):
             Pair<InstanceIdentifier<LabelSwitchedPath>, LabelSwitchedPath> {
-        val attrs = writeContext.readAfter(RWUtils.cutId(id, Tunnel::class.java).child(P2pTunnelAttributes::class.java))?.orNull()
+        val attrs = writeContext.readAfter(RWUtils.cutId(id, Tunnel::class.java)
+            .child(P2pTunnelAttributes::class.java))?.orNull()
         attrs ?: throw IllegalArgumentException("Destination path MUST be specified")
 
         val to = attrs.config?.destination?.ipv4Address?.value

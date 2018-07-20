@@ -32,20 +32,26 @@ import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class RsvpInterfaceReader(private val underlayAccess: UnderlayAccess) : MplsListReader.MplsConfigListReader<Interface, InterfaceKey, InterfaceBuilder> {
+class RsvpInterfaceReader(private val underlayAccess: UnderlayAccess) :
+    MplsListReader.MplsConfigListReader<Interface, InterfaceKey, InterfaceBuilder> {
 
     override fun merge(p0: Builder<out DataObject>, p1: MutableList<Interface>) {
         (p0 as InterfaceAttributesBuilder).`interface` = p1
     }
 
-    override fun readCurrentAttributesForType(instanceIdentifier: InstanceIdentifier<Interface>, interfaceBuilder: InterfaceBuilder, readContext: ReadContext) {
+    override fun readCurrentAttributesForType(
+        instanceIdentifier: InstanceIdentifier<Interface>,
+        interfaceBuilder: InterfaceBuilder,
+        readContext: ReadContext
+    ) {
         val key = instanceIdentifier.firstKeyOf(Interface::class.java)
         interfaceBuilder.interfaceId = key.interfaceId
     }
 
     override fun getBuilder(p0: InstanceIdentifier<Interface>): InterfaceBuilder = InterfaceBuilder()
 
-    override fun getAllIdsForType(id: InstanceIdentifier<Interface>, readContext: ReadContext): List<InterfaceKey> = getInterfaceIds(underlayAccess)
+    override fun getAllIdsForType(id: InstanceIdentifier<Interface>, readContext: ReadContext):
+        List<InterfaceKey> = getInterfaceIds(underlayAccess)
 
     companion object {
 

@@ -37,7 +37,11 @@ class TunnelConfigReader(private val access: UnderlayAccess) : MplsReader.MplsCo
 
     override fun getBuilder(p0: InstanceIdentifier<Config>): ConfigBuilder = ConfigBuilder()
 
-    override fun readCurrentAttributesForType(instanceIdentifier: InstanceIdentifier<Config>, configBuilder: ConfigBuilder, readContext: ReadContext) {
+    override fun readCurrentAttributesForType(
+        instanceIdentifier: InstanceIdentifier<Config>,
+        configBuilder: ConfigBuilder,
+        readContext: ReadContext
+    ) {
         val name = instanceIdentifier.firstKeyOf<Tunnel, TunnelKey>(Tunnel::class.java).name
         configBuilder.name = name
         try {
@@ -52,7 +56,7 @@ class TunnelConfigReader(private val access: UnderlayAccess) : MplsReader.MplsCo
     }
 
     @VisibleForTesting
-    fun ConfigBuilder.parseConfig(path : LabelSwitchedPath) {
+    fun ConfigBuilder.parseConfig(path: LabelSwitchedPath) {
         isShortcutEligible = true
         type = P2P::class.java
         metric = path.metric?.uint32?.toInt()
@@ -62,7 +66,7 @@ class TunnelConfigReader(private val access: UnderlayAccess) : MplsReader.MplsCo
     }
 
     companion object {
-        fun readTunnel(underlayAccess: UnderlayAccess, name: String) : LabelSwitchedPath? {
+        fun readTunnel(underlayAccess: UnderlayAccess, name: String): LabelSwitchedPath? {
             return underlayAccess.read(TunnelReader.MPLS).checkedGet().orNull()?.let {
                 it.labelSwitchedPath.orEmpty()
                         .find { it.name == name }

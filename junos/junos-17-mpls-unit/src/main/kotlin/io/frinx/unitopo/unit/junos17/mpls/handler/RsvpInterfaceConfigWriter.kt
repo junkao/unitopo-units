@@ -65,7 +65,7 @@ class RsvpInterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : Wr
          * This method enforces '.0' at the end of each interface name unless it's not
          * specified explicitly.
          */
-        fun formatIfcName(ifcName: String) : String {
+        fun formatIfcName(ifcName: String): String {
             if (ifcName.contains("."))
                 return ifcName
             return ifcName.plus(".0")

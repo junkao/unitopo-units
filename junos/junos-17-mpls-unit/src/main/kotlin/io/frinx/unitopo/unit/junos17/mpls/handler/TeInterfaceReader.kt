@@ -32,9 +32,11 @@ import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class TeInterfaceReader(private val underlayAccess: UnderlayAccess) : MplsListReader.MplsConfigListReader<Interface, InterfaceKey, InterfaceBuilder> {
+class TeInterfaceReader(private val underlayAccess: UnderlayAccess) :
+    MplsListReader.MplsConfigListReader<Interface, InterfaceKey, InterfaceBuilder> {
 
-    override fun getAllIdsForType(instanceIdentifier: InstanceIdentifier<Interface>, readContext: ReadContext): List<InterfaceKey> {
+    override fun getAllIdsForType(instanceIdentifier: InstanceIdentifier<Interface>, readContext: ReadContext):
+        List<InterfaceKey> {
         try {
             return getInterfaceIds(underlayAccess)
         } catch (e: org.opendaylight.controller.md.sal.common.api.data.ReadFailedException) {
@@ -46,7 +48,11 @@ class TeInterfaceReader(private val underlayAccess: UnderlayAccess) : MplsListRe
         (builder as TeInterfaceAttributesBuilder).`interface` = readData
     }
 
-    override fun readCurrentAttributesForType(instanceIdentifier: InstanceIdentifier<Interface>, interfaceBuilder: InterfaceBuilder, readContext: ReadContext) {
+    override fun readCurrentAttributesForType(
+        instanceIdentifier: InstanceIdentifier<Interface>,
+        interfaceBuilder: InterfaceBuilder,
+        readContext: ReadContext
+    ) {
         val key = instanceIdentifier.firstKeyOf(Interface::class.java)
         interfaceBuilder.interfaceId = key.interfaceId
     }
