@@ -46,13 +46,14 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.insta
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.IpAddress
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 import java.util.Collections
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.connection.points.connection.point.endpoints.endpoint.remote.ConfigBuilder as RemoteConfigBuilder
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.connection.points.connection.point.endpoints.endpoint.local.ConfigBuilder as LocalConfigBuilder
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.connection.points.connection.point.endpoints.endpoint.ConfigBuilder as EndpointConfigBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.connection.points.connection.point.ConfigBuilder as ConnectionPointConfigBuilder
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.connection.points.connection.point.endpoints.endpoint.ConfigBuilder as EndpointConfigBuilder
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.connection.points.connection.point.endpoints.endpoint.local.ConfigBuilder as LocalConfigBuilder
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.connection.points.connection.point.endpoints.endpoint.remote.ConfigBuilder as RemoteConfigBuilder
 
 // TODO read also operational data
-class L2P2PConnectionPointsReader(private val underlayAccess: UnderlayAccess) : L2p2pReader.L2p2pConfigReader<ConnectionPoints, ConnectionPointsBuilder>,
+class L2P2PConnectionPointsReader(private val underlayAccess: UnderlayAccess) :
+    L2p2pReader.L2p2pConfigReader<ConnectionPoints, ConnectionPointsBuilder>,
         CompositeReader.Child<ConnectionPoints, ConnectionPointsBuilder> {
 
     override fun getBuilder(p0: InstanceIdentifier<ConnectionPoints>): ConnectionPointsBuilder {
@@ -60,9 +61,11 @@ class L2P2PConnectionPointsReader(private val underlayAccess: UnderlayAccess) : 
         throw UnsupportedOperationException("Should not be invoked")
     }
 
-    override fun readCurrentAttributesForType(id: InstanceIdentifier<ConnectionPoints>,
-                                              builder: ConnectionPointsBuilder,
-                                              ctx: ReadContext) {
+    override fun readCurrentAttributesForType(
+        id: InstanceIdentifier<ConnectionPoints>,
+        builder: ConnectionPointsBuilder,
+        ctx: ReadContext
+    ) {
         val l2p2InstanceName = id.firstKeyOf(NetworkInstance::class.java).name
 
         val underlayP2PConnectId = L2P2PReader.UNDERLAY_P2PXCONNECT_ID.child(P2pXconnect::class.java,
@@ -90,7 +93,7 @@ class L2P2PConnectionPointsReader(private val underlayAccess: UnderlayAccess) : 
         builder.connectionPoint = Lists.newArrayList(connectionPoint1, connectionPoint2)
     }
 
-    private fun parseRemoteEndpoint(pseudoWire: Pseudowire) : ConnectionPoint {
+    private fun parseRemoteEndpoint(pseudoWire: Pseudowire): ConnectionPoint {
 
         val remoteSystem = IpAddress(pseudoWire.neighbor?.get(0)?.neighbor)
         val virtualCircuitId = pseudoWire.pseudowireId?.value
@@ -111,11 +114,11 @@ class L2P2PConnectionPointsReader(private val underlayAccess: UnderlayAccess) : 
                 .setRemote(remote)
                 .build()
 
-
         return createConnectionPoint(remoteEndpoint, CONNECTION_POINT_2)
     }
 
-    private fun parseLocalConnectionPoint(attachementCircuit: AttachmentCircuit, connectionPointId: String): ConnectionPoint {
+    private fun parseLocalConnectionPoint(attachementCircuit: AttachmentCircuit, connectionPointId: String):
+        ConnectionPoint {
 
         val underlayIfcName = attachementCircuit.name?.value!!
         val local: Local

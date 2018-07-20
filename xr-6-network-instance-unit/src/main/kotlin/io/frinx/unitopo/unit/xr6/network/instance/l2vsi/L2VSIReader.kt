@@ -35,7 +35,9 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.insta
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstanceKey
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class L2VSIReader(private val underlayAccess: UnderlayAccess) : ConfigListReaderCustomizer<NetworkInstance, NetworkInstanceKey, NetworkInstanceBuilder>, CompositeListReader.Child<NetworkInstance, NetworkInstanceKey, NetworkInstanceBuilder> {
+class L2VSIReader(private val underlayAccess: UnderlayAccess) :
+    ConfigListReaderCustomizer<NetworkInstance, NetworkInstanceKey, NetworkInstanceBuilder>,
+    CompositeListReader.Child<NetworkInstance, NetworkInstanceKey, NetworkInstanceBuilder> {
 
     override fun getBuilder(p0: InstanceIdentifier<NetworkInstance>): NetworkInstanceBuilder {
         // NOOP
@@ -43,15 +45,19 @@ class L2VSIReader(private val underlayAccess: UnderlayAccess) : ConfigListReader
     }
 
     @Throws(ReadFailedException::class)
-    override fun getAllIds(instanceIdentifier: InstanceIdentifier<NetworkInstance>,
-                           readContext: ReadContext): List<NetworkInstanceKey> {
-        return getAllIds(underlayAccess);
+    override fun getAllIds(
+        instanceIdentifier: InstanceIdentifier<NetworkInstance>,
+        readContext: ReadContext
+    ): List<NetworkInstanceKey> {
+        return getAllIds(underlayAccess)
     }
 
     @Throws(ReadFailedException::class)
-    override fun readCurrentAttributes(instanceIdentifier: InstanceIdentifier<NetworkInstance>,
-                                       networkInstanceBuilder: NetworkInstanceBuilder,
-                                       readContext: ReadContext) {
+    override fun readCurrentAttributes(
+        instanceIdentifier: InstanceIdentifier<NetworkInstance>,
+        networkInstanceBuilder: NetworkInstanceBuilder,
+        readContext: ReadContext
+    ) {
         val name = instanceIdentifier.firstKeyOf(NetworkInstance::class.java).name
         networkInstanceBuilder.name = name
     }
@@ -89,6 +95,6 @@ class L2VSIReader(private val underlayAccess: UnderlayAccess) : ConfigListReader
         }
 
         private fun BridgeDomain.getVfiWithSameName(): Vfi? = this.vfis?.vfi.orEmpty()
-                .firstOrNull {vfi -> vfi.name.value == name.value}
+                .firstOrNull { vfi -> vfi.name.value == name.value }
     }
 }

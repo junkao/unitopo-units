@@ -26,7 +26,8 @@ import io.frinx.unitopo.unit.xr6.network.instance.vrf.VrfStateReader
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.State
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.StateBuilder
 
-class NetworkInstanceStateReader(access: UnderlayAccess) : NetworkInstanceStateReader(object : ArrayList<ReaderCustomizer<State, StateBuilder>>() {
+class NetworkInstanceStateReader(access: UnderlayAccess)
+    : NetworkInstanceStateReader(object : ArrayList<ReaderCustomizer<State, StateBuilder>>() {
     init {
         add(VrfStateReader(access))
         add(DefaultStateReader())

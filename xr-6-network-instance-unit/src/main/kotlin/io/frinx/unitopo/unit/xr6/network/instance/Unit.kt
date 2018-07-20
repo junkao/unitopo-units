@@ -32,7 +32,11 @@ import io.frinx.unitopo.unit.utils.NoopWriter
 import io.frinx.unitopo.unit.xr6.interfaces.Unit
 import io.frinx.unitopo.unit.xr6.network.instance.vrf.ifc.VrfInterfaceConfigWriter
 import io.frinx.unitopo.unit.xr6.network.instance.vrf.ifc.VrfInterfaceReader
-import io.frinx.unitopo.unit.xr6.network.instance.vrf.protocol.*
+import io.frinx.unitopo.unit.xr6.network.instance.vrf.protocol.LocalAggregateConfigReader
+import io.frinx.unitopo.unit.xr6.network.instance.vrf.protocol.LocalAggregateConfigWriter
+import io.frinx.unitopo.unit.xr6.network.instance.vrf.protocol.LocalAggregateReader
+import io.frinx.unitopo.unit.xr6.network.instance.vrf.protocol.ProtocolConfigWriter
+import io.frinx.unitopo.unit.xr6.network.instance.vrf.protocol.ProtocolReader
 import io.frinx.unitopo.unit.xr6.network.instance.vrf.table.TableConnectionConfigWriter
 import io.frinx.unitopo.unit.xr6.network.instance.vrf.table.TableConnectionReader
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.local.routing.rev170515.local.aggregate.top.LocalAggregatesBuilder
@@ -45,7 +49,6 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev150730.`$YangModuleInfoImpl` as UnderlayInterfacesYangInfo
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.infra.rsi.cfg.rev150730.`$YangModuleInfoImpl` as UnderlayVRFYangInto
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.`$YangModuleInfoImpl` as NetInstanceYangInfo
 
 class Unit(private val registry: TranslationUnitCollector) : NetworkInstanceUnit() {
 
@@ -67,7 +70,7 @@ class Unit(private val registry: TranslationUnitCollector) : NetworkInstanceUnit
     )
 
     override fun provideSpecificWriters(wRegistry: ModifiableWriterRegistryBuilder, underlayAccess: UnderlayAccess) {
-        //todo create proper writers once we support routing policies
+        // todo create proper writers once we support routing policies
         wRegistry.add(GenericWriter(IIDs.NE_NE_INTERINSTANCEPOLICIES, NoopWriter()))
         wRegistry.add(GenericWriter(IIDs.NE_NE_IN_APPLYPOLICY, NoopWriter()))
         wRegistry.add(GenericWriter(IIDs.NE_NE_IN_AP_CONFIG, NoopWriter()))
@@ -114,7 +117,8 @@ class Unit(private val registry: TranslationUnitCollector) : NetworkInstanceUnit
     override fun provideSpecificReaders(rRegistry: ModifiableReaderRegistryBuilder, underlayAccess: UnderlayAccess) {
 
         rRegistry.add(GenericConfigListReader(IIDs.NE_NETWORKINSTANCE, NetworkInstanceReader(underlayAccess)))
-        rRegistry.add(GenericConfigReader<Config, ConfigBuilder>(IIDs.NE_NE_CONFIG, NetworkInstanceConfigReader(underlayAccess)))
+        rRegistry.add(GenericConfigReader<Config, ConfigBuilder>(IIDs.NE_NE_CONFIG,
+            NetworkInstanceConfigReader(underlayAccess)))
 
         rRegistry.add(GenericConfigListReader(IIDs.NE_NE_IN_INTERFACE, VrfInterfaceReader(underlayAccess)))
 
@@ -127,7 +131,8 @@ class Unit(private val registry: TranslationUnitCollector) : NetworkInstanceUnit
 
         // Table connections for VRF
         rRegistry.addStructuralReader(IIDs.NE_NE_TABLECONNECTIONS, TableConnectionsBuilder::class.java)
-        rRegistry.subtreeAdd(setOf(RWUtils.cutIdFromStart<TableConnection>(IIDs.NE_NE_TA_TA_CONFIG, InstanceIdentifier.create(TableConnection::class.java))),
+        rRegistry.subtreeAdd(setOf(RWUtils.cutIdFromStart<TableConnection>(IIDs.NE_NE_TA_TA_CONFIG,
+            InstanceIdentifier.create(TableConnection::class.java))),
                 GenericConfigListReader(IIDs.NE_NE_TA_TABLECONNECTION, TableConnectionReader(underlayAccess)))
 
         // Connection points for L2P2p

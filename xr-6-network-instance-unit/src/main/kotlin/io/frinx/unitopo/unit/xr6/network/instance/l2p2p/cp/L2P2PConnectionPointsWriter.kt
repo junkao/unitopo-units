@@ -34,7 +34,11 @@ import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.l2.eth.i
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.l2.eth.infra.cfg.rev151109._interface.configurations._interface.configuration.ethernet.service.EncapsulationBuilder
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.l2.eth.infra.cfg.rev151109._interface.configurations._interface.configuration.ethernet.service.RewriteBuilder
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.l2.eth.infra.cfg.rev151109._interface.configurations._interface.configuration.vlan.sub.configuration.VlanIdentifierBuilder
-import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.l2.eth.infra.datatypes.rev151109.*
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.l2.eth.infra.datatypes.rev151109.Match
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.l2.eth.infra.datatypes.rev151109.Rewrite
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.l2.eth.infra.datatypes.rev151109.Vlan
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.l2.eth.infra.datatypes.rev151109.VlanTag
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.l2.eth.infra.datatypes.rev151109.VlanTagOrAny
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.l2vpn.cfg.rev151109.PseudowireIdRange
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.l2vpn.cfg.rev151109._interface.configurations._interface.configuration.L2Transport
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.l2vpn.cfg.rev151109._interface.configurations._interface.configuration.L2TransportBuilder
@@ -80,9 +84,11 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.vlan.rev17071
 
 class L2P2PConnectionPointsWriter(private val underlayAccess: UnderlayAccess) : L2p2pWriter<ConnectionPoints> {
 
-    override fun writeCurrentAttributesForType(id: InstanceIdentifier<ConnectionPoints>,
-                                               dataAfter: ConnectionPoints,
-                                               writeContext: WriteContext) {
+    override fun writeCurrentAttributesForType(
+        id: InstanceIdentifier<ConnectionPoints>,
+        dataAfter: ConnectionPoints,
+        writeContext: WriteContext
+    ) {
         val connectionPointList = dataAfter.connectionPoint
                 ?: throw IllegalArgumentException("No connection points specified")
 
@@ -116,16 +122,19 @@ class L2P2PConnectionPointsWriter(private val underlayAccess: UnderlayAccess) : 
 
         require(connectionPoint.endpoints.endpoint?.size == 1)
 
-        val endPoint = connectionPoint.endpoints.endpoint?.firstOrNull() ?:
-                throw IllegalArgumentException("No endpoint in connection point $connectionPointId")
+        val endPoint = connectionPoint.endpoints.endpoint?.firstOrNull()
+                ?: throw IllegalArgumentException("No endpoint in connection point $connectionPointId")
 
         require(endPoint.endpointId == L2P2PConnectionPointsReader.ENDPOINT_ID)
-
 
         return endPoint
     }
 
-    private fun configureEndpoint(writeContext: WriteContext, endpoint: Endpoint, id: InstanceIdentifier<ConnectionPoints>) {
+    private fun configureEndpoint(
+        writeContext: WriteContext,
+        endpoint: Endpoint,
+        id: InstanceIdentifier<ConnectionPoints>
+    ) {
         if (endpoint.config?.type === LOCAL::class.java) {
             configureLocalEndpoint(writeContext, endpoint.local, id)
         } else {
@@ -154,7 +163,11 @@ class L2P2PConnectionPointsWriter(private val underlayAccess: UnderlayAccess) : 
         underlayAccess.merge(underlayPseudowireId, pseudowire)
     }
 
-    private fun configureLocalEndpoint(writeContext: WriteContext, local: Local, id: InstanceIdentifier<ConnectionPoints>) {
+    private fun configureLocalEndpoint(
+        writeContext: WriteContext,
+        local: Local,
+        id: InstanceIdentifier<ConnectionPoints>
+    ) {
         val ifcName: String
         if (local.config?.subinterface != null) {
             ifcName = local.config?.`interface`!! + "." + local.config?.subinterface!!
@@ -231,7 +244,8 @@ class L2P2PConnectionPointsWriter(private val underlayAccess: UnderlayAccess) : 
         // Underlay interface configuration representing subinterface is needed here, so read it from underlay
         // or if not present (we are configuring it right now) invoke SubinterfaceWriter to render the data
         val subinterfaceFromUnderlay = underlayAccess.read(underlayIfcId).get()
-        val subinterfaceToConfigure = SubinterfaceConfigWriter.getData(subIfcId.child(SubinterfaceConfig::class.java), subinterfaceData.config).second
+        val subinterfaceToConfigure = SubinterfaceConfigWriter.getData(subIfcId.child(SubinterfaceConfig::class.java),
+            subinterfaceData.config).second
         val underlaySubifcConfiguration = requireNotNull(
                 subinterfaceFromUnderlay.or({ subinterfaceToConfigure }),
                 { "Cannot configure L2P2P on non-existent subinterface $underlayIfcName" })
@@ -246,16 +260,18 @@ class L2P2PConnectionPointsWriter(private val underlayAccess: UnderlayAccess) : 
         underlayAccess.merge(underlayIfcId, underlaySubifcConfigurationAfter)
     }
 
-    override fun deleteCurrentAttributesForType(id: InstanceIdentifier<ConnectionPoints>,
-                                                dataBefore: ConnectionPoints,
-                                                writeContext: WriteContext) {
+    override fun deleteCurrentAttributesForType(
+        id: InstanceIdentifier<ConnectionPoints>,
+        dataBefore: ConnectionPoints,
+        writeContext: WriteContext
+    ) {
         val l2p2InstanceName = id.firstKeyOf(NetworkInstance::class.java).name
 
         val (endpoint1, endpoint2) = getEndPoints(dataBefore)
 
         deleteEndpoint(endpoint1)
         deleteEndpoint(endpoint2)
-        
+
         val underlayP2PXconnectId = L2P2PReader.UNDERLAY_P2PXCONNECT_ID.child(P2pXconnect::class.java,
                 P2pXconnectKey(CiscoIosXrString(l2p2InstanceName)))
         underlayAccess.delete(underlayP2PXconnectId)
@@ -306,9 +322,12 @@ class L2P2PConnectionPointsWriter(private val underlayAccess: UnderlayAccess) : 
         underlayAccess.merge(underlayIfcId, underlaySubifcConfigBefore)
     }
 
-    override fun updateCurrentAttributesForType(id: InstanceIdentifier<ConnectionPoints>,
-                                                dataBefore: ConnectionPoints,
-                                                dataAfter: ConnectionPoints, writeContext: WriteContext) {
+    override fun updateCurrentAttributesForType(
+        id: InstanceIdentifier<ConnectionPoints>,
+        dataBefore: ConnectionPoints,
+        dataAfter: ConnectionPoints,
+        writeContext: WriteContext
+    ) {
         deleteCurrentAttributes(id, dataBefore, writeContext)
         writeCurrentAttributes(id, dataAfter, writeContext)
     }
@@ -327,7 +346,8 @@ class L2P2PConnectionPointsWriter(private val underlayAccess: UnderlayAccess) : 
         require(data.isPresent, { "Unknown interface $ifcName, cannot configure l2p2p" })
     }
 
-    private fun checkSubIfcExists(writeContext: WriteContext, instanceIdentifier: InstanceIdentifier<Subinterface>): Subinterface {
+    private fun checkSubIfcExists(writeContext: WriteContext, instanceIdentifier: InstanceIdentifier<Subinterface>):
+        Subinterface {
         val subData = writeContext.readAfter(instanceIdentifier)
         val index = instanceIdentifier.firstKeyOf(Subinterface::class.java).index
         val name = instanceIdentifier.firstKeyOf(Interface::class.java).name

@@ -28,7 +28,8 @@ import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class LocalAggregateReader(access: UnderlayAccess) : ConfigListReaderCustomizer<Aggregate, AggregateKey, AggregateBuilder>,
+class LocalAggregateReader(access: UnderlayAccess) :
+    ConfigListReaderCustomizer<Aggregate, AggregateKey, AggregateBuilder>,
         CompositeListReader<Aggregate, AggregateKey, AggregateBuilder>(listOf(
                 BgpLocalAggregateReader(access)
         )) {

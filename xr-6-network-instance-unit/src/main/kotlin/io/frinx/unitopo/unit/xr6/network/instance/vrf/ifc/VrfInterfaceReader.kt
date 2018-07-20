@@ -32,11 +32,16 @@ import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class VrfInterfaceReader(private val underlayAccess: UnderlayAccess) : L3VrfListReader.L3VrfConfigListReader<Interface, InterfaceKey, InterfaceBuilder> {
+class VrfInterfaceReader(private val underlayAccess: UnderlayAccess) :
+    L3VrfListReader.L3VrfConfigListReader<Interface, InterfaceKey, InterfaceBuilder> {
 
     private val interfaceReader: InterfaceReader = InterfaceReader(underlayAccess)
 
-    override fun readCurrentAttributesForType(id: InstanceIdentifier<Interface>, builder: InterfaceBuilder, ctx: ReadContext) {
+    override fun readCurrentAttributesForType(
+        id: InstanceIdentifier<Interface>,
+        builder: InterfaceBuilder,
+        ctx: ReadContext
+    ) {
         val ifcName = id.firstKeyOf(Interface::class.java).id
         builder.id = ifcName
     }

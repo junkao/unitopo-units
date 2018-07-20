@@ -32,7 +32,8 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.insta
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstanceKey
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class L2P2PReader(private val underlayAccess: UnderlayAccess) : ConfigListReaderCustomizer<NetworkInstance, NetworkInstanceKey, NetworkInstanceBuilder>,
+class L2P2PReader(private val underlayAccess: UnderlayAccess) :
+    ConfigListReaderCustomizer<NetworkInstance, NetworkInstanceKey, NetworkInstanceBuilder>,
         CompositeListReader.Child<NetworkInstance, NetworkInstanceKey, NetworkInstanceBuilder> {
 
     override fun getBuilder(p0: InstanceIdentifier<NetworkInstance>): NetworkInstanceBuilder {
@@ -40,14 +41,18 @@ class L2P2PReader(private val underlayAccess: UnderlayAccess) : ConfigListReader
         throw UnsupportedOperationException("Should not be invoked")
     }
 
-    override fun getAllIds(instanceIdentifier: InstanceIdentifier<NetworkInstance>,
-                           readContext: ReadContext): List<NetworkInstanceKey> {
+    override fun getAllIds(
+        instanceIdentifier: InstanceIdentifier<NetworkInstance>,
+        readContext: ReadContext
+    ): List<NetworkInstanceKey> {
         return getAllIds(underlayAccess)
     }
 
-    override fun readCurrentAttributes(instanceIdentifier: InstanceIdentifier<NetworkInstance>,
-                                       networkInstanceBuilder: NetworkInstanceBuilder,
-                                       readContext: ReadContext) {
+    override fun readCurrentAttributes(
+        instanceIdentifier: InstanceIdentifier<NetworkInstance>,
+        networkInstanceBuilder: NetworkInstanceBuilder,
+        readContext: ReadContext
+    ) {
         val name = instanceIdentifier.firstKeyOf(NetworkInstance::class.java).name
         networkInstanceBuilder.name = name
     }

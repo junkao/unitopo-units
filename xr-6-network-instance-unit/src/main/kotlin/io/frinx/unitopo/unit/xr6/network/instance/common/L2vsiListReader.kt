@@ -25,10 +25,11 @@ import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.Identifiable
 import org.opendaylight.yangtools.yang.binding.Identifier
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
-import java.util.*
+import java.util.AbstractMap
 import java.util.function.Function
 
-interface L2vsiListReader<O : DataObject, K : Identifier<O>, B : Builder<O>> : TypedListReader<O, K, B> where O : Identifiable<K> {
+interface L2vsiListReader<O : DataObject, K : Identifier<O>, B : Builder<O>> : TypedListReader<O, K, B>
+    where O : Identifiable<K> {
 
     override fun getParentCheck(id: InstanceIdentifier<O>?) =
             AbstractMap.SimpleEntry<InstanceIdentifier<out DataObject>, Function<DataObject, Boolean>>(

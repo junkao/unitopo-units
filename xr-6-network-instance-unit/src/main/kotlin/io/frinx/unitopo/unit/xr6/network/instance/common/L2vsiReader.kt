@@ -26,19 +26,20 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.insta
 import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
-import java.util.*
+import java.util.AbstractMap
 import java.util.function.Function
 
 interface L2vsiReader<O : DataObject, B : Builder<O>> : TypedReader<O, B> {
 
-    override fun getParentCheck(id: InstanceIdentifier<O>?): AbstractMap.SimpleEntry<InstanceIdentifier<out DataObject>, Function<DataObject, Boolean>> {
-        return AbstractMap.SimpleEntry(RWUtils.cutId(id!!, NetworkInstance::class.java).child(Config::class.java), L2VSI_CHECK)
+    override fun getParentCheck(id: InstanceIdentifier<O>?): AbstractMap.SimpleEntry<
+        InstanceIdentifier<out DataObject>, Function<DataObject, Boolean>> {
+        return AbstractMap.SimpleEntry(RWUtils.cutId(id!!, NetworkInstance::class.java)
+            .child(Config::class.java), L2VSI_CHECK)
     }
 
     companion object {
         val L2VSI_CHECK = Function { config: DataObject -> (config as Config).type == L2VSI::class.java }
     }
-
 
     interface L2vsiConfigReader<O : DataObject, B : Builder<O>> : L2vsiReader<O, B>, ConfigReaderCustomizer<O, B>
     interface L2vsiOperReader<O : DataObject, B : Builder<O>> : L2vsiReader<O, B>, OperReaderCustomizer<O, B>

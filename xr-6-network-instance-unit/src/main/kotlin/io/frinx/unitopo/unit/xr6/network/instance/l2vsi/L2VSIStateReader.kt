@@ -28,7 +28,8 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.insta
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.types.rev170228.L2VSI
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class L2VSIStateReader(private val cli: UnderlayAccess) : OperReaderCustomizer<State, StateBuilder>, CompositeReader.Child<State, StateBuilder> {
+class L2VSIStateReader(private val cli: UnderlayAccess) :
+    OperReaderCustomizer<State, StateBuilder>, CompositeReader.Child<State, StateBuilder> {
 
     override fun getBuilder(p0: InstanceIdentifier<State>): StateBuilder {
         // NOOP
@@ -36,11 +37,14 @@ class L2VSIStateReader(private val cli: UnderlayAccess) : OperReaderCustomizer<S
     }
 
     @Throws(ReadFailedException::class)
-    override fun readCurrentAttributes(instanceIdentifier: InstanceIdentifier<State>,
-                                       stateBuilder: StateBuilder,
-                                       readContext: ReadContext) {
+    override fun readCurrentAttributes(
+        instanceIdentifier: InstanceIdentifier<State>,
+        stateBuilder: StateBuilder,
+        readContext: ReadContext
+    ) {
         if (isVrf(instanceIdentifier)) {
-            stateBuilder.name = instanceIdentifier.firstKeyOf<NetworkInstance, NetworkInstanceKey>(NetworkInstance::class.java).name
+            stateBuilder.name = instanceIdentifier.firstKeyOf<NetworkInstance,
+                NetworkInstanceKey>(NetworkInstance::class.java).name
             stateBuilder.type = L2VSI::class.java
 
             // TODO set other attributes i.e. description
@@ -49,6 +53,7 @@ class L2VSIStateReader(private val cli: UnderlayAccess) : OperReaderCustomizer<S
 
     @Throws(ReadFailedException::class)
     private fun isVrf(id: InstanceIdentifier<State>): Boolean {
-        return L2VSIReader.getAllIds(cli).contains(id.firstKeyOf<NetworkInstance, NetworkInstanceKey>(NetworkInstance::class.java))
+        return L2VSIReader.getAllIds(cli).contains(id.firstKeyOf<NetworkInstance,
+            NetworkInstanceKey>(NetworkInstance::class.java))
     }
 }

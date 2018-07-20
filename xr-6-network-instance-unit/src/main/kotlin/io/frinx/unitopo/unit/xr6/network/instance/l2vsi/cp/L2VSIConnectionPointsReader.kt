@@ -41,13 +41,12 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.insta
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.types.rev170228.REMOTE
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.connection.points.connection.point.ConfigBuilder as CpConfigBuilder
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.connection.points.connection.point.StateBuilder as CpStateBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.connection.points.connection.point.endpoints.endpoint.ConfigBuilder as EpConfigBuilder
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.connection.points.connection.point.endpoints.endpoint.StateBuilder as EpStateBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.connection.points.connection.point.endpoints.endpoint.local.ConfigBuilder as LocalConfigBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.connection.points.connection.point.endpoints.endpoint.remote.ConfigBuilder as RemoteConfigBuilder
 
-class L2VSIConnectionPointsReader(private val underlayAccess: UnderlayAccess) : L2vsiReader.L2vsiConfigReader<ConnectionPoints, ConnectionPointsBuilder>,
+class L2VSIConnectionPointsReader(private val underlayAccess: UnderlayAccess) :
+    L2vsiReader.L2vsiConfigReader<ConnectionPoints, ConnectionPointsBuilder>,
         CompositeReader.Child<ConnectionPoints, ConnectionPointsBuilder> {
 
     override fun getBuilder(p0: InstanceIdentifier<ConnectionPoints>): ConnectionPointsBuilder {
@@ -55,9 +54,11 @@ class L2VSIConnectionPointsReader(private val underlayAccess: UnderlayAccess) : 
         throw UnsupportedOperationException("Should not be invoked")
     }
 
-    override fun readCurrentAttributesForType(id: InstanceIdentifier<ConnectionPoints>,
-                                              builder: ConnectionPointsBuilder,
-                                              ctx: ReadContext) {
+    override fun readCurrentAttributesForType(
+        id: InstanceIdentifier<ConnectionPoints>,
+        builder: ConnectionPointsBuilder,
+        ctx: ReadContext
+    ) {
         val l2vsiName = id.firstKeyOf(NetworkInstance::class.java).name
         val isOper = isOper(ctx)
 
@@ -69,7 +70,6 @@ class L2VSIConnectionPointsReader(private val underlayAccess: UnderlayAccess) : 
         bd.vfis?.vfi.orEmpty()
                 .firstOrNull { vfi -> vfi.name.value == l2vsiName }
                 ?.let { vfi -> builder.fromUnderlay(bd, vfi, isOper) }
-
     }
 
     private fun isOper(ctx: ReadContext): Boolean {
@@ -87,7 +87,8 @@ class L2VSIConnectionPointsReader(private val underlayAccess: UnderlayAccess) : 
 private fun ConnectionPointsBuilder.fromUnderlay(bd: BridgeDomain, vfi: Vfi, isOper: Boolean) {
 
     val vccId = vfi.vpnid?.value
-    val routeTarget = vfi.bgpAutoDiscovery?.routeTargets?.routeTarget.orEmpty().first()?.twoByteAsOrFourByteAs.orEmpty().first()
+    val routeTarget = vfi.bgpAutoDiscovery?.routeTargets?.routeTarget.orEmpty()
+        .first()?.twoByteAsOrFourByteAs.orEmpty().first()
 
     // Looking for vpn with vccId == routeTarget.asIndex.
     if (vccId == null) return
