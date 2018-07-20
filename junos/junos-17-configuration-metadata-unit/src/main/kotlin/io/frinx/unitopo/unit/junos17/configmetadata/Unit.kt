@@ -35,15 +35,16 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
             JunosYangInfoimport.getInstance()
     ).toMutableSet()
 
-
     override fun getYangSchemas(): Set<YangModuleInfo> = setOf(
             OpenconfigConfigMetadata.getInstance()
     )
 
-    override fun provideHandlers(rRegistry: ModifiableReaderRegistryBuilder,
-                                 wRegistry: ModifiableWriterRegistryBuilder,
-                                 context: UnderlayAccess) =
-            provideReaders(rRegistry,context)
+    override fun provideHandlers(
+        rRegistry: ModifiableReaderRegistryBuilder,
+        wRegistry: ModifiableWriterRegistryBuilder,
+        context: UnderlayAccess
+    ) =
+            provideReaders(rRegistry, context)
 
     private var reg: TranslationUnitCollector.Registration? = null
 
@@ -57,8 +58,7 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
 
     override fun getRpcs(context: UnderlayAccess) = emptySet<RpcService<*, *>>()
 
-    private fun provideReaders(rRegistry: ModifiableReaderRegistryBuilder, underlayAccess: UnderlayAccess){
+    private fun provideReaders(rRegistry: ModifiableReaderRegistryBuilder, underlayAccess: UnderlayAccess) {
         rRegistry.add(GenericOperReader(IIDs.CONFIGURATIONMETADATA, ConfigMetadataReader(underlayAccess)))
     }
-
 }
