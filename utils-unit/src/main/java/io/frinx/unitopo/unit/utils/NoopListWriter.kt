@@ -29,5 +29,4 @@ class NoopListWriter<C, K> : ListWriterCustomizer<C, K>
     override fun writeCurrentAttributes(p0: InstanceIdentifier<C>, p1: C, p2: WriteContext) {}
 
     override fun deleteCurrentAttributes(p0: InstanceIdentifier<C>, p1: C, p2: WriteContext) {}
-
 }
