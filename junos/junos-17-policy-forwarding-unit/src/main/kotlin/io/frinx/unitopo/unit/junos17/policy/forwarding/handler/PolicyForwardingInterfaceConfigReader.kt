@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 package io.frinx.unitopo.unit.junos17.policy.forwarding.handler
 
 import io.fd.honeycomb.translate.read.ReadContext
@@ -36,7 +35,8 @@ import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class PolicyForwardingInterfaceConfigReader(private val underlayAccess: UnderlayAccess) : ConfigReaderCustomizer<Config, ConfigBuilder> {
+class PolicyForwardingInterfaceConfigReader(private val underlayAccess: UnderlayAccess) :
+    ConfigReaderCustomizer<Config, ConfigBuilder> {
 
     override fun readCurrentAttributes(id: InstanceIdentifier<Config>, builder: ConfigBuilder, p2: ReadContext) {
         val ifcName = id.firstKeyOf(OcInterface::class.java).interfaceId.value
@@ -69,7 +69,7 @@ class PolicyForwardingInterfaceConfigReader(private val underlayAccess: Underlay
 
     companion object {
 
-        fun filterUnit(iface : Interface) : List<Classifiers> =
-            iface.unit.orEmpty().filter { it.classifiers != null }.map{ it.classifiers }.toList()
+        fun filterUnit(iface: Interface): List<Classifiers> =
+            iface.unit.orEmpty().filter { it.classifiers != null }.map { it.classifiers }.toList()
     }
 }

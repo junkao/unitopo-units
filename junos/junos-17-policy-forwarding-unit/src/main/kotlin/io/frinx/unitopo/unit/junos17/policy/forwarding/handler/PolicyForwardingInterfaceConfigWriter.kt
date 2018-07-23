@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 package io.frinx.unitopo.unit.junos17.policy.forwarding.handler
 
 import io.fd.honeycomb.translate.spi.write.WriterCustomizer
@@ -57,13 +56,14 @@ class PolicyForwardingInterfaceConfigWriter(private val underlayAccess: Underlay
         }
     }
 
-    private fun getData(data : Config):
+    private fun getData(data: Config):
             Pair<InstanceIdentifier<Interface>, Interface> {
         val underlayIfcCfg = InterfaceBuilder().setName(data.interfaceId.value)
         data.getAugmentation(NiPfIfJuniperAug::class.java)?.let {
             underlayIfcCfg.schedulerMap = it.schedulerMap
             val cBuilder = ClassifiersBuilder()
-            cBuilder.inetPrecedence = InetPrecedenceBuilder().setClassifierName(InetPrecedence.ClassifierName(it.classifiers?.inetPrecedence?.name)).build()
+            cBuilder.inetPrecedence = InetPrecedenceBuilder().setClassifierName(
+                InetPrecedence.ClassifierName(it.classifiers?.inetPrecedence?.name)).build()
             cBuilder.exp = ExpBuilder().setClassifierName(Exp.ClassifierName(it.classifiers?.exp?.name)).build()
             val uBuilder = UnitBuilder().setName(Unit.Name("0"))
                     .setClassifiers(cBuilder.build())
@@ -74,5 +74,4 @@ class PolicyForwardingInterfaceConfigWriter(private val underlayAccess: Underlay
 
     private fun getId(ifcName: String): InstanceIdentifier<Interface> =
             PolicyForwardingInterfaceReader.CLASS_OF_SERVICE.child(Interface::class.java, InterfaceKey(ifcName))
-
 }
