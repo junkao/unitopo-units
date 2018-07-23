@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 package io.frinx.unitopo.unit.junos17.mpls.common
 
 import io.fd.honeycomb.translate.spi.read.ConfigListReaderCustomizer
@@ -31,13 +30,18 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 import java.util.AbstractMap
 import java.util.function.Function
 
-interface MplsListReader<O, K : Identifier<O>, B : Builder<O>> : TypedListReader<O, K, B> where O : DataObject, O : Identifiable<K> {
+interface MplsListReader<O, K : Identifier<O>, B : Builder<O>> :
+    TypedListReader<O, K, B> where O : DataObject, O : Identifiable<K> {
 
-    override fun getParentCheck(id: InstanceIdentifier<O>?): AbstractMap.SimpleEntry<InstanceIdentifier<out DataObject>, Function<DataObject, Boolean>>? {
-        return AbstractMap.SimpleEntry(RWUtils.cutId(id!!, NetworkInstance::class.java).child(Config::class.java), MplsReader.MPLS_CHECK)
+    override fun getParentCheck(id: InstanceIdentifier<O>?):
+        AbstractMap.SimpleEntry<InstanceIdentifier<out DataObject>, Function<DataObject, Boolean>>? {
+        return AbstractMap.SimpleEntry(RWUtils.cutId(id!!, NetworkInstance::class.java).child(Config::class.java),
+            MplsReader.MPLS_CHECK)
     }
 
-    interface MplsConfigListReader<O, K : Identifier<O>, B : Builder<O>> : MplsListReader<O, K, B>, ConfigListReaderCustomizer<O, K, B> where O : DataObject, O : Identifiable<K>
+    interface MplsConfigListReader<O, K : Identifier<O>, B : Builder<O>> : MplsListReader<O, K, B>,
+        ConfigListReaderCustomizer<O, K, B> where O : DataObject, O : Identifiable<K>
 
-    interface MplsOperListReader<O, K : Identifier<O>, B : Builder<O>> : MplsListReader<O, K, B>, OperListReaderCustomizer<O, K, B> where O : DataObject, O : Identifiable<K>
+    interface MplsOperListReader<O, K : Identifier<O>, B : Builder<O>> : MplsListReader<O, K, B>,
+        OperListReaderCustomizer<O, K, B> where O : DataObject, O : Identifiable<K>
 }

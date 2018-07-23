@@ -31,16 +31,23 @@ import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 import org.opendaylight.controller.md.sal.common.api.data.ReadFailedException as MdSalReadFailedException
 
-class NiMplsRsvpIfSubscripAugReader(private val underlayAccess: UnderlayAccess) : MplsReader.MplsConfigReader<NiMplsRsvpIfSubscripAug, NiMplsRsvpIfSubscripAugBuilder> {
+class NiMplsRsvpIfSubscripAugReader(private val underlayAccess: UnderlayAccess) :
+    MplsReader.MplsConfigReader<NiMplsRsvpIfSubscripAug, NiMplsRsvpIfSubscripAugBuilder> {
 
     override fun merge(p0: Builder<out DataObject>, p1: NiMplsRsvpIfSubscripAug) {
         (p0 as ConfigBuilder).addAugmentation(NiMplsRsvpIfSubscripAug::class.java, p1)
     }
 
-    override fun getBuilder(p0: InstanceIdentifier<NiMplsRsvpIfSubscripAug>): NiMplsRsvpIfSubscripAugBuilder = NiMplsRsvpIfSubscripAugBuilder()
+    override fun getBuilder(p0: InstanceIdentifier<NiMplsRsvpIfSubscripAug>): NiMplsRsvpIfSubscripAugBuilder =
+        NiMplsRsvpIfSubscripAugBuilder()
 
-    override fun readCurrentAttributesForType(instanceIdentifier: InstanceIdentifier<NiMplsRsvpIfSubscripAug>, configBuilder: NiMplsRsvpIfSubscripAugBuilder, readContext: ReadContext) {
-        val name = RsvpInterfaceConfigWriter.formatIfcName(instanceIdentifier.firstKeyOf<OcInterface, InterfaceKey>(OcInterface::class.java).interfaceId.value)
+    override fun readCurrentAttributesForType(
+        instanceIdentifier: InstanceIdentifier<NiMplsRsvpIfSubscripAug>,
+        configBuilder: NiMplsRsvpIfSubscripAugBuilder,
+        readContext: ReadContext
+    ) {
+        val name = RsvpInterfaceConfigWriter.formatIfcName(instanceIdentifier.firstKeyOf<OcInterface,
+            InterfaceKey>(OcInterface::class.java).interfaceId.value)
         try {
             RsvpInterfaceConfigReader.readInterface(underlayAccess, name)?.let {
                 it.bandwidth?.let {
@@ -52,7 +59,7 @@ class NiMplsRsvpIfSubscripAugReader(private val underlayAccess: UnderlayAccess) 
         }
     }
 
-    private fun translateBw(bandwidth : String) : Long {
+    private fun translateBw(bandwidth: String): Long {
         return when {
             bandwidth.endsWith('k') -> bandwidth.removeSuffix("k").toLong() * 1000
             bandwidth.endsWith('m') -> bandwidth.removeSuffix("m").toLong() * 1000000

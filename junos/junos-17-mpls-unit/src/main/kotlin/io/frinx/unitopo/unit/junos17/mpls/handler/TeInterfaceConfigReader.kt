@@ -30,8 +30,13 @@ class TeInterfaceConfigReader : MplsReader.MplsConfigReader<Config, ConfigBuilde
 
     override fun getBuilder(p0: InstanceIdentifier<Config>): ConfigBuilder = ConfigBuilder()
 
-    override fun readCurrentAttributesForType(instanceIdentifier: InstanceIdentifier<Config>, configBuilder: ConfigBuilder, readContext: ReadContext) {
-        configBuilder.interfaceId = instanceIdentifier.firstKeyOf<Interface, InterfaceKey>(Interface::class.java).interfaceId
+    override fun readCurrentAttributesForType(
+        instanceIdentifier: InstanceIdentifier<Config>,
+        configBuilder: ConfigBuilder,
+        readContext: ReadContext
+    ) {
+        configBuilder.interfaceId = instanceIdentifier.firstKeyOf<Interface, InterfaceKey>(Interface::class.java)
+            .interfaceId
     }
 
     override fun merge(parentBuilder: Builder<out DataObject>, readValue: Config) {

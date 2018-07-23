@@ -30,12 +30,18 @@ import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class RsvpInterfaceConfigReader(private val underlayAccess: UnderlayAccess) : MplsReader.MplsConfigReader<Config, ConfigBuilder> {
+class RsvpInterfaceConfigReader(private val underlayAccess: UnderlayAccess) :
+    MplsReader.MplsConfigReader<Config, ConfigBuilder> {
 
     override fun getBuilder(p0: InstanceIdentifier<Config>): ConfigBuilder = ConfigBuilder()
 
-    override fun readCurrentAttributesForType(instanceIdentifier: InstanceIdentifier<Config>, configBuilder: ConfigBuilder, readContext: ReadContext) {
-        val ifcName = RsvpInterfaceConfigWriter.formatIfcName(instanceIdentifier.firstKeyOf<OcInterface, InterfaceKey>(OcInterface::class.java).interfaceId.value)
+    override fun readCurrentAttributesForType(
+        instanceIdentifier: InstanceIdentifier<Config>,
+        configBuilder: ConfigBuilder,
+        readContext: ReadContext
+    ) {
+        val ifcName = RsvpInterfaceConfigWriter.formatIfcName(instanceIdentifier
+            .firstKeyOf<OcInterface, InterfaceKey>(OcInterface::class.java).interfaceId.value)
         readInterface(underlayAccess, ifcName)?.let {
             configBuilder.interfaceId = InterfaceId(it.name.interfaceName.value)
         }
@@ -47,10 +53,10 @@ class RsvpInterfaceConfigReader(private val underlayAccess: UnderlayAccess) : Mp
 
     companion object {
 
-        fun readInterface(underlayAccess: UnderlayAccess, name: String) : Interface? {
+        fun readInterface(underlayAccess: UnderlayAccess, name: String): Interface? {
             return underlayAccess.read(RsvpInterfaceReader.RSVP, LogicalDatastoreType.OPERATIONAL)
                     .checkedGet().orNull()
-                    ?.`interface`.orEmpty().firstOrNull{ it.name.interfaceName.value == name}
+                    ?.`interface`.orEmpty().firstOrNull { it.name.interfaceName.value == name }
         }
     }
 }

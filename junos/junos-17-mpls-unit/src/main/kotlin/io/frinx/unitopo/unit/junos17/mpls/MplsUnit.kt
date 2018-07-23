@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 package io.frinx.unitopo.unit.junos17.mpls
 
 import io.fd.honeycomb.rpc.RpcService
@@ -25,20 +24,27 @@ import io.fd.honeycomb.translate.read.registry.ModifiableReaderRegistryBuilder
 import io.fd.honeycomb.translate.write.registry.ModifiableWriterRegistryBuilder
 import io.frinx.openconfig.openconfig.network.instance.IIDs
 import io.frinx.unitopo.registry.api.TranslationUnitCollector
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.mpls.rev170824.`$YangModuleInfoImpl` as MplsYangInfo
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.mpls.rev170824.mpls.top.MplsBuilder
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.mpls.rev170824.mpls.top.mpls.TeInterfaceAttributesBuilder
-import org.opendaylight.yangtools.yang.binding.YangModuleInfo
-import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.`$YangModuleInfoImpl` as JunosYangInfo
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.mpls.extension.rev171024.`$YangModuleInfoImpl` as RsvpExtension
 import io.frinx.unitopo.registry.spi.TranslateUnit
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.junos17.mpls.handler.*
+import io.frinx.unitopo.unit.junos17.mpls.handler.NiMplsRsvpIfSubscripAugReader
+import io.frinx.unitopo.unit.junos17.mpls.handler.NiMplsRsvpIfSubscripAugWriter
+import io.frinx.unitopo.unit.junos17.mpls.handler.P2pAttributesConfigReader
+import io.frinx.unitopo.unit.junos17.mpls.handler.RsvpInterfaceConfigReader
+import io.frinx.unitopo.unit.junos17.mpls.handler.RsvpInterfaceConfigWriter
+import io.frinx.unitopo.unit.junos17.mpls.handler.RsvpInterfaceReader
+import io.frinx.unitopo.unit.junos17.mpls.handler.TeInterfaceConfigReader
+import io.frinx.unitopo.unit.junos17.mpls.handler.TeInterfaceConfigWriter
+import io.frinx.unitopo.unit.junos17.mpls.handler.TeInterfaceReader
+import io.frinx.unitopo.unit.junos17.mpls.handler.TunnelConfigReader
+import io.frinx.unitopo.unit.junos17.mpls.handler.TunnelConfigWriter
+import io.frinx.unitopo.unit.junos17.mpls.handler.TunnelReader
 import io.frinx.unitopo.unit.utils.NoopListWriter
 import io.frinx.unitopo.unit.utils.NoopWriter
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.mpls.extension.rev171024.NiMplsRsvpIfSubscripAug
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.mpls.rev170824.mpls.top.MplsBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.mpls.rev170824.mpls.top.mpls.LspsBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.mpls.rev170824.mpls.top.mpls.SignalingProtocolsBuilder
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.mpls.rev170824.mpls.top.mpls.TeInterfaceAttributesBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.mpls.rev170824.mpls.top.mpls.lsps.ConstrainedPathBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.mpls.rev170824.te.tunnel.p2p_top.P2pTunnelAttributesBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.mpls.rev170824.te.tunnels_top.TunnelsBuilder
@@ -46,6 +52,10 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.rsvp.rev17082
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.rsvp.rev170824.mpls.rsvp.subscription.subscription.ConfigBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.rsvp.rev170824.rsvp.global.RsvpTeBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.rsvp.rev170824.rsvp.global.rsvp.te.InterfaceAttributesBuilder
+import org.opendaylight.yangtools.yang.binding.YangModuleInfo
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.mpls.extension.rev171024.`$YangModuleInfoImpl` as RsvpExtension
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.mpls.rev170824.`$YangModuleInfoImpl` as MplsYangInfo
+import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.`$YangModuleInfoImpl` as JunosYangInfo
 
 class MplsUnit(private val registry: TranslationUnitCollector) : TranslateUnit {
 
@@ -57,7 +67,7 @@ class MplsUnit(private val registry: TranslationUnitCollector) : TranslateUnit {
     private var reg: TranslationUnitCollector.Registration? = null
 
     fun init() {
-        reg = registry.registerTranslateUnit( this)
+        reg = registry.registerTranslateUnit(this)
     }
 
     fun close() {
@@ -72,9 +82,11 @@ class MplsUnit(private val registry: TranslationUnitCollector) : TranslateUnit {
 
     override fun getRpcs(underlayAccess: UnderlayAccess): Set<RpcService<*, *>> = emptySet()
 
-    override fun provideHandlers(rRegistry: ModifiableReaderRegistryBuilder,
-                                 wRegistry: ModifiableWriterRegistryBuilder,
-                                 underlayAccess: UnderlayAccess) {
+    override fun provideHandlers(
+        rRegistry: ModifiableReaderRegistryBuilder,
+        wRegistry: ModifiableWriterRegistryBuilder,
+        underlayAccess: UnderlayAccess
+    ) {
         provideReaders(rRegistry, underlayAccess)
         provideWriters(wRegistry, underlayAccess)
     }
@@ -87,7 +99,8 @@ class MplsUnit(private val registry: TranslationUnitCollector) : TranslateUnit {
         wRegistry.add(GenericWriter(IIDs.NE_NE_MP_SI_RS_IN_INTERFACE, NoopListWriter()))
         wRegistry.add(GenericWriter(IIDs.NE_NE_MP_SI_RS_IN_IN_CONFIG, RsvpInterfaceConfigWriter(underlayAccess)))
         wRegistry.add(GenericWriter(IIDs.NE_NE_MP_SI_RS_IN_IN_SU_CONFIG, NoopWriter()))
-        wRegistry.addAfter(GenericWriter(IIDs.NE_NE_MP_SI_RS_IN_IN_SU_CONFIG.augmentation(NiMplsRsvpIfSubscripAug::class.java), NiMplsRsvpIfSubscripAugWriter(underlayAccess)),
+        wRegistry.addAfter(GenericWriter(IIDs.NE_NE_MP_SI_RS_IN_IN_SU_CONFIG.augmentation(
+            NiMplsRsvpIfSubscripAug::class.java), NiMplsRsvpIfSubscripAugWriter(underlayAccess)),
                 IIDs.NE_NE_MP_SI_RS_IN_IN_CONFIG)
 
         // TE
@@ -114,7 +127,8 @@ class MplsUnit(private val registry: TranslationUnitCollector) : TranslateUnit {
         rRegistry.add(GenericConfigReader(IIDs.NE_NE_MP_SI_RS_IN_IN_CONFIG, RsvpInterfaceConfigReader(underlayAccess)))
         rRegistry.addStructuralReader(IIDs.NE_NE_MP_SI_RS_IN_IN_SUBSCRIPTION, SubscriptionBuilder::class.java)
         rRegistry.addStructuralReader(IIDs.NE_NE_MP_SI_RS_IN_IN_SU_CONFIG, ConfigBuilder::class.java)
-        rRegistry.add(GenericConfigReader(IIDs.NE_NE_MP_SI_RS_IN_IN_SU_CONFIG.augmentation(NiMplsRsvpIfSubscripAug::class.java), NiMplsRsvpIfSubscripAugReader(underlayAccess)))
+        rRegistry.add(GenericConfigReader(IIDs.NE_NE_MP_SI_RS_IN_IN_SU_CONFIG.augmentation(
+            NiMplsRsvpIfSubscripAug::class.java), NiMplsRsvpIfSubscripAugReader(underlayAccess)))
 
         // TE
         rRegistry.addStructuralReader(IIDs.NE_NE_MP_TEINTERFACEATTRIBUTES, TeInterfaceAttributesBuilder::class.java)
@@ -127,8 +141,10 @@ class MplsUnit(private val registry: TranslationUnitCollector) : TranslateUnit {
         rRegistry.addStructuralReader(IIDs.NE_NE_MP_LS_CO_TUNNELS, TunnelsBuilder::class.java)
         rRegistry.add(GenericConfigListReader(IIDs.NE_NE_MP_LS_CO_TU_TUNNEL, TunnelReader(underlayAccess)))
         rRegistry.add(GenericConfigReader(IIDs.NE_NE_MP_LS_CO_TU_TU_CONFIG, TunnelConfigReader(underlayAccess)))
-        rRegistry.addStructuralReader(IIDs.NE_NE_MP_LS_CO_TU_TU_P2PTUNNELATTRIBUTES, P2pTunnelAttributesBuilder::class.java)
-        rRegistry.add(GenericConfigReader(IIDs.NE_NE_MP_LS_CO_TU_TU_P2_CONFIG, P2pAttributesConfigReader(underlayAccess)))
+        rRegistry.addStructuralReader(IIDs.NE_NE_MP_LS_CO_TU_TU_P2PTUNNELATTRIBUTES,
+            P2pTunnelAttributesBuilder::class.java)
+        rRegistry.add(GenericConfigReader(IIDs.NE_NE_MP_LS_CO_TU_TU_P2_CONFIG,
+            P2pAttributesConfigReader(underlayAccess)))
     }
 
     override fun toString(): String {

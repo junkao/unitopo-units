@@ -32,11 +32,13 @@ import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class TunnelReader(private val underlayAccess: UnderlayAccess) : MplsListReader.MplsConfigListReader<Tunnel, TunnelKey, TunnelBuilder> {
+class TunnelReader(private val underlayAccess: UnderlayAccess)
+    : MplsListReader.MplsConfigListReader<Tunnel, TunnelKey, TunnelBuilder> {
 
     override fun getBuilder(p0: InstanceIdentifier<Tunnel>): TunnelBuilder = TunnelBuilder()
 
-    override fun getAllIdsForType(instanceIdentifier: InstanceIdentifier<Tunnel>, readContext: ReadContext): List<TunnelKey> {
+    override fun getAllIdsForType(instanceIdentifier: InstanceIdentifier<Tunnel>, readContext: ReadContext):
+        List<TunnelKey> {
         try {
             return getTunnelKeys(underlayAccess)
         } catch (e: org.opendaylight.controller.md.sal.common.api.data.ReadFailedException) {
@@ -48,7 +50,11 @@ class TunnelReader(private val underlayAccess: UnderlayAccess) : MplsListReader.
         (builder as TunnelsBuilder).tunnel = readData
     }
 
-    override fun readCurrentAttributesForType(instanceIdentifier: InstanceIdentifier<Tunnel>, tunnelBuilder: TunnelBuilder, readContext: ReadContext) {
+    override fun readCurrentAttributesForType(
+        instanceIdentifier: InstanceIdentifier<Tunnel>,
+        tunnelBuilder: TunnelBuilder,
+        readContext: ReadContext
+    ) {
         val key = instanceIdentifier.firstKeyOf(Tunnel::class.java)
         tunnelBuilder.name = key.name
     }
@@ -70,7 +76,7 @@ class TunnelReader(private val underlayAccess: UnderlayAccess) : MplsListReader.
         @VisibleForTesting
         fun parsePaths(it: Mpls): List<TunnelKey> {
             return it.labelSwitchedPath.orEmpty()
-                .map { TunnelKey( it.name) }
+                .map { TunnelKey(it.name) }
                 .toList()
         }
     }

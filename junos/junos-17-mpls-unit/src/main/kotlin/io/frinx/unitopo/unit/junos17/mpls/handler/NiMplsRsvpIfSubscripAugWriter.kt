@@ -26,9 +26,14 @@ import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configur
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.protocols.rsvp.InterfaceBuilder
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class NiMplsRsvpIfSubscripAugWriter (private val underlayAccess: UnderlayAccess) : WriterCustomizer<NiMplsRsvpIfSubscripAug> {
+class NiMplsRsvpIfSubscripAugWriter(private val underlayAccess: UnderlayAccess) :
+    WriterCustomizer<NiMplsRsvpIfSubscripAug> {
 
-    override fun writeCurrentAttributes(id: InstanceIdentifier<NiMplsRsvpIfSubscripAug>, p1: NiMplsRsvpIfSubscripAug, p2: WriteContext) {
+    override fun writeCurrentAttributes(
+        id: InstanceIdentifier<NiMplsRsvpIfSubscripAug>,
+        p1: NiMplsRsvpIfSubscripAug,
+        p2: WriteContext
+    ) {
         val (underlayId, underlayIfcCfg) = getData(id, p1)
         try {
             underlayAccess.put(underlayId, underlayIfcCfg)
@@ -37,7 +42,11 @@ class NiMplsRsvpIfSubscripAugWriter (private val underlayAccess: UnderlayAccess)
         }
     }
 
-    override fun deleteCurrentAttributes(id: InstanceIdentifier<NiMplsRsvpIfSubscripAug>, p1: NiMplsRsvpIfSubscripAug, p2: WriteContext) {
+    override fun deleteCurrentAttributes(
+        id: InstanceIdentifier<NiMplsRsvpIfSubscripAug>,
+        p1: NiMplsRsvpIfSubscripAug,
+        p2: WriteContext
+    ) {
         writeCurrentAttributes(id, NiMplsRsvpIfSubscripAugBuilder().build(), p2)
     }
 
