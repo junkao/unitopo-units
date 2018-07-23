@@ -23,16 +23,12 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.ospfv2.rev170
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.ospfv2.rev170228.ospfv2.top.ospfv2.areas.AreaBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.ospfv2.rev170228.ospfv2.top.ospfv2.areas.AreaKey
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.ospf.types.rev170228.OspfAreaIdentifier
-import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.protocols.ospf.Area as JunosArea
-import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.protocols.ospf.AreaKey as JunosAreaKey
-import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.protocols.ospf.area.Interface as JunosInterface
-import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.protocols.ospf.area.InterfaceKey as JunosInterfaceKey
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.yang.types.rev130715.DottedQuad
 import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
-class OspfAreaReader(private val underlayAccess: UnderlayAccess):
+class OspfAreaReader(private val underlayAccess: UnderlayAccess) :
         OspfListReader.OspfConfigListReader<Area, AreaKey, AreaBuilder> {
 
     override fun getBuilder(id: IID<Area>): AreaBuilder = AreaBuilder()
@@ -47,7 +43,7 @@ class OspfAreaReader(private val underlayAccess: UnderlayAccess):
 
     override fun getAllIdsForType(id: IID<Area>, readContext: ReadContext): List<AreaKey> {
         val optOspf = underlayAccess.read(OspfProtocolReader.getOspfId()).checkedGet()
-        if(!optOspf.isPresent) {
+        if (!optOspf.isPresent) {
             return emptyList()
         }
         return optOspf.get()?.`area`.orEmpty().map {

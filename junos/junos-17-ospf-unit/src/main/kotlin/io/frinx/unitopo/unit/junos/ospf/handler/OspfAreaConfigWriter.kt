@@ -29,7 +29,12 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
 class OspfAreaConfigWriter(private val underlayAccess: UnderlayAccess) : OspfWriter<Config> {
 
-    override fun updateCurrentAttributesForType(id: IID<Config>, dataBefore: Config, dataAfter: Config, writeContext: WriteContext) {
+    override fun updateCurrentAttributesForType(
+        id: IID<Config>,
+        dataBefore: Config,
+        dataAfter: Config,
+        writeContext: WriteContext
+    ) {
         writeCurrentAttributesForType(id, dataAfter, writeContext)
     }
 
@@ -66,5 +71,4 @@ class OspfAreaConfigWriter(private val underlayAccess: UnderlayAccess) : OspfWri
 
         return Pair(OspfProtocolReader.getAreaId(areaId), area)
     }
-
 }

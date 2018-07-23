@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.yang.binding.DataObject
 import java.math.BigInteger
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
-class OspfMaxMetricConfigReader(private val underlayAccess: UnderlayAccess):
+class OspfMaxMetricConfigReader(private val underlayAccess: UnderlayAccess) :
         OspfReader.OspfConfigReader<Config, ConfigBuilder> {
 
     override fun getBuilder(id: IID<Config>): ConfigBuilder {

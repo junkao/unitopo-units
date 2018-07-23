@@ -48,7 +48,12 @@ class OspfMaxMetricConfigWriter(private val underlayAccess: UnderlayAccess) : Os
         }
     }
 
-    override fun updateCurrentAttributesForType(id: IID<Config>, dataBefore: Config, dataAfter: Config, writeContext: WriteContext) {
+    override fun updateCurrentAttributesForType(
+        id: IID<Config>,
+        dataBefore: Config,
+        dataAfter: Config,
+        writeContext: WriteContext
+    ) {
         writeData(id, dataAfter)
     }
 
@@ -69,5 +74,4 @@ class OspfMaxMetricConfigWriter(private val underlayAccess: UnderlayAccess) : Os
                 .build()
         return Pair(OspfProtocolReader.getOspfId(), ospf)
     }
-
 }
