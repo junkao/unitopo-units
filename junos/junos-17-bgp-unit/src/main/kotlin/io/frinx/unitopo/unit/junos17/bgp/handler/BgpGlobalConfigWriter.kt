@@ -22,13 +22,16 @@ import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.junos17.bgp.handler.BgpProtocolReader.Companion.UNDERLAY_RT_OPT_AS
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.global.base.Config
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
-import org.opendaylight.controller.md.sal.common.api.data.ReadFailedException as MdSalReadFailedException
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.routing.options.AutonomousSystem as JunosAutonomousSystem
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.routing.options.AutonomousSystemBuilder as JunosAutonomousSystemBuilder
 
 class BgpGlobalConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCustomizer<Config> {
 
-    override fun writeCurrentAttributes(id: InstanceIdentifier<Config>, dataAfter: Config, writeContext: WriteContext) {
+    override fun writeCurrentAttributes(
+        id: InstanceIdentifier<Config>,
+        dataAfter: Config,
+        writeContext: WriteContext
+    ) {
         val underlayIfcCfg = getData(dataAfter)
 
         try {
@@ -38,9 +41,11 @@ class BgpGlobalConfigWriter(private val underlayAccess: UnderlayAccess) : Writer
         }
     }
 
-    override fun deleteCurrentAttributes(id: InstanceIdentifier<Config>,
-                                         dataBefore: Config,
-                                         writeContext: WriteContext) {
+    override fun deleteCurrentAttributes(
+        id: InstanceIdentifier<Config>,
+        dataBefore: Config,
+        writeContext: WriteContext
+    ) {
         try {
             underlayAccess.delete(UNDERLAY_RT_OPT_AS)
         } catch (e: Exception) {
@@ -48,9 +53,12 @@ class BgpGlobalConfigWriter(private val underlayAccess: UnderlayAccess) : Writer
         }
     }
 
-    override fun updateCurrentAttributes(id: InstanceIdentifier<Config>,
-                                         dataBefore: Config, dataAfter: Config,
-                                         writeContext: WriteContext) {
+    override fun updateCurrentAttributes(
+        id: InstanceIdentifier<Config>,
+        dataBefore: Config,
+        dataAfter: Config,
+        writeContext: WriteContext
+    ) {
         val autonomousSystem = getData(dataAfter)
 
         try {

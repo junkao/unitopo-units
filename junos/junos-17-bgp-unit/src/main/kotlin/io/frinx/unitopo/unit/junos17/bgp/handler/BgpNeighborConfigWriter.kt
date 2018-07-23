@@ -24,7 +24,6 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.types.rev170202.PeerType
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.Ipaddr
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
-import org.opendaylight.controller.md.sal.common.api.data.ReadFailedException as MdSalReadFailedException
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.protocols.bgp.Group as JunosGroup
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.protocols.bgp.Group.Type as JunosGroupType
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.protocols.bgp.GroupBuilder as JunosGroupBuilder
@@ -33,7 +32,11 @@ import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configur
 
 class BgpNeighborConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCustomizer<Config> {
 
-    override fun writeCurrentAttributes(id: InstanceIdentifier<Config>, dataAfter: Config, writeContext: WriteContext) {
+    override fun writeCurrentAttributes(
+        id: InstanceIdentifier<Config>,
+        dataAfter: Config,
+        writeContext: WriteContext
+    ) {
         val neighbor = getUnderlayNeigbor(dataAfter)
         val group = getunderlayGroup(dataAfter)
         val isUnderlayGroupPresent =
@@ -53,9 +56,11 @@ class BgpNeighborConfigWriter(private val underlayAccess: UnderlayAccess) : Writ
         }
     }
 
-    override fun deleteCurrentAttributes(id: InstanceIdentifier<Config>,
-                                         dataBefore: Config,
-                                         writeContext: WriteContext) {
+    override fun deleteCurrentAttributes(
+        id: InstanceIdentifier<Config>,
+        dataBefore: Config,
+        writeContext: WriteContext
+    ) {
         val neighborBefore = getUnderlayNeigbor(dataBefore)
         val groupBefore = getunderlayGroup(dataBefore)
         try {
@@ -67,9 +72,12 @@ class BgpNeighborConfigWriter(private val underlayAccess: UnderlayAccess) : Writ
         }
     }
 
-    override fun updateCurrentAttributes(id: InstanceIdentifier<Config>,
-                                         dataBefore: Config, dataAfter: Config,
-                                         writeContext: WriteContext) {
+    override fun updateCurrentAttributes(
+        id: InstanceIdentifier<Config>,
+        dataBefore: Config,
+        dataAfter: Config,
+        writeContext: WriteContext
+    ) {
         val neighborAfter = getUnderlayNeigbor(dataAfter)
         val groupAfter = getunderlayGroup(dataAfter)
 
@@ -95,7 +103,8 @@ class BgpNeighborConfigWriter(private val underlayAccess: UnderlayAccess) : Writ
                     throw WriteFailedException(id, e)
                 }
             } else {
-                throw WriteFailedException(id, String.format("Update failed: Underlay Group: %s is missing", groupAfter.name))
+                throw WriteFailedException(id,
+                    String.format("Update failed: Underlay Group: %s is missing", groupAfter.name))
             }
         } else {
             if (isUnderlayGroupAfterPresent) {
@@ -107,7 +116,8 @@ class BgpNeighborConfigWriter(private val underlayAccess: UnderlayAccess) : Writ
                     throw WriteFailedException(id, e)
                 }
             } else {
-                throw WriteFailedException(id, String.format("Update failed: Underlay Group: %s is missing", groupAfter.name))
+                throw WriteFailedException(id,
+                    String.format("Update failed: Underlay Group: %s is missing", groupAfter.name))
             }
         }
     }
@@ -126,7 +136,7 @@ class BgpNeighborConfigWriter(private val underlayAccess: UnderlayAccess) : Writ
     }
 
     private fun parseJunosGroupType(peerType: PeerType?): JunosGroupType? {
-        return when(peerType){
+        return when (peerType) {
             PeerType.INTERNAL -> JunosGroupType.Internal
             PeerType.EXTERNAL -> JunosGroupType.External
             else -> null

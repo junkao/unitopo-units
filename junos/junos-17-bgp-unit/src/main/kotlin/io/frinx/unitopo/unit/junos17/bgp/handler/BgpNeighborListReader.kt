@@ -31,13 +31,14 @@ import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.protocols.bgp.group.Neighbor as JunosNeighbor
 
-class BgpNeighborListReader(private val underlayAccess: UnderlayAccess) : ConfigListReaderCustomizer<Neighbor, NeighborKey, NeighborBuilder> {
+class BgpNeighborListReader(private val underlayAccess: UnderlayAccess) :
+    ConfigListReaderCustomizer<Neighbor, NeighborKey, NeighborBuilder> {
     override fun readCurrentAttributes(iId: InstanceIdentifier<Neighbor>, builder: NeighborBuilder, ctx: ReadContext) {
         val neighborName = iId.firstKeyOf(Neighbor::class.java).neighborAddress.ipv4Address.value
         underlayAccess.read(UNDERLAY_PROTOCOL_BGP).checkedGet().orNull()?.let {
             it.group.orEmpty().forEach { group -> group?.neighbor.orEmpty()
                     .firstOrNull { neighbor -> neighbor.name?.value == neighborName }
-                    ?.let { neighbor -> builder.fromUnderlay(neighbor) } }}
+                    ?.let { neighbor -> builder.fromUnderlay(neighbor) } } }
     }
 
     override fun getAllIds(id: InstanceIdentifier<Neighbor>, context: ReadContext): List<NeighborKey> {
@@ -53,7 +54,6 @@ class BgpNeighborListReader(private val underlayAccess: UnderlayAccess) : Config
     }
 
     override fun getBuilder(id: InstanceIdentifier<Neighbor>) = NeighborBuilder()
-
 }
 
 internal fun NeighborBuilder.fromUnderlay(neighbor: JunosNeighbor) {
