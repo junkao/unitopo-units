@@ -48,7 +48,11 @@ import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.xr.types.rev150629.CiscoIosXrString
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.global.afi.safi.list.afi.safi.Config
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.top.bgp.Global
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.types.rev170202.*
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.types.rev170202.AFISAFITYPE
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.types.rev170202.IPV4UNICAST
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.types.rev170202.IPV6UNICAST
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.types.rev170202.L3VPNIPV4UNICAST
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.types.rev170202.L3VPNIPV6UNICAST
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstanceKey
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.types.inet.rev170403.AsNumber
@@ -56,9 +60,11 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
 class GlobalAfiSafiConfigWriter(private val underlayAccess: UnderlayAccess) : BgpWriter<Config> {
 
-    override fun writeCurrentAttributesForType(id: IID<Config>,
-                                               config: Config,
-                                               writeContext: WriteContext) {
+    override fun writeCurrentAttributesForType(
+        id: IID<Config>,
+        config: Config,
+        writeContext: WriteContext
+    ) {
         val vrfKey = id.firstKeyOf(NetworkInstance::class.java)
         val asNumber = writeContext.readAfter(RWUtils.cutId(id, Global::class.java)).get().config.`as`
         val underlayAfi = requireNotNull(config.afiSafiName.toUnderlay(),
@@ -79,17 +85,21 @@ class GlobalAfiSafiConfigWriter(private val underlayAccess: UnderlayAccess) : Bg
         }
     }
 
-    override fun updateCurrentAttributesForType(id: IID<Config>,
-                                                dataBefore: Config,
-                                                dataAfter: Config,
-                                                writeContext: WriteContext) {
+    override fun updateCurrentAttributesForType(
+        id: IID<Config>,
+        dataBefore: Config,
+        dataAfter: Config,
+        writeContext: WriteContext
+    ) {
         // No need to update the AFI SAFI since we are just creating or deleting the it from this handler
         // no actual configuration is touched here
     }
 
-    override fun deleteCurrentAttributesForType(id: IID<Config>,
-                                                config: Config,
-                                                writeContext: WriteContext) {
+    override fun deleteCurrentAttributesForType(
+        id: IID<Config>,
+        config: Config,
+        writeContext: WriteContext
+    ) {
         val vrfKey = id.firstKeyOf(NetworkInstance::class.java)
         val asNumber = writeContext.readBefore(RWUtils.cutId(id, Global::class.java)).get().config.`as`
         val underlayAfi = requireNotNull(config.afiSafiName.toUnderlay(),
@@ -103,10 +113,12 @@ class GlobalAfiSafiConfigWriter(private val underlayAccess: UnderlayAccess) : Bg
     }
 
     companion object {
-        fun getVrfId(vrfKey: NetworkInstanceKey, asNum: AsNumber, bgpAddressFamily: BgpAddressFamily): InstanceIdentifier<VrfGlobalAf> {
+        fun getVrfId(vrfKey: NetworkInstanceKey, asNum: AsNumber, bgpAddressFamily: BgpAddressFamily):
+            InstanceIdentifier<VrfGlobalAf> {
             val (as1, as2) = asToDotNotation(asNum)
 
-            return GlobalConfigWriter.XR_BGP_ID.child(Instance::class.java, InstanceKey(GlobalConfigWriter.XR_BGP_INSTANCE_NAME))
+            return GlobalConfigWriter.XR_BGP_ID.child(Instance::class.java,
+                InstanceKey(GlobalConfigWriter.XR_BGP_INSTANCE_NAME))
                     .child(InstanceAs::class.java, InstanceAsKey(BgpAsRange(as1)))
                     .child(FourByteAs::class.java, FourByteAsKey(BgpAsRange(as2)))
                     .child(Vrfs::class.java)
@@ -119,7 +131,8 @@ class GlobalAfiSafiConfigWriter(private val underlayAccess: UnderlayAccess) : Bg
         fun getGlobalId(asNum: AsNumber, bgpAddressFamily: BgpAddressFamily): InstanceIdentifier<GlobalAf> {
             val (as1, as2) = asToDotNotation(asNum)
 
-            return GlobalConfigWriter.XR_BGP_ID.child(Instance::class.java, InstanceKey(GlobalConfigWriter.XR_BGP_INSTANCE_NAME))
+            return GlobalConfigWriter.XR_BGP_ID.child(Instance::class.java,
+                InstanceKey(GlobalConfigWriter.XR_BGP_INSTANCE_NAME))
                     .child(InstanceAs::class.java, InstanceAsKey(BgpAsRange(as1)))
                     .child(FourByteAs::class.java, FourByteAsKey(BgpAsRange(as2)))
                     .child(DefaultVrf::class.java)
@@ -132,10 +145,10 @@ class GlobalAfiSafiConfigWriter(private val underlayAccess: UnderlayAccess) : Bg
 
 fun Class<out AFISAFITYPE>.toUnderlay(): BgpAddressFamily? {
     when (this) {
-        IPV4UNICAST::class.java  -> return BgpAddressFamily.Ipv4Unicast
-        L3VPNIPV4UNICAST::class.java  -> return BgpAddressFamily.VpNv4Unicast
-        L3VPNIPV6UNICAST::class.java  -> return BgpAddressFamily.VpNv6Unicast
-        IPV6UNICAST::class.java  -> return BgpAddressFamily.Ipv6Unicast
+        IPV4UNICAST::class.java -> return BgpAddressFamily.Ipv4Unicast
+        L3VPNIPV4UNICAST::class.java -> return BgpAddressFamily.VpNv4Unicast
+        L3VPNIPV6UNICAST::class.java -> return BgpAddressFamily.VpNv6Unicast
+        IPV6UNICAST::class.java -> return BgpAddressFamily.Ipv6Unicast
     }
 
     return null

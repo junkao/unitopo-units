@@ -41,13 +41,15 @@ import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class NeighborReader(private val access: UnderlayAccess) : BgpListReader.BgpConfigListReader<Neighbor, NeighborKey, NeighborBuilder> {
+class NeighborReader(private val access: UnderlayAccess) :
+    BgpListReader.BgpConfigListReader<Neighbor, NeighborKey, NeighborBuilder> {
 
     override fun getAllIdsForType(id: InstanceIdentifier<Neighbor>, readContext: ReadContext): List<NeighborKey> {
         val protKey = id.firstKeyOf<Protocol, ProtocolKey>(Protocol::class.java)
         val vrfKey = id.firstKeyOf(NetworkInstance::class.java)
 
-        val data = access.read(BgpProtocolReader.UNDERLAY_BGP.child(Instance::class.java, InstanceKey(CiscoIosXrString(protKey.name))))
+        val data = access.read(BgpProtocolReader.UNDERLAY_BGP.child(Instance::class.java,
+            InstanceKey(CiscoIosXrString(protKey.name))))
                 .checkedGet()
                 .orNull()
 
@@ -58,7 +60,11 @@ class NeighborReader(private val access: UnderlayAccess) : BgpListReader.BgpConf
         (builder as NeighborsBuilder).neighbor = list
     }
 
-    override fun readCurrentAttributesForType(id: InstanceIdentifier<Neighbor>, neighborBuilder: NeighborBuilder, readContext: ReadContext) {
+    override fun readCurrentAttributesForType(
+        id: InstanceIdentifier<Neighbor>,
+        neighborBuilder: NeighborBuilder,
+        readContext: ReadContext
+    ) {
         neighborBuilder.neighborAddress = id.firstKeyOf(Neighbor::class.java).neighborAddress
     }
 

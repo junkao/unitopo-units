@@ -39,12 +39,15 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.types.inet.re
 import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 
-class BgpLocalAggregateReader(private val access: UnderlayAccess) : BgpListReader.BgpConfigListReader<Aggregate, AggregateKey, AggregateBuilder> {
+class BgpLocalAggregateReader(private val access: UnderlayAccess) :
+    BgpListReader.BgpConfigListReader<Aggregate, AggregateKey, AggregateBuilder> {
 
     override fun getBuilder(id: IID<Aggregate>) = AggregateBuilder()
 
-    override fun getAllIdsForType(id: IID<Aggregate>,
-                                  readContext: ReadContext): List<AggregateKey> {
+    override fun getAllIdsForType(
+        id: IID<Aggregate>,
+        readContext: ReadContext
+    ): List<AggregateKey> {
         val protKey = id.firstKeyOf<Protocol, ProtocolKey>(Protocol::class.java)
         val vrfKey = id.firstKeyOf(NetworkInstance::class.java)
 
@@ -60,8 +63,11 @@ class BgpLocalAggregateReader(private val access: UnderlayAccess) : BgpListReade
         (builder as LocalAggregatesBuilder).aggregate = list
     }
 
-    override fun readCurrentAttributesForType(IID: IID<Aggregate>,
-                                              aggregateBuilder: AggregateBuilder, readContext: ReadContext) {
+    override fun readCurrentAttributesForType(
+        IID: IID<Aggregate>,
+        aggregateBuilder: AggregateBuilder,
+        readContext: ReadContext
+    ) {
         aggregateBuilder.key = IID.firstKeyOf(Aggregate::class.java)
     }
 
@@ -82,7 +88,6 @@ class BgpLocalAggregateReader(private val access: UnderlayAccess) : BgpListReade
                     .map { AggregateKey(it) }
                     .toList()
         }
-
     }
 }
 

@@ -30,9 +30,11 @@ class BgpLocalAggregateConfigReader : BgpReader.BgpConfigReader<Config, ConfigBu
 
     override fun getBuilder(p0: InstanceIdentifier<Config>) = ConfigBuilder()
 
-    override fun readCurrentAttributesForType(instanceIdentifier: InstanceIdentifier<Config>,
-                                     configBuilder: ConfigBuilder,
-                                     readContext: ReadContext) {
+    override fun readCurrentAttributesForType(
+        instanceIdentifier: InstanceIdentifier<Config>,
+        configBuilder: ConfigBuilder,
+        readContext: ReadContext
+    ) {
         val aggregateKey = instanceIdentifier.firstKeyOf(Aggregate::class.java)
         configBuilder.prefix = aggregateKey.prefix
     }

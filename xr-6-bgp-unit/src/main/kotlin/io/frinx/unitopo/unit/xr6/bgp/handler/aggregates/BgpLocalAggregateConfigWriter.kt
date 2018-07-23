@@ -43,11 +43,15 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
 class BgpLocalAggregateConfigWriter(private val access: UnderlayAccess) : BgpWriter<Config> {
 
-    override fun writeCurrentAttributesForType(instanceIdentifier: InstanceIdentifier<Config>, config: Config,
-                                               writeContext: WriteContext) {
+    override fun writeCurrentAttributesForType(
+        instanceIdentifier: InstanceIdentifier<Config>,
+        config: Config,
+        writeContext: WriteContext
+    ) {
         val vrfKey = instanceIdentifier.firstKeyOf(NetworkInstance::class.java)
 
-        val networkInstance = writeContext.readAfter(RWUtils.cutId(instanceIdentifier, NetworkInstance::class.java).child(Protocols::class.java)).get()
+        val networkInstance = writeContext.readAfter(RWUtils.cutId(instanceIdentifier,
+            NetworkInstance::class.java).child(Protocols::class.java)).get()
         val bgp = getBgpGlobal(networkInstance)
         requireNotNull(bgp,
                 { "BGP not configured for VRF: ${vrfKey.name}. Cannot configure networks" })
@@ -81,7 +85,7 @@ class BgpLocalAggregateConfigWriter(private val access: UnderlayAccess) : BgpWri
 
         // Check that network and address family are IP version compatible
         if (ipPrefix.ipv4Address != null && it == BgpAddressFamily.Ipv4Unicast ||
-                ipPrefix.ipv6Address != null && it == BgpAddressFamily.Ipv6Unicast ) {
+                ipPrefix.ipv6Address != null && it == BgpAddressFamily.Ipv6Unicast) {
 
             access.merge(GlobalAfiSafiConfigWriter.getGlobalId(asNumber, it)
                     .child(SourcedNetworks::class.java)
@@ -93,7 +97,7 @@ class BgpLocalAggregateConfigWriter(private val access: UnderlayAccess) : BgpWri
     private fun deleteGlobalNetworkForAfi(it: BgpAddressFamily, asNumber: AsNumber, prefix: IpPrefix) {
         val ipPrefix = prefix.getNetAddress()
         if (ipPrefix.ipv4Address != null && it == BgpAddressFamily.Ipv4Unicast ||
-                ipPrefix.ipv6Address != null && it == BgpAddressFamily.Ipv6Unicast ) {
+                ipPrefix.ipv6Address != null && it == BgpAddressFamily.Ipv6Unicast) {
 
             access.delete(GlobalAfiSafiConfigWriter.getGlobalId(asNumber, it)
                     .child(SourcedNetworks::class.java)
@@ -101,12 +105,17 @@ class BgpLocalAggregateConfigWriter(private val access: UnderlayAccess) : BgpWri
         }
     }
 
-    private fun writeVrfNetworkForAfi(it: BgpAddressFamily, vrfKey: NetworkInstanceKey, asNumber: AsNumber, prefix: IpPrefix) {
+    private fun writeVrfNetworkForAfi(
+        it: BgpAddressFamily,
+        vrfKey: NetworkInstanceKey,
+        asNumber: AsNumber,
+        prefix: IpPrefix
+    ) {
         val ipPrefix = prefix.getNetAddress()
 
         // Check that network and address family are IP version compatible
         if (ipPrefix.ipv4Address != null && it == BgpAddressFamily.Ipv4Unicast ||
-                ipPrefix.ipv6Address != null && it == BgpAddressFamily.Ipv6Unicast ) {
+                ipPrefix.ipv6Address != null && it == BgpAddressFamily.Ipv6Unicast) {
 
             access.merge(GlobalAfiSafiConfigWriter.getVrfId(vrfKey, asNumber, it)
                     .child(SourcedNetworks::class.java)
@@ -115,11 +124,16 @@ class BgpLocalAggregateConfigWriter(private val access: UnderlayAccess) : BgpWri
         }
     }
 
-    private fun deleteVrfNetworkForAfi(it: BgpAddressFamily, vrfKey: NetworkInstanceKey, asNumber: AsNumber, prefix: IpPrefix) {
+    private fun deleteVrfNetworkForAfi(
+        it: BgpAddressFamily,
+        vrfKey: NetworkInstanceKey,
+        asNumber: AsNumber,
+        prefix: IpPrefix
+    ) {
         val ipPrefix = prefix.getNetAddress()
 
         if (ipPrefix.ipv4Address != null && it == BgpAddressFamily.Ipv4Unicast ||
-                ipPrefix.ipv6Address != null && it == BgpAddressFamily.Ipv6Unicast ) {
+                ipPrefix.ipv6Address != null && it == BgpAddressFamily.Ipv6Unicast) {
 
         access.delete(GlobalAfiSafiConfigWriter.getVrfId(vrfKey, asNumber, it)
                 .child(SourcedNetworks::class.java)
@@ -127,17 +141,26 @@ class BgpLocalAggregateConfigWriter(private val access: UnderlayAccess) : BgpWri
         }
     }
 
-    override fun updateCurrentAttributesForType(id: InstanceIdentifier<Config>, dataBefore: Config, dataAfter: Config,
-                                                writeContext: WriteContext) {
+    override fun updateCurrentAttributesForType(
+        id: InstanceIdentifier<Config>,
+        dataBefore: Config,
+        dataAfter: Config,
+        writeContext: WriteContext
+    ) {
         deleteCurrentAttributes(id, dataBefore, writeContext)
         writeCurrentAttributes(id, dataAfter, writeContext)
     }
 
-    override fun deleteCurrentAttributesForType(instanceIdentifier: InstanceIdentifier<Config>, config: Config,
-                                                writeContext: WriteContext) {
+    override fun deleteCurrentAttributesForType(
+        instanceIdentifier: InstanceIdentifier<Config>,
+        config: Config,
+        writeContext: WriteContext
+    ) {
         val vrfKey = instanceIdentifier.firstKeyOf(NetworkInstance::class.java)
-        val protocolsBefore = writeContext.readBefore(RWUtils.cutId(instanceIdentifier, NetworkInstance::class.java).child(Protocols::class.java)).get()
-        val protocolsAfter = writeContext.readAfter(RWUtils.cutId(instanceIdentifier, NetworkInstance::class.java).child(Protocols::class.java)).or(ProtocolsBuilder().build())
+        val protocolsBefore = writeContext.readBefore(RWUtils.cutId(instanceIdentifier, NetworkInstance::class.java)
+            .child(Protocols::class.java)).get()
+        val protocolsAfter = writeContext.readAfter(RWUtils.cutId(instanceIdentifier, NetworkInstance::class.java)
+            .child(Protocols::class.java)).or(ProtocolsBuilder().build())
         val bgp = getBgpGlobal(protocolsBefore)
         val bgpAfter = getBgpGlobal(protocolsAfter)
         val asNumber = bgp!!.global?.config?.`as`
@@ -173,7 +196,6 @@ class BgpLocalAggregateConfigWriter(private val access: UnderlayAccess) : BgpWri
         }
     }
 }
-
 
 private fun IpPrefix.getNetAddress(): IpAddress {
     val prefixString = ipv4Prefix?.value ?: ipv6Prefix.value

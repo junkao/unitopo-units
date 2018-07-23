@@ -34,17 +34,21 @@ class NeighborReaderTest : AbstractNetconfHandlerTest() {
     @Test
     fun testIds() {
         val parseNeighbors = NeighborReader.parseNeighbors(parseGetCfgResponse(DATA_NODES,
-                BgpProtocolReader.UNDERLAY_BGP.child(Instance::class.java, InstanceKey(CiscoIosXrString("default")))), NetworkInstanceKey("default"));
+                BgpProtocolReader.UNDERLAY_BGP.child(Instance::class.java, InstanceKey(CiscoIosXrString("default")))),
+            NetworkInstanceKey("default"))
 
-        Assert.assertEquals(listOf("4004::1", "10.1.0.4", "2.3.4.5").map { NeighborKey(IpAddress(it.toCharArray())) }, parseNeighbors)
+        Assert.assertEquals(listOf("4004::1", "10.1.0.4", "2.3.4.5").map { NeighborKey(IpAddress(it.toCharArray())) },
+            parseNeighbors)
 
         val parseNeighborsVrf = NeighborReader.parseNeighbors(parseGetCfgResponse(DATA_NODES,
-                BgpProtocolReader.UNDERLAY_BGP.child(Instance::class.java, InstanceKey(CiscoIosXrString("default")))), NetworkInstanceKey("abcd"));
+                BgpProtocolReader.UNDERLAY_BGP.child(Instance::class.java, InstanceKey(CiscoIosXrString("default")))),
+            NetworkInstanceKey("abcd"))
 
         Assert.assertEquals(listOf("4444::1111").map { NeighborKey(IpAddress(it.toCharArray())) }, parseNeighborsVrf)
 
         val parseNeighborsEmpty = NeighborReader.parseNeighbors(parseGetCfgResponse(DATA_NODES,
-                BgpProtocolReader.UNDERLAY_BGP.child(Instance::class.java, InstanceKey(CiscoIosXrString("default")))), NetworkInstanceKey("NONEXISTING"));
+                BgpProtocolReader.UNDERLAY_BGP.child(Instance::class.java, InstanceKey(CiscoIosXrString("default")))),
+            NetworkInstanceKey("NONEXISTING"))
 
         Assert.assertEquals(emptyList<NeighborKey>(), parseNeighborsEmpty)
     }

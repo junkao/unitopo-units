@@ -20,7 +20,11 @@ import io.fd.honeycomb.translate.read.ReadContext
 import io.frinx.openconfig.network.instance.NetworInstance
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.network.instance.protocol.bgp.common.BgpReader
-import io.frinx.unitopo.unit.xr6.bgp.*
+import io.frinx.unitopo.unit.xr6.bgp.UnderlayOperBgpInstance
+import io.frinx.unitopo.unit.xr6.bgp.UnderlayOperBgpInstanceKey
+import io.frinx.unitopo.unit.xr6.bgp.UnderlayOperNeighbor
+import io.frinx.unitopo.unit.xr6.bgp.UnderlayOperNeighborKey
+import io.frinx.unitopo.unit.xr6.bgp.UnderlayOperNeighbors
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.oper.rev150827.Bgp
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.oper.rev150827.BgpConnState
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.oper.rev150827._default.vrf.DefaultVrf
@@ -55,7 +59,11 @@ class NeighborStateReader(private val access: UnderlayAccess) : BgpReader.BgpOpe
 
     override fun getBuilder(p0: InstanceIdentifier<State>) = StateBuilder()
 
-    override fun readCurrentAttributesForType(id: InstanceIdentifier<State>, builder: StateBuilder, readContext: ReadContext) {
+    override fun readCurrentAttributesForType(
+        id: InstanceIdentifier<State>,
+        builder: StateBuilder,
+        readContext: ReadContext
+    ) {
         val neighborKey = id.firstKeyOf(Neighbor::class.java)
         builder.neighborAddress = neighborKey.neighborAddress
 
@@ -70,24 +78,29 @@ class NeighborStateReader(private val access: UnderlayAccess) : BgpReader.BgpOpe
     }
 
     companion object {
-        fun getId(protKey: ProtocolKey, vrfName: NetworkInstanceKey, neighKey: NeighborKey): InstanceIdentifier<UnderlayOperNeighbor> {
+        fun getId(protKey: ProtocolKey, vrfName: NetworkInstanceKey, neighKey: NeighborKey):
+            InstanceIdentifier<UnderlayOperNeighbor> {
             return if (vrfName == NetworInstance.DEFAULT_NETWORK) {
                 InstanceIdentifier.create(Bgp::class.java)
                         .child(Instances::class.java)
-                        .child(UnderlayOperBgpInstance::class.java, UnderlayOperBgpInstanceKey(CiscoIosXrString(protKey.name)))
+                        .child(UnderlayOperBgpInstance::class.java,
+                            UnderlayOperBgpInstanceKey(CiscoIosXrString(protKey.name)))
                         .child(InstanceActive::class.java)
                         .child(DefaultVrf::class.java)
                         .child(UnderlayOperNeighbors::class.java)
-                        .child(UnderlayOperNeighbor::class.java, UnderlayOperNeighborKey(neighKey.neighborAddress.toNoZone()))
+                        .child(UnderlayOperNeighbor::class.java,
+                            UnderlayOperNeighborKey(neighKey.neighborAddress.toNoZone()))
             } else {
                 return InstanceIdentifier.create(Bgp::class.java)
                         .child(Instances::class.java)
-                        .child(UnderlayOperBgpInstance::class.java, UnderlayOperBgpInstanceKey(CiscoIosXrString(protKey.name)))
+                        .child(UnderlayOperBgpInstance::class.java,
+                            UnderlayOperBgpInstanceKey(CiscoIosXrString(protKey.name)))
                         .child(InstanceActive::class.java)
                         .child(Vrfs::class.java)
                         .child(Vrf::class.java, VrfKey(CiscoIosXrString(vrfName.name)))
                         .child(UnderlayOperNeighbors::class.java)
-                        .child(UnderlayOperNeighbor::class.java, UnderlayOperNeighborKey(neighKey.neighborAddress.toNoZone()))
+                        .child(UnderlayOperNeighbor::class.java,
+                            UnderlayOperNeighborKey(neighKey.neighborAddress.toNoZone()))
             }
         }
     }
@@ -108,7 +121,7 @@ fun StateBuilder.fromUnderlay(neighbor: UnderlayOperNeighbor?) {
     }
 }
 
-fun BgpConnState.toOpenconfig() : BgpNeighborState.SessionState? {
+fun BgpConnState.toOpenconfig(): BgpNeighborState.SessionState? {
     return when (this) {
         BgpConnState.BgpStActive -> BgpNeighborState.SessionState.ACTIVE
         BgpConnState.BgpStIdle -> BgpNeighborState.SessionState.IDLE

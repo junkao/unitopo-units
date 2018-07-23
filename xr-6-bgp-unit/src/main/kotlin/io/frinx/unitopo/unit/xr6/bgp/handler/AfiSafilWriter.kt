@@ -55,16 +55,20 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.insta
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstanceKey
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.Config
-import org.slf4j.LoggerFactory
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.protocol.Config as ProtoConfig
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.global.base.Config as GlobalConfig
-import java.util.*
+import java.util.ArrayList
+import java.util.Arrays
 import java.util.regex.Pattern
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.global.base.Config as GlobalConfig
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
 class AfiSafilWriter(private val underlayAccess: UnderlayAccess) : BgpListWriter<AfiSafi, AfiSafiKey> {
 
-    override fun updateCurrentAttributesForType(iid: IID<AfiSafi>, dataBefore: AfiSafi, dataAfter: AfiSafi, writeContext: WriteContext) {
+    override fun updateCurrentAttributesForType(
+        iid: IID<AfiSafi>,
+        dataBefore: AfiSafi,
+        dataAfter: AfiSafi,
+        writeContext: WriteContext
+    ) {
         deleteCurrentAttributesForType(iid, dataBefore, writeContext)
         writeCurrentAttributesForType(iid, dataAfter, writeContext)
     }
@@ -77,7 +81,6 @@ class AfiSafilWriter(private val underlayAccess: UnderlayAccess) : BgpListWriter
         } catch (e: Exception) {
             throw io.fd.honeycomb.translate.write.WriteFailedException(bgpIid, e)
         }
-
     }
 
     override fun writeCurrentAttributesForType(iid: IID<AfiSafi>, dataAfter: AfiSafi, wtc: WriteContext) {
@@ -86,7 +89,7 @@ class AfiSafilWriter(private val underlayAccess: UnderlayAccess) : BgpListWriter
         val rd = wtc.readAfter(IID.create(NetworkInstances::class.java)
                 .child(NetworkInstance::class.java, NetworkInstanceKey(vrfName))
                 .child(Config::class.java)).get().routeDistinguisher.string
-        //TODO use subtree writer for continer global, that will remove need to read config container
+        // TODO use subtree writer for continer global, that will remove need to read config container
         val cfg = wtc.readAfter(iid.firstIdentifierOf(Global::class.java)
                 .child(GlobalConfig::class.java)).get()
         val bgp = getBgpData(dataAfter, cfg, vrfName, rd)
@@ -99,6 +102,19 @@ class AfiSafilWriter(private val underlayAccess: UnderlayAccess) : BgpListWriter
     }
 
     private fun getBgpData(afisafi: AfiSafi, cfg: GlobalConfig, vrfName: String, rd: String): Bgp {
+
+        val defaultVrf = DefaultVrfBuilder()
+            .setGlobal(GlobalBuilder()
+                .setGlobalAfs(GlobalAfsBuilder()
+                    .setGlobalAf(
+                        Arrays.asList(
+                            GlobalAfBuilder()
+                                .setKey(GlobalAfKey(BgpAddressFamily.VpNv4Unicast))
+                                .setEnable(true)
+                                .build()))
+                    .build())
+                .build())
+            .build()
         val bgp = BgpBuilder()
                 .setInstance(Arrays.asList(
                         InstanceBuilder()
@@ -111,26 +127,20 @@ class AfiSafilWriter(private val underlayAccess: UnderlayAccess) : BgpListWriter
                                                                 .setAs(BgpAsRange(cfg.`as`?.value))
                                                                 .setBgpRunning(true)
                                                                 .let {
-                                                                    if(!vrfName.equals("default")) {
+                                                                    if (!vrfName.equals("default")) {
                                                                         it.vrfs = VrfsBuilder()
-                                                                                .setVrf(afiSafiToVrf(afisafi, vrfName, rd))
+                                                                                .setVrf(
+                                                                                    afiSafiToVrf(afisafi, vrfName, rd))
                                                                                 .build()
-                                                                        it.defaultVrf = DefaultVrfBuilder()
-                                                                                .setGlobal(GlobalBuilder()
-                                                                                        .setGlobalAfs(GlobalAfsBuilder()
-                                                                                                .setGlobalAf(Arrays.asList(GlobalAfBuilder()
-                                                                                                        .setKey(GlobalAfKey(BgpAddressFamily.VpNv4Unicast))
-                                                                                                        .setEnable(true)
-                                                                                                        .build()))
-                                                                                                .build())
-                                                                                        .build())
-                                                                                .build()
+                                                                        it.defaultVrf = defaultVrf
                                                                     } else {
 
                                                                         it.defaultVrf = DefaultVrfBuilder()
                                                                                 .setGlobal(GlobalBuilder()
                                                                                         .setGlobalAfs(GlobalAfsBuilder()
-                                                                                                .setGlobalAf(afiSafiToGlobalAf(afisafi))
+                                                                                                .setGlobalAf(
+                                                                                                    afiSafiToGlobalAf(
+                                                                                                        afisafi))
                                                                                                 .build())
                                                                                         .build())
                                                                                 .build()

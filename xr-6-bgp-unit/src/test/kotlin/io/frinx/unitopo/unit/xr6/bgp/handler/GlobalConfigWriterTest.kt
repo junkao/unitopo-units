@@ -55,8 +55,6 @@ class GlobalConfigWriterTest {
                         .setAddressIndex(BgpExtcommV4AddrIndex(223))
                         .build(),
                 RouteDistinguisher("2.11.240.1:223").toXrRouteDistinguisher())
-
-
     }
 
     @Test(expected = IllegalArgumentException::class)

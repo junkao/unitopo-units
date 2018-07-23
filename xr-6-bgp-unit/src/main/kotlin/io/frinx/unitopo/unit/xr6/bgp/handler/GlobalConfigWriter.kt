@@ -21,7 +21,11 @@ import io.frinx.openconfig.network.instance.NetworInstance
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.network.instance.As.Companion.asToDotNotation
 import io.frinx.unitopo.unit.network.instance.protocol.bgp.common.BgpReader
-import io.frinx.unitopo.unit.xr6.bgp.*
+import io.frinx.unitopo.unit.xr6.bgp.IID
+import io.frinx.unitopo.unit.xr6.bgp.UnderlayBgp
+import io.frinx.unitopo.unit.xr6.bgp.UnderlayBgpBuilder
+import io.frinx.unitopo.unit.xr6.bgp.UnderlayRouteDistinguisher
+import io.frinx.unitopo.unit.xr6.bgp.UnderlayRouteDistinguisherBuilder
 import io.frinx.unitopo.unit.xr6.bgp.common.BgpWriter
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.BgpRouteDistinguisher
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.Instance
@@ -63,7 +67,12 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.insta
 
 class GlobalConfigWriter(private val underlayAccess: UnderlayAccess) : BgpWriter<Config> {
 
-    override fun updateCurrentAttributesForType(id: IID<Config>, dataBefore: Config, dataAfter: Config, writeContext: WriteContext) {
+    override fun updateCurrentAttributesForType(
+        id: IID<Config>,
+        dataBefore: Config,
+        dataAfter: Config,
+        writeContext: WriteContext
+    ) {
         val vrfKey = checkArguments(id)
 
         if (vrfKey == NetworInstance.DEFAULT_NETWORK) {
@@ -142,7 +151,12 @@ class GlobalConfigWriter(private val underlayAccess: UnderlayAccess) : BgpWriter
                     .child(Vrf::class.java, VrfKey(CiscoIosXrString(vrfKey.name)))
         }
 
-        private fun renderVrfData(bgpBuilder: VrfBuilder, vrfKey: NetworkInstanceKey, dataAfter: Config, rd: RouteDistinguisher?) {
+        private fun renderVrfData(
+            bgpBuilder: VrfBuilder,
+            vrfKey: NetworkInstanceKey,
+            dataAfter: Config,
+            rd: RouteDistinguisher?
+        ) {
             // Reuse existing fields for global container
             val globalBuilder = bgpBuilder.vrfGlobal?.let {
                 VrfGlobalBuilder(it)
@@ -192,7 +206,6 @@ class GlobalConfigWriter(private val underlayAccess: UnderlayAccess) : BgpWriter
                             .build()))
                     .build()
         }
-
     }
 }
 

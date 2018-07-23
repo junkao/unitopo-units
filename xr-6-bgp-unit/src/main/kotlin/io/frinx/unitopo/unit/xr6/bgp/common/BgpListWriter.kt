@@ -28,7 +28,7 @@ import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.Identifiable
 import org.opendaylight.yangtools.yang.binding.Identifier
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
-import java.util.*
+import java.util.AbstractMap
 
 interface BgpListWriter<O, K> : TypedWriter<O>, ListWriterCustomizer<O, K>
         where O: DataObject, O: Identifiable<K>, K: Identifier<O> {
@@ -37,7 +37,7 @@ interface BgpListWriter<O, K> : TypedWriter<O>, ListWriterCustomizer<O, K>
         return ProtocolKey(TYPE, null)
     }
 
-    override fun getParentCheck(id: InstanceIdentifier<O>) =  AbstractMap.SimpleEntry(
+    override fun getParentCheck(id: InstanceIdentifier<O>) = AbstractMap.SimpleEntry(
             RWUtils.cutId(id, NetworkInstance::class.java).child(Config::class.java),
             L3VrfReader.L3VRF_CHECK)
 

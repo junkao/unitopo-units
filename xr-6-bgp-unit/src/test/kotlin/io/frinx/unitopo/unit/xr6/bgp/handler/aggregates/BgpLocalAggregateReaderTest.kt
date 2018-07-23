@@ -27,26 +27,29 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.local.routing
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstanceKey
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.types.inet.rev170403.IpPrefix
 
-class BgpLocalBgpLocalAggregateReaderTest : AbstractNetconfHandlerTest() {
+class BgpLocalAggregateReaderTest : AbstractNetconfHandlerTest() {
 
     private val DATA_NODES = getResourceAsString("/bgp-conf2.xml")
 
     @Test
     fun testIds() {
         val parseAggregates = BgpLocalAggregateReader.parseAggregates(parseGetCfgResponse(DATA_NODES,
-                BgpProtocolReader.UNDERLAY_BGP.child(Instance::class.java, InstanceKey(CiscoIosXrString("default")))), NetworkInstanceKey("default"));
+                BgpProtocolReader.UNDERLAY_BGP.child(Instance::class.java, InstanceKey(CiscoIosXrString("default")))),
+            NetworkInstanceKey("default"))
 
-        Assert.assertEquals(listOf("42.41.43.0/24", "9009::/64").map { AggregateKey(IpPrefix(it.toCharArray())) }, parseAggregates)
+        Assert.assertEquals(listOf("42.41.43.0/24", "9009::/64").map { AggregateKey(IpPrefix(it.toCharArray())) },
+            parseAggregates)
 
         val parseAggregatesVrf = BgpLocalAggregateReader.parseAggregates(parseGetCfgResponse(DATA_NODES,
-                BgpProtocolReader.UNDERLAY_BGP.child(Instance::class.java, InstanceKey(CiscoIosXrString("default")))), NetworkInstanceKey("abcd"));
+                BgpProtocolReader.UNDERLAY_BGP.child(Instance::class.java, InstanceKey(CiscoIosXrString("default")))),
+            NetworkInstanceKey("abcd"))
 
         Assert.assertEquals(listOf("1.2.0.0/16").map { AggregateKey(IpPrefix(it.toCharArray())) }, parseAggregatesVrf)
 
         val parseAggregatesEmpty = BgpLocalAggregateReader.parseAggregates(parseGetCfgResponse(DATA_NODES,
-                BgpProtocolReader.UNDERLAY_BGP.child(Instance::class.java, InstanceKey(CiscoIosXrString("default")))), NetworkInstanceKey("NONEXISTING"));
+                BgpProtocolReader.UNDERLAY_BGP.child(Instance::class.java, InstanceKey(CiscoIosXrString("default")))),
+            NetworkInstanceKey("NONEXISTING"))
 
         Assert.assertEquals(emptyList<AggregateKey>(), parseAggregatesEmpty)
     }
-
 }

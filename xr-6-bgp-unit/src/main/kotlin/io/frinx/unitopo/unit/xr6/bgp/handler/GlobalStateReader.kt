@@ -84,7 +84,6 @@ class GlobalStateReader(private val access: UnderlayAccess) : BgpReader.BgpOperR
                         .child(Vrf::class.java, VrfKey(CiscoIosXrString(vrfName.name)))
                         .child(GlobalProcessInfo::class.java)
             }
-
         }
     }
 }
@@ -93,7 +92,7 @@ class GlobalStateReader(private val access: UnderlayAccess) : BgpReader.BgpOperR
 fun StateBuilder.fromUnderlay(data: GlobalProcessInfo?) {
     data?.let {
         it.global?.let {
-            `as`= AsNumber(it.localAs)
+            `as` = AsNumber(it.localAs)
         }
         it.vrf?.let {
             routerId = DottedQuad(it.routerId.value)
