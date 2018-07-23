@@ -34,19 +34,24 @@ import org.opendaylight.yangtools.yang.data.impl.schema.Builders
 import org.opendaylight.yangtools.yang.model.api.SchemaPath
 import org.w3c.dom.Element
 
-class ConfigMetadataReader(private val access: UnderlayAccess) : OperReaderCustomizer<ConfigurationMetadata, ConfigurationMetadataBuilder> {
+class ConfigMetadataReader(private val access: UnderlayAccess) :
+    OperReaderCustomizer<ConfigurationMetadata, ConfigurationMetadataBuilder> {
 
+    override fun getBuilder(id: InstanceIdentifier<ConfigurationMetadata>): ConfigurationMetadataBuilder =
+        ConfigurationMetadataBuilder()
 
-    override fun getBuilder(id: InstanceIdentifier<ConfigurationMetadata>): ConfigurationMetadataBuilder = ConfigurationMetadataBuilder()
-
-    override fun readCurrentAttributes(id: InstanceIdentifier<ConfigurationMetadata>, configmetadata: ConfigurationMetadataBuilder, ctx: ReadContext) {
-
+    override fun readCurrentAttributes(
+        id: InstanceIdentifier<ConfigurationMetadata>,
+        configmetadata: ConfigurationMetadataBuilder,
+        ctx: ReadContext
+    ) {
 
         val invokeRpc = access.invokeRpc(schema, input)
 
         val checkedGet = invokeRpc.checkedGet()
         checkedGet.result ?: return
-        val choice = (checkedGet.result as ContainerNode).getChild(YangInstanceIdentifier.NodeIdentifier(QName.create(qName, "output_c")))
+        val choice = (checkedGet.result as ContainerNode)
+            .getChild(YangInstanceIdentifier.NodeIdentifier(QName.create(qName, "output_c")))
 
         if (choice.isPresent) {
             val xmlNode = (choice.get() as ChoiceNode).getChild(yangIid)
@@ -62,7 +67,8 @@ class ConfigMetadataReader(private val access: UnderlayAccess) : OperReaderCusto
     }
 
     override fun merge(parentBuilder: Builder<out DataObject>, data: ConfigurationMetadata) {
-        (parentBuilder as ConfigurationMetadataBuilder).lastConfigurationFingerprint = data.lastConfigurationFingerprint
+        (parentBuilder as ConfigurationMetadataBuilder).lastConfigurationFingerprint =
+            data.lastConfigurationFingerprint
     }
 
     companion object {
