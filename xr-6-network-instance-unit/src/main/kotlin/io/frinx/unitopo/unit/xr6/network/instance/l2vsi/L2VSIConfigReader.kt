@@ -37,11 +37,14 @@ class L2VSIConfigReader(private val underlayAccess: UnderlayAccess) : ConfigRead
     }
 
     @Throws(ReadFailedException::class)
-    override fun readCurrentAttributes(instanceIdentifier: InstanceIdentifier<Config>,
-                                       configBuilder: ConfigBuilder,
-                                       readContext: ReadContext) {
+    override fun readCurrentAttributes(
+        instanceIdentifier: InstanceIdentifier<Config>,
+        configBuilder: ConfigBuilder,
+        readContext: ReadContext
+    ) {
         if (isVrf(instanceIdentifier)) {
-            configBuilder.name = instanceIdentifier.firstKeyOf<NetworkInstance, NetworkInstanceKey>(NetworkInstance::class.java).name
+            configBuilder.name = instanceIdentifier.firstKeyOf<NetworkInstance,
+                NetworkInstanceKey>(NetworkInstance::class.java).name
             configBuilder.type = L2VSI::class.java
 
             // TODO set other attributes i.e. description
@@ -50,6 +53,7 @@ class L2VSIConfigReader(private val underlayAccess: UnderlayAccess) : ConfigRead
 
     @Throws(ReadFailedException::class)
     private fun isVrf(id: InstanceIdentifier<Config>): Boolean {
-        return L2VSIReader.getAllIds(underlayAccess).contains(id.firstKeyOf<NetworkInstance, NetworkInstanceKey>(NetworkInstance::class.java))
+        return L2VSIReader.getAllIds(underlayAccess).contains(id.firstKeyOf<NetworkInstance,
+            NetworkInstanceKey>(NetworkInstance::class.java))
     }
 }

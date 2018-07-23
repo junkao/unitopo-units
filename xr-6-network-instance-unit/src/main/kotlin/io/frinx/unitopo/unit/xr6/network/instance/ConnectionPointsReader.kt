@@ -28,10 +28,11 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.insta
 import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
-import java.util.*
+import java.util.ArrayList
 
 class ConnectionPointsReader(cli: UnderlayAccess) : ConfigReaderCustomizer<ConnectionPoints, ConnectionPointsBuilder>,
-        CompositeReader<ConnectionPoints, ConnectionPointsBuilder>(object : ArrayList<ReaderCustomizer<ConnectionPoints, ConnectionPointsBuilder>>() {
+        CompositeReader<ConnectionPoints, ConnectionPointsBuilder>(
+            object : ArrayList<ReaderCustomizer<ConnectionPoints, ConnectionPointsBuilder>>() {
     init {
         add(L2P2PConnectionPointsReader(cli))
         add(L2VSIConnectionPointsReader(cli))

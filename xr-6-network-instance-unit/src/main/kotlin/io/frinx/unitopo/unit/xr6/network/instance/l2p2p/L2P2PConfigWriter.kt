@@ -24,15 +24,28 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
 class L2P2PConfigWriter(private val cli: UnderlayAccess) : WriterCustomizer<Config> {
 
-    override fun writeCurrentAttributes(instanceIdentifier: InstanceIdentifier<Config>, config: Config, writeContext: WriteContext) {
+    override fun writeCurrentAttributes(
+        instanceIdentifier: InstanceIdentifier<Config>,
+        config: Config,
+        writeContext: WriteContext
+    ) {
         // NOOP at this level
     }
 
-    override fun updateCurrentAttributes(id: InstanceIdentifier<Config>, dataBefore: Config, dataAfter: Config, writeContext: WriteContext) {
+    override fun updateCurrentAttributes(
+        id: InstanceIdentifier<Config>,
+        dataBefore: Config,
+        dataAfter: Config,
+        writeContext: WriteContext
+    ) {
         // NOOP at this level
     }
 
-    override fun deleteCurrentAttributes(instanceIdentifier: InstanceIdentifier<Config>, config: Config, writeContext: WriteContext) {
+    override fun deleteCurrentAttributes(
+        instanceIdentifier: InstanceIdentifier<Config>,
+        config: Config,
+        writeContext: WriteContext
+    ) {
         // NOOP at this level
     }
 }

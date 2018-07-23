@@ -46,7 +46,6 @@ import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.instance.instance.`as`.four._byte.`as`.vrfs.vrf.vrf.global.RouteDistinguisher as UnderlayRouteDistinguisher
-import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.instance.instance.`as`.four._byte.`as`.vrfs.vrf.vrf.global.RouteDistinguisherBuilder as UnderlayRouteDistinguisherBuilder
 
 class VrfConfigReader(private val underlayAccess: UnderlayAccess) : ConfigReaderCustomizer<Config, ConfigBuilder>,
         CompositeReader.Child<Config, ConfigBuilder> {
@@ -64,10 +63,10 @@ class VrfConfigReader(private val underlayAccess: UnderlayAccess) : ConfigReader
         }
     }
 
-
     @Throws(ReadFailedException::class)
     private fun isVrf(id: InstanceIdentifier<Config>): Boolean {
-        return VrfReader.getAllIds(underlayAccess).contains(id.firstKeyOf<NetworkInstance, NetworkInstanceKey>(NetworkInstance::class.java))
+        return VrfReader.getAllIds(underlayAccess).contains(id.firstKeyOf<NetworkInstance,
+            NetworkInstanceKey>(NetworkInstance::class.java))
     }
 
     override fun getBuilder(id: InstanceIdentifier<Config>): ConfigBuilder = ConfigBuilder()
@@ -82,7 +81,8 @@ class VrfConfigReader(private val underlayAccess: UnderlayAccess) : ConfigReader
          * Get RD from BGP configuration
          */
         private fun getRd(underlayAccess: UnderlayAccess, vrfKey: NetworkInstanceKey): RouteDistinguisher? {
-            val data = underlayAccess.read(BgpProtocolReader.UNDERLAY_BGP.child(Instance::class.java, InstanceKey(XR_BGP_INSTANCE_NAME)))
+            val data = underlayAccess.read(BgpProtocolReader.UNDERLAY_BGP.child(Instance::class.java,
+                InstanceKey(XR_BGP_INSTANCE_NAME)))
                     .checkedGet()
                     .orNull()
             return BgpProtocolReader.getFirst4ByteAs(data)

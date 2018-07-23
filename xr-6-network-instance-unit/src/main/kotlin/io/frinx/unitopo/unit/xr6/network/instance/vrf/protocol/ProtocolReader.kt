@@ -32,7 +32,8 @@ import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class ProtocolReader(cli: UnderlayAccess) : L3VrfListReader.L3VrfConfigListReader<Protocol, ProtocolKey, ProtocolBuilder> {
+class ProtocolReader(cli: UnderlayAccess) :
+    L3VrfListReader.L3VrfConfigListReader<Protocol, ProtocolKey, ProtocolBuilder> {
 
     private val delegate: XrProtocolReaderComposite
 
@@ -42,7 +43,8 @@ class ProtocolReader(cli: UnderlayAccess) : L3VrfListReader.L3VrfConfigListReade
     }
 
     @Throws(ReadFailedException::class)
-    override fun getAllIdsForType(instanceIdentifier: InstanceIdentifier<Protocol>, readContext: ReadContext): List<ProtocolKey> {
+    override fun getAllIdsForType(instanceIdentifier: InstanceIdentifier<Protocol>, readContext: ReadContext):
+        List<ProtocolKey> {
         return delegate.getAllIds(instanceIdentifier, readContext)
     }
 
@@ -51,7 +53,11 @@ class ProtocolReader(cli: UnderlayAccess) : L3VrfListReader.L3VrfConfigListReade
     }
 
     @Throws(ReadFailedException::class)
-    override fun readCurrentAttributesForType(instanceIdentifier: InstanceIdentifier<Protocol>, protocolBuilder: ProtocolBuilder, readContext: ReadContext) {
+    override fun readCurrentAttributesForType(
+        instanceIdentifier: InstanceIdentifier<Protocol>,
+        protocolBuilder: ProtocolBuilder,
+        readContext: ReadContext
+    ) {
         delegate.readCurrentAttributes(instanceIdentifier, protocolBuilder, readContext)
     }
 
@@ -59,7 +65,8 @@ class ProtocolReader(cli: UnderlayAccess) : L3VrfListReader.L3VrfConfigListReade
         return delegate.getBuilder(id)
     }
 
-    class XrProtocolReaderComposite(cli: UnderlayAccess) : ProtocolReaderComposite(object : ArrayList<ListReaderCustomizer<Protocol, ProtocolKey, ProtocolBuilder>>() {
+    class XrProtocolReaderComposite(cli: UnderlayAccess) :
+        ProtocolReaderComposite(object : ArrayList<ListReaderCustomizer<Protocol, ProtocolKey, ProtocolBuilder>>() {
         init {
             add(OspfProtocolReader(cli))
             add(BgpProtocolReader(cli))

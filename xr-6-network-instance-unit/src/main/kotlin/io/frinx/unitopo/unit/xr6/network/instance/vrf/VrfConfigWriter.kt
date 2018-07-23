@@ -53,7 +53,12 @@ class VrfConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCustom
         underlayAccess.delete(vrfIid)
     }
 
-    override fun updateCurrentAttributes(id: org.opendaylight.yangtools.yang.binding.InstanceIdentifier<Config>, dataBefore: Config, dataAfter: Config, writeContext: WriteContext) {
+    override fun updateCurrentAttributes(
+        id: org.opendaylight.yangtools.yang.binding.InstanceIdentifier<Config>,
+        dataBefore: Config,
+        dataAfter: Config,
+        writeContext: WriteContext
+    ) {
         if (dataAfter.type != L3VRF::class.java) {
             return
         }
@@ -97,7 +102,9 @@ class VrfConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCustom
                                 // Reuse existing AF configuration
                                 .map { vrfBuilder
                                             .afs?.af.orEmpty()
-                                            .find { existIt -> existIt.afName == it && existIt.safName == VrfSubAddressFamily.Unicast && existIt.topologyName == TOPO_NAME }
+                                            .find { existIt -> existIt.afName == it &&
+                                                existIt.safName == VrfSubAddressFamily.Unicast &&
+                                                existIt.topologyName == TOPO_NAME }
                                             ?: AfBuilder().setAfName(it).build() }
                                 .map { AfBuilder(it) }
                                 .map { it.setCreate(true)

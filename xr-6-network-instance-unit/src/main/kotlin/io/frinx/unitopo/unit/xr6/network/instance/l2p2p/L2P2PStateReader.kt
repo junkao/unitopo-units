@@ -27,18 +27,22 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.insta
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.types.rev170228.L2P2P
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class L2P2PStateReader(private val underlayAccess: UnderlayAccess) : OperReaderCustomizer<State, StateBuilder>, CompositeReader.Child<State, StateBuilder> {
+class L2P2PStateReader(private val underlayAccess: UnderlayAccess) :
+    OperReaderCustomizer<State, StateBuilder>, CompositeReader.Child<State, StateBuilder> {
 
     override fun getBuilder(p0: InstanceIdentifier<State>): StateBuilder {
         // NOOP
         throw UnsupportedOperationException("Should not be invoked")
     }
 
-    override fun readCurrentAttributes(instanceIdentifier: InstanceIdentifier<State>,
-                                       configBuilder: StateBuilder,
-                                       readContext: ReadContext) {
+    override fun readCurrentAttributes(
+        instanceIdentifier: InstanceIdentifier<State>,
+        configBuilder: StateBuilder,
+        readContext: ReadContext
+    ) {
         if (isP2P(instanceIdentifier, readContext)) {
-            configBuilder.name = instanceIdentifier.firstKeyOf<NetworkInstance, NetworkInstanceKey>(NetworkInstance::class.java).name
+            configBuilder.name = instanceIdentifier
+                .firstKeyOf<NetworkInstance, NetworkInstanceKey>(NetworkInstance::class.java).name
             configBuilder.type = L2P2P::class.java
 
             // TODO set other attributes i.e. description

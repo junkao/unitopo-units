@@ -21,7 +21,13 @@ import io.frinx.openconfig.openconfig.network.instance.IIDs
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr6.network.instance.common.L2vsiWriter
 import io.frinx.unitopo.unit.xr6.network.instance.l2vsi.L2VSIReader
-import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.l2vpn.cfg.rev151109.*
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.l2vpn.cfg.rev151109.BgpRouteDistinguisher
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.l2vpn.cfg.rev151109.BgpRouteTargetFormat
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.l2vpn.cfg.rev151109.BgpRouteTargetRole
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.l2vpn.cfg.rev151109.RdasIndex
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.l2vpn.cfg.rev151109.RdasRange
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.l2vpn.cfg.rev151109.VeidRange
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.l2vpn.cfg.rev151109.VpnidRange
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.l2vpn.cfg.rev151109.l2vpn.database.bridge.domain.groups.bridge.domain.group.bridge.domains.BridgeDomain
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.l2vpn.cfg.rev151109.l2vpn.database.bridge.domain.groups.bridge.domain.group.bridge.domains.BridgeDomainBuilder
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.l2vpn.cfg.rev151109.l2vpn.database.bridge.domain.groups.bridge.domain.group.bridge.domains.BridgeDomainKey
@@ -50,12 +56,15 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
 class L2VSIConnectionPointsWriter(private val underlayAccess: UnderlayAccess) : L2vsiWriter<ConnectionPoints> {
 
-    override fun writeCurrentAttributesForType(id: InstanceIdentifier<ConnectionPoints>,
-                                               o: ConnectionPoints,
-                                               writeContext: WriteContext) {
+    override fun writeCurrentAttributesForType(
+        id: InstanceIdentifier<ConnectionPoints>,
+        o: ConnectionPoints,
+        writeContext: WriteContext
+    ) {
         val l2vsiName = id.firstKeyOf(NetworkInstance::class.java).name
 
-        val protocols = writeContext.readAfter(IIDs.NETWORKINSTANCES.child(NetworkInstance::class.java, NetworkInstanceKey(l2vsiName))
+        val protocols = writeContext.readAfter(IIDs.NETWORKINSTANCES.child(NetworkInstance::class.java,
+            NetworkInstanceKey(l2vsiName))
                 .child(Protocols::class.java))
                 .orNull()
         requireNotNull(protocols, { "No routing protocol set for l2vpn: $l2vsiName" })
@@ -68,20 +77,23 @@ class L2VSIConnectionPointsWriter(private val underlayAccess: UnderlayAccess) : 
         underlayAccess.merge(L2VSIReader.UNDERLAY_BD_ID
                 .child(BridgeDomain::class.java, BridgeDomainKey(CiscoIosXrString(l2vsiName))),
                 o.toUnderlay(l2vsiName, asNumber))
-
     }
 
-    override fun updateCurrentAttributesForType(id: InstanceIdentifier<ConnectionPoints>,
-                                                dataBefore: ConnectionPoints,
-                                                dataAfter: ConnectionPoints,
-                                                writeContext: WriteContext) {
+    override fun updateCurrentAttributesForType(
+        id: InstanceIdentifier<ConnectionPoints>,
+        dataBefore: ConnectionPoints,
+        dataAfter: ConnectionPoints,
+        writeContext: WriteContext
+    ) {
         deleteCurrentAttributes(id, dataBefore, writeContext)
         writeCurrentAttributes(id, dataAfter, writeContext)
     }
 
-    override fun deleteCurrentAttributesForType(id: InstanceIdentifier<ConnectionPoints>,
-                                                o: ConnectionPoints,
-                                                writeContext: WriteContext) {
+    override fun deleteCurrentAttributesForType(
+        id: InstanceIdentifier<ConnectionPoints>,
+        o: ConnectionPoints,
+        writeContext: WriteContext
+    ) {
         val l2vsiName = id.firstKeyOf(NetworkInstance::class.java).name
 
         underlayAccess.delete(L2VSIReader.UNDERLAY_BD_ID
@@ -138,7 +150,6 @@ private fun ConnectionPoints.toUnderlay(l2vsiName: String, asNumber: AsNumber): 
                     .build()) }
 
     return builder.build()
-
 }
 
 private fun Endpoint.toUnderlayLocalEndpoint(): BdAttachmentCircuit {

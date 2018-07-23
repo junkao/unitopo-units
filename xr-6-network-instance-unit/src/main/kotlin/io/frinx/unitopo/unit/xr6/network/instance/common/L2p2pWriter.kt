@@ -23,7 +23,7 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.insta
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.Config
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
-import java.util.*
+import java.util.AbstractMap
 import java.util.function.Function
 
 interface L2p2pWriter<O : DataObject> : TypedWriter<O>, WriterCustomizer<O> {

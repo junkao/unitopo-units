@@ -37,11 +37,14 @@ class VrfStateReader(private val cli: UnderlayAccess) : OperReaderCustomizer<Sta
     }
 
     @Throws(ReadFailedException::class)
-    override fun readCurrentAttributes(instanceIdentifier: InstanceIdentifier<State>,
-                                       stateBuilder: StateBuilder,
-                                       readContext: ReadContext) {
+    override fun readCurrentAttributes(
+        instanceIdentifier: InstanceIdentifier<State>,
+        stateBuilder: StateBuilder,
+        readContext: ReadContext
+    ) {
         if (isVrf(instanceIdentifier)) {
-            stateBuilder.name = instanceIdentifier.firstKeyOf<NetworkInstance, NetworkInstanceKey>(NetworkInstance::class.java).name
+            stateBuilder.name = instanceIdentifier.firstKeyOf<NetworkInstance,
+                NetworkInstanceKey>(NetworkInstance::class.java).name
             stateBuilder.type = L3VRF::class.java
 
             // TODO set other attributes i.e. description
@@ -50,6 +53,7 @@ class VrfStateReader(private val cli: UnderlayAccess) : OperReaderCustomizer<Sta
 
     @Throws(ReadFailedException::class)
     private fun isVrf(id: InstanceIdentifier<State>): Boolean {
-        return VrfReader.getAllIds(cli).contains(id.firstKeyOf<NetworkInstance, NetworkInstanceKey>(NetworkInstance::class.java))
+        return VrfReader.getAllIds(cli).contains(id.firstKeyOf<NetworkInstance,
+            NetworkInstanceKey>(NetworkInstance::class.java))
     }
 }

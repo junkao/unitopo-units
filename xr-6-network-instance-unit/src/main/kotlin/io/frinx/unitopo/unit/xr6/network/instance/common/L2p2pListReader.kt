@@ -27,18 +27,19 @@ import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.Identifiable
 import org.opendaylight.yangtools.yang.binding.Identifier
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
-import java.util.*
+import java.util.AbstractMap
 import java.util.function.Function
 
-interface L2p2pListReader<O : DataObject, K : Identifier<O>, B : Builder<O>> : TypedListReader<O, K, B> where O : Identifiable<K> {
+interface L2p2pListReader<O : DataObject, K : Identifier<O>, B : Builder<O>> : TypedListReader<O, K, B>
+    where O : Identifiable<K> {
 
     override fun getParentCheck(id: InstanceIdentifier<O>?) =
             AbstractMap.SimpleEntry<InstanceIdentifier<out DataObject>, Function<DataObject, Boolean>>(
                 RWUtils.cutId(id!!, NetworkInstance::class.java).child(Config::class.java),
                 L2p2pReader.L2P2P_CHECK)
 
-    interface L2p2pConfigListReader<O : DataObject, K : Identifier<O>, B : Builder<O>> : L2p2pListReader<O, K, B>, ConfigListReaderCustomizer<O, K, B> where O : Identifiable<K>
-    interface L2p2pOperListReader<O : DataObject, K : Identifier<O>, B : Builder<O>>:L2p2pListReader<O, K, B>, OperListReaderCustomizer<O, K, B> where O : Identifiable<K>
-
-
+    interface L2p2pConfigListReader<O : DataObject, K : Identifier<O>, B : Builder<O>> : L2p2pListReader<O, K, B>,
+        ConfigListReaderCustomizer<O, K, B> where O : Identifiable<K>
+    interface L2p2pOperListReader<O : DataObject, K : Identifier<O>, B : Builder<O>> : L2p2pListReader<O, K, B>,
+        OperListReaderCustomizer<O, K, B> where O : Identifiable<K>
 }

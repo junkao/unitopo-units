@@ -18,7 +18,6 @@ package io.frinx.unitopo.unit.xr6.network.instance.l2p2p
 
 import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
-import io.fd.honeycomb.translate.util.RWUtils
 import io.frinx.cli.registry.common.CompositeReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
@@ -28,7 +27,8 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.insta
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.types.rev170228.L2P2P
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class L2P2PConfigReader(private val underlayAccess: UnderlayAccess) : ConfigReaderCustomizer<Config, ConfigBuilder>,
+class L2P2PConfigReader(private val underlayAccess: UnderlayAccess) :
+    ConfigReaderCustomizer<Config, ConfigBuilder>,
         CompositeReader.Child<Config, ConfigBuilder> {
 
     override fun getBuilder(p0: InstanceIdentifier<Config>): ConfigBuilder {
@@ -36,11 +36,14 @@ class L2P2PConfigReader(private val underlayAccess: UnderlayAccess) : ConfigRead
         throw UnsupportedOperationException("Should not be invoked")
     }
 
-    override fun readCurrentAttributes(instanceIdentifier: InstanceIdentifier<Config>,
-                                       configBuilder: ConfigBuilder,
-                                       readContext: ReadContext) {
+    override fun readCurrentAttributes(
+        instanceIdentifier: InstanceIdentifier<Config>,
+        configBuilder: ConfigBuilder,
+        readContext: ReadContext
+    ) {
         if (isP2P(instanceIdentifier)) {
-            configBuilder.name = instanceIdentifier.firstKeyOf<NetworkInstance, NetworkInstanceKey>(NetworkInstance::class.java).name
+            configBuilder.name = instanceIdentifier.firstKeyOf<NetworkInstance,
+                NetworkInstanceKey>(NetworkInstance::class.java).name
             configBuilder.type = L2P2P::class.java
 
             // TODO set other attributes i.e. description

@@ -26,8 +26,8 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.insta
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.ConfigBuilder
 import io.frinx.unitopo.unit.network.instance.NetworkInstanceConfigReader
 
-class NetworkInstanceConfigReader(cli: UnderlayAccess) :
-        NetworkInstanceConfigReader(object : ArrayList<ReaderCustomizer<Config, ConfigBuilder>>() {
+class NetworkInstanceConfigReader(cli: UnderlayAccess)
+    : NetworkInstanceConfigReader(object : ArrayList<ReaderCustomizer<Config, ConfigBuilder>>() {
             init {
                 add(VrfConfigReader(cli))
                 add(DefaultConfigReader())

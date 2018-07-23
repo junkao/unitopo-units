@@ -25,7 +25,8 @@ import io.frinx.unitopo.unit.xr6.network.instance.l2p2p.L2P2PConfigWriter
 import io.frinx.unitopo.unit.xr6.network.instance.vrf.VrfConfigWriter
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.Config
 
-class NetworkInstanceConfigWriter(access: UnderlayAccess) : CompositeWriter<Config>(Lists.newArrayList<WriterCustomizer<Config>>(
+class NetworkInstanceConfigWriter(access: UnderlayAccess)
+    : CompositeWriter<Config>(Lists.newArrayList<WriterCustomizer<Config>>(
         VrfConfigWriter(access),
         DefaultConfigWriter(),
         L2P2PConfigWriter(access)))

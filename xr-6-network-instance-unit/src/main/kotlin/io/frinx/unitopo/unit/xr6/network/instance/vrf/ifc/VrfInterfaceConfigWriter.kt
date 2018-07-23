@@ -59,8 +59,10 @@ class VrfInterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : Wri
             return
         }
 
-        val ifcExists = wc.readAfter(IIDs.INTERFACES.child(org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.Interface::class.java,
-                org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.InterfaceKey(data.id)))
+        val ifcExists = wc.readAfter(IIDs.INTERFACES.child(org.opendaylight.yang.gen.v1.http
+            .frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.Interface::class.java,
+                org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top
+                    .interfaces.InterfaceKey(data.id)))
                 .isPresent
         Preconditions.checkArgument(ifcExists, "Interface: %s does not exist, cannot add it to VRF", data.id)
 
@@ -78,8 +80,8 @@ class VrfInterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : Wri
     companion object {
         public fun getInterfaceConfigurationIdentifier(ifaceName: String): IID<InterfaceConfiguration> {
             return IID.create(InterfaceConfigurations::class.java)
-                    .child(InterfaceConfiguration::class.java, InterfaceConfigurationKey(InterfaceActive("act"), InterfaceName(ifaceName)))
-
+                    .child(InterfaceConfiguration::class.java, InterfaceConfigurationKey(InterfaceActive("act"),
+                        InterfaceName(ifaceName)))
         }
     }
 }

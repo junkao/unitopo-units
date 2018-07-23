@@ -30,10 +30,15 @@ import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class VrfReader(private val underlayAccess: UnderlayAccess) : ConfigListReaderCustomizer<NetworkInstance, NetworkInstanceKey, NetworkInstanceBuilder>,
+class VrfReader(private val underlayAccess: UnderlayAccess) :
+    ConfigListReaderCustomizer<NetworkInstance, NetworkInstanceKey, NetworkInstanceBuilder>,
         CompositeListReader.Child<NetworkInstance, NetworkInstanceKey, NetworkInstanceBuilder> {
 
-    override fun readCurrentAttributes(id: InstanceIdentifier<NetworkInstance>, builder: NetworkInstanceBuilder, ctx: ReadContext) {
+    override fun readCurrentAttributes(
+        id: InstanceIdentifier<NetworkInstance>,
+        builder: NetworkInstanceBuilder,
+        ctx: ReadContext
+    ) {
         val vrfName = id.firstKeyOf(NetworkInstance::class.java).name
         builder.name = vrfName
     }
