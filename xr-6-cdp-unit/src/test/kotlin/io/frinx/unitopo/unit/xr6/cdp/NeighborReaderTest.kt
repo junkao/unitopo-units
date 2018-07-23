@@ -28,7 +28,7 @@ class NeighborReaderTest : AbstractNetconfHandlerTest() {
     @Test
     fun testAllIds() {
         val cdp = parseGetCfgResponse(DATA_NODES, InterfaceReader.CDP_OPER)
-        val neighbors = InterfaceReader.parseInterfaceNeighbors("MgmtEth0/0/CPU0/0", cdp);
+        val neighbors = InterfaceReader.parseInterfaceNeighbors("MgmtEth0/0/CPU0/0", cdp)
 
         Assert.assertEquals(
                 listOf("PE2.demo.frinx.io", "XE1.FRINX", "R121.FRINX.LOCAL", "XE2.FRINX", "R2.FRINX.LOCAL", "TELNET")
