@@ -26,8 +26,9 @@ import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-open class ProtocolReaderComposite(readers : ArrayList<ListReaderCustomizer<Protocol, ProtocolKey, ProtocolBuilder>>) :
-        CompositeListReader<Protocol, ProtocolKey, ProtocolBuilder>(readers), ListReaderCustomizer<Protocol, ProtocolKey, ProtocolBuilder> {
+open class ProtocolReaderComposite(readers: ArrayList<ListReaderCustomizer<Protocol, ProtocolKey, ProtocolBuilder>>) :
+        CompositeListReader<Protocol, ProtocolKey, ProtocolBuilder>(readers),
+    ListReaderCustomizer<Protocol, ProtocolKey, ProtocolBuilder> {
 
     override fun merge(builder: Builder<out DataObject>, list: List<Protocol>) {
         (builder as ProtocolsBuilder).protocol = list

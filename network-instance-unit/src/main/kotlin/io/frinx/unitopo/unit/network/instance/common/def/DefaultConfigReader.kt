@@ -28,7 +28,8 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.insta
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.types.rev170228.DEFAULTINSTANCE
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class DefaultConfigReader : ConfigReaderCustomizer<Config, ConfigBuilder>, CompositeReader.Child<Config, ConfigBuilder> {
+class DefaultConfigReader
+    : ConfigReaderCustomizer<Config, ConfigBuilder>, CompositeReader.Child<Config, ConfigBuilder> {
 
     override fun getBuilder(p0: InstanceIdentifier<Config>): ConfigBuilder {
         // NOOP
@@ -36,11 +37,14 @@ class DefaultConfigReader : ConfigReaderCustomizer<Config, ConfigBuilder>, Compo
     }
 
     @Throws(ReadFailedException::class)
-    override fun readCurrentAttributes(instanceIdentifier: InstanceIdentifier<Config>,
-                                       configBuilder: ConfigBuilder,
-                                       readContext: ReadContext) {
+    override fun readCurrentAttributes(
+        instanceIdentifier: InstanceIdentifier<Config>,
+        configBuilder: ConfigBuilder,
+        readContext: ReadContext
+    ) {
         if (isDefault(instanceIdentifier)) {
-            configBuilder.name = instanceIdentifier.firstKeyOf<NetworkInstance, NetworkInstanceKey>(NetworkInstance::class.java).name
+            configBuilder.name = instanceIdentifier
+                .firstKeyOf<NetworkInstance, NetworkInstanceKey>(NetworkInstance::class.java).name
             configBuilder.type = DEFAULTINSTANCE::class.java
         }
     }
@@ -48,8 +52,8 @@ class DefaultConfigReader : ConfigReaderCustomizer<Config, ConfigBuilder>, Compo
     companion object {
 
         internal fun isDefault(instanceIdentifier: InstanceIdentifier<*>): Boolean {
-            return instanceIdentifier.firstKeyOf<NetworkInstance, NetworkInstanceKey>(NetworkInstance::class.java) == DEFAULT_NETWORK
+            return instanceIdentifier
+                .firstKeyOf<NetworkInstance, NetworkInstanceKey>(NetworkInstance::class.java) == DEFAULT_NETWORK
         }
     }
-
 }

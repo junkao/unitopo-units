@@ -26,7 +26,11 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 class DefaultConfigWriter : WriterCustomizer<Config> {
 
     @Throws(WriteFailedException.CreateFailedException::class)
-    override fun writeCurrentAttributes(instanceIdentifier: InstanceIdentifier<Config>, config: Config, writeContext: WriteContext) {
+    override fun writeCurrentAttributes(
+        instanceIdentifier: InstanceIdentifier<Config>,
+        config: Config,
+        writeContext: WriteContext
+    ) {
 
         if (config.type == DEFAULTINSTANCE::class.java) {
             throw WriteFailedException.CreateFailedException(instanceIdentifier, config, EX)
@@ -34,7 +38,12 @@ class DefaultConfigWriter : WriterCustomizer<Config> {
     }
 
     @Throws(WriteFailedException::class)
-    override fun updateCurrentAttributes(id: InstanceIdentifier<Config>, dataBefore: Config, dataAfter: Config, writeContext: WriteContext) {
+    override fun updateCurrentAttributes(
+        id: InstanceIdentifier<Config>,
+        dataBefore: Config,
+        dataAfter: Config,
+        writeContext: WriteContext
+    ) {
 
         if (dataAfter.type == DEFAULTINSTANCE::class.java) {
             throw WriteFailedException.UpdateFailedException(id, dataBefore, dataAfter, EX)
@@ -42,7 +51,11 @@ class DefaultConfigWriter : WriterCustomizer<Config> {
     }
 
     @Throws(WriteFailedException.DeleteFailedException::class)
-    override fun deleteCurrentAttributes(instanceIdentifier: InstanceIdentifier<Config>, config: Config, writeContext: WriteContext) {
+    override fun deleteCurrentAttributes(
+        instanceIdentifier: InstanceIdentifier<Config>,
+        config: Config,
+        writeContext: WriteContext
+    ) {
 
         if (config.type == DEFAULTINSTANCE::class.java) {
             throw WriteFailedException.DeleteFailedException(instanceIdentifier, EX)

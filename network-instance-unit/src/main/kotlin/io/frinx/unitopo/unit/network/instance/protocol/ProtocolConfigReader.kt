@@ -34,7 +34,11 @@ class ProtocolConfigReader : L3VrfReader.L3VrfConfigReader<Config, ConfigBuilder
     }
 
     @Throws(ReadFailedException::class)
-    override fun readCurrentAttributesForType(instanceIdentifier: InstanceIdentifier<Config>, configBuilder: ConfigBuilder, readContext: ReadContext) {
+    override fun readCurrentAttributesForType(
+        instanceIdentifier: InstanceIdentifier<Config>,
+        configBuilder: ConfigBuilder,
+        readContext: ReadContext
+    ) {
         val protocolKey = instanceIdentifier.firstKeyOf(Protocol::class.java)
         configBuilder.identifier = protocolKey.identifier
         configBuilder.name = protocolKey.name

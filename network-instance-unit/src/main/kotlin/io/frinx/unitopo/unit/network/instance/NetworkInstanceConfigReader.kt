@@ -26,8 +26,9 @@ import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-open class NetworkInstanceConfigReader(readers : ArrayList<ReaderCustomizer<Config, ConfigBuilder>>) :
-        ConfigReaderCustomizer<Config, ConfigBuilder>, CompositeReader<Config, ConfigBuilder>(readers), ReaderCustomizer<Config, ConfigBuilder> {
+open class NetworkInstanceConfigReader(readers: ArrayList<ReaderCustomizer<Config, ConfigBuilder>>) :
+        ConfigReaderCustomizer<Config, ConfigBuilder>, CompositeReader<Config, ConfigBuilder>(readers),
+    ReaderCustomizer<Config, ConfigBuilder> {
 
     override fun getBuilder(instanceIdentifier: InstanceIdentifier<Config>): ConfigBuilder {
         return ConfigBuilder()

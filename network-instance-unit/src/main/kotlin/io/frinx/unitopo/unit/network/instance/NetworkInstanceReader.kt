@@ -27,8 +27,11 @@ import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-open class NetworkInstanceReader(readers : ArrayList<ListReaderCustomizer<NetworkInstance, NetworkInstanceKey, NetworkInstanceBuilder>>) : ConfigListReaderCustomizer<NetworkInstance, NetworkInstanceKey, NetworkInstanceBuilder>,
-        CompositeListReader<NetworkInstance, NetworkInstanceKey, NetworkInstanceBuilder>(readers), ListReaderCustomizer<NetworkInstance, NetworkInstanceKey, NetworkInstanceBuilder> {
+open class NetworkInstanceReader(
+    readers: ArrayList<ListReaderCustomizer<NetworkInstance, NetworkInstanceKey, NetworkInstanceBuilder>>
+) : ConfigListReaderCustomizer<NetworkInstance, NetworkInstanceKey, NetworkInstanceBuilder>,
+        CompositeListReader<NetworkInstance, NetworkInstanceKey, NetworkInstanceBuilder>(readers),
+    ListReaderCustomizer<NetworkInstance, NetworkInstanceKey, NetworkInstanceBuilder> {
 
     override fun merge(builder: Builder<out DataObject>, list: List<NetworkInstance>) {
         (builder as NetworkInstancesBuilder).networkInstance = list

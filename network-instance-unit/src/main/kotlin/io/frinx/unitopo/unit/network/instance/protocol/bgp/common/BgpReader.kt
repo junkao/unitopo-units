@@ -35,7 +35,6 @@ interface BgpReader<O : DataObject, B : Builder<O>> : TypedReader<O, B> {
         val NAME: String = "default"
     }
 
-
     /**
      * Union mixin of Bgp reader and Config reader.
      */

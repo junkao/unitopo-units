@@ -24,7 +24,8 @@ import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-open class NetworkInstanceStateReader(readers : ArrayList<ReaderCustomizer<State, StateBuilder>>) : CompositeReader<State, StateBuilder>(
+open class NetworkInstanceStateReader(readers: ArrayList<ReaderCustomizer<State, StateBuilder>>) :
+    CompositeReader<State, StateBuilder>(
         readers), ReaderCustomizer<State, StateBuilder> {
 
     override fun getBuilder(instanceIdentifier: InstanceIdentifier<State>): StateBuilder {
