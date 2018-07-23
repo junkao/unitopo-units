@@ -32,7 +32,11 @@ class StaticStateReader : LrReader.LrOperReader<State, StateBuilder> {
     override fun getBuilder(instanceIdentifier: InstanceIdentifier<State>) = StateBuilder()
 
     @Throws(ReadFailedException::class)
-    override fun readCurrentAttributesForType(instanceIdentifier: InstanceIdentifier<State>, stateBuilder: StateBuilder, readContext: ReadContext) {
+    override fun readCurrentAttributesForType(
+        instanceIdentifier: InstanceIdentifier<State>,
+        stateBuilder: StateBuilder,
+        readContext: ReadContext
+    ) {
         val ipPrefix = instanceIdentifier.firstKeyOf<Static, StaticKey>(Static::class.java).prefix
         stateBuilder.prefix = ipPrefix
     }

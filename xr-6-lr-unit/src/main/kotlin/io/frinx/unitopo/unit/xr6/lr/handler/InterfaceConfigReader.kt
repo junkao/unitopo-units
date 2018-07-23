@@ -33,7 +33,11 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
 class InterfaceConfigReader(private val access: UnderlayAccess) : LrReader.LrOperReader<Config, ConfigBuilder> {
 
-    override fun readCurrentAttributesForType(id: InstanceIdentifier<Config>, builder: ConfigBuilder, ctx: ReadContext) {
+    override fun readCurrentAttributesForType(
+        id: InstanceIdentifier<Config>,
+        builder: ConfigBuilder,
+        ctx: ReadContext
+    ) {
         val key = id.firstKeyOf(NextHop::class.java)
         val vrfName = id.firstKeyOf(NetworkInstance::class.java).name
         val routeKey = id.firstKeyOf(Static::class.java)
@@ -57,7 +61,8 @@ class InterfaceConfigReader(private val access: UnderlayAccess) : LrReader.LrOpe
             table.vrfNextHopInterfaceName.orEmpty().firstOrNull { it.interfaceName.value == key.toString() }?.let {
                 builder.`interface` = it.interfaceName.value
             }
-            table.vrfNextHopInterfaceNameNextHopAddress.orEmpty().firstOrNull { it.nextHopAddress.createComplexKey(it.interfaceName.value) == key }?.let {
+            table.vrfNextHopInterfaceNameNextHopAddress.orEmpty().firstOrNull { it.nextHopAddress
+                .createComplexKey(it.interfaceName.value) == key }?.let {
                 builder.`interface` = it.interfaceName.value
             }
         }

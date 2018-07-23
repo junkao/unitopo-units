@@ -41,14 +41,18 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.
 import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
-import java.util.*
+import java.util.ArrayList
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.local.routing.rev170515.LocalStaticNexthopConfig.NextHop as BASE_NEXTHOP_CONFIG
 
 class NextHopReader(private val access: UnderlayAccess) : LrListReader<NextHop, NextHopKey, NextHopBuilder> {
 
     override fun getBuilder(id: InstanceIdentifier<NextHop>) = NextHopBuilder()
 
-    override fun readCurrentAttributesForType(id: InstanceIdentifier<NextHop>, builder: NextHopBuilder, ctx: ReadContext) {
+    override fun readCurrentAttributesForType(
+        id: InstanceIdentifier<NextHop>,
+        builder: NextHopBuilder,
+        ctx: ReadContext
+    ) {
         if (access.currentOperationType == LogicalDatastoreType.CONFIGURATION) {
             // FIXME Since this mixes config and oper data, it can only work in oper reads
             return
@@ -120,7 +124,8 @@ class NextHopReader(private val access: UnderlayAccess) : LrListReader<NextHop, 
             table.vrfNextHopInterfaceName.orEmpty().forEach { keys.add(NextHopKey(it.interfaceName.value)) }
 
             // interface + nexthop
-            table.vrfNextHopInterfaceNameNextHopAddress.orEmpty().forEach { keys.add(it.nextHopAddress.createComplexKey(it.interfaceName.value)) }
+            table.vrfNextHopInterfaceNameNextHopAddress.orEmpty().forEach { keys.add(it.nextHopAddress
+                .createComplexKey(it.interfaceName.value)) }
 
             // only next hop
             table.vrfNextHopNextHopAddress.orEmpty().forEach { keys.add(it.nextHopAddress.createComplexKey(null)) }
@@ -159,13 +164,13 @@ class NextHopReader(private val access: UnderlayAccess) : LrListReader<NextHop, 
             builder.state = sBuilder.build()
         }
 
-
         private fun setMetric(cBuilder: ConfigBuilder, sBuilder: StateBuilder, content: VRFNEXTHOPCONTENT) {
             cBuilder.metric = content.loadMetric
             sBuilder.metric = content.loadMetric
         }
 
-        private fun VrfPrefixes.findPrefix(routeKey: StaticKey) = vrfPrefix.orEmpty().firstOrNull { it.ipAddressToPrefix().ipv4Prefix == routeKey.prefix.ipv4Prefix }
+        private fun VrfPrefixes.findPrefix(routeKey: StaticKey) = vrfPrefix.orEmpty().firstOrNull { it
+            .ipAddressToPrefix().ipv4Prefix == routeKey.prefix.ipv4Prefix }
 
         private fun ipFromIpAddressNoZone(ipNoZone: IpAddressNoZone): IpAddress {
             ipNoZone.ipv4AddressNoZone?.let {
