@@ -32,7 +32,11 @@ class AclInterfaceConfigReader : ConfigReaderCustomizer<Config, ConfigBuilder> {
     override fun getBuilder(p0: InstanceIdentifier<Config>): ConfigBuilder = ConfigBuilder()
 
     @Throws(ReadFailedException::class)
-    override fun readCurrentAttributes(instanceIdentifier: InstanceIdentifier<Config>, configBuilder: ConfigBuilder, readContext: ReadContext) {
+    override fun readCurrentAttributes(
+        instanceIdentifier: InstanceIdentifier<Config>,
+        configBuilder: ConfigBuilder,
+        readContext: ReadContext
+    ) {
         configBuilder.id = instanceIdentifier.firstKeyOf<Interface, InterfaceKey>(Interface::class.java).id
     }
 

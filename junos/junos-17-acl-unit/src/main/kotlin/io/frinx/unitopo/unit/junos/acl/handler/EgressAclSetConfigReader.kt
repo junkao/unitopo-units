@@ -27,7 +27,8 @@ import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
-class EgressAclSetConfigReader(private val underlayAccess: UnderlayAccess) : ConfigReaderCustomizer<Config, ConfigBuilder> {
+class EgressAclSetConfigReader(private val underlayAccess: UnderlayAccess) :
+    ConfigReaderCustomizer<Config, ConfigBuilder> {
 
     override fun getBuilder(id: IID<Config>): ConfigBuilder = ConfigBuilder()
 
@@ -39,7 +40,7 @@ class EgressAclSetConfigReader(private val underlayAccess: UnderlayAccess) : Con
         val setName = getSetName(id)
 
         config.setName = setName
-        //TODO add support for family inet6
+        // TODO add support for family inet6
         config.type = ACLIPV4::class.java
     }
 

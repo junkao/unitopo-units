@@ -27,22 +27,19 @@ import io.frinx.openconfig.openconfig.acl.IIDs
 import io.frinx.unitopo.registry.api.TranslationUnitCollector
 import io.frinx.unitopo.registry.spi.TranslateUnit
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.junos.acl.handler.*
+import io.frinx.unitopo.unit.junos.acl.handler.AclInterfaceConfigReader
+import io.frinx.unitopo.unit.junos.acl.handler.AclInterfaceReader
+import io.frinx.unitopo.unit.junos.acl.handler.EgressAclSetConfigReader
+import io.frinx.unitopo.unit.junos.acl.handler.EgressAclSetConfigWriter
+import io.frinx.unitopo.unit.junos.acl.handler.EgressAclSetReader
+import io.frinx.unitopo.unit.junos.acl.handler.IngressAclSetConfigReader
+import io.frinx.unitopo.unit.junos.acl.handler.IngressAclSetConfigWriter
+import io.frinx.unitopo.unit.junos.acl.handler.IngressAclSetReader
 import io.frinx.unitopo.unit.utils.NoopListWriter
 import io.frinx.unitopo.unit.utils.NoopWriter
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.acl.rev170526._interface.egress.acl.top.EgressAclSets
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.acl.rev170526._interface.egress.acl.top.EgressAclSetsBuilder
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.acl.rev170526._interface.egress.acl.top.egress.acl.sets.EgressAclSet
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.acl.rev170526._interface.egress.acl.top.egress.acl.sets.EgressAclSetKey
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.acl.rev170526._interface.ingress.acl.top.IngressAclSets
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.acl.rev170526._interface.ingress.acl.top.IngressAclSetsBuilder
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.acl.rev170526._interface.ingress.acl.top.ingress.acl.sets.IngressAclSet
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.acl.rev170526._interface.ingress.acl.top.ingress.acl.sets.IngressAclSetKey
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.acl.rev170526.acl.interfaces.top.Interfaces
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.acl.rev170526.acl.interfaces.top.InterfacesBuilder
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.acl.rev170526.acl.interfaces.top.interfaces.Interface
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.acl.rev170526.acl.interfaces.top.interfaces.InterfaceKey
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.acl.rev170526.acl.top.Acl
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.acl.rev170526.acl.top.AclBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.acl.rev170526.`$YangModuleInfoImpl` as AclYangInfo
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.`$YangModuleInfoImpl` as UnderlayInterfacesYangInfo
@@ -66,9 +63,11 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
 
     override fun getRpcs(underlayAccess: UnderlayAccess) = emptySet<RpcService<*, *>>()
 
-    override fun provideHandlers(rRegistry: ModifiableReaderRegistryBuilder,
-                                 wRegistry: ModifiableWriterRegistryBuilder,
-                                 underlayAccess: UnderlayAccess) {
+    override fun provideHandlers(
+        rRegistry: ModifiableReaderRegistryBuilder,
+        wRegistry: ModifiableWriterRegistryBuilder,
+        underlayAccess: UnderlayAccess
+    ) {
         provideReaders(rRegistry, underlayAccess)
         provideWriters(wRegistry, underlayAccess)
     }
@@ -99,5 +98,4 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
     }
 
     override fun toString(): String = "Junos 17.3 acl translate unit"
-
 }
