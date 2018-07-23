@@ -31,7 +31,8 @@ import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 import java.util.ArrayList
 
-class ProtocolReader(access: UnderlayAccess) : L3VrfListReader.L3VrfConfigListReader<Protocol, ProtocolKey, ProtocolBuilder> {
+class ProtocolReader(access: UnderlayAccess) :
+    L3VrfListReader.L3VrfConfigListReader<Protocol, ProtocolKey, ProtocolBuilder> {
 
     private val delegate: JunosProtocolReaderComposite
 
@@ -41,7 +42,8 @@ class ProtocolReader(access: UnderlayAccess) : L3VrfListReader.L3VrfConfigListRe
     }
 
     @Throws(ReadFailedException::class)
-    override fun getAllIdsForType(instanceIdentifier: InstanceIdentifier<Protocol>, readContext: ReadContext): List<ProtocolKey> {
+    override fun getAllIdsForType(instanceIdentifier: InstanceIdentifier<Protocol>, readContext: ReadContext):
+        List<ProtocolKey> {
         return delegate.getAllIds(instanceIdentifier, readContext)
     }
 
@@ -50,7 +52,11 @@ class ProtocolReader(access: UnderlayAccess) : L3VrfListReader.L3VrfConfigListRe
     }
 
     @Throws(ReadFailedException::class)
-    override fun readCurrentAttributesForType(instanceIdentifier: InstanceIdentifier<Protocol>, protocolBuilder: ProtocolBuilder, readContext: ReadContext) {
+    override fun readCurrentAttributesForType(
+        instanceIdentifier: InstanceIdentifier<Protocol>,
+        protocolBuilder: ProtocolBuilder,
+        readContext: ReadContext
+    ) {
         delegate.readCurrentAttributes(instanceIdentifier, protocolBuilder, readContext)
     }
 
@@ -58,7 +64,8 @@ class ProtocolReader(access: UnderlayAccess) : L3VrfListReader.L3VrfConfigListRe
         return delegate.getBuilder(id)
     }
 
-    class JunosProtocolReaderComposite(access: UnderlayAccess) : ProtocolReaderComposite(object : ArrayList<ListReaderCustomizer<Protocol, ProtocolKey, ProtocolBuilder>>() {
+    class JunosProtocolReaderComposite(access: UnderlayAccess) :
+        ProtocolReaderComposite(object : ArrayList<ListReaderCustomizer<Protocol, ProtocolKey, ProtocolBuilder>>() {
         init {
             add(BgpProtocolReader(access))
             add(OspfProtocolReader(access))
