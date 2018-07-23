@@ -31,7 +31,8 @@ import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv6.ma.cfg.rev150730.InterfaceConfiguration1 as UnderlayIpv6Augment
 
-open class Ipv6ConfigReader(private val underlayAccess: UnderlayAccess) : ConfigReaderCustomizer<Config, ConfigBuilder> {
+open class Ipv6ConfigReader(private val underlayAccess: UnderlayAccess) :
+    ConfigReaderCustomizer<Config, ConfigBuilder> {
 
     override fun getBuilder(id: InstanceIdentifier<Config>): ConfigBuilder = ConfigBuilder()
 

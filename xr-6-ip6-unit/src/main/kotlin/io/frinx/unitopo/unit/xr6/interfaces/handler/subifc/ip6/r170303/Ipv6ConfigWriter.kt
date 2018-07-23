@@ -42,7 +42,11 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
 class Ipv6ConfigWriter(private val underlayAccess: UnderlayAccess) : Ipv6ConfigWriter(underlayAccess) {
 
-    override fun writeCurrentAttributes(id: InstanceIdentifier<Config>, dataAfter: Config, writeContext: WriteContext) {
+    override fun writeCurrentAttributes(
+        id: InstanceIdentifier<Config>,
+        dataAfter: Config,
+        writeContext: WriteContext
+    ) {
         try {
             if (isLinkLocal(dataAfter.ip.value)) {
                 val (underlayId, underlayCfg) = getLinkLocalData(id, dataAfter)
@@ -56,7 +60,11 @@ class Ipv6ConfigWriter(private val underlayAccess: UnderlayAccess) : Ipv6ConfigW
         }
     }
 
-    override fun deleteCurrentAttributes(id: InstanceIdentifier<Config>, dataBefore: Config, writeContext: WriteContext) {
+    override fun deleteCurrentAttributes(
+        id: InstanceIdentifier<Config>,
+        dataBefore: Config,
+        writeContext: WriteContext
+    ) {
         try {
             if (isLinkLocal(dataBefore.ip.value)) {
                 underlayAccess.delete(getId(id)
@@ -94,9 +102,9 @@ class Ipv6ConfigWriter(private val underlayAccess: UnderlayAccess) : Ipv6ConfigW
         return Pair(getAddressId(id, dataAfter.ip), regBuilder.build())
     }
 
-    private fun getAddressId(id: InstanceIdentifier<Config>, ip : Ipv6AddressNoZone) : InstanceIdentifier<RegularAddress> {
+    private fun getAddressId(id: InstanceIdentifier<Config>, ip: Ipv6AddressNoZone):
+        InstanceIdentifier<RegularAddress> {
         return getId(id).child(RegularAddresses::class.java)
                 .child(RegularAddress::class.java, RegularAddressKey(IpAddressNoZone(ip)))
     }
-
 }

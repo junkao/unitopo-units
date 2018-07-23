@@ -33,7 +33,8 @@ import io.frinx.openconfig.openconfig.network.instance.IIDs as NetworkInstanceII
 class Unit(registry: TranslationUnitCollector) : Unit(registry) {
 
     override fun getUnderlayYangSchemas() = setOf(
-            org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv6.ma.cfg.rev170303.`$YangModuleInfoImpl`.getInstance())
+            org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco
+                .ios.xr.ipv6.ma.cfg.rev170303.`$YangModuleInfoImpl`.getInstance())
 
     override fun provideWriters(wRegistry: ModifiableWriterRegistryBuilder, underlayAccess: UnderlayAccess) {
         wRegistry.add(GenericWriter(SUBIFC_IPV6_ADDRESS_ID, Ipv6AddressWriter()))

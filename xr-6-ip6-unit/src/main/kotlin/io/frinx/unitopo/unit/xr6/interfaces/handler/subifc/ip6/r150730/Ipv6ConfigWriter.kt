@@ -46,7 +46,11 @@ import java.util.regex.Pattern
 
 open class Ipv6ConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCustomizer<Config> {
 
-    override fun writeCurrentAttributes(id: InstanceIdentifier<Config>, dataAfter: Config, writeContext: WriteContext) {
+    override fun writeCurrentAttributes(
+        id: InstanceIdentifier<Config>,
+        dataAfter: Config,
+        writeContext: WriteContext
+    ) {
         val subId = id.firstKeyOf(Subinterface::class.java).index
         if (subId != ZERO_SUBINTERFACE_ID) {
             throw WriteFailedException.CreateFailedException(id, dataAfter,
@@ -65,7 +69,11 @@ open class Ipv6ConfigWriter(private val underlayAccess: UnderlayAccess) : Writer
         }
     }
 
-    override fun deleteCurrentAttributes(id: InstanceIdentifier<Config>, dataBefore: Config, writeContext: WriteContext) {
+    override fun deleteCurrentAttributes(
+        id: InstanceIdentifier<Config>,
+        dataBefore: Config,
+        writeContext: WriteContext
+    ) {
         try {
             if (isLinkLocal(dataBefore.ip.value)) {
                 underlayAccess.delete(getId(id)
@@ -103,7 +111,8 @@ open class Ipv6ConfigWriter(private val underlayAccess: UnderlayAccess) : Writer
         return Pair(getAddressId(id, dataAfter.ip), regBuilder.build())
     }
 
-    private fun getAddressId(id: InstanceIdentifier<Config>, ip : Ipv6AddressNoZone) : InstanceIdentifier<RegularAddress> {
+    private fun getAddressId(id: InstanceIdentifier<Config>, ip: Ipv6AddressNoZone):
+        InstanceIdentifier<RegularAddress> {
         return getId(id).child(RegularAddresses::class.java)
             .child(RegularAddress::class.java, RegularAddressKey(IpAddressNoZone(ip)))
     }
