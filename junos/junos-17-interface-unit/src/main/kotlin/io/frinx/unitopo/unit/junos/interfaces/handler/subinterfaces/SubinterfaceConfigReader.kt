@@ -32,16 +32,19 @@ import org.opendaylight.controller.md.sal.common.api.data.ReadFailedException as
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.Unit as JunosInterfaceUnit
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
-class SubinterfaceConfigReader(private val underlayAccess: UnderlayAccess) : ConfigReaderCustomizer<Config, ConfigBuilder> {
+class SubinterfaceConfigReader(private val underlayAccess: UnderlayAccess)
+    : ConfigReaderCustomizer<Config, ConfigBuilder> {
 
     override fun getBuilder(instanceIdentifier: IID<Config>): ConfigBuilder {
         return ConfigBuilder()
     }
 
     @Throws(ReadFailedException::class)
-    override fun readCurrentAttributes(instanceIdentifier: IID<Config>,
-                                       configBuilder: ConfigBuilder,
-                                       readContext: ReadContext) {
+    override fun readCurrentAttributes(
+        instanceIdentifier: IID<Config>,
+        configBuilder: ConfigBuilder,
+        readContext: ReadContext
+    ) {
         try {
             val name = instanceIdentifier.firstKeyOf(Interface::class.java).name
             val unitId = instanceIdentifier.firstKeyOf(Subinterface::class.java).index
@@ -59,7 +62,3 @@ class SubinterfaceConfigReader(private val underlayAccess: UnderlayAccess) : Con
 internal fun ConfigBuilder.fromUnderlay(junosUnit: JunosInterfaceUnit) {
     index = junosUnit.name.toLong()
 }
-
-
-
-

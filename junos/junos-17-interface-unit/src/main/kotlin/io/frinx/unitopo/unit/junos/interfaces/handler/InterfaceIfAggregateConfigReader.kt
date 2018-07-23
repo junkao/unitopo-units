@@ -28,10 +28,10 @@ import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.controller.md.sal.common.api.data.ReadFailedException as MDSalReadFailed
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.gigether.options.Ieee8023ad as JunosGigEthIeee8023ad
-import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.gigether.options.Ieee8023adBuilder as JunosGigEthIeee8023adBuilder
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
-class InterfaceIfAggregateConfigReader(private val underlayAccess: UnderlayAccess) : ConfigReaderCustomizer<Config1, Config1Builder> {
+class InterfaceIfAggregateConfigReader(private val underlayAccess: UnderlayAccess) :
+    ConfigReaderCustomizer<Config1, Config1Builder> {
     override fun getBuilder(iid: IID<Config1>): Config1Builder {
         return Config1Builder()
     }

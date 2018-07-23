@@ -31,26 +31,29 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.re
 import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.controller.md.sal.common.api.data.ReadFailedException as MDSalReadFailed
-import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.Unit as JunosInterfaceUnit
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.unit.family.inet.Address as JunosInterfaceUnitAddress
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
-class SubinterfaceAddressConfigReader(private val underlayAccess: UnderlayAccess) : ConfigReaderCustomizer<Config, ConfigBuilder> {
+class SubinterfaceAddressConfigReader(private val underlayAccess: UnderlayAccess) :
+    ConfigReaderCustomizer<Config, ConfigBuilder> {
 
     override fun getBuilder(instanceIdentifier: IID<Config>): ConfigBuilder {
         return ConfigBuilder()
     }
 
     @Throws(ReadFailedException::class)
-    override fun readCurrentAttributes(instanceIdentifier: IID<Config>,
-                                       configBuilder: ConfigBuilder,
-                                       readContext: ReadContext) {
+    override fun readCurrentAttributes(
+        instanceIdentifier: IID<Config>,
+        configBuilder: ConfigBuilder,
+        readContext: ReadContext
+    ) {
         try {
             val name = instanceIdentifier.firstKeyOf(Interface::class.java).name
             val unitId = instanceIdentifier.firstKeyOf(Subinterface::class.java).index
             val addressKey = AddressKey(instanceIdentifier.firstKeyOf(Address::class.java).ip)
 
-            InterfaceReader.readUnitAddress(underlayAccess, name, unitId, addressKey, { configBuilder.fromUnderlay(it) })
+            InterfaceReader.readUnitAddress(underlayAccess, name, unitId, addressKey,
+                { configBuilder.fromUnderlay(it) })
         } catch (e: MDSalReadFailed) {
             throw ReadFailedException(instanceIdentifier, e)
         }
@@ -65,7 +68,3 @@ internal fun ConfigBuilder.fromUnderlay(junosUnitAddress: JunosInterfaceUnitAddr
     ip = resolveIpv4Address(junosUnitAddress.name)
     prefixLength = resolveIpv4Prefix(junosUnitAddress.name)
 }
-
-
-
-

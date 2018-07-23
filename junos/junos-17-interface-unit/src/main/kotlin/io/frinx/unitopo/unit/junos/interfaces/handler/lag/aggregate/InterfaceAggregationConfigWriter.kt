@@ -32,24 +32,16 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.AggregatedEtherOptions as JunosAggregEthOptions
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.AggregatedEtherOptions.MinimumLinks as JunosMinimumLinks
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.AggregatedEtherOptionsBuilder as JunosAggregEthOptionsBuilder
-import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.Unit as JunosInterfaceUnit
-import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.UnitBuilder as JunosInterfaceUnitBuilder
-import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.UnitKey as JunosInterfaceUnitKey
-import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.aggregated.ether.options.BfdLivenessDetection as JunosBfdLivenessDetection
-import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.aggregated.ether.options.BfdLivenessDetectionBuilder as JunosBfdLivenessDetectionBuilder
-import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.unit.Family as JunosInterfaceUnitFamily
-import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.unit.family.Inet as JunosInterfaceUnitFamilyInet
-import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.unit.family.inet.Address as JunosInterfaceUnitFamilyInetAddress
-import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.unit.family.inet.AddressBuilder as JunosInterfaceUnitFamilyInetAddressBuilder
-import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.unit.family.inet.AddressKey as JunosInterfaceUnitFamilyInetAddressKey
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.config.interfaces.Interface as JunosInterface
-import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.config.interfaces.InterfaceBuilder as JunosInterfaceBuilder
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.config.interfaces.InterfaceKey as JunosInterfaceKey
-
 
 class InterfaceAggregationConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCustomizer<Config> {
 
-    override fun writeCurrentAttributes(id: InstanceIdentifier<Config>, dataAfter: Config, writeContext: WriteContext) {
+    override fun writeCurrentAttributes(
+        id: InstanceIdentifier<Config>,
+        dataAfter: Config,
+        writeContext: WriteContext
+    ) {
         val (underlayAggrEthOptId, underlayAggrEthOpt) = getData(id, dataAfter)
         Preconditions.checkArgument(isSupportedForInterface(underlayAggrEthOptId),
                 "Write: Aggregation Config is not supported for: %s", id)
@@ -71,14 +63,17 @@ class InterfaceAggregationConfigWriter(private val underlayAccess: UnderlayAcces
         }
     }
 
-    override fun updateCurrentAttributes(id: InstanceIdentifier<Config>,
-                                         dataBefore: Config, dataAfter: Config,
-                                         writeContext: WriteContext) {
+    override fun updateCurrentAttributes(
+        id: InstanceIdentifier<Config>,
+        dataBefore: Config,
+        dataAfter: Config,
+        writeContext: WriteContext
+    ) {
         val (underlayAggrEthOptId, underlayAggrEthOpt) = getData(id, dataAfter)
         Preconditions.checkArgument(isSupportedForInterface(underlayAggrEthOptId),
                 "Update: Aggregation Config is not supported for: %s", id)
         try {
-             underlayAccess.merge(underlayAggrEthOptId, underlayAggrEthOpt)
+            underlayAccess.merge(underlayAggrEthOptId, underlayAggrEthOpt)
         } catch (e: Exception) {
             throw WriteFailedException(id, e)
         }
@@ -97,7 +92,7 @@ class InterfaceAggregationConfigWriter(private val underlayAccess: UnderlayAcces
     }
 
     private fun parseLinkSpeedJunos(linkSpeed: JuniperIfAggregateConfig.LinkSpeed?): JunosAggregEthOptions.LinkSpeed? {
-        return when (linkSpeed){
+        return when (linkSpeed) {
             JuniperIfAggregateConfig.LinkSpeed._10M -> JunosAggregEthOptions.LinkSpeed._10m
             JuniperIfAggregateConfig.LinkSpeed._100M -> JunosAggregEthOptions.LinkSpeed._100m
             JuniperIfAggregateConfig.LinkSpeed._1G -> JunosAggregEthOptions.LinkSpeed._1g

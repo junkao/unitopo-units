@@ -33,10 +33,10 @@ import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.controller.md.sal.common.api.data.ReadFailedException as MDSalReadFailed
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.AggregatedEtherOptions as JunosAggregatedEtherOptions
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.AggregatedEtherOptions.LinkSpeed as JunosAggregatedEtherOptionsLinkSpeed
-import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.AggregatedEtherOptionsBuilder as JunosAggregatedEtherOptionsBuilder
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
-class InterfaceAggregationConfigReader(private val underlayAccess: UnderlayAccess) : ConfigReaderCustomizer<Config, ConfigBuilder> {
+class InterfaceAggregationConfigReader(private val underlayAccess: UnderlayAccess) :
+    ConfigReaderCustomizer<Config, ConfigBuilder> {
     override fun getBuilder(iid: IID<Config>): ConfigBuilder {
         return ConfigBuilder()
     }
@@ -58,11 +58,12 @@ class InterfaceAggregationConfigReader(private val underlayAccess: UnderlayAcces
 
 private fun ConfigBuilder.fromUnderlay(underlay: JunosAggregatedEtherOptions?) {
     minLinks = underlay?.minimumLinks?.uint16
-    addAugmentation(IfLagJuniperAug::class.java, IfLagJuniperAugBuilder().setLinkSpeed(parseLinkSpeed(underlay?.linkSpeed)).build())
+    addAugmentation(IfLagJuniperAug::class.java,
+        IfLagJuniperAugBuilder().setLinkSpeed(parseLinkSpeed(underlay?.linkSpeed)).build())
 }
 
-internal fun parseLinkSpeed(linkSpeed: JunosAggregatedEtherOptionsLinkSpeed?) : JuniperIfAggregateConfig.LinkSpeed? {
-    return when (linkSpeed){
+internal fun parseLinkSpeed(linkSpeed: JunosAggregatedEtherOptionsLinkSpeed?): JuniperIfAggregateConfig.LinkSpeed? {
+    return when (linkSpeed) {
         JunosAggregatedEtherOptionsLinkSpeed._10m -> JuniperIfAggregateConfig.LinkSpeed._10M
         JunosAggregatedEtherOptionsLinkSpeed._100m -> JuniperIfAggregateConfig.LinkSpeed._100M
         JunosAggregatedEtherOptionsLinkSpeed._1g -> JuniperIfAggregateConfig.LinkSpeed._1G

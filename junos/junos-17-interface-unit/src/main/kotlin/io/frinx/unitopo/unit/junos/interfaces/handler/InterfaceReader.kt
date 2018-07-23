@@ -33,7 +33,6 @@ import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.AggregatedEtherOptions as JunosAggregatedEtherOptions
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.Damping as JunosDamping
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.HoldTime as JunosHoldTime
-import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.HoldTimeBuilder as JunosHoldTimeBuilder
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.Unit as JunosInterfaceUnit
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.aggregated.ether.options.BfdLivenessDetection as JunosBfdLivenessDetection
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.gigether.options.Ieee8023ad as JunosGigEthIeee8023ad
@@ -44,8 +43,8 @@ import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configur
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.config.interfaces.InterfaceKey as JunosInterfaceKey
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
-
-class InterfaceReader(private val underlayAccess: UnderlayAccess) : ConfigListReaderCustomizer<Interface, InterfaceKey, InterfaceBuilder> {
+class InterfaceReader(private val underlayAccess: UnderlayAccess) :
+    ConfigListReaderCustomizer<Interface, InterfaceKey, InterfaceBuilder> {
 
     @Throws(ReadFailedException::class)
     override fun getAllIds(instanceIdentifier: IID<Interface>, readContext: ReadContext): List<InterfaceKey> {
@@ -63,9 +62,11 @@ class InterfaceReader(private val underlayAccess: UnderlayAccess) : ConfigListRe
     override fun getBuilder(instanceIdentifier: IID<Interface>): InterfaceBuilder = InterfaceBuilder()
 
     @Throws(ReadFailedException::class)
-    override fun readCurrentAttributes(instanceIdentifier: IID<Interface>,
-                                       interfaceBuilder: InterfaceBuilder,
-                                       readContext: ReadContext) {
+    override fun readCurrentAttributes(
+        instanceIdentifier: IID<Interface>,
+        interfaceBuilder: InterfaceBuilder,
+        readContext: ReadContext
+    ) {
         try {
             // Just set the name (if there is such interface)
             if (interfaceExists(underlayAccess, instanceIdentifier)) {
@@ -144,24 +145,40 @@ class InterfaceReader(private val underlayAccess: UnderlayAccess) : ConfigListRe
                     .let { it?.gigetherOptions?.ieee8023ad?.let { it1 -> handler(it1) } }
         }
 
-        fun readUnitCfg(underlayAccess: UnderlayAccess, name: String, unitId: Long, handler: (JunosInterfaceUnit) -> Unit) {
+        fun readUnitCfg(
+            underlayAccess: UnderlayAccess,
+            name: String,
+            unitId: Long,
+            handler: (JunosInterfaceUnit) -> Unit
+        ) {
             readInterface(underlayAccess, name)
                     // Invoke handler with read UnitCfg
                     .let { it?.unit?.first { it1 -> it1.name == unitId.toString() }
                             ?.let { it2 -> handler(it2) } }
         }
 
-        fun readUnitAddress(underlayAccess: UnderlayAccess, ifcName: String, subIfcId: Long, addressKey: AddressKey, handler: (JunosInterfaceUnitAddress) -> Unit) {
+        fun readUnitAddress(
+            underlayAccess: UnderlayAccess,
+            ifcName: String,
+            subIfcId: Long,
+            addressKey: AddressKey,
+            handler: (JunosInterfaceUnitAddress) -> Unit
+        ) {
             readInterface(underlayAccess, ifcName)
                     // Invoke handler with read UnitAddress
                     .let {
                         it?.unit?.first { it1 -> it1.name == subIfcId.toString() }
-                                ?.family?.inet?.address?.first { address -> address.name.value.contains(addressKey.ip.value) }
+                                ?.family?.inet?.address
+                            ?.first { address -> address.name.value.contains(addressKey.ip.value) }
                                 ?.let { it2 -> handler(it2) }
                     }
         }
 
-        fun readAggregationCfg(underlayAccess: UnderlayAccess, ifcName: String, handler: (JunosAggregatedEtherOptions) -> Unit) {
+        fun readAggregationCfg(
+            underlayAccess: UnderlayAccess,
+            ifcName: String,
+            handler: (JunosAggregatedEtherOptions) -> Unit
+        ) {
             readInterface(underlayAccess, ifcName)
                     // Invoke handler with read UnitAddress
                     .let {
@@ -170,7 +187,11 @@ class InterfaceReader(private val underlayAccess: UnderlayAccess) : ConfigListRe
                     }
         }
 
-        fun readAggregationBfdCfg(underlayAccess: UnderlayAccess, ifcName: String, handler: (JunosBfdLivenessDetection) -> Unit) {
+        fun readAggregationBfdCfg(
+            underlayAccess: UnderlayAccess,
+            ifcName: String,
+            handler: (JunosBfdLivenessDetection) -> Unit
+        ) {
             readInterface(underlayAccess, ifcName)
                     // Invoke handler with read UnitAddress
                     .let {
