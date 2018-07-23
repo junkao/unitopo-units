@@ -16,10 +16,8 @@
 package io.frinx.unitopo.unit.xr6.platform
 
 import io.fd.honeycomb.rpc.RpcService
-import io.fd.honeycomb.translate.impl.read.GenericListReader
 import io.fd.honeycomb.translate.impl.read.GenericOperListReader
 import io.fd.honeycomb.translate.impl.read.GenericOperReader
-import io.fd.honeycomb.translate.impl.read.GenericReader
 import io.fd.honeycomb.translate.read.registry.ModifiableReaderRegistryBuilder
 import io.fd.honeycomb.translate.write.registry.ModifiableWriterRegistryBuilder
 import io.frinx.openconfig.openconfig.platform.IIDs
@@ -33,8 +31,6 @@ import io.frinx.unitopo.unit.xr6.platform.handler.ComponentStateReader
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.platform.rev161222.platform.component.top.ComponentsBuilder
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.asr9k.sc.invmgr.admin.oper.rev151109.`$YangModuleInfoImpl` as UnderlayInventoryModule
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.platform.rev161222.`$YangModuleInfoImpl` as OpenconfigPlatformModule
-
-
 
 class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
     private var reg: TranslationUnitCollector.Registration? = null
@@ -57,8 +53,11 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
 
     override fun getRpcs(context: UnderlayAccess) = emptySet<RpcService<*, *>>()
 
-    override fun provideHandlers(rRegistry: ModifiableReaderRegistryBuilder, wRegistry: ModifiableWriterRegistryBuilder,
-                                 access: UnderlayAccess) {
+    override fun provideHandlers(
+        rRegistry: ModifiableReaderRegistryBuilder,
+        wRegistry: ModifiableWriterRegistryBuilder,
+        access: UnderlayAccess
+    ) {
         provideReaders(rRegistry, access)
         provideWriters(wRegistry, access)
     }
@@ -75,5 +74,4 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
     }
 
     override fun toString() = "xr6-platform-unit"
-
 }

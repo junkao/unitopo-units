@@ -29,11 +29,13 @@ import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 import java.util.regex.Pattern
 
+class ComponentReader(private val access: UnderlayAccess)
+    : OperListReaderCustomizer<Component, ComponentKey, ComponentBuilder> {
 
-class ComponentReader(private val access: UnderlayAccess) : OperListReaderCustomizer<Component, ComponentKey, ComponentBuilder> {
-
-    override fun getAllIds(instanceIdentifier: InstanceIdentifier<Component>,
-                           readContext: ReadContext): List<ComponentKey> {
+    override fun getAllIds(
+        instanceIdentifier: InstanceIdentifier<Component>,
+        readContext: ReadContext
+    ): List<ComponentKey> {
 
         return access.read(RACKS_ID).checkedGet().orNull()
                 // TODO we should be able to read all nodes from XR inventory
@@ -50,9 +52,11 @@ class ComponentReader(private val access: UnderlayAccess) : OperListReaderCustom
         return ComponentBuilder()
     }
 
-    override fun readCurrentAttributes(instanceIdentifier: InstanceIdentifier<Component>,
-                                       componentBuilder: ComponentBuilder,
-                                       readContext: ReadContext) {
+    override fun readCurrentAttributes(
+        instanceIdentifier: InstanceIdentifier<Component>,
+        componentBuilder: ComponentBuilder,
+        readContext: ReadContext
+    ) {
         val componentName = instanceIdentifier.firstKeyOf(Component::class.java).name
         componentBuilder.name = componentName
     }
@@ -63,7 +67,6 @@ class ComponentReader(private val access: UnderlayAccess) : OperListReaderCustom
 
         // TODO Make this regexp more robust, so we can match various line cards
         private val LINE_CARD_PATTERN = Pattern.compile(".*Line Card.*")
-
 
         // TODO better javadoc
         /**

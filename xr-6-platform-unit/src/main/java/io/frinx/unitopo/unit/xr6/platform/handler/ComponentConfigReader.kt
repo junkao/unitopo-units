@@ -29,8 +29,11 @@ class ComponentConfigReader : OperReaderCustomizer<Config, ConfigBuilder> {
 
     override fun getBuilder(id: InstanceIdentifier<Config>) = ConfigBuilder()
 
-    override fun readCurrentAttributes(id: InstanceIdentifier<Config>, builder: ConfigBuilder,
-                                       ctx: ReadContext) {
+    override fun readCurrentAttributes(
+        id: InstanceIdentifier<Config>,
+        builder: ConfigBuilder,
+        ctx: ReadContext
+    ) {
         builder.name = id.firstKeyOf(Component::class.java).name
     }
 
