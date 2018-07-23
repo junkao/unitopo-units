@@ -28,7 +28,8 @@ import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class NeighborReader(private val underlayAccess: UnderlayAccess) : OperListReaderCustomizer<Neighbor, NeighborKey, NeighborBuilder> {
+class NeighborReader(private val underlayAccess: UnderlayAccess) :
+    OperListReaderCustomizer<Neighbor, NeighborKey, NeighborBuilder> {
 
     override fun merge(builder: Builder<out DataObject>, readData: MutableList<Neighbor>) {
         (builder as NeighborsBuilder).neighbor = readData
@@ -39,7 +40,8 @@ class NeighborReader(private val underlayAccess: UnderlayAccess) : OperListReade
     }
 
     override fun getAllIds(id: InstanceIdentifier<Neighbor>, context: ReadContext): List<NeighborKey> {
-        return parseDeviceIds(InterfaceReader.readInterfaceNeighbors(underlayAccess, id.firstKeyOf(Interface::class.java).name))
+        return parseDeviceIds(InterfaceReader.readInterfaceNeighbors(underlayAccess,
+            id.firstKeyOf(Interface::class.java).name))
     }
 
     override fun getBuilder(id: InstanceIdentifier<Neighbor>) = NeighborBuilder()

@@ -28,7 +28,7 @@ class NeighborReaderTest : AbstractNetconfHandlerTest() {
     @Test
     fun testAllIds() {
         val lldp = parseGetCfgResponse(DATA_NODES, InterfaceReader.LLDP_OPER)
-        val neighbors = InterfaceReader.parseInterfaceNeighbors("GigabitEthernet0/0/0/3", lldp);
+        val neighbors = InterfaceReader.parseInterfaceNeighbors("GigabitEthernet0/0/0/3", lldp)
 
         Assert.assertEquals(
                 listOf("PE2.demo.frinx.io")

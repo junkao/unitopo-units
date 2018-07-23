@@ -29,7 +29,8 @@ import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ethernet.lldp.oper.rev151109.lldp.nodes.node.interfaces.Interface as UnderlayLldpInterface
 
-class InterfaceReader(private val underlayAccess: UnderlayAccess) : OperListReaderCustomizer<Interface, InterfaceKey, InterfaceBuilder> {
+class InterfaceReader(private val underlayAccess: UnderlayAccess) :
+    OperListReaderCustomizer<Interface, InterfaceKey, InterfaceBuilder> {
 
     override fun getAllIds(id: InstanceIdentifier<Interface>, context: ReadContext) = getInterfaceIds(underlayAccess)
 
