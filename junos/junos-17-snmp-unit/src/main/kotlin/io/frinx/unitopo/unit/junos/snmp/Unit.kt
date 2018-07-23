@@ -60,9 +60,11 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
 
     override fun getRpcs(underlayAccess: UnderlayAccess) = emptySet<RpcService<*, *>>()
 
-    override fun provideHandlers(rRegistry: ModifiableReaderRegistryBuilder,
-                                 wRegistry: ModifiableWriterRegistryBuilder,
-                                 underlayAccess: UnderlayAccess) {
+    override fun provideHandlers(
+        rRegistry: ModifiableReaderRegistryBuilder,
+        wRegistry: ModifiableWriterRegistryBuilder,
+        underlayAccess: UnderlayAccess
+    ) {
         provideReaders(rRegistry, underlayAccess)
         provideWriters(wRegistry, underlayAccess)
     }
@@ -71,7 +73,8 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
         wRegistry.add(GenericWriter(IIDs.SNMP, NoopWriter()))
         wRegistry.add(GenericWriter(IIDs.SN_INTERFACES, NoopWriter()))
         wRegistry.add(GenericListWriter(IIDs.SN_IN_INTERFACE, NoopListWriter()))
-        wRegistry.subtreeAddAfter(setOf(InstanceIdentifier.create(Config::class.java).child(EnabledTrapForEvent::class.java)),
+        wRegistry.subtreeAddAfter(setOf(InstanceIdentifier.create(Config::class.java)
+            .child(EnabledTrapForEvent::class.java)),
                 GenericWriter(IIDs.SN_IN_IN_CONFIG, SnmpConfigWriter(underlayAccess)), InterfacesIIDs.IN_IN_CONFIG)
     }
 
@@ -83,5 +86,4 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
     }
 
     override fun toString(): String = "Junos 17.3 snmp translate unit"
-
 }

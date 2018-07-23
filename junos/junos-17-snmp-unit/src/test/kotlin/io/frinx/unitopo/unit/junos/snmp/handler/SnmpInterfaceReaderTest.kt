@@ -34,6 +34,4 @@ class SnmpInterfaceReaderTest : AbstractNetconfHandlerTest() {
                 .map { SnmpInterfaceKey(InterfaceId(it.first)) to it.second }
                 .toList(), ifcs)
     }
-
 }
-

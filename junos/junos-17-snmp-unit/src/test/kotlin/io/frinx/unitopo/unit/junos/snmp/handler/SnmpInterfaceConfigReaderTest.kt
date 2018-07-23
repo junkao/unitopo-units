@@ -61,6 +61,4 @@ class SnmpInterfaceConfigReaderTest : AbstractNetconfHandlerTest() {
                         .build()))
                 .build()
     }
-
 }
-

@@ -50,11 +50,17 @@ class SnmpConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCusto
         writeData(id, null)
     }
 
-    override fun updateCurrentAttributes(id: IID<Config>, dataBefore: Config, dataAfter: Config, writeContext: WriteContext) {
+    override fun updateCurrentAttributes(
+        id: IID<Config>,
+        dataBefore: Config,
+        dataAfter: Config,
+        writeContext: WriteContext
+    ) {
         writeData(id, dataAfter)
     }
 
-    private fun resolveOcInterface(id: IID<Config>, writeContext: WriteContext): Pair<OcInterfaceKey, Optional<OcInterface>> {
+    private fun resolveOcInterface(id: IID<Config>, writeContext: WriteContext):
+        Pair<OcInterfaceKey, Optional<OcInterface>> {
         val ocIfcKey = OcInterfaceKey(id.firstKeyOf(SnmpInterface::class.java).interfaceId.value)
         val ocIfcOpt = writeContext.readAfter(IIDs.INTERFACES.child(OcInterface::class.java, ocIfcKey))
         return Pair(ocIfcKey, ocIfcOpt)

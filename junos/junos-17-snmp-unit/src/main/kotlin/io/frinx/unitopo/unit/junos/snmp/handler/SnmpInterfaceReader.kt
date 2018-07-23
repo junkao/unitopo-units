@@ -33,7 +33,8 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.snmp.rev17102
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.snmp.rev171024.snmp.interfaces.structural.interfaces.InterfaceKey as SnmpInterfaceKey
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
-class SnmpInterfaceReader(private val underlayAccess: UnderlayAccess) : ConfigListReaderCustomizer<SnmpInterface, SnmpInterfaceKey, SnmpInterfaceBuilder> {
+class SnmpInterfaceReader(private val underlayAccess: UnderlayAccess) :
+    ConfigListReaderCustomizer<SnmpInterface, SnmpInterfaceKey, SnmpInterfaceBuilder> {
 
     override fun getBuilder(id: IID<SnmpInterface>): SnmpInterfaceBuilder = SnmpInterfaceBuilder()
 
@@ -71,5 +72,4 @@ class SnmpInterfaceReader(private val underlayAccess: UnderlayAccess) : ConfigLi
                     ?.toList().orEmpty()
         }
     }
-
 }
