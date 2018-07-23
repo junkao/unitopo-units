@@ -24,12 +24,19 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
 class InterfaceWriter : ListWriterCustomizer<Interface, InterfaceKey> {
 
-    override fun writeCurrentAttributes(id: InstanceIdentifier<Interface>, dataAfter: Interface, writeContext: WriteContext) {
+    override fun writeCurrentAttributes(
+        id: InstanceIdentifier<Interface>,
+        dataAfter: Interface,
+        writeContext: WriteContext
+    ) {
         // NOOP
     }
 
-    override fun deleteCurrentAttributes(id: InstanceIdentifier<Interface>, dataBefore: Interface, writeContext: WriteContext) {
+    override fun deleteCurrentAttributes(
+        id: InstanceIdentifier<Interface>,
+        dataBefore: Interface,
+        writeContext: WriteContext
+    ) {
         // NOOP
     }
-
 }

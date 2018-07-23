@@ -38,15 +38,22 @@ class InterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : Writer
         underlayAccess.put(underlayId, underlayIfcCfg)
     }
 
-    override fun deleteCurrentAttributes(id: InstanceIdentifier<Config>, dataBefore: Config, writeContext: WriteContext) {
+    override fun deleteCurrentAttributes(
+        id: InstanceIdentifier<Config>,
+        dataBefore: Config,
+        writeContext: WriteContext
+    ) {
         val (_, _, underlayId) = getId(id)
 
         underlayAccess.delete(underlayId)
     }
 
-    override fun updateCurrentAttributes(id: InstanceIdentifier<Config>,
-                                         dataBefore: Config, dataAfter: Config,
-                                         writeContext: WriteContext) {
+    override fun updateCurrentAttributes(
+        id: InstanceIdentifier<Config>,
+        dataBefore: Config,
+        dataAfter: Config,
+        writeContext: WriteContext
+    ) {
         val (_, _, underlayId) = getId(id)
         val before = underlayAccess.read(underlayId)
                 .checkedGet()

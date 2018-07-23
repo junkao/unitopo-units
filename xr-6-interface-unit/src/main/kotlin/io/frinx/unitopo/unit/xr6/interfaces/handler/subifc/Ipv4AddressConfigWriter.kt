@@ -47,7 +47,11 @@ class Ipv4AddressConfigWriter(private val underlayAccess: UnderlayAccess) : Writ
         }
     }
 
-    override fun deleteCurrentAttributes(id: InstanceIdentifier<Config>, dataBefore: Config, writeContext: WriteContext) {
+    override fun deleteCurrentAttributes(
+        id: InstanceIdentifier<Config>,
+        dataBefore: Config,
+        writeContext: WriteContext
+    ) {
         try {
             underlayAccess.delete(getId(id))
         } catch (e: Exception) {

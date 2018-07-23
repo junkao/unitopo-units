@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 package io.frinx.unitopo.unit.xr6.interfaces.handler.subifc
 
 import io.fd.honeycomb.translate.spi.write.ListWriterCustomizer
@@ -25,13 +24,19 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
 class SubinterfaceWriter : ListWriterCustomizer<Subinterface, SubinterfaceKey> {
 
-    override fun deleteCurrentAttributes(id: InstanceIdentifier<Subinterface>, dataBefore: Subinterface, writeContext: WriteContext) {
+    override fun deleteCurrentAttributes(
+        id: InstanceIdentifier<Subinterface>,
+        dataBefore: Subinterface,
+        writeContext: WriteContext
+    ) {
         // NOOP
     }
 
-    override fun writeCurrentAttributes(id: InstanceIdentifier<Subinterface>, dataAfter: Subinterface, writeContext: WriteContext) {
+    override fun writeCurrentAttributes(
+        id: InstanceIdentifier<Subinterface>,
+        dataAfter: Subinterface,
+        writeContext: WriteContext
+    ) {
         // NOOP
     }
-
-
 }

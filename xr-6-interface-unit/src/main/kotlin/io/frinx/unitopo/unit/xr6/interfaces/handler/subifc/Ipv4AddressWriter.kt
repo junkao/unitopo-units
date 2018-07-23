@@ -23,10 +23,10 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
 class Ipv4AddressWriter : WriterCustomizer<Address> {
     override fun deleteCurrentAttributes(p0: InstanceIdentifier<Address>, p1: Address, p2: WriteContext) {
-        //noop
+        // noop
     }
 
     override fun writeCurrentAttributes(p0: InstanceIdentifier<Address>, p1: Address, p2: WriteContext) {
-        //noop
+        // noop
     }
 }

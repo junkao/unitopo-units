@@ -39,9 +39,11 @@ class InterfaceStateReader(private val underlayAccess: UnderlayAccess) : OperRea
     override fun getBuilder(instanceIdentifier: InstanceIdentifier<State>): StateBuilder = StateBuilder()
 
     @Throws(ReadFailedException::class)
-    override fun readCurrentAttributes(instanceIdentifier: InstanceIdentifier<State>,
-                                       stateBuilder: StateBuilder,
-                                       readContext: ReadContext) {
+    override fun readCurrentAttributes(
+        instanceIdentifier: InstanceIdentifier<State>,
+        stateBuilder: StateBuilder,
+        readContext: ReadContext
+    ) {
         try {
             // Using InterfaceConfiguration and also InterfaceProperties to collect all necessary information
             val name = instanceIdentifier.firstKeyOf(Interface::class.java).name
@@ -50,7 +52,6 @@ class InterfaceStateReader(private val underlayAccess: UnderlayAccess) : OperRea
         } catch (e: MDSalReadFailed) {
             throw ReadFailedException(instanceIdentifier, e)
         }
-
     }
 
     override fun merge(builder: Builder<out DataObject>, state: State) {

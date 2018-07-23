@@ -31,16 +31,19 @@ import org.opendaylight.controller.md.sal.common.api.data.ReadFailedException as
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.oper.rev150730._interface.table.interfaces.Interface as OperInterface
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
-class InterfaceConfigReader(private val underlayAccess: UnderlayAccess) : ConfigReaderCustomizer<Config, ConfigBuilder> {
+class InterfaceConfigReader(private val underlayAccess: UnderlayAccess) :
+    ConfigReaderCustomizer<Config, ConfigBuilder> {
 
     override fun getBuilder(instanceIdentifier: IID<Config>): ConfigBuilder {
         return ConfigBuilder()
     }
 
     @Throws(ReadFailedException::class)
-    override fun readCurrentAttributes(instanceIdentifier: IID<Config>,
-                                       configBuilder: ConfigBuilder,
-                                       readContext: ReadContext) {
+    override fun readCurrentAttributes(
+        instanceIdentifier: IID<Config>,
+        configBuilder: ConfigBuilder,
+        readContext: ReadContext
+    ) {
         try {
             val name = instanceIdentifier.firstKeyOf(Interface::class.java).name
             InterfaceReader.readInterfaceCfg(underlayAccess, name, { configBuilder.fromUnderlay(it) })

@@ -40,7 +40,11 @@ import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.l2.eth.i
 
 class SubinterfaceVlanConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCustomizer<Config> {
 
-    override fun deleteCurrentAttributes(id: InstanceIdentifier<Config>, dataBefore: Config, writeContext: WriteContext) {
+    override fun deleteCurrentAttributes(
+        id: InstanceIdentifier<Config>,
+        dataBefore: Config,
+        writeContext: WriteContext
+    ) {
         val underlayId = getId(id)
         writeContext.readAfter(RWUtils.cutId(id, IIDs.IN_IN_SU_SUBINTERFACE)).orNull()?.let {
             // Delete only if the subinterface stays. If we delete the VLAN tag for subifc and subinterface in a single TX,
@@ -54,8 +58,12 @@ class SubinterfaceVlanConfigWriter(private val underlayAccess: UnderlayAccess) :
         underlayAccess.put(ethServiceId, data)
     }
 
-    override fun updateCurrentAttributes(id: InstanceIdentifier<Config>, dataBefore: Config,
-                                         dataAfter: Config, writeContext: WriteContext) {
+    override fun updateCurrentAttributes(
+        id: InstanceIdentifier<Config>,
+        dataBefore: Config,
+        dataAfter: Config,
+        writeContext: WriteContext
+    ) {
         deleteCurrentAttributes(id, dataBefore, writeContext)
         writeCurrentAttributes(id, dataAfter, writeContext)
     }

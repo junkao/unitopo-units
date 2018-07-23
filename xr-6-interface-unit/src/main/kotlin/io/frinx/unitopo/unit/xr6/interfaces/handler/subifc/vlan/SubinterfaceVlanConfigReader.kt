@@ -32,10 +32,10 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.vlan.types.re
 import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
-import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.l2.eth.infra.cfg.rev151109.InterfaceConfiguration2 as EthServiceAugment
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.l2.eth.infra.cfg.rev151109.InterfaceConfiguration1 as VlanSubConfig
 
-class SubinterfaceVlanConfigReader(private val underlayAccess: UnderlayAccess) : ConfigReaderCustomizer<Config, ConfigBuilder> {
+class SubinterfaceVlanConfigReader(private val underlayAccess: UnderlayAccess) :
+    ConfigReaderCustomizer<Config, ConfigBuilder> {
 
     override fun readCurrentAttributes(id: InstanceIdentifier<Config>, builder: ConfigBuilder, ctx: ReadContext) {
         val ifcName = id.firstKeyOf(Interface::class.java).name
@@ -55,5 +55,5 @@ class SubinterfaceVlanConfigReader(private val underlayAccess: UnderlayAccess) :
 private fun ConfigBuilder.fromUnderlay(underlay: InterfaceConfiguration) {
     underlay.getAugmentation(VlanSubConfig::class.java)
             ?.vlanSubConfiguration?.vlanIdentifier?.firstTag?.value
-            ?.let { vlanId = VlanLogicalConfig.VlanId(VlanId(it.toInt()))}
+            ?.let { vlanId = VlanLogicalConfig.VlanId(VlanId(it.toInt())) }
 }

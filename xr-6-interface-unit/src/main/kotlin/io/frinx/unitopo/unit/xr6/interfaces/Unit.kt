@@ -28,8 +28,20 @@ import io.frinx.openconfig.openconfig.interfaces.IIDs
 import io.frinx.unitopo.registry.api.TranslationUnitCollector
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr6.init.Unit
-import io.frinx.unitopo.unit.xr6.interfaces.handler.*
-import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.*
+import io.frinx.unitopo.unit.xr6.interfaces.handler.InterfaceConfigReader
+import io.frinx.unitopo.unit.xr6.interfaces.handler.InterfaceConfigWriter
+import io.frinx.unitopo.unit.xr6.interfaces.handler.InterfaceReader
+import io.frinx.unitopo.unit.xr6.interfaces.handler.InterfaceStateReader
+import io.frinx.unitopo.unit.xr6.interfaces.handler.InterfaceWriter
+import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.Ipv4AddressConfigWriter
+import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.Ipv4AddressReader
+import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.Ipv4AddressWriter
+import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.Ipv4ConfigReader
+import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.SubinterfaceConfigReader
+import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.SubinterfaceConfigWriter
+import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.SubinterfaceReader
+import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.SubinterfaceStateReader
+import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.SubinterfaceWriter
 import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.vlan.SubinterfaceVlanConfigReader
 import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.vlan.SubinterfaceVlanConfigWriter
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.Subinterface1
@@ -44,21 +56,15 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.re
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.vlan.rev170714.vlan.logical.top.Vlan
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.vlan.rev170714.vlan.logical.top.VlanBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.vlan.rev170714.vlan.logical.top.vlan.Config
+import io.frinx.openconfig.openconfig.network.instance.IIDs as NetworkInstanceIIDs
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev150730.`$YangModuleInfoImpl` as UnderlayInterfacesYangInfo
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.oper.rev150730.`$YangModuleInfoImpl` as UnderlayInterfacesOperYangInfo
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.io.cfg.rev150730.`$YangModuleInfoImpl` as UnderlayIpv4YangInfo
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.`$YangModuleInfoImpl` as IpYangInfo
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.ipv4.top.ipv4.addresses.address.Config as Ipv4AddressConfig
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.ipv6.top.ipv6.Addresses as Ipv6Addresses
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.ipv6.top.ipv6.AddressesBuilder as Ipv6AddressesBuilder
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.ipv6.top.ipv6.addresses.Address as Ipv6Address
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.ipv6.top.ipv6.addresses.address.Config as Ipv6AddressConfig
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.`$YangModuleInfoImpl` as InterfacesYangInfo
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.subinterfaces.subinterface.Config as SubinterfaceConfig
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.subinterfaces.subinterface.State as SubinterfaceState
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.vlan.rev170714.Subinterface1 as VlanAug
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.vlan.rev170714.Subinterface1Builder as VlanAugBuilder
-import io.frinx.openconfig.openconfig.network.instance.IIDs as NetworkInstanceIIDs
 
 class Unit(private val registry: TranslationUnitCollector) : Unit() {
     private var reg: TranslationUnitCollector.Registration? = null
@@ -79,9 +85,11 @@ class Unit(private val registry: TranslationUnitCollector) : Unit() {
 
     override fun getRpcs(underlayAccess: UnderlayAccess) = emptySet<RpcService<*, *>>()
 
-    override fun provideHandlers(rRegistry: ModifiableReaderRegistryBuilder,
-                                 wRegistry: ModifiableWriterRegistryBuilder,
-                                 underlayAccess: UnderlayAccess) {
+    override fun provideHandlers(
+        rRegistry: ModifiableReaderRegistryBuilder,
+        wRegistry: ModifiableWriterRegistryBuilder,
+        underlayAccess: UnderlayAccess
+    ) {
         provideReaders(rRegistry, underlayAccess)
         provideWriters(wRegistry, underlayAccess)
     }
@@ -147,7 +155,7 @@ class Unit(private val registry: TranslationUnitCollector) : Unit() {
     }
 }
 
-typealias InterfaceIpv4Augment = org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.Subinterface1
-typealias InterfaceIpv6Augment = org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.Subinterface2
-
-
+typealias InterfaceIpv4Augment = org.opendaylight.yang.gen.v1.http.frinx
+.openconfig.net.yang.interfaces.ip.rev161222.Subinterface1
+typealias InterfaceIpv6Augment = org.opendaylight.yang.gen.v1.http.frinx
+.openconfig.net.yang.interfaces.ip.rev161222.Subinterface2

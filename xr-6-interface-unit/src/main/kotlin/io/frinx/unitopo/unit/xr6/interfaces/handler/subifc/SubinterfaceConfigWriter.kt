@@ -35,7 +35,11 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
 class SubinterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCustomizer<Config> {
 
-    override fun deleteCurrentAttributes(id: InstanceIdentifier<Config>, dataBefore: Config, writeContext: WriteContext) {
+    override fun deleteCurrentAttributes(
+        id: InstanceIdentifier<Config>,
+        dataBefore: Config,
+        writeContext: WriteContext
+    ) {
         if (id.firstKeyOf(Subinterface::class.java).index == ZERO_SUBINTERFACE_ID) {
             return
         }
@@ -54,14 +58,18 @@ class SubinterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : Wri
         underlayAccess.put(underlayId, underlayIfcCfg)
     }
 
-    override fun updateCurrentAttributes(id: InstanceIdentifier<Config>, dataBefore: Config,
-                                         dataAfter: Config, writeContext: WriteContext) {
+    override fun updateCurrentAttributes(
+        id: InstanceIdentifier<Config>,
+        dataBefore: Config,
+        dataAfter: Config,
+        writeContext: WriteContext
+    ) {
         deleteCurrentAttributes(id, dataBefore, writeContext)
         writeCurrentAttributes(id, dataAfter, writeContext)
     }
 
     companion object {
-        fun isInterfaceVirtual(ifcName : InterfaceName) =
+        fun isInterfaceVirtual(ifcName: InterfaceName) =
             ifcName.value.startsWith("Loopback") || ifcName.value.startsWith("null")
 
         private fun Config.shutdown() = isEnabled == null || !isEnabled
@@ -73,14 +81,14 @@ class SubinterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : Wri
             val interfaceActive = InterfaceActive("act")
 
             val underlaySubifcName = InterfaceName(
-                    getSubIfcName(id.firstKeyOf(Interface::class.java).name, id.firstKeyOf(Subinterface::class.java).index))
+                    getSubIfcName(id.firstKeyOf(Interface::class.java).name,
+                        id.firstKeyOf(Subinterface::class.java).index))
 
             val underlayId = InterfaceReader.IFC_CFGS.child(InterfaceConfiguration::class.java,
                     InterfaceConfigurationKey(interfaceActive, underlaySubifcName))
 
             return Triple(interfaceActive, underlaySubifcName, underlayId)
         }
-
 
         public fun getData(id: InstanceIdentifier<Config>, dataAfter: Config):
                 Pair<InstanceIdentifier<InterfaceConfiguration>, InterfaceConfiguration> {
@@ -99,4 +107,3 @@ class SubinterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : Wri
         }
     }
 }
-

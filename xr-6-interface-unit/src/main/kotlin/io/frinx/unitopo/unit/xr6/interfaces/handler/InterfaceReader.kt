@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 package io.frinx.unitopo.unit.xr6.interfaces.handler
 
 import com.google.common.annotations.VisibleForTesting
@@ -45,7 +44,8 @@ import java.util.regex.Pattern
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.oper.rev150730._interface.table.interfaces.Interface as UnderlayInterface
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
-class InterfaceReader(private val underlayAccess: UnderlayAccess) : ConfigListReaderCustomizer<Interface, InterfaceKey, InterfaceBuilder> {
+class InterfaceReader(private val underlayAccess: UnderlayAccess) :
+    ConfigListReaderCustomizer<Interface, InterfaceKey, InterfaceBuilder> {
 
     @Throws(ReadFailedException::class)
     override fun getAllIds(instanceIdentifier: IID<Interface>, readContext: ReadContext): List<InterfaceKey> {
@@ -63,9 +63,11 @@ class InterfaceReader(private val underlayAccess: UnderlayAccess) : ConfigListRe
     override fun getBuilder(instanceIdentifier: IID<Interface>): InterfaceBuilder = InterfaceBuilder()
 
     @Throws(ReadFailedException::class)
-    override fun readCurrentAttributes(instanceIdentifier: IID<Interface>,
-                                       interfaceBuilder: InterfaceBuilder,
-                                       readContext: ReadContext) {
+    override fun readCurrentAttributes(
+        instanceIdentifier: IID<Interface>,
+        interfaceBuilder: InterfaceBuilder,
+        readContext: ReadContext
+    ) {
         try {
             // Just set the name (if there is such interface)
             if (interfaceExists(underlayAccess, instanceIdentifier)) {
@@ -84,7 +86,11 @@ class InterfaceReader(private val underlayAccess: UnderlayAccess) : ConfigListRe
         /**
          * Read interface configuration
          */
-        fun readInterfaceCfg(underlayAccess: UnderlayAccess, name: String, handler: (InterfaceConfiguration) -> kotlin.Unit) {
+        fun readInterfaceCfg(
+            underlayAccess: UnderlayAccess,
+            name: String,
+            handler: (InterfaceConfiguration) -> kotlin.Unit
+        ) {
 
             // Check if reading existing interface because later we use default value for existing interfaces that
             // have no configuration
@@ -120,7 +126,11 @@ class InterfaceReader(private val underlayAccess: UnderlayAccess) : ConfigListRe
         /**
          * Read interface properties
          */
-        fun readInterfaceProps(underlayAccess: UnderlayAccess, name: String, handler: (UnderlayInterface) -> kotlin.Unit) {
+        fun readInterfaceProps(
+            underlayAccess: UnderlayAccess,
+            name: String,
+            handler: (UnderlayInterface) -> kotlin.Unit
+        ) {
             underlayAccess.read(DATA_NODES_ID, LogicalDatastoreType.OPERATIONAL)
                     .checkedGet()
                     .orNull()
@@ -165,7 +175,6 @@ class InterfaceReader(private val underlayAccess: UnderlayAccess) : ConfigListRe
         }
     }
 }
-
 
 internal fun parseIfcType(name: String): Class<out InterfaceType> {
     // FIXME duplicate with ios-interface-unit
