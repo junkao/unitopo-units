@@ -26,7 +26,4 @@ abstract class Unit : TranslateUnit {
     override fun toString(): String = "XR 6 init unit"
 
     override fun useAutoCommit() = true
-
 }
-
-
