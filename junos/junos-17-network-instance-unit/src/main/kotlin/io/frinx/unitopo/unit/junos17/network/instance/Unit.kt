@@ -28,7 +28,6 @@ import io.frinx.unitopo.unit.utils.NoopWriter
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.Config
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.ConfigBuilder
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.`$YangModuleInfoImpl` as NetInstanceYangInfo
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.`$YangModuleInfoImpl` as JunosYangInfo
 
 class Unit(private val registry: TranslationUnitCollector) : NetworkInstanceUnit() {
@@ -56,12 +55,11 @@ class Unit(private val registry: TranslationUnitCollector) : NetworkInstanceUnit
 
     override fun provideSpecificReaders(rRegistry: ModifiableReaderRegistryBuilder, underlayAccess: UnderlayAccess) {
         rRegistry.add(GenericConfigListReader(IIDs.NE_NETWORKINSTANCE, NetworkInstanceReader(underlayAccess)))
-        rRegistry.add(GenericConfigReader<Config, ConfigBuilder>(IIDs.NE_NE_CONFIG, NetworkInstanceConfigReader(underlayAccess)))
+        rRegistry.add(GenericConfigReader<Config, ConfigBuilder>(
+            IIDs.NE_NE_CONFIG, NetworkInstanceConfigReader(underlayAccess)))
 
         rRegistry.add(GenericConfigListReader(IIDs.NE_NE_PR_PROTOCOL, ProtocolReader(underlayAccess)))
     }
 
     override fun toString(): String = "Junos 17.3 network-instance translate unit"
 }
-
-
