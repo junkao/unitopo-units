@@ -29,14 +29,16 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 import java.util.AbstractMap
 import java.util.function.Function
 
-interface L3VrfListReader<O : DataObject, K : Identifier<O>, B : Builder<O>> : TypedListReader<O, K, B> where O : Identifiable<K> {
+interface L3VrfListReader<O : DataObject, K : Identifier<O>, B : Builder<O>> : TypedListReader<O, K, B>
+    where O : Identifiable<K> {
 
-    override fun getParentCheck(id: InstanceIdentifier<O>?)=
+    override fun getParentCheck(id: InstanceIdentifier<O>?) =
             AbstractMap.SimpleEntry<InstanceIdentifier<out DataObject>, Function<DataObject, Boolean>>(
                     RWUtils.cutId(id!!, NetworkInstance::class.java).child(Config::class.java),
                     L3VrfReader.L3VRF_CHECK)
 
-    interface L3VrfConfigListReader<O : DataObject, K : Identifier<O>, B : Builder<O>> : L3VrfListReader<O, K, B>, ConfigListReaderCustomizer<O, K, B> where O : Identifiable<K>
-    interface L3VrfOperListReader<O : DataObject, K : Identifier<O>, B : Builder<O>>:L3VrfListReader<O, K, B>, OperListReaderCustomizer<O, K, B> where O : Identifiable<K>
-
+    interface L3VrfConfigListReader<O : DataObject, K : Identifier<O>, B : Builder<O>> : L3VrfListReader<O, K, B>,
+        ConfigListReaderCustomizer<O, K, B> where O : Identifiable<K>
+    interface L3VrfOperListReader<O : DataObject, K : Identifier<O>, B : Builder<O>> : L3VrfListReader<O, K, B>,
+        OperListReaderCustomizer<O, K, B> where O : Identifiable<K>
 }

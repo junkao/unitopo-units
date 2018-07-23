@@ -33,9 +33,11 @@ class ProtocolStateReader : L3VrfReader.L3VrfOperReader<State, StateBuilder> {
     }
 
     @Throws(ReadFailedException::class)
-    override fun readCurrentAttributesForType(instanceIdentifier: InstanceIdentifier<State>,
-                                              StateBuilder: StateBuilder,
-                                              readContext: ReadContext) {
+    override fun readCurrentAttributesForType(
+        instanceIdentifier: InstanceIdentifier<State>,
+        StateBuilder: StateBuilder,
+        readContext: ReadContext
+    ) {
         val protocolKey = instanceIdentifier.firstKeyOf(Protocol::class.java)
         StateBuilder.identifier = protocolKey.identifier
         StateBuilder.name = protocolKey.name

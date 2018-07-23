@@ -31,12 +31,15 @@ import java.util.function.Function
 
 interface L3VrfReader<O : DataObject, B : Builder<O>> : TypedReader<O, B> {
 
-    override fun getParentCheck(id: InstanceIdentifier<O>?): AbstractMap.SimpleEntry<InstanceIdentifier<out DataObject>, Function<DataObject, Boolean>> {
-        return AbstractMap.SimpleEntry(RWUtils.cutId(id!!, NetworkInstance::class.java).child(Config::class.java), L3VRF_CHECK)
+    override fun getParentCheck(id: InstanceIdentifier<O>?):
+        AbstractMap.SimpleEntry<InstanceIdentifier<out DataObject>, Function<DataObject, Boolean>> {
+        return AbstractMap.SimpleEntry(RWUtils.cutId(id!!, NetworkInstance::class.java)
+            .child(Config::class.java), L3VRF_CHECK)
     }
 
     companion object {
-        val L3VRF_CHECK = Function { config: DataObject -> (config as Config).type == L3VRF::class.java || config.type == DEFAULTINSTANCE::class.java}
+        val L3VRF_CHECK = Function { config: DataObject ->
+            (config as Config).type == L3VRF::class.java || config.type == DEFAULTINSTANCE::class.java }
     }
 
     interface L3VrfConfigReader<O : DataObject, B : Builder<O>> : L3VrfReader<O, B>, ConfigReaderCustomizer<O, B>

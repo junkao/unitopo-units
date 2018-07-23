@@ -28,9 +28,9 @@ import io.frinx.unitopo.unit.network.instance.protocol.ProtocolConfigReader
 import io.frinx.unitopo.unit.network.instance.protocol.ProtocolStateReader
 import io.frinx.unitopo.unit.utils.NoopWriter
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.NetworkInstancesBuilder
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.ProtocolsBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.InterfacesBuilder
-import org.opendaylight.yangtools.yang.binding.*
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.ProtocolsBuilder
+import org.opendaylight.yangtools.yang.binding.YangModuleInfo
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.`$YangModuleInfoImpl` as NetInstanceYangInfo
 
 abstract class NetworkInstanceUnit : TranslateUnit {
@@ -41,9 +41,11 @@ abstract class NetworkInstanceUnit : TranslateUnit {
 
     override fun getRpcs(underlayAccess: UnderlayAccess): Set<RpcService<*, *>> = emptySet()
 
-    override fun provideHandlers(rRegistry: ModifiableReaderRegistryBuilder,
-                                 wRegistry: ModifiableWriterRegistryBuilder,
-                                 underlayAccess: UnderlayAccess) {
+    override fun provideHandlers(
+        rRegistry: ModifiableReaderRegistryBuilder,
+        wRegistry: ModifiableWriterRegistryBuilder,
+        underlayAccess: UnderlayAccess
+    ) {
         provideReaders(rRegistry)
         provideSpecificReaders(rRegistry, underlayAccess)
         provideWriters(wRegistry)
@@ -72,5 +74,3 @@ abstract class NetworkInstanceUnit : TranslateUnit {
 
     override fun toString(): String = "Network-instance translate unit"
 }
-
-

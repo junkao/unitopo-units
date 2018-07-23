@@ -35,13 +35,15 @@ class DefaultStateReader : OperReaderCustomizer<State, StateBuilder>, CompositeR
     }
 
     @Throws(ReadFailedException::class)
-    override fun readCurrentAttributes(instanceIdentifier: InstanceIdentifier<State>,
-                                       configBuilder: StateBuilder,
-                                       readContext: ReadContext) {
+    override fun readCurrentAttributes(
+        instanceIdentifier: InstanceIdentifier<State>,
+        configBuilder: StateBuilder,
+        readContext: ReadContext
+    ) {
         if (DefaultConfigReader.isDefault(instanceIdentifier)) {
-            configBuilder.name = instanceIdentifier.firstKeyOf<NetworkInstance, NetworkInstanceKey>(NetworkInstance::class.java).name
+            configBuilder.name = instanceIdentifier
+                .firstKeyOf<NetworkInstance, NetworkInstanceKey>(NetworkInstance::class.java).name
             configBuilder.type = DEFAULTINSTANCE::class.java
         }
     }
-
 }

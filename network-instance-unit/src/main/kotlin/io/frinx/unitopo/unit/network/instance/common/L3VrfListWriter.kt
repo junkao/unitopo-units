@@ -24,12 +24,13 @@ import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.Identifiable
 import org.opendaylight.yangtools.yang.binding.Identifier
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
-import java.util.*
+import java.util.AbstractMap
 import java.util.function.Function
 
 interface L3VrfListWriter<O : DataObject, K : Identifier<O>> : TypedWriter<O> where O : Identifiable<K> {
 
-    override fun getParentCheck(id: InstanceIdentifier<O>?) = AbstractMap.SimpleEntry<InstanceIdentifier<out DataObject>, Function<DataObject, Boolean>>(
+    override fun getParentCheck(id: InstanceIdentifier<O>?) =
+        AbstractMap.SimpleEntry<InstanceIdentifier<out DataObject>, Function<DataObject, Boolean>>(
             RWUtils.cutId(id!!, NetworkInstance::class.java).child(Config::class.java),
             L3VrfReader.L3VRF_CHECK)
 }
