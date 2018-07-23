@@ -27,7 +27,9 @@ import org.opendaylight.yangtools.yang.binding.Identifier
 interface OspfListReader<O, K, B> : OspfReader<O, B>, TypedListReader<O, K, B>
         where O : DataObject, O : Identifiable<K>, K : Identifier<O>, B : Builder<O> {
 
-    interface OspfConfigListReader<O : DataObject, K : Identifier<O>, B : Builder<O>> : OspfListReader<O, K, B>, ConfigListReaderCustomizer<O, K, B> where O : Identifiable<K>
+    interface OspfConfigListReader<O : DataObject, K : Identifier<O>, B : Builder<O>> : OspfListReader<O, K, B>,
+        ConfigListReaderCustomizer<O, K, B> where O : Identifiable<K>
 
-    interface OspfOperListReader<O : DataObject, K : Identifier<O>, B : Builder<O>>: OspfListReader<O, K, B>, OperListReaderCustomizer<O, K, B> where O : Identifiable<K>
+    interface OspfOperListReader<O : DataObject, K : Identifier<O>, B : Builder<O>> : OspfListReader<O, K, B>,
+        OperListReaderCustomizer<O, K, B> where O : Identifiable<K>
 }
