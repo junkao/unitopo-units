@@ -29,7 +29,12 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
 class OspfAreaInterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : OspfWriter<Config> {
 
-    override fun updateCurrentAttributesForType(id: IID<Config>, dataBefore: Config, dataAfter: Config, writeContext: WriteContext) {
+    override fun updateCurrentAttributesForType(
+        id: IID<Config>,
+        dataBefore: Config,
+        dataAfter: Config,
+        writeContext: WriteContext
+    ) {
         writeCurrentAttributesForType(id, dataAfter, writeContext)
     }
 
@@ -58,7 +63,7 @@ class OspfAreaInterfaceConfigWriter(private val underlayAccess: UnderlayAccess) 
         return Pair(ifaceIid, iface.build())
     }
 
-    private fun getInterfaceBuilder(id: IID<Config>) : Pair<IID<JunosInterface>, JunosInterfaceBuilder> {
+    private fun getInterfaceBuilder(id: IID<Config>): Pair<IID<JunosInterface>, JunosInterfaceBuilder> {
         val areaId = String(id.firstKeyOf(Area::class.java).identifier.value)
         val ifaceId = id.firstKeyOf(Interface::class.java).id
         val ifaceIid = OspfProtocolReader.getInterfaceId(areaId, ifaceId)

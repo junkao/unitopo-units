@@ -69,9 +69,11 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
 
     override fun getRpcs(underlayAccess: UnderlayAccess) = emptySet<RpcService<*, *>>()
 
-    override fun provideHandlers(rRegistry: ModifiableReaderRegistryBuilder,
-                                 wRegistry: ModifiableWriterRegistryBuilder,
-                                 underlayAccess: UnderlayAccess) {
+    override fun provideHandlers(
+        rRegistry: ModifiableReaderRegistryBuilder,
+        wRegistry: ModifiableWriterRegistryBuilder,
+        underlayAccess: UnderlayAccess
+    ) {
         provideReaders(rRegistry, underlayAccess)
         provideWriters(wRegistry, underlayAccess)
     }
@@ -86,8 +88,10 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
         wRegistry.add(GenericListWriter(IIDs.NE_NE_PR_PR_OS_AR_AREA, NoopListWriter()))
         wRegistry.add(GenericWriter(IIDs.NE_NE_PR_PR_OS_AR_AR_CONFIG, OspfAreaConfigWriter(underlayAccess)))
         wRegistry.add(GenericWriter(IIDs.NE_NE_PR_PR_OS_AR_AR_INTERFACES, NoopWriter()))
-        wRegistry.add(GenericListWriter(IIDs.NE_NE_PR_PR_OS_AR_AR_IN_INTERFACE, OspfAreaInterfaceWriter(underlayAccess)))
-        wRegistry.add(GenericWriter(IIDs.NE_NE_PR_PR_OS_AR_AR_IN_IN_CONFIG, OspfAreaInterfaceConfigWriter(underlayAccess)))
+        wRegistry.add(GenericListWriter(IIDs.NE_NE_PR_PR_OS_AR_AR_IN_INTERFACE,
+            OspfAreaInterfaceWriter(underlayAccess)))
+        wRegistry.add(GenericWriter(IIDs.NE_NE_PR_PR_OS_AR_AR_IN_IN_CONFIG,
+            OspfAreaInterfaceConfigWriter(underlayAccess)))
     }
 
     private fun provideReaders(rRegistry: ModifiableReaderRegistryBuilder, underlayAccess: UnderlayAccess) {
@@ -95,14 +99,16 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
         rRegistry.addStructuralReader(IIDs.NE_NE_PR_PR_OS_GLOBAL, GlobalBuilder::class.java)
         rRegistry.addStructuralReader(IIDs.NE_NE_PR_PR_OS_GL_TIMERS, TimersBuilder::class.java)
         rRegistry.addStructuralReader(IIDs.NE_NE_PR_PR_OS_GL_TI_MAXMETRIC, MaxMetricBuilder::class.java)
-        rRegistry.add(GenericConfigReader(IIDs.NE_NE_PR_PR_OS_GL_TI_MA_CONFIG, OspfMaxMetricConfigReader(underlayAccess)))
+        rRegistry.add(GenericConfigReader(IIDs.NE_NE_PR_PR_OS_GL_TI_MA_CONFIG,
+            OspfMaxMetricConfigReader(underlayAccess)))
         rRegistry.addStructuralReader(IIDs.NE_NE_PR_PR_OS_AREAS, AreasBuilder::class.java)
         rRegistry.add(GenericConfigListReader(IIDs.NE_NE_PR_PR_OS_AR_AREA, OspfAreaReader(underlayAccess)))
         rRegistry.addStructuralReader(IIDs.NE_NE_PR_PR_OS_AR_AR_INTERFACES, InterfacesBuilder::class.java)
-        rRegistry.add(GenericConfigListReader(IIDs.NE_NE_PR_PR_OS_AR_AR_IN_INTERFACE, OspfAreaInterfaceReader(underlayAccess)))
-        rRegistry.add(GenericConfigReader(IIDs.NE_NE_PR_PR_OS_AR_AR_IN_IN_CONFIG, OspfAreaInterfaceConfigReader(underlayAccess)))
+        rRegistry.add(GenericConfigListReader(IIDs.NE_NE_PR_PR_OS_AR_AR_IN_INTERFACE,
+            OspfAreaInterfaceReader(underlayAccess)))
+        rRegistry.add(GenericConfigReader(IIDs.NE_NE_PR_PR_OS_AR_AR_IN_IN_CONFIG,
+            OspfAreaInterfaceConfigReader(underlayAccess)))
     }
 
     override fun toString(): String = "Junos 17.3 ospf translate unit"
-
 }
