@@ -32,23 +32,14 @@
   <packaging>pom</packaging>
 
   <modules>
+    <module>artifacts</module>
     <module>kotlin-unit-parent</module>
     <module>utils-unit</module>
     <module>network-instance-unit</module>
     <module>common</module>
-    <module>xr-6-init-unit</module>
-    <module>xr-6-interface-unit</module>
-    <module>xr-6-ip6-unit</module>
-    <module>xr-6-network-instance-unit</module>
-    <module>xr-6-bgp-unit</module>
-    <module>xr-6-routing-policy-unit</module>
-    <module>xr-6-ospf-unit</module>
-    <module>xr-6-lr-unit</module>
-    <module>xr-6-platform-unit</module>
-    <module>xr-6-cdp-unit</module>
-    <module>xr-6-lldp-unit</module>
     <module>features</module>
     <module>junos</module>
+    <module>xr</module>
   </modules>
 
   <build>

@@ -25,7 +25,7 @@
         <groupId>io.frinx.unitopo</groupId>
         <artifactId>kotlin-unit-parent</artifactId>
         <version>3.1.5.rc18-frinx-SNAPSHOT</version>
-        <relativePath>../kotlin-unit-parent</relativePath>
+        <relativePath>../../kotlin-unit-parent</relativePath>
     </parent>
 
     <artifactId>xr-6-network-instance-unit</artifactId>

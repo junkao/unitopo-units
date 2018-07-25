@@ -25,13 +25,13 @@
         <groupId>io.frinx.unitopo</groupId>
         <artifactId>kotlin-unit-parent</artifactId>
         <version>3.1.5.rc18-frinx-SNAPSHOT</version>
-        <relativePath>../kotlin-unit-parent</relativePath>
+        <relativePath>../../kotlin-unit-parent</relativePath>
     </parent>
 
-    <artifactId>xr-6-cdp-unit</artifactId>
+    <artifactId>xr-6-lldp-unit</artifactId>
     <packaging>bundle</packaging>
     <description>
-        Unified topology unit for XR CDP.
+        Unified topology unit for XR LLDP.
         Compatible with:
         IOS XR 6
         - 6.0.0 - 6.2.2
@@ -40,17 +40,12 @@
 
     <dependencies>
         <dependency>
-            <groupId>io.frinx.unitopo</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>xr-6-ip6-unit</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <!-- Openconfig models -->
-        <dependency>
-            <groupId>io.frinx.openconfig</groupId>
-            <artifactId>openconfig-cdp</artifactId>
-            <version>${openconfig.version}</version>
-        </dependency>
         <dependency>
             <groupId>io.frinx.openconfig</groupId>
             <artifactId>openconfig-lldp</artifactId>

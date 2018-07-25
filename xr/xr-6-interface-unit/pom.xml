@@ -25,13 +25,13 @@
         <groupId>io.frinx.unitopo</groupId>
         <artifactId>kotlin-unit-parent</artifactId>
         <version>3.1.5.rc18-frinx-SNAPSHOT</version>
-        <relativePath>../kotlin-unit-parent</relativePath>
+        <relativePath>../../kotlin-unit-parent</relativePath>
     </parent>
 
-    <artifactId>xr-6-lldp-unit</artifactId>
+    <artifactId>xr-6-interface-unit</artifactId>
     <packaging>bundle</packaging>
     <description>
-        Unified topology unit for XR LLDP.
+        Unified topology unit for XR interfaces.
         Compatible with:
         IOS XR 6
         - 6.0.0 - 6.2.2
@@ -40,15 +40,41 @@
 
     <dependencies>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>io.frinx.unitopo</groupId>
+            <artifactId>xr-6-init-unit</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.frinx.unitopo</groupId>
             <artifactId>xr-6-ip6-unit</artifactId>
             <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.fd.honeycomb</groupId>
+            <artifactId>translate-utils</artifactId>
+            <version>${hc.version}</version>
         </dependency>
 
         <!-- Openconfig models -->
         <dependency>
             <groupId>io.frinx.openconfig</groupId>
-            <artifactId>openconfig-lldp</artifactId>
+            <artifactId>openconfig-interfaces</artifactId>
+            <version>${openconfig.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.frinx.openconfig</groupId>
+            <artifactId>openconfig-vlan</artifactId>
+            <version>${openconfig.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.frinx.openconfig</groupId>
+            <artifactId>openconfig-if-ip</artifactId>
+            <version>${openconfig.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.frinx.openconfig</groupId>
+            <artifactId>openconfig-network-instance</artifactId>
             <version>${openconfig.version}</version>
         </dependency>
 
@@ -58,11 +84,24 @@
         </dependency>
         <dependency>
             <groupId>org.opendaylight.mdsal.model</groupId>
+            <artifactId>ietf-interfaces</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.mdsal.model</groupId>
+            <artifactId>iana-if-type-2014-05-08</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.mdsal.model</groupId>
             <artifactId>ietf-inet-types-2013-07-15</artifactId>
         </dependency>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>yang-common</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-net</groupId>
+            <artifactId>commons-net</artifactId>
         </dependency>
 
         <!-- Testing Dependencies -->

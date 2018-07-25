@@ -15,73 +15,45 @@
   ~ limitations under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<!-- vi: set et smarttab sw=4 tabstop=4: -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>io.frinx.unitopo</groupId>
         <artifactId>kotlin-unit-parent</artifactId>
         <version>3.1.5.rc18-frinx-SNAPSHOT</version>
-        <relativePath>../kotlin-unit-parent</relativePath>
+        <relativePath>../../kotlin-unit-parent</relativePath>
     </parent>
 
-    <modelVersion>4.0.0</modelVersion>
-    <artifactId>xr-6-ospf-unit</artifactId>
-    <name>xr-6-ospf-unit-</name>
+    <artifactId>xr-6-cdp-unit</artifactId>
     <packaging>bundle</packaging>
+    <description>
+        Unified topology unit for XR CDP.
+        Compatible with:
+        IOS XR 6
+        - 6.0.0 - 6.2.2
+        According to: https://github.com/YangModels/yang/tree/master/vendor/cisco/xr
+    </description>
 
     <dependencies>
         <dependency>
             <groupId>io.frinx.unitopo</groupId>
-            <artifactId>network-instance-unit</artifactId>
+            <artifactId>xr-6-ip6-unit</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.frinx.unitopo</groupId>
-            <artifactId>utils-unit</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.frinx.unitopo</groupId>
-            <artifactId>common-handlers</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>io.frinx.cli</groupId>
-            <artifactId>translation-registry-common</artifactId>
-            <version>${cli.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>io.fd.honeycomb</groupId>
-            <artifactId>translate-utils</artifactId>
-            <version>${hc.version}</version>
         </dependency>
 
         <!-- Openconfig models -->
         <dependency>
             <groupId>io.frinx.openconfig</groupId>
-            <artifactId>openconfig-ospf</artifactId>
+            <artifactId>openconfig-cdp</artifactId>
             <version>${openconfig.version}</version>
         </dependency>
         <dependency>
             <groupId>io.frinx.openconfig</groupId>
-            <artifactId>openconfig-bgp</artifactId>
-            <version>${openconfig.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.frinx.openconfig</groupId>
-            <artifactId>openconfig-network-instance</artifactId>
-            <version>${openconfig.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.frinx.openconfig</groupId>
-            <artifactId>openconfig-extensions</artifactId>
-            <version>${openconfig.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.frinx.openconfig</groupId>
-            <artifactId>openconfig-policy</artifactId>
+            <artifactId>openconfig-lldp</artifactId>
             <version>${openconfig.version}</version>
         </dependency>
 
@@ -104,11 +76,20 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <!-- Netconf testing dependencies-->
         <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>utils-unit</artifactId>
+            <type>test-jar</type>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <groupId>org.opendaylight.netconf</groupId>
+            <artifactId>sal-netconf-connector</artifactId>
+            <version>${mdsal-old.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>
