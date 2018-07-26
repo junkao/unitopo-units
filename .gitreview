@@ -1,0 +1,5 @@
+[gerrit]
+host=gerrit.frinx.io
+port=29418
+project=unitopo-units.git
+defaultbranch=carbon/development
