@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.opendaylight.mdsal</groupId>
         <artifactId>binding-parent</artifactId>
-        <version>0.10.1-Carbon-SR1.3_1_5_rc18-frinxodl</version>
+        <version>0.10.1-Carbon-SR1.3_1_5_rc19-frinxodl-SNAPSHOT</version>
         <relativePath/>
     </parent>
 
@@ -36,12 +36,12 @@
     <properties>
         <cli.version>3.1.5.rc18-frinx</cli.version>
         <openconfig.version>3.1.5.rc18-frinx</openconfig.version>
-        <hc.version>1.17.10-Carbon-SR1.3_1_5_rc18-frinxodl</hc.version>
+        <hc.version>1.17.10-Carbon-SR1.3_1_5_rc19-frinxodl-SNAPSHOT</hc.version>
         <kotlin.version>1.2.41</kotlin.version>
-        <netconf.version>1.2.1-Carbon-SR1.3_1_5_rc18-frinxodl</netconf.version>
-        <mdsal-old.version>1.5.1-Carbon-SR1.3_1_5_rc18-frinxodl</mdsal-old.version>
-        <controller.version>1.5.1-Carbon-SR1.3_1_5_rc18-frinxodl</controller.version>
-        <config.version>0.6.1-Carbon-SR1.3_1_5_rc18-frinxodl</config.version>
+        <netconf.version>1.2.1-Carbon-SR1.3_1_5_rc19-frinxodl-SNAPSHOT</netconf.version>
+        <mdsal-old.version>1.5.1-Carbon-SR1.3_1_5_rc19-frinxodl-SNAPSHOT</mdsal-old.version>
+        <controller.version>1.5.1-Carbon-SR1.3_1_5_rc19-frinxodl-SNAPSHOT</controller.version>
+        <config.version>0.6.1-Carbon-SR1.3_1_5_rc19-frinxodl-SNAPSHOT</config.version>
     </properties>
 
     <build>
