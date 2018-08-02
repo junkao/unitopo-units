@@ -26,7 +26,7 @@ import io.frinx.unitopo.registry.spi.TranslateUnit
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.junos17.configmetadata.handler.ConfigMetadataReader
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.configuration.metadata.rev700101.`$YangModuleInfoImpl` as OpenconfigConfigMetadata
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.configuration.metadata.rev180731.`$YangModuleInfoImpl` as OpenconfigConfigMetadata
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jrpc.show.system.junos._17._3r1._10.rev170101.`$YangModuleInfoImpl` as JunosYangInfoimport
 
 class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {

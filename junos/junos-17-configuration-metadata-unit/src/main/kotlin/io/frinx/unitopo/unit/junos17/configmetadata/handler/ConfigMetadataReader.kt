@@ -19,8 +19,8 @@ package io.frinx.unitopo.unit.junos17.configmetadata.handler
 import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.spi.read.OperReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.configuration.metadata.rev700101.metadata.ConfigurationMetadata
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.configuration.metadata.rev700101.metadata.ConfigurationMetadataBuilder
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.configuration.metadata.rev180731.metadata.ConfigurationMetadata
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.configuration.metadata.rev180731.metadata.ConfigurationMetadataBuilder
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jrpc.show.system.junos._17._3r1._10.rev170101.GetCommitRevisionInformationInput
 import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
