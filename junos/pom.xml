@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <!--
   ~ Copyright © 2018 Frinx and others.
   ~
@@ -41,6 +40,7 @@
     <module>junos-17-policy-forwarding-unit</module>
     <module>junos-17-ospf-unit</module>
     <module>junos-17-configuration-metadata-unit</module>
+    <module>junos-17-platform</module>
   </modules>
 
   <build>

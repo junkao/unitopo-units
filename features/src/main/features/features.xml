@@ -80,6 +80,7 @@
         <bundle>mvn:io.frinx.unitopo/junos-17-policy-forwarding-unit/{{VERSION}}</bundle>
         <bundle>mvn:io.frinx.unitopo/junos-17-ospf-unit/{{VERSION}}</bundle>
         <bundle>mvn:io.frinx.unitopo/junos-17-configuration-metadata-unit/{{VERSION}}</bundle>
+        <bundle>mvn:io.frinx.unitopo/junos-17-platform/{{VERSION}}</bundle>
     </feature>
 
 </features>
