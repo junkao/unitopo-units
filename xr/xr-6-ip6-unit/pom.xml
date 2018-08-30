@@ -33,6 +33,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>io.frinx.unitopo</groupId>
+            <artifactId>xr-6-models</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>io.frinx.openconfig</groupId>
             <artifactId>openconfig-interfaces</artifactId>
             <version>${openconfig.version}</version>
@@ -58,4 +63,22 @@
             <artifactId>ietf-inet-types-2013-07-15</artifactId>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Import-Package>
+                            org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.*;device=xr6,
+                            *,
+                        </Import-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

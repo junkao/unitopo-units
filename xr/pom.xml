@@ -32,6 +32,7 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>xr-6-models</module>
         <module>xr-6-init-unit</module>
         <module>xr-6-interface-unit</module>
         <module>xr-6-ip6-unit</module>
