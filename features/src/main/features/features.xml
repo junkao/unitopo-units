@@ -23,6 +23,7 @@
     <repository>mvn:org.opendaylight.yangtools/features-yangtools/{{VERSION}}/xml/features</repository>
     <repository>mvn:org.opendaylight.controller/features-mdsal/{{VERSION}}/xml/features</repository>
     <repository>mvn:org.opendaylight.mdsal.model/features-mdsal-model/{{VERSION}}/xml/features</repository>
+    <repository>mvn:org.opendaylight.netconf/features-netconf-connector/{{VERSION}}/xml/features</repository>
     <repository>mvn:io.frinx.openconfig/openconfig-features/{{VERSION}}/xml/features</repository>
     <repository>mvn:io.frinx.unitopo/unified-topology-features/{{VERSION}}/xml/features</repository>
 
@@ -44,6 +45,7 @@
 
     <feature name='unified-topology-unit-xr-6' version='${project.version}'>
         <feature version='${project.version}'>unified-topology-unit-base</feature>
+        <feature version='${netconf.version}'>odl-netconf-topology</feature>
         <bundle>mvn:commons-net/commons-net/{{VERSION}}</bundle>
         <bundle>mvn:io.frinx.unitopo/network-instance-unit/{{VERSION}}</bundle>
         <bundle>mvn:io.frinx.unitopo/utils-unit/{{VERSION}}</bundle>
@@ -68,6 +70,7 @@
 
     <feature name='unified-topology-unit-junos-17-3' version='${project.version}'>
         <feature version='${project.version}'>unified-topology-unit-base</feature>
+        <feature version='${netconf.version}'>odl-netconf-topology</feature>
         <bundle>mvn:commons-net/commons-net/{{VERSION}}</bundle>
         <bundle>mvn:io.frinx.unitopo/network-instance-unit/{{VERSION}}</bundle>
         <bundle>mvn:io.frinx.unitopo/utils-unit/{{VERSION}}</bundle>
