@@ -73,5 +73,5 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
         rRegistry.add(GenericOperReader(IIDs.CO_CO_STATE, ComponentStateReader(access)))
     }
 
-    override fun toString() = "xr6-platform-unit"
+    override fun toString() = "XR 6 platform translate unit"
 }

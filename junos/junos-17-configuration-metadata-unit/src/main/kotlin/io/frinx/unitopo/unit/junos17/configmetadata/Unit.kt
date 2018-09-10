@@ -61,4 +61,6 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
     private fun provideReaders(rRegistry: ModifiableReaderRegistryBuilder, underlayAccess: UnderlayAccess) {
         rRegistry.add(GenericOperReader(IIDs.CONFIGURATIONMETADATA, ConfigMetadataReader(underlayAccess)))
     }
+
+    override fun toString() = "Junos 17.3 Configuration metadata translation unit"
 }

@@ -111,6 +111,44 @@
                         </execution>
                     </executions>
                 </plugin>
+                <plugin>
+                    <groupId>org.opendaylight.yangtools</groupId>
+                    <artifactId>yang-maven-plugin</artifactId>
+                    <version>${yangtools.version}</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>io.frinx.cli</groupId>
+                            <artifactId>yang-docs-plugin</artifactId>
+                            <version>${project.version}</version>
+                            <type>jar</type>
+                        </dependency>
+                        <dependency>
+                            <groupId>io.frinx.unitopo</groupId>
+                            <artifactId>yang-docs-plugin</artifactId>
+                            <version>${project.version}</version>
+                            <type>jar</type>
+                        </dependency>
+                    </dependencies>
+                    <executions>
+                        <execution>
+                            <phase>process-classes</phase>
+                            <id>yang-docs</id>
+                            <goals>
+                                <goal>generate-sources</goal>
+                            </goals>
+                            <configuration>
+                                <codeGenerators>
+                                    <generator>
+                                        <codeGeneratorClass>io.frinx.binding.ids.unitopo.YangDocsGenerator</codeGeneratorClass>
+                                        <outputBaseDir>${salGeneratorPath}</outputBaseDir>
+                                        <resourceBaseDir>${project.build.directory}/generated-sources/spi</resourceBaseDir>
+                                    </generator>
+                                </codeGenerators>
+                                <inspectDependencies>true</inspectDependencies>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
             </plugins>
         <pluginManagement>
             <plugins>
@@ -176,7 +214,6 @@
             <artifactId>annotations</artifactId>
             <version>13.0</version>
         </dependency>
-
         <!-- Unitopo -->
         <dependency>
             <groupId>io.frinx.unitopo</groupId>
