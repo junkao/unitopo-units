@@ -47,7 +47,7 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.insta
 
 class L2VSIConnectionPointsReader(private val underlayAccess: UnderlayAccess) :
     L2vsiReader.L2vsiConfigReader<ConnectionPoints, ConnectionPointsBuilder>,
-        CompositeReader.Child<ConnectionPoints, ConnectionPointsBuilder> {
+    CompositeReader.Child<ConnectionPoints, ConnectionPointsBuilder> {
 
     override fun getBuilder(p0: InstanceIdentifier<ConnectionPoints>): ConnectionPointsBuilder {
         // NOOP
@@ -63,19 +63,17 @@ class L2VSIConnectionPointsReader(private val underlayAccess: UnderlayAccess) :
         val isOper = isOper(ctx)
 
         val bd = L2VSIReader.getAllBridgeDomains(underlayAccess)
-                .firstOrNull { bd -> bd.name.value == l2vsiName }
+            .firstOrNull { bd -> bd.name.value == l2vsiName }
 
         if (bd == null) return
 
         bd.vfis?.vfi.orEmpty()
-                .firstOrNull { vfi -> vfi.name.value == l2vsiName }
-                ?.let { vfi -> builder.fromUnderlay(bd, vfi, isOper) }
+            .firstOrNull { vfi -> vfi.name.value == l2vsiName }
+            ?.let { vfi -> builder.fromUnderlay(bd, vfi, isOper) }
     }
 
-    private fun isOper(ctx: ReadContext): Boolean {
-        val flag = ctx.modificationCache.get(Reader.DS_TYPE_FLAG)
-        return flag != null && flag === LogicalDatastoreType.OPERATIONAL
-    }
+    private fun isOper(ctx: ReadContext) =
+        ctx.modificationCache.get(Reader.DS_TYPE_FLAG) === LogicalDatastoreType.OPERATIONAL
 
     companion object {
         val REMOTE_ID = "remote"
@@ -108,21 +106,21 @@ fun parseLocalPoints(bd: BridgeDomain, isOper: Boolean): List<ConnectionPoint> {
     // FIXME finish isOper
 
     return bd.bdAttachmentCircuits?.bdAttachmentCircuit.orEmpty()
-            .map { atCirc -> atCirc.name.value }
-            .map { ifcName -> toLocalPoint(ifcName) }
+        .map { atCirc -> atCirc.name.value }
+        .map { ifcName -> toLocalPoint(ifcName) }
 }
 
 fun toLocalPoint(ifcName: String): ConnectionPoint {
     val connectionPointBuilder = ConnectionPointBuilder()
 
     connectionPointBuilder
-            .setKey(ConnectionPointKey(ifcName))
-            .config = CpConfigBuilder()
-            .setConnectionPointId(ifcName)
-            .build()
+        .setKey(ConnectionPointKey(ifcName))
+        .config = CpConfigBuilder()
+        .setConnectionPointId(ifcName)
+        .build()
 
     val localCfgBuilder = LocalConfigBuilder()
-            .setInterface(ifcName)
+        .setInterface(ifcName)
 
     if (ifcName.contains('.')) {
         val split = ifcName.split('.')
@@ -131,19 +129,28 @@ fun toLocalPoint(ifcName: String): ConnectionPoint {
     }
 
     connectionPointBuilder.endpoints = EndpointsBuilder()
-            .setEndpoint(listOf(EndpointBuilder()
+        .setEndpoint(
+            listOf(
+                EndpointBuilder()
                     .setEndpointId(ifcName)
-                    .setConfig(EpConfigBuilder()
+                    .setConfig(
+                        EpConfigBuilder()
                             .setEndpointId(ifcName)
                             .setPrecedence(0)
                             .setType(LOCAL::class.java)
-                            .build())
-                    .setLocal(LocalBuilder()
-                            .setConfig(localCfgBuilder
-                                    .build())
-                            .build())
-                    .build()))
-            .build()
+                            .build()
+                    )
+                    .setLocal(
+                        LocalBuilder()
+                            .setConfig(
+                                localCfgBuilder
+                                    .build()
+                            )
+                            .build()
+                    ).build()
+            )
+        )
+        .build()
 
     return connectionPointBuilder.build()
 }
@@ -154,26 +161,36 @@ fun parseRemotePoint(vccid: Long, isOper: Boolean): ConnectionPoint {
     // FIXME finish isOper
 
     connectionPointBuilder
-            .setKey(ConnectionPointKey(REMOTE_ID))
-            .config = CpConfigBuilder()
-            .setConnectionPointId(REMOTE_ID)
-            .build()
+        .setKey(ConnectionPointKey(REMOTE_ID))
+        .config = CpConfigBuilder()
+        .setConnectionPointId(REMOTE_ID)
+        .build()
 
     connectionPointBuilder.endpoints = EndpointsBuilder()
-            .setEndpoint(listOf(EndpointBuilder()
+        .setEndpoint(
+            listOf(
+                EndpointBuilder()
                     .setEndpointId(ENDPOINT_ID)
-                    .setConfig(EpConfigBuilder()
+                    .setConfig(
+                        EpConfigBuilder()
                             .setEndpointId(ENDPOINT_ID)
                             .setPrecedence(0)
                             .setType(REMOTE::class.java)
-                            .build())
-                    .setRemote(RemoteBuilder()
-                            .setConfig(RemoteConfigBuilder()
+                            .build()
+                    )
+                    .setRemote(
+                        RemoteBuilder()
+                            .setConfig(
+                                RemoteConfigBuilder()
                                     .setVirtualCircuitIdentifier(vccid)
-                                    .build())
-                            .build())
-                    .build()))
-            .build()
+                                    .build()
+                            )
+                            .build()
+                    )
+                    .build()
+            )
+        )
+        .build()
 
     return connectionPointBuilder.build()
 }
