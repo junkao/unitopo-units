@@ -18,7 +18,7 @@ package io.frinx.unitopo.unit.xr6.network.instance.l2vsi.cp
 
 import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.read.Reader
-import io.frinx.cli.registry.common.CompositeReader
+import io.frinx.translate.unit.commons.registry.common.CompositeReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr6.network.instance.common.L2vsiReader
 import io.frinx.unitopo.unit.xr6.network.instance.l2vsi.L2VSIReader

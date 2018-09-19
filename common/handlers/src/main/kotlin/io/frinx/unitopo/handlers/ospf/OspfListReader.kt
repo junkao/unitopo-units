@@ -18,7 +18,7 @@ package io.frinx.unitopo.handlers.ospf
 
 import io.fd.honeycomb.translate.spi.read.ConfigListReaderCustomizer
 import io.fd.honeycomb.translate.spi.read.OperListReaderCustomizer
-import io.frinx.cli.registry.common.TypedListReader
+import io.frinx.translate.unit.commons.registry.common.TypedListReader
 import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.Identifiable

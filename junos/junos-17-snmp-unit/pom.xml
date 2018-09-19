@@ -73,6 +73,13 @@
             <artifactId>yang-binding</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>io.frinx.translate.unit.commons</groupId>
+            <artifactId>translation-registry-common</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+
         <!-- Netconf testing dependencies-->
         <dependency>
             <groupId>${project.groupId}</groupId>

@@ -17,8 +17,8 @@ package io.frinx.unitopo.unit.xr6.lr.handler
 
 import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.read.ReadFailedException
-import io.frinx.cli.registry.common.CompositeListReader
 import io.frinx.openconfig.network.instance.NetworInstance
+import io.frinx.translate.unit.commons.registry.common.CompositeListReader
 import io.frinx.unitopo.unit.xr6.lr.common.LrReader
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.Protocol
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.ProtocolBuilder

@@ -85,9 +85,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>io.frinx.cli</groupId>
+            <groupId>io.frinx.translate.unit.commons</groupId>
             <artifactId>translation-registry-common</artifactId>
-            <version>${cli.version}</version>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

@@ -19,7 +19,7 @@ package io.frinx.unitopo.unit.xr6.network.instance.l2p2p.cp
 import com.google.common.collect.Lists
 import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.read.Reader
-import io.frinx.cli.registry.common.CompositeReader
+import io.frinx.translate.unit.commons.registry.common.CompositeReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr6.interfaces.handler.InterfaceReader
 import io.frinx.unitopo.unit.xr6.network.instance.common.L2p2pReader

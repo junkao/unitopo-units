@@ -258,5 +258,15 @@
       <artifactId>junos-17-platform</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>io.frinx.translate.unit.commons</groupId>
+      <artifactId>utils</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.frinx.translate.unit.commons</groupId>
+      <artifactId>translation-registry-common</artifactId>
+      <version>${project.version}</version>
+    </dependency>
   </dependencies>
 </project>

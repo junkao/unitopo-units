@@ -19,7 +19,7 @@ package io.frinx.unitopo.unit.xr6.network.instance.l2vsi
 import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.read.ReadFailedException
 import io.fd.honeycomb.translate.spi.read.ConfigListReaderCustomizer
-import io.frinx.cli.registry.common.CompositeListReader
+import io.frinx.translate.unit.commons.registry.common.CompositeListReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.l2vpn.cfg.rev151109.L2vpn
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.l2vpn.cfg.rev151109.l2vpn.Database
