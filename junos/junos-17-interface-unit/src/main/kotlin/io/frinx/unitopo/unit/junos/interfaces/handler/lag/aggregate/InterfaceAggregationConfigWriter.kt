@@ -16,10 +16,8 @@
 
 package io.frinx.unitopo.unit.junos.interfaces.handler.lag.aggregate
 
-import com.google.common.base.Preconditions
 import io.fd.honeycomb.translate.spi.write.WriterCustomizer
 import io.fd.honeycomb.translate.write.WriteContext
-import io.fd.honeycomb.translate.write.WriteFailedException
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.junos.interfaces.handler.InterfaceReader
 import io.frinx.unitopo.unit.junos.interfaces.handler.parseIfcType
@@ -37,30 +35,16 @@ import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configur
 
 class InterfaceAggregationConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCustomizer<Config> {
 
-    override fun writeCurrentAttributes(
-        id: InstanceIdentifier<Config>,
-        dataAfter: Config,
-        writeContext: WriteContext
-    ) {
+    override fun writeCurrentAttributes(id: InstanceIdentifier<Config>, dataAfter: Config, writeContext: WriteContext) {
+        isSupportedForInterface(id)
         val (underlayAggrEthOptId, underlayAggrEthOpt) = getData(id, dataAfter)
-        Preconditions.checkArgument(isSupportedForInterface(underlayAggrEthOptId),
-                "Write: Aggregation Config is not supported for: %s", id)
-        try {
-            underlayAccess.put(underlayAggrEthOptId, underlayAggrEthOpt)
-        } catch (e: Exception) {
-            throw WriteFailedException(id, e)
-        }
+        underlayAccess.put(underlayAggrEthOptId, underlayAggrEthOpt)
     }
 
     override fun deleteCurrentAttributes(id: InstanceIdentifier<Config>, config: Config, context: WriteContext) {
+        isSupportedForInterface(id)
         val underlayAggrEthOptId = getUnderlayId(id)
-        Preconditions.checkArgument(isSupportedForInterface(underlayAggrEthOptId),
-                "Delete: Aggregation Config is not supported for: %s", id)
-        try {
-            underlayAccess.delete(underlayAggrEthOptId)
-        } catch (e: Exception) {
-            throw WriteFailedException(id, e)
-        }
+        underlayAccess.delete(underlayAggrEthOptId)
     }
 
     override fun updateCurrentAttributes(
@@ -69,24 +53,21 @@ class InterfaceAggregationConfigWriter(private val underlayAccess: UnderlayAcces
         dataAfter: Config,
         writeContext: WriteContext
     ) {
+        isSupportedForInterface(id)
         val (underlayAggrEthOptId, underlayAggrEthOpt) = getData(id, dataAfter)
-        Preconditions.checkArgument(isSupportedForInterface(underlayAggrEthOptId),
-                "Update: Aggregation Config is not supported for: %s", id)
-        try {
-            underlayAccess.merge(underlayAggrEthOptId, underlayAggrEthOpt)
-        } catch (e: Exception) {
-            throw WriteFailedException(id, e)
-        }
+        underlayAccess.merge(underlayAggrEthOptId, underlayAggrEthOpt)
     }
 
-    private fun getData(id: InstanceIdentifier<Config>, dataAfter: Config):
-            Pair<InstanceIdentifier<JunosAggregEthOptions>, JunosAggregEthOptions> {
+    private fun getData(
+        id: InstanceIdentifier<Config>,
+        dataAfter: Config
+    ): Pair<InstanceIdentifier<JunosAggregEthOptions>, JunosAggregEthOptions> {
         val underlayAggrEthOptId = getUnderlayId(id)
 
         val aggregatedEtherOptionsBuilder = JunosAggregEthOptionsBuilder()
         aggregatedEtherOptionsBuilder.minimumLinks = JunosMinimumLinks(dataAfter.minLinks)
         aggregatedEtherOptionsBuilder.linkSpeed =
-                parseLinkSpeedJunos(dataAfter.getAugmentation(IfLagJuniperAug::class.java)?.linkSpeed)
+            parseLinkSpeedJunos(dataAfter.getAugmentation(IfLagJuniperAug::class.java)?.linkSpeed)
 
         return Pair(underlayAggrEthOptId, aggregatedEtherOptionsBuilder.build())
     }
@@ -115,13 +96,13 @@ class InterfaceAggregationConfigWriter(private val underlayAccess: UnderlayAcces
         val ifcName = id.firstKeyOf(Interface::class.java).name
 
         return InterfaceReader.IFCS.child(JunosInterface::class.java, JunosInterfaceKey(ifcName))
-                .child(JunosAggregEthOptions::class.java)
+            .child(JunosAggregEthOptions::class.java)
     }
 
-    private fun isSupportedForInterface(deviceId: InstanceIdentifier<JunosAggregEthOptions>): Boolean {
-        return when (parseIfcType(deviceId.firstKeyOf(JunosInterface::class.java).name)) {
-            Ieee8023adLag::class.java -> true
-            else -> false
+    private fun isSupportedForInterface(deviceId: InstanceIdentifier<Config>) {
+        val ifcType = parseIfcType(deviceId.firstKeyOf(Interface::class.java).name)
+        require(ifcType === Ieee8023adLag::class.java) {
+            "Cannot configure aggregate config on non LAG interface ${deviceId.firstKeyOf(Interface::class.java).name}"
         }
     }
 }
