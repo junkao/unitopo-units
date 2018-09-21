@@ -25,7 +25,7 @@
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>xr-6-routing-policy-unit</artifactId>
-    <name>xr-6-bpg-unit-</name>
+    <name>xr-6-routing-policy-unit</name>
     <packaging>bundle</packaging>
 
     <dependencies>

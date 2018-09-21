@@ -19,7 +19,7 @@ package io.frinx.unitopo.unit.xr6.network.instance.vrf
 import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.read.ReadFailedException
 import io.fd.honeycomb.translate.spi.read.OperReaderCustomizer
-import io.frinx.cli.registry.common.CompositeReader
+import io.frinx.translate.unit.commons.registry.common.CompositeReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstanceKey

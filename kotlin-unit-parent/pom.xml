@@ -22,9 +22,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.opendaylight.mdsal</groupId>
-        <artifactId>binding-parent</artifactId>
-        <version>0.10.1-Carbon-SR1.3_1_6_rc11-frinxodl-SNAPSHOT</version>
+        <groupId>io.frinx.translate.unit.commons</groupId>
+        <artifactId>kotlin-parent</artifactId>
+        <version>3.1.6.rc11-frinx-SNAPSHOT</version>
         <relativePath/>
     </parent>
 
@@ -34,6 +34,7 @@
     <packaging>pom</packaging>
 
     <properties>
+
         <cli.version>3.1.6.rc11-frinx-SNAPSHOT</cli.version>
         <openconfig.version>3.1.6.rc11-frinx-SNAPSHOT</openconfig.version>
         <hc.version>1.17.10-Carbon-SR1.3_1_6_rc11-frinxodl-SNAPSHOT</hc.version>
@@ -42,91 +43,25 @@
         <mdsal-old.version>1.5.1-Carbon-SR1.3_1_6_rc11-frinxodl-SNAPSHOT</mdsal-old.version>
         <controller.version>1.5.1-Carbon-SR1.3_1_6_rc11-frinxodl-SNAPSHOT</controller.version>
         <config.version>0.6.1-Carbon-SR1.3_1_6_rc11-frinxodl-SNAPSHOT</config.version>
+
     </properties>
 
     <build>
-        <!-- Configuration necessary to have java+kotlin compilation working -->
             <plugins>
-                <plugin>
-                    <artifactId>kotlin-maven-plugin</artifactId>
-                    <groupId>org.jetbrains.kotlin</groupId>
-                    <version>${kotlin.version}</version>
-                    <executions>
-                        <execution>
-                            <id>compile</id>
-                            <goals>
-                                <goal>compile</goal>
-                            </goals>
-                            <configuration>
-                                <jvmTarget>1.8</jvmTarget>
-                                <sourceDirs>
-                                    <sourceDir>${salGeneratorPath}</sourceDir>
-                                    <sourceDir>${project.basedir}/src/main/java</sourceDir>
-                                    <sourceDir>${project.basedir}/src/main/kotlin</sourceDir>
-                                </sourceDirs>
-                            </configuration>
-                        </execution>
-                        <execution>
-                            <id>test-compile</id>
-                            <goals>
-                                <goal>test-compile</goal>
-                            </goals>
-                            <configuration>
-                                <jvmTarget>1.8</jvmTarget>
-                                <sourceDirs>
-                                    <sourceDir>${project.basedir}/src/test/java</sourceDir>
-                                    <sourceDir>${project.basedir}/src/test/kotlin</sourceDir>
-                                </sourceDirs>
-                            </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <executions>
-                        <!-- Replacing default-compile as it is treated specially by maven -->
-                        <execution>
-                            <id>default-compile</id>
-                            <phase>none</phase>
-                        </execution>
-                        <!-- Replacing default-testCompile as it is treated specially by maven -->
-                        <execution>
-                            <id>default-testCompile</id>
-                            <phase>none</phase>
-                        </execution>
-                        <execution>
-                            <id>java-compile</id>
-                            <phase>compile</phase>
-                            <goals>
-                                <goal>compile</goal>
-                            </goals>
-                        </execution>
-                        <execution>
-                            <id>java-test-compile</id>
-                            <phase>test-compile</phase>
-                            <goals>
-                                <goal>testCompile</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
                 <plugin>
                     <groupId>org.opendaylight.yangtools</groupId>
                     <artifactId>yang-maven-plugin</artifactId>
                     <version>${yangtools.version}</version>
                     <dependencies>
                         <dependency>
-                            <groupId>io.frinx.cli</groupId>
-                            <artifactId>yang-docs-plugin</artifactId>
+                            <groupId>io.frinx.translate.unit.commons</groupId>
+                            <artifactId>yang-docs-plugin-common</artifactId>
                             <version>${project.version}</version>
-                            <type>jar</type>
                         </dependency>
                         <dependency>
                             <groupId>io.frinx.unitopo</groupId>
                             <artifactId>yang-docs-plugin</artifactId>
                             <version>${project.version}</version>
-                            <type>jar</type>
                         </dependency>
                     </dependencies>
                     <executions>
@@ -150,57 +85,6 @@
                     </executions>
                 </plugin>
             </plugins>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <artifactId>maven-checkstyle-plugin</artifactId>
-                    <executions>
-                        <execution>
-                            <id>check-license</id>
-                            <phase>process-sources</phase>
-                            <goals>
-                                <goal>check</goal>
-                            </goals>
-                            <configuration>
-                                <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
-                                <includes>**\/*.java, **\/*.xtend, **\/*.kt</includes>
-                                <headerLocation>Regex.txt</headerLocation>
-                            </configuration>
-                        </execution>
-                    </executions>
-                    <configuration>
-                        <propertyExpansion>checkstyle.violationSeverity=error</propertyExpansion>
-                   </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-antrun-plugin</artifactId>
-                    <version>1.8</version>
-                    <executions>
-                        <execution>
-                            <id>ktlint</id>
-                            <phase>verify</phase>
-                            <configuration>
-                                <target name="ktlint">
-                                    <java taskname="ktlint" dir="${basedir}" fork="true" failonerror="true"
-                                          classpathref="maven.plugin.classpath" classname="com.github.shyiko.ktlint.Main">
-                                        <arg value="src/**/*.kt"/>
-                                    </java>
-                                </target>
-                            </configuration>
-                            <goals><goal>run</goal></goals>
-                        </execution>
-                    </executions>
-                    <dependencies>
-                        <dependency>
-                            <groupId>com.github.shyiko</groupId>
-                            <artifactId>ktlint</artifactId>
-                            <version>0.24.0</version>
-                        </dependency>
-                    </dependencies>
-                </plugin>
-            </plugins>
-        </pluginManagement>
     </build>
 
     <dependencies>

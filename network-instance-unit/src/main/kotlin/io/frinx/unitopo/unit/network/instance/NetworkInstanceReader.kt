@@ -18,7 +18,7 @@ package io.frinx.unitopo.unit.network.instance
 
 import io.fd.honeycomb.translate.spi.read.ConfigListReaderCustomizer
 import io.fd.honeycomb.translate.spi.read.ListReaderCustomizer
-import io.frinx.cli.registry.common.CompositeListReader
+import io.frinx.translate.unit.commons.registry.common.CompositeListReader
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.NetworkInstancesBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstanceBuilder

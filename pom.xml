@@ -32,8 +32,8 @@
   <packaging>pom</packaging>
 
   <modules>
-    <module>artifacts</module>
     <module>kotlin-unit-parent</module>
+    <module>artifacts</module>
     <module>utils-unit</module>
     <module>network-instance-unit</module>
     <module>common</module>
