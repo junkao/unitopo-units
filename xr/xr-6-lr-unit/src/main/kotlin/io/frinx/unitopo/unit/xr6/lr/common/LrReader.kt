@@ -18,7 +18,7 @@ package io.frinx.unitopo.unit.xr6.lr.common
 
 import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
 import io.fd.honeycomb.translate.spi.read.OperReaderCustomizer
-import io.frinx.translate.unit.commons.registry.common.TypedReader
+import io.frinx.translate.unit.commons.handler.spi.TypedReader
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.ProtocolKey
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.policy.types.rev160512.STATIC
 import org.opendaylight.yangtools.concepts.Builder

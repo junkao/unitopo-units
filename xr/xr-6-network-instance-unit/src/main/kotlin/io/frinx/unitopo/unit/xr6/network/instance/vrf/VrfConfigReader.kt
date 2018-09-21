@@ -19,7 +19,7 @@ package io.frinx.unitopo.unit.xr6.network.instance.vrf
 import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.read.ReadFailedException
 import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
-import io.frinx.translate.unit.commons.registry.common.CompositeReader
+import io.frinx.translate.unit.commons.handler.spi.CompositeReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.network.instance.As
 import io.frinx.unitopo.unit.xr6.bgp.handler.BgpProtocolReader

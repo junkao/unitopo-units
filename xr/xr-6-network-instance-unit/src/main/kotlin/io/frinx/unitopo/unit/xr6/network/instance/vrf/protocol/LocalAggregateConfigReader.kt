@@ -17,7 +17,7 @@
 package io.frinx.unitopo.unit.xr6.network.instance.vrf.protocol
 
 import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
-import io.frinx.translate.unit.commons.registry.common.CompositeReader
+import io.frinx.translate.unit.commons.handler.spi.CompositeReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr6.bgp.handler.aggregates.BgpLocalAggregateConfigReader
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.local.routing.rev170515.local.aggregate.top.local.aggregates.AggregateBuilder

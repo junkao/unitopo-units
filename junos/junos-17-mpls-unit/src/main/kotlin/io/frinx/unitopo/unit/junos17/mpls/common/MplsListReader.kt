@@ -19,7 +19,7 @@ package io.frinx.unitopo.unit.junos17.mpls.common
 import io.fd.honeycomb.translate.spi.read.ConfigListReaderCustomizer
 import io.fd.honeycomb.translate.spi.read.OperListReaderCustomizer
 import io.fd.honeycomb.translate.util.RWUtils
-import io.frinx.translate.unit.commons.registry.common.TypedListReader
+import io.frinx.translate.unit.commons.handler.spi.TypedListReader
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.Config
 import org.opendaylight.yangtools.concepts.Builder

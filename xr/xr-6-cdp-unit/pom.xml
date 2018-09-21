@@ -40,6 +40,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>io.frinx.translate.unit.commons</groupId>
+            <artifactId>handlers</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>io.frinx.unitopo</groupId>
             <artifactId>xr-6-models</artifactId>
             <version>${project.version}</version>
@@ -79,12 +84,6 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.frinx.translate.unit.commons</groupId>
-            <artifactId>translation-registry-common</artifactId>
-            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
 

@@ -18,7 +18,7 @@ package io.frinx.unitopo.unit.xr6.bgp.handler.table
 
 import io.fd.honeycomb.translate.read.ReadContext
 import io.frinx.openconfig.network.instance.NetworInstance
-import io.frinx.translate.unit.commons.registry.common.CompositeListReader
+import io.frinx.translate.unit.commons.handler.spi.CompositeListReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.network.instance.common.L3VrfListReader
 import io.frinx.unitopo.unit.xr6.bgp.handler.BgpProtocolReader

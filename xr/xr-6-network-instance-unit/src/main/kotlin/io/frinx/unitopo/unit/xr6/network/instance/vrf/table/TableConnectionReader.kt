@@ -17,7 +17,7 @@
 package io.frinx.unitopo.unit.xr6.network.instance.vrf.table
 
 import io.fd.honeycomb.translate.spi.read.ConfigListReaderCustomizer
-import io.frinx.translate.unit.commons.registry.common.CompositeListReader
+import io.frinx.translate.unit.commons.handler.spi.CompositeListReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr6.bgp.handler.table.BgpTableConnectionReader
 import io.frinx.unitopo.unit.xr6.ospf.handler.table.OspfTableConnectionReader

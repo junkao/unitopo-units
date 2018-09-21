@@ -17,7 +17,7 @@ package io.frinx.unitopo.unit.xr6.ospf.handler
 
 import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.read.ReadFailedException
-import io.frinx.translate.unit.commons.registry.common.CompositeListReader
+import io.frinx.translate.unit.commons.handler.spi.CompositeListReader
 import io.frinx.unitopo.handlers.ospf.OspfReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev151109.Ospf

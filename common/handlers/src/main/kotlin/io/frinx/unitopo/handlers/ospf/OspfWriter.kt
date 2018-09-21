@@ -17,7 +17,7 @@
 package io.frinx.unitopo.handlers.ospf
 
 import io.fd.honeycomb.translate.spi.write.WriterCustomizer
-import io.frinx.translate.unit.commons.registry.common.TypedWriter
+import io.frinx.translate.unit.commons.handler.spi.TypedWriter
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.ProtocolKey
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.policy.types.rev160512.OSPF
 import org.opendaylight.yangtools.yang.binding.DataObject

@@ -18,7 +18,7 @@ package io.frinx.unitopo.unit.xr6.network.instance
 
 import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
 import io.fd.honeycomb.translate.spi.read.ReaderCustomizer
-import io.frinx.translate.unit.commons.registry.common.CompositeReader
+import io.frinx.translate.unit.commons.handler.spi.CompositeReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr6.network.instance.l2p2p.cp.L2P2PConnectionPointsReader
 import io.frinx.unitopo.unit.xr6.network.instance.l2vsi.cp.L2VSIConnectionPointsReader

@@ -18,7 +18,7 @@ package io.frinx.unitopo.unit.xr6.network.instance.common
 
 import io.fd.honeycomb.translate.spi.write.WriterCustomizer
 import io.fd.honeycomb.translate.util.RWUtils
-import io.frinx.translate.unit.commons.registry.common.TypedWriter
+import io.frinx.translate.unit.commons.handler.spi.TypedWriter
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.Config
 import org.opendaylight.yangtools.yang.binding.DataObject

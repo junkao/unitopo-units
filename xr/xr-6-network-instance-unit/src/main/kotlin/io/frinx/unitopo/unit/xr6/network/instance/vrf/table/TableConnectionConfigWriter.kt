@@ -16,7 +16,7 @@
 
 package io.frinx.unitopo.unit.xr6.network.instance.vrf.table
 
-import io.frinx.translate.unit.commons.registry.common.CompositeWriter
+import io.frinx.translate.unit.commons.handler.spi.CompositeWriter
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr6.bgp.handler.table.BgpTableConnectionWriter
 import io.frinx.unitopo.unit.xr6.ospf.handler.table.OspfTableConnectionWriter

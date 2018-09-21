@@ -17,7 +17,7 @@ package io.frinx.unitopo.unit.xr6.bgp.handler
 
 import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.read.ReadFailedException
-import io.frinx.translate.unit.commons.registry.common.CompositeListReader
+import io.frinx.translate.unit.commons.handler.spi.CompositeListReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.network.instance.protocol.bgp.common.BgpReader
 import io.frinx.unitopo.unit.xr6.bgp.IID

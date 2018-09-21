@@ -40,7 +40,7 @@
         <bundle>mvn:io.frinx.cli/honeycomb-rpcs/{{VERSION}}</bundle>
 
         <bundle>mvn:io.frinx.translate.unit.commons/utils/{{VERSION}}</bundle>
-        <bundle>mvn:io.frinx.translate.unit.commons/translation-registry-common/{{VERSION}}</bundle>
+        <bundle>mvn:io.frinx.translate.unit.commons/handlers/{{VERSION}}</bundle>
         <bundle>wrap:mvn:io.fd.honeycomb/translate-utils/${hc.version}</bundle>
         <bundle>wrap:mvn:io.frinx.unitopo/common-handlers/{{VERSION}}</bundle>
     </feature>
