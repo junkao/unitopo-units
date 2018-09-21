@@ -55,7 +55,15 @@ class InterfaceAggregationConfigWriter(private val underlayAccess: UnderlayAcces
     ) {
         isSupportedForInterface(id)
         val (underlayAggrEthOptId, underlayAggrEthOpt) = getData(id, dataAfter)
-        underlayAccess.merge(underlayAggrEthOptId, underlayAggrEthOpt)
+
+        if (underlayAggrEthOpt.minimumLinks == null && underlayAggrEthOpt.linkSpeed == null) {
+            // TODO Can be removed after FI-258 is fixed
+            underlayAccess.delete(underlayAggrEthOptId)
+        } else {
+            // TODO This put should be just enough, above delete
+            // should be not necessary
+            underlayAccess.put(underlayAggrEthOptId, underlayAggrEthOpt)
+        }
     }
 
     private fun getData(
