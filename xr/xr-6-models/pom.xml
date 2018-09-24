@@ -28,6 +28,7 @@
         <relativePath/>
     </parent>
 
+    <groupId>io.frinx.unitopo</groupId>
     <artifactId>xr-6-models</artifactId>
     <packaging>bundle</packaging>
     <build>
