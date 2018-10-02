@@ -36,12 +36,12 @@
   </prerequisites>
 
   <properties>
-    <restconf.version>1.5.1-Carbon-SR1.3_1_6_rc15-frinxodl-SNAPSHOT</restconf.version>
+    <restconf.version>1.5.1-Carbon-SR1.3_1_6-frinxodl</restconf.version>
     <openconfig.version>3.1.6.rc15-frinx-SNAPSHOT</openconfig.version>
     <cli.version>3.1.6.rc15-frinx-SNAPSHOT</cli.version>
     <cli.units.version>3.1.6.rc15-frinx-SNAPSHOT</cli.units.version>
     <unitopo.version>3.1.6.rc15-frinx-SNAPSHOT</unitopo.version>
-    <netconf.version>1.2.1-Carbon-SR1.3_1_6_rc15-frinxodl-SNAPSHOT</netconf.version>
+    <netconf.version>1.2.1-Carbon-SR1.3_1_6-frinxodl</netconf.version>
   </properties>
 
   <dependencies>
