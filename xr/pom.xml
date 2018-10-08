@@ -44,6 +44,7 @@
         <module>xr-6-platform-unit</module>
         <module>xr-6-cdp-unit</module>
         <module>xr-6-lldp-unit</module>
+        <module>xr-6-configuration-metadata-unit</module>
     </modules>
 
     <build>

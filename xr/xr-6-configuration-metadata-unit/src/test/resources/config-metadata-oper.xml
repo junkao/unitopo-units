@@ -1,0 +1,154 @@
+<?xml version="1.0"?>
+<!--
+  ~ Copyright © 2018 Frinx and others.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<!--
+#317
+<rpc message-id="101"
+          xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+<get>
+ <filter type="subtree">
+   <cfg-hist-gl xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-config-cfgmgr-exec-oper">
+   	<record-type>
+   		<record-type>commit</record-type>
+   	</record-type>
+   </cfg-hist-gl>
+ </filter>
+</get>
+</rpc>
+##
+-->
+<rpc-reply message-id="101" xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+    <data>
+        <cfg-hist-gl xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-config-cfgmgr-exec-oper">
+            <record-type>
+                <record-type>commit</record-type>
+                <record>
+                    <record>0</record>
+                    <timestamp>1523530694</timestamp>
+                    <info>
+                        <type>cfghist-bag-record-commit</type>
+                        <commit-info>
+                            <commit-id>1000000001</commit-id>
+                            <user-id>cisco</user-id>
+                            <line>con0_0_CPU0</line>
+                            <client-name>CLI</client-name>
+                            <label></label>
+                            <comment></comment>
+                        </commit-info>
+                    </info>
+                    <record-type>cfghist-bag-record-commit</record-type>
+                </record>
+                <record>
+                    <record>3</record>
+                    <timestamp>1523530955</timestamp>
+                    <info>
+                        <type>cfghist-bag-record-commit</type>
+                        <commit-info>
+                            <commit-id>1000000004</commit-id>
+                            <user-id>cisco</user-id>
+                            <line>con0_0_CPU0</line>
+                            <client-name>CLI</client-name>
+                            <label></label>
+                            <comment></comment>
+                        </commit-info>
+                    </info>
+                    <record-type>cfghist-bag-record-commit</record-type>
+                </record>
+                <record>
+                    <record>8</record>
+                    <timestamp>1523608607</timestamp>
+                    <info>
+                        <type>cfghist-bag-record-commit</type>
+                        <commit-info>
+                            <commit-id>1000000009</commit-id>
+                            <user-id>cisco</user-id>
+                            <line>vty1:node0_0_CPU0</line>
+                            <client-name>CLI</client-name>
+                            <label></label>
+                            <comment></comment>
+                        </commit-info>
+                    </info>
+                    <record-type>cfghist-bag-record-commit</record-type>
+                </record>
+                <record>
+                    <record>14</record>
+                    <timestamp>1523615106</timestamp>
+                    <info>
+                        <type>cfghist-bag-record-commit</type>
+                        <commit-info>
+                            <commit-id>1000000015</commit-id>
+                            <user-id>cisco</user-id>
+                            <line>vty0:node0_0_CPU0</line>
+                            <client-name>CLI</client-name>
+                            <label></label>
+                            <comment></comment>
+                        </commit-info>
+                    </info>
+                    <record-type>cfghist-bag-record-commit</record-type>
+                </record>
+                <record>
+                    <record>1234</record>
+                    <timestamp>1533293063</timestamp>
+                    <info>
+                        <type>cfghist-bag-record-commit</type>
+                        <commit-info>
+                            <commit-id>1000001207</commit-id>
+                            <user-id>cisco</user-id>
+                            <line>netconf</line>
+                            <client-name>YANG Framework</client-name>
+                            <label></label>
+                            <comment></comment>
+                        </commit-info>
+                    </info>
+                    <record-type>cfghist-bag-record-commit</record-type>
+                </record>
+                <record>
+                    <record>1248</record>
+                    <timestamp>1533293123</timestamp>
+                    <info>
+                        <type>cfghist-bag-record-commit</type>
+                        <commit-info>
+                            <commit-id>1000001221</commit-id>
+                            <user-id>cisco</user-id>
+                            <line>netconf</line>
+                            <client-name>YANG Framework</client-name>
+                            <label></label>
+                            <comment></comment>
+                        </commit-info>
+                    </info>
+                    <record-type>cfghist-bag-record-commit</record-type>
+                </record>
+                <record>
+                    <record>1273</record>
+                    <timestamp>1539169475</timestamp>
+                    <info>
+                        <type>cfghist-bag-record-commit</type>
+                        <commit-info>
+                            <commit-id>1000001246</commit-id>
+                            <user-id>cisco</user-id>
+                            <line>vty1:node0_0_CPU0</line>
+                            <client-name>CLI</client-name>
+                            <label></label>
+                            <comment></comment>
+                        </commit-info>
+                    </info>
+                    <record-type>cfghist-bag-record-commit</record-type>
+                </record>
+            </record-type>
+        </cfg-hist-gl>
+    </data>
+</rpc-reply>
