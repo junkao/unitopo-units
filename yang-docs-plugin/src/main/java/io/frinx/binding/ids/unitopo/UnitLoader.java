@@ -33,27 +33,25 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
-import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.apache.maven.project.MavenProject;
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo;
 import org.opendaylight.yangtools.yang.binding.util.BindingReflections;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class is responsible for loading the unit from classPath and creating reflection object.
  */
 public class UnitLoader {
+    private static final Logger LOG = LoggerFactory.getLogger(UnitLoader.class);
 
     private static final String INIT = "init";
     private static final String UNIT_CLASS = "Unit.class";
     private static final String DOT_CLASS = ".class";
     private final MavenProject project;
     private Set<YangModuleInfo> yangModuleInfos = Collections.emptySet();
-    private final Log log = new SystemStreamLog();
 
     UnitLoader(MavenProject project) {
-
         this.project = project;
     }
 
@@ -79,7 +77,7 @@ public class UnitLoader {
 
         Constructor<?>[] classConstructor;
 
-        //Trying to get constructor.
+        // Trying to get constructor.
         classConstructor = classReflection.getConstructors();
 
         if (classConstructor.length == 0) {
@@ -103,7 +101,7 @@ public class UnitLoader {
 
         unitPath = parseUnitPath(runtimeClasspathElements.iterator().next().toString());
 
-        log.debug(unitPath + " has been found and will be used");
+        LOG.debug(unitPath + " has been found and will be used");
 
         URLClassLoader newLoader = new URLClassLoader(runtimeUrls,
                 Thread.currentThread().getContextClassLoader());
@@ -140,7 +138,7 @@ public class UnitLoader {
             return Optional.of(constructor.newInstance(arguments));
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
                 | InvocationTargetException e) {
-            log.warn("Could not create reflection from classloader, docs wont be generated for this unit.", e);
+            LOG.warn("Could not create reflection from classloader, docs wont be generated for this unit.", e);
         }
         return Optional.empty();
     }
@@ -152,7 +150,7 @@ public class UnitLoader {
                     INIT);
             method.invoke(reflectionObject);
         } catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException e) {
-            log.warn("Could not invoke method init() in " + reflectionObject.getClass().getName()
+            LOG.warn("Could not invoke method init() in " + reflectionObject.getClass().getName()
                     + "yang docs wont be generated for this unit", e);
         }
     }
