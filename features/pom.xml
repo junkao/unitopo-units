@@ -41,6 +41,7 @@
     <openconfig.version>3.1.7.rc2-frinx-SNAPSHOT</openconfig.version>
     <kotlin.version>1.2.41</kotlin.version>
     <jgraph.version>0.9.2</jgraph.version>
+    <translate.unit.commons.version>3.1.7.rc2-frinx-SNAPSHOT</translate.unit.commons.version>
   </properties>
 
   <dependencyManagement>
@@ -261,12 +262,12 @@
     <dependency>
       <groupId>io.frinx.translate.unit.commons</groupId>
       <artifactId>utils</artifactId>
-      <version>${project.version}</version>
+      <version>${translate.unit.commons.version}</version>
     </dependency>
     <dependency>
       <groupId>io.frinx.translate.unit.commons</groupId>
       <artifactId>handlers</artifactId>
-      <version>${project.version}</version>
+      <version>${translate.unit.commons.version}</version>
     </dependency>
   </dependencies>
 </project>

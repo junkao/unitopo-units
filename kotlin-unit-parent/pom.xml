@@ -43,7 +43,7 @@
         <mdsal-old.version>1.5.1-Carbon-SR1.3_1_7_rc2-frinxodl-SNAPSHOT</mdsal-old.version>
         <controller.version>1.5.1-Carbon-SR1.3_1_7_rc2-frinxodl-SNAPSHOT</controller.version>
         <config.version>0.6.1-Carbon-SR1.3_1_7_rc2-frinxodl-SNAPSHOT</config.version>
-
+        <translate.unit.commons.version>3.1.7.rc2-frinx-SNAPSHOT</translate.unit.commons.version>
     </properties>
 
     <build>
@@ -56,7 +56,7 @@
                         <dependency>
                             <groupId>io.frinx.translate.unit.commons</groupId>
                             <artifactId>yang-docs-plugin-common</artifactId>
-                            <version>${project.version}</version>
+                            <version>${translate.unit.commons.version}</version>
                         </dependency>
                         <dependency>
                             <groupId>io.frinx.unitopo</groupId>
