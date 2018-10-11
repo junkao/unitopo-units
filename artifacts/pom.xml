@@ -150,7 +150,7 @@
             </dependency>
             <dependency>
                 <groupId>io.frinx.unitopo</groupId>
-                <artifactId>jxr-6-platform-unit</artifactId>
+                <artifactId>xr-6-platform-unit</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
