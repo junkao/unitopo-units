@@ -45,6 +45,8 @@
         <module>xr-6-cdp-unit</module>
         <module>xr-6-lldp-unit</module>
         <module>xr-6-configuration-metadata-unit</module>
+        <module>xr-7-models</module>
+        <module>xr-7-init-unit</module>
     </modules>
 
     <build>

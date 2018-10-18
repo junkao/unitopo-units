@@ -45,6 +45,15 @@
         <bundle>wrap:mvn:io.frinx.unitopo/common-handlers/{{VERSION}}</bundle>
     </feature>
 
+    <feature name='unified-topology-unit-xr-7' version='${project.version}'>
+        <feature version='${project.version}'>unified-topology-unit-base</feature>
+        <bundle>mvn:commons-net/commons-net/{{VERSION}}</bundle>
+        <bundle>mvn:io.frinx.unitopo/network-instance-unit/{{VERSION}}</bundle>
+        <bundle>mvn:io.frinx.unitopo/utils-unit/{{VERSION}}</bundle>
+        <bundle>mvn:io.frinx.unitopo/xr-7-models/{{VERSION}}</bundle>
+        <bundle>mvn:io.frinx.unitopo/xr-7-init-unit/{{VERSION}}</bundle>
+    </feature>
+
     <feature name='unified-topology-unit-xr-6' version='${project.version}'>
         <feature version='${project.version}'>unified-topology-unit-base</feature>
         <feature version='${netconf.version}'>odl-netconf-topology</feature>
@@ -68,6 +77,7 @@
 
     <feature name='unified-topology-all-units' version='${project.version}'>
         <feature version='${project.version}'>unified-topology-unit-xr-6</feature>
+        <feature version='${project.version}'>unified-topology-unit-xr-7</feature>
         <feature version='${project.version}'>unified-topology-unit-junos-17-3</feature>
     </feature>
 
