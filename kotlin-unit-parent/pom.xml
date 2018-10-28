@@ -24,26 +24,26 @@
     <parent>
         <groupId>io.frinx.translate.unit.commons</groupId>
         <artifactId>kotlin-parent</artifactId>
-        <version>3.1.7.rc4-frinx</version>
+        <version>3.1.7.rc5-frinx-SNAPSHOT</version>
         <relativePath/>
     </parent>
 
     <groupId>io.frinx.unitopo</groupId>
     <artifactId>kotlin-unit-parent</artifactId>
-    <version>3.1.7.rc4-frinx</version>
+    <version>3.1.7.rc5-frinx-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <properties>
 
-        <cli.version>3.1.7.rc4-frinx</cli.version>
-        <openconfig.version>3.1.7.rc4-frinx</openconfig.version>
+        <cli.version>3.1.7.rc5-frinx-SNAPSHOT</cli.version>
+        <openconfig.version>3.1.7.rc5-frinx-SNAPSHOT</openconfig.version>
         <hc.version>1.17.10-Carbon-SR1.3_1_7_rc5-frinxodl-SNAPSHOT</hc.version>
         <kotlin.version>1.2.41</kotlin.version>
         <netconf.version>1.2.1-Carbon-SR1.3_1_7_rc5-frinxodl-SNAPSHOT</netconf.version>
         <mdsal-old.version>1.5.1-Carbon-SR1.3_1_7_rc5-frinxodl-SNAPSHOT</mdsal-old.version>
         <controller.version>1.5.1-Carbon-SR1.3_1_7_rc5-frinxodl-SNAPSHOT</controller.version>
         <config.version>0.6.1-Carbon-SR1.3_1_7_rc5-frinxodl-SNAPSHOT</config.version>
-        <translate.unit.commons.version>3.1.7.rc4-frinx</translate.unit.commons.version>
+        <translate.unit.commons.version>3.1.7.rc5-frinx-SNAPSHOT</translate.unit.commons.version>
     </properties>
 
     <build>
