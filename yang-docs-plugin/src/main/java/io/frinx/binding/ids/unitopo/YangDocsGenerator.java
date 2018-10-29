@@ -139,8 +139,8 @@ public final class YangDocsGenerator implements BasicCodeGenerator, BuildContext
     }
 
     @Override
-    public void setMavenProject(MavenProject project) {
-        this.project = project;
+    public void setMavenProject(MavenProject mavenProject) {
+        this.project = mavenProject;
     }
 
 
