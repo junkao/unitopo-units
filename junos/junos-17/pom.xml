@@ -25,12 +25,22 @@
   </parent>
 
   <groupId>io.frinx.unitopo</groupId>
-  <artifactId>unitopo-units-junos</artifactId>
+  <artifactId>unitopo-units-junos-17</artifactId>
   <version>3.1.7.rc6-frinx-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <modules>
-    <module>junos-17</module>
+    <module>junos-17-models</module>
+    <module>junos-17-network-instance-unit</module>
+    <module>junos-17-mpls-unit</module>
+    <module>junos-17-interface-unit</module>
+    <module>junos-17-bgp-unit</module>
+    <module>junos-17-snmp-unit</module>
+    <module>junos-17-acl-unit</module>
+    <module>junos-17-policy-forwarding-unit</module>
+    <module>junos-17-ospf-unit</module>
+    <module>junos-17-configuration-metadata-unit</module>
+    <module>junos-17-platform</module>
   </modules>
 
   <build>
