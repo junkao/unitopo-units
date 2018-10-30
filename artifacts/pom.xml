@@ -50,7 +50,7 @@
                 <version>${project.version}</version>
             </dependency>
 
-            <!-- Junos -->
+            <!-- Junos-17 -->
             <dependency>
                 <groupId>io.frinx.unitopo</groupId>
                 <artifactId>junos-17-acl-unit</artifactId>
@@ -99,6 +99,18 @@
             <dependency>
                 <groupId>io.frinx.unitopo</groupId>
                 <artifactId>junos-17-snmp-unit</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- Junos-18 -->
+            <dependency>
+                <groupId>io.frinx.unitopo</groupId>
+                <artifactId>junos-18-models</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.frinx.unitopo</groupId>
+                <artifactId>junos-18-configuration-metadata-unit</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
