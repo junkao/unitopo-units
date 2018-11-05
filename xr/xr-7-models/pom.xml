@@ -22,13 +22,15 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>io.frinx.unitopo</groupId>
-        <artifactId>kotlin-unit-parent</artifactId>
-        <version>3.1.7.rc12-frinx-SNAPSHOT</version>
-        <relativePath>../../kotlin-unit-parent</relativePath>
+        <groupId>org.opendaylight.mdsal</groupId>
+        <artifactId>binding-parent</artifactId>
+        <version>0.10.1-Carbon-SR1.3_1_7_rc12-frinxodl-SNAPSHOT</version>
+        <relativePath/>
     </parent>
 
+    <groupId>io.frinx.unitopo</groupId>
     <artifactId>xr-7-models</artifactId>
+    <version>3.1.7.rc12-frinx-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <build>
         <plugins>
@@ -57,6 +59,14 @@
         </plugins>
    </build>
     <dependencies>
+        <dependency>
+            <groupId>org.opendaylight.mdsal.model</groupId>
+            <artifactId>ietf-yang-types-20130715</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.mdsal.model</groupId>
+            <artifactId>ietf-inet-types-2013-07-15</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>yang-common</artifactId>
