@@ -100,6 +100,7 @@
         <bundle>mvn:io.frinx.unitopo/junos-17-configuration-metadata-unit/{{VERSION}}</bundle>
         <bundle>mvn:io.frinx.unitopo/junos-17-platform/{{VERSION}}</bundle>
         <bundle>mvn:io.frinx.unitopo/junos-17-lacp-unit/{{VERSION}}</bundle>
+        <bundle>mvn:io.frinx.unitopo/junos-17-bfd-unit/{{VERSION}}</bundle>
     </feature>
 
     <feature name='unified-topology-unit-junos-18-2' version='${project.version}'>
