@@ -21,7 +21,9 @@ import io.fd.honeycomb.translate.impl.read.GenericConfigListReader
 import io.fd.honeycomb.translate.impl.write.GenericWriter
 import io.fd.honeycomb.translate.read.registry.ModifiableReaderRegistryBuilder
 import io.fd.honeycomb.translate.write.registry.ModifiableWriterRegistryBuilder
-import io.frinx.openconfig.openconfig.network.instance.IIDs
+import io.frinx.openconfig.openconfig.bgp.IIDs as BgpIIDs
+import io.frinx.openconfig.openconfig.network.instance.IIDs as NeIIDs
+import io.frinx.openconfig.openconfig.policy.IIDs
 import io.frinx.unitopo.registry.api.TranslationUnitCollector
 import io.frinx.unitopo.registry.spi.TranslateUnit
 import io.frinx.unitopo.registry.spi.UnderlayAccess
@@ -33,6 +35,7 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.policy.re
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.policy.rev170730.ext.community.set.top.ExtCommunitySets
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.policy.rev170730.ext.community.set.top.ExtCommunitySetsBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.policy.rev170730.ext.community.set.top.ext.community.sets.ExtCommunitySet
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.policy.rev170730.ext.community.set.top.ext.community.sets.ext.community.set.Config
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.policy.rev170730.routing.policy.defined.sets.BgpDefinedSets
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.policy.rev170730.routing.policy.defined.sets.BgpDefinedSetsBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.routing.policy.rev170714.`$YangModuleInfoImpl`
@@ -78,40 +81,28 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
 
     private fun provideWriters(wRegistry: ModifiableWriterRegistryBuilder, access: UnderlayAccess) {
         // provide writers
-        wRegistry.add(GenericWriter<RoutingPolicy>(io.frinx.openconfig.openconfig.policy.IIDs.ROUTINGPOLICY,
+        wRegistry.add(GenericWriter<RoutingPolicy>(IIDs.ROUTINGPOLICY, NoopWriter()))
+        wRegistry.add(GenericWriter<DefinedSets>(IIDs.RO_DEFINEDSETS, NoopWriter()))
+        wRegistry.add(GenericWriter<DefinedSets2>(BgpIIDs.RO_DE_AUG_DEFINEDSETS2, NoopWriter()))
+        wRegistry.add(GenericWriter<BgpDefinedSets>(BgpIIDs.RO_DE_AUG_DEFINEDSETS2_BGPDEFINEDSETS, NoopWriter()))
+        wRegistry.add(GenericWriter<ExtCommunitySets>(BgpIIDs.RO_DE_AUG_DEFINEDSETS2_BG_EXTCOMMUNITYSETS, NoopWriter()))
+        wRegistry.add(GenericWriter<ExtCommunitySet>(BgpIIDs.RO_DE_AUG_DEFINEDSETS2_BG_EX_EXTCOMMUNITYSET,
             NoopWriter()))
-        wRegistry.add(GenericWriter<DefinedSets>(io.frinx.openconfig.openconfig.policy.IIDs.RO_DEFINEDSETS,
-            NoopWriter()))
-        wRegistry.add(GenericWriter<DefinedSets2>(DEFINED_SETS_1, NoopWriter()))
-        wRegistry.add(GenericWriter<BgpDefinedSets>(BGP_DEFINED_SETS, NoopWriter()))
-        wRegistry.add(GenericWriter<ExtCommunitySets>(EXT_COMMUNITY_SETS, NoopWriter()))
-        wRegistry.add(GenericWriter<ExtCommunitySet>(EXT_COMMUNITY_SET, NoopWriter()))
-        wRegistry.addAfter(GenericWriter<org.opendaylight.yang.gen.v1.http.frinx.openconfig.net
-        .yang.bgp.policy.rev170730.ext.community.set.top.ext.community.sets.ext.community.set.Config>(EXT_CS_CONFIG,
-                ExtCommunitySetConfigWriter(access)), IIDs.NE_NE_CONFIG)
+        wRegistry.addAfter(GenericWriter<Config>(BgpIIDs.RO_DE_AUG_DEFINEDSETS2_BG_EX_EX_CONFIG,
+            ExtCommunitySetConfigWriter(access)), NeIIDs.NE_NE_CONFIG)
     }
 
     private fun provideReaders(rRegistry: ModifiableReaderRegistryBuilder, access: UnderlayAccess) {
         // provide readers
-        rRegistry.addStructuralReader(io.frinx.openconfig.openconfig.policy.IIDs.ROUTINGPOLICY,
-            RoutingPolicyBuilder::class.java)
-        rRegistry.addStructuralReader(io.frinx.openconfig.openconfig.policy.IIDs.RO_DEFINEDSETS,
-            DefinedSetsBuilder::class.java)
-        rRegistry.addStructuralReader(DEFINED_SETS_1, DefinedSets2Builder::class.java)
-        rRegistry.addStructuralReader(BGP_DEFINED_SETS, BgpDefinedSetsBuilder::class.java)
-        rRegistry.addStructuralReader(EXT_COMMUNITY_SETS, ExtCommunitySetsBuilder::class.java)
-        rRegistry.add(GenericConfigListReader(EXT_COMMUNITY_SET, ExtCommunitySetReader(access)))
+        rRegistry.addStructuralReader(IIDs.ROUTINGPOLICY, RoutingPolicyBuilder::class.java)
+        rRegistry.addStructuralReader(IIDs.RO_DEFINEDSETS, DefinedSetsBuilder::class.java)
+        rRegistry.addStructuralReader(BgpIIDs.RO_DE_AUG_DEFINEDSETS2, DefinedSets2Builder::class.java)
+        rRegistry.addStructuralReader(BgpIIDs.RO_DE_AUG_DEFINEDSETS2_BGPDEFINEDSETS, BgpDefinedSetsBuilder::class.java)
+        rRegistry.addStructuralReader(BgpIIDs.RO_DE_AUG_DEFINEDSETS2_BG_EXTCOMMUNITYSETS,
+            ExtCommunitySetsBuilder::class.java)
+        rRegistry.add(GenericConfigListReader(BgpIIDs.RO_DE_AUG_DEFINEDSETS2_BG_EX_EXTCOMMUNITYSET,
+            ExtCommunitySetReader(access)))
     }
 
     override fun toString() = "XR 6 (2015-07-30) routing policy translate unit"
-
-    companion object {
-        private val DEFINED_SETS_1 = io.frinx.openconfig.openconfig.policy.IIDs.RO_DEFINEDSETS
-            .augmentation(DefinedSets2::class.java)
-        private val BGP_DEFINED_SETS = DEFINED_SETS_1.child(BgpDefinedSets::class.java)
-        private val EXT_COMMUNITY_SETS = BGP_DEFINED_SETS.child(ExtCommunitySets::class.java)
-        private val EXT_COMMUNITY_SET = EXT_COMMUNITY_SETS.child(ExtCommunitySet::class.java)
-        private val EXT_CS_CONFIG = EXT_COMMUNITY_SET.child(org.opendaylight.yang.gen.v1.http.frinx.openconfig.net
-            .yang.bgp.policy.rev170730.ext.community.set.top.ext.community.sets.ext.community.set.Config::class.java)
-    }
 }
