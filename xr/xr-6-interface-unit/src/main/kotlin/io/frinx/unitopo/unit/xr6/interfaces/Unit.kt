@@ -25,6 +25,8 @@ import io.fd.honeycomb.translate.impl.write.GenericWriter
 import io.fd.honeycomb.translate.read.registry.ModifiableReaderRegistryBuilder
 import io.fd.honeycomb.translate.write.registry.ModifiableWriterRegistryBuilder
 import io.frinx.openconfig.openconfig.interfaces.IIDs
+import io.frinx.openconfig.openconfig._if.ip.IIDs as IfIpIIDs
+import io.frinx.openconfig.openconfig.vlan.IIDs as VlanIIDs
 import io.frinx.unitopo.registry.api.TranslationUnitCollector
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr6.init.Unit
@@ -44,26 +46,18 @@ import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.SubinterfaceStateRead
 import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.SubinterfaceWriter
 import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.vlan.SubinterfaceVlanConfigReader
 import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.vlan.SubinterfaceVlanConfigWriter
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.Subinterface1
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.Subinterface1Builder
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.ipv4.top.Ipv4
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.ipv4.top.Ipv4Builder
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.ipv4.top.ipv4.Addresses
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.ipv4.top.ipv4.AddressesBuilder
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.ipv4.top.ipv4.addresses.Address
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.InterfacesBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.SubinterfacesBuilder
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.vlan.rev170714.vlan.logical.top.Vlan
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.vlan.rev170714.vlan.logical.top.VlanBuilder
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.vlan.rev170714.vlan.logical.top.vlan.Config
 import io.frinx.openconfig.openconfig.network.instance.IIDs as NetworkInstanceIIDs
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev150730.`$YangModuleInfoImpl` as UnderlayInterfacesYangInfo
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.oper.rev150730.`$YangModuleInfoImpl` as UnderlayInterfacesOperYangInfo
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.io.cfg.rev150730.`$YangModuleInfoImpl` as UnderlayIpv4YangInfo
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.`$YangModuleInfoImpl` as IpYangInfo
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.ipv4.top.ipv4.addresses.address.Config as Ipv4AddressConfig
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.`$YangModuleInfoImpl` as InterfacesYangInfo
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.vlan.rev170714.Subinterface1 as VlanAug
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.vlan.rev170714.Subinterface1Builder as VlanAugBuilder
 
 class Unit(private val registry: TranslationUnitCollector) : Unit() {
@@ -103,12 +97,12 @@ class Unit(private val registry: TranslationUnitCollector) : Unit() {
         wRegistry.add(GenericListWriter(IIDs.IN_IN_SU_SUBINTERFACE, SubinterfaceWriter()))
         wRegistry.addAfter(GenericWriter(IIDs.IN_IN_SU_SU_CONFIG, SubinterfaceConfigWriter(underlayAccess)),
                 IIDs.IN_IN_CONFIG)
-        wRegistry.addAfter(GenericWriter(SUBIFC_VLAN_CFG_ID, SubinterfaceVlanConfigWriter(underlayAccess)),
-                IIDs.IN_IN_SU_SU_CONFIG)
+        wRegistry.addAfter(GenericWriter(VlanIIDs.IN_IN_SU_SU_AUG_SUBINTERFACE1_VL_CONFIG,
+            SubinterfaceVlanConfigWriter(underlayAccess)), IIDs.IN_IN_SU_SU_CONFIG)
 
-        wRegistry.add(GenericWriter(SUBIFC_IPV4_ADDRESS_ID, Ipv4AddressWriter()))
-        wRegistry.addAfter(GenericWriter(SUBIFC_IPV4_CFG_ID, Ipv4AddressConfigWriter(underlayAccess)),
-                NetworkInstanceIIDs.NE_NE_IN_IN_CONFIG)
+        wRegistry.add(GenericWriter(IfIpIIDs.IN_IN_SU_SU_AUG_SUBINTERFACE1_IP_AD_ADDRESS, Ipv4AddressWriter()))
+        wRegistry.addAfter(GenericWriter(IfIpIIDs.IN_IN_SU_SU_AUG_SUBINTERFACE1_IP_AD_AD_CONFIG,
+            Ipv4AddressConfigWriter(underlayAccess)), NetworkInstanceIIDs.NE_NE_IN_IN_CONFIG)
     }
 
     private fun provideReaders(rRegistry: ModifiableReaderRegistryBuilder, underlayAccess: UnderlayAccess) {
@@ -122,15 +116,18 @@ class Unit(private val registry: TranslationUnitCollector) : Unit() {
         rRegistry.add(GenericConfigReader(IIDs.IN_IN_SU_SU_CONFIG, SubinterfaceConfigReader(underlayAccess)))
         rRegistry.add(GenericOperReader(IIDs.IN_IN_SU_SU_STATE, SubinterfaceStateReader(underlayAccess)))
 
-        rRegistry.addStructuralReader(SUBIFC_VLAN_AUG_ID, VlanAugBuilder::class.java)
-        rRegistry.addStructuralReader(SUBIFC_VLAN_ID, VlanBuilder::class.java)
-        rRegistry.add(GenericConfigReader(SUBIFC_VLAN_CFG_ID, SubinterfaceVlanConfigReader(underlayAccess)))
+        rRegistry.addStructuralReader(VlanIIDs.IN_IN_SU_SU_AUG_SUBINTERFACE1, VlanAugBuilder::class.java)
+        rRegistry.addStructuralReader(VlanIIDs.IN_IN_SU_SU_AUG_SUBINTERFACE1_VLAN, VlanBuilder::class.java)
+        rRegistry.add(GenericConfigReader(VlanIIDs.IN_IN_SU_SU_AUG_SUBINTERFACE1_VL_CONFIG,
+            SubinterfaceVlanConfigReader(underlayAccess)))
 
-        rRegistry.addStructuralReader(SUBIFC_IPV4_AUG_ID, Subinterface1Builder::class.java)
-        rRegistry.addStructuralReader(SUBIFC_IPV4_ID, Ipv4Builder::class.java)
-        rRegistry.addStructuralReader(SUBIFC_IPV4_ADDRESSES_ID, AddressesBuilder::class.java)
-        rRegistry.add(GenericConfigListReader(SUBIFC_IPV4_ADDRESS_ID, Ipv4AddressReader(underlayAccess)))
-        rRegistry.add(GenericConfigReader(SUBIFC_IPV4_CFG_ID, Ipv4ConfigReader(underlayAccess)))
+        rRegistry.addStructuralReader(IfIpIIDs.IN_IN_SU_SU_AUG_SUBINTERFACE1, Subinterface1Builder::class.java)
+        rRegistry.addStructuralReader(IfIpIIDs.IN_IN_SU_SU_AUG_SUBINTERFACE1_IPV4, Ipv4Builder::class.java)
+        rRegistry.addStructuralReader(IfIpIIDs.IN_IN_SU_SU_AUG_SUBINTERFACE1_IP_ADDRESSES, AddressesBuilder::class.java)
+        rRegistry.add(GenericConfigListReader(IfIpIIDs.IN_IN_SU_SU_AUG_SUBINTERFACE1_IP_AD_ADDRESS,
+            Ipv4AddressReader(underlayAccess)))
+        rRegistry.add(GenericConfigReader(IfIpIIDs.IN_IN_SU_SU_AUG_SUBINTERFACE1_IP_AD_AD_CONFIG,
+            Ipv4ConfigReader(underlayAccess)))
     }
 
     override fun toString(): String = "XR 6 (2015-07-30) interface translate unit"
@@ -140,22 +137,5 @@ class Unit(private val registry: TranslationUnitCollector) : Unit() {
                 UnderlayInterfacesYangInfo.getInstance(),
                 UnderlayInterfacesOperYangInfo.getInstance(),
                 UnderlayIpv4YangInfo.getInstance())
-
-        private val SUBIFC_IPV4_AUG_ID = IIDs.IN_IN_SU_SUBINTERFACE.augmentation(Subinterface1::class.java)
-
-        private val SUBIFC_IPV4_ID = SUBIFC_IPV4_AUG_ID.child(Ipv4::class.java)
-        private val SUBIFC_IPV4_ADDRESSES_ID = SUBIFC_IPV4_ID.child(Addresses::class.java)
-        private val SUBIFC_IPV4_ADDRESS_ID = SUBIFC_IPV4_ADDRESSES_ID.child(Address::class.java)
-        val SUBIFC_IPV4_CFG_ID = SUBIFC_IPV4_ADDRESS_ID.child(Ipv4AddressConfig::class.java)
-
-        private val SUBIFC_VLAN_AUG_ID = IIDs.IN_IN_SU_SUBINTERFACE.augmentation(VlanAug::class.java)
-
-        private val SUBIFC_VLAN_ID = SUBIFC_VLAN_AUG_ID.child(Vlan::class.java)
-        public val SUBIFC_VLAN_CFG_ID = SUBIFC_VLAN_ID.child(Config::class.java)
     }
 }
-
-typealias InterfaceIpv4Augment = org.opendaylight.yang.gen.v1.http.frinx
-.openconfig.net.yang.interfaces.ip.rev161222.Subinterface1
-typealias InterfaceIpv6Augment = org.opendaylight.yang.gen.v1.http.frinx
-.openconfig.net.yang.interfaces.ip.rev161222.Subinterface2
