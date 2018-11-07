@@ -40,7 +40,6 @@ import io.frinx.unitopo.unit.junos17.mpls.handler.TunnelConfigWriter
 import io.frinx.unitopo.unit.junos17.mpls.handler.TunnelReader
 import io.frinx.unitopo.unit.utils.NoopListWriter
 import io.frinx.unitopo.unit.utils.NoopWriter
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.mpls.extension.rev171024.NiMplsRsvpIfSubscripAug
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.mpls.rev170824.mpls.top.MplsBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.mpls.rev170824.mpls.top.mpls.LspsBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.mpls.rev170824.mpls.top.mpls.SignalingProtocolsBuilder
@@ -99,9 +98,8 @@ class MplsUnit(private val registry: TranslationUnitCollector) : TranslateUnit {
         wRegistry.add(GenericWriter(IIDs.NE_NE_MP_SI_RS_IN_INTERFACE, NoopListWriter()))
         wRegistry.add(GenericWriter(IIDs.NE_NE_MP_SI_RS_IN_IN_CONFIG, RsvpInterfaceConfigWriter(underlayAccess)))
         wRegistry.add(GenericWriter(IIDs.NE_NE_MP_SI_RS_IN_IN_SU_CONFIG, NoopWriter()))
-        wRegistry.addAfter(GenericWriter(IIDs.NE_NE_MP_SI_RS_IN_IN_SU_CONFIG.augmentation(
-            NiMplsRsvpIfSubscripAug::class.java), NiMplsRsvpIfSubscripAugWriter(underlayAccess)),
-                IIDs.NE_NE_MP_SI_RS_IN_IN_CONFIG)
+        wRegistry.addAfter(GenericWriter(IIDs.NE_NE_MP_SI_RS_IN_IN_SU_CO_AUG_NIMPLSRSVPIFSUBSCRIPAUG,
+            NiMplsRsvpIfSubscripAugWriter(underlayAccess)), IIDs.NE_NE_MP_SI_RS_IN_IN_CONFIG)
 
         // TE
         wRegistry.add(GenericWriter(IIDs.NE_NE_MP_TE_INTERFACE, NoopListWriter()))
@@ -127,8 +125,8 @@ class MplsUnit(private val registry: TranslationUnitCollector) : TranslateUnit {
         rRegistry.add(GenericConfigReader(IIDs.NE_NE_MP_SI_RS_IN_IN_CONFIG, RsvpInterfaceConfigReader(underlayAccess)))
         rRegistry.addStructuralReader(IIDs.NE_NE_MP_SI_RS_IN_IN_SUBSCRIPTION, SubscriptionBuilder::class.java)
         rRegistry.addStructuralReader(IIDs.NE_NE_MP_SI_RS_IN_IN_SU_CONFIG, ConfigBuilder::class.java)
-        rRegistry.add(GenericConfigReader(IIDs.NE_NE_MP_SI_RS_IN_IN_SU_CONFIG.augmentation(
-            NiMplsRsvpIfSubscripAug::class.java), NiMplsRsvpIfSubscripAugReader(underlayAccess)))
+        rRegistry.add(GenericConfigReader(IIDs.NE_NE_MP_SI_RS_IN_IN_SU_CO_AUG_NIMPLSRSVPIFSUBSCRIPAUG,
+            NiMplsRsvpIfSubscripAugReader(underlayAccess)))
 
         // TE
         rRegistry.addStructuralReader(IIDs.NE_NE_MP_TEINTERFACEATTRIBUTES, TeInterfaceAttributesBuilder::class.java)
