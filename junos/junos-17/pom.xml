@@ -41,6 +41,7 @@
     <module>junos-17-ospf-unit</module>
     <module>junos-17-configuration-metadata-unit</module>
     <module>junos-17-platform</module>
+    <module>junos-17-lacp-unit</module>
   </modules>
 
   <build>

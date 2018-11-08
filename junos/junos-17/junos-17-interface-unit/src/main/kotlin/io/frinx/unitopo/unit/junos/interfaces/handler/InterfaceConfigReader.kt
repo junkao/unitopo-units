@@ -59,36 +59,38 @@ class InterfaceConfigReader(private val underlayAccess: UnderlayAccess) :
     override fun merge(builder: Builder<out DataObject>, config: Config) {
         (builder as InterfaceBuilder).config = config
     }
-}
 
-internal fun ConfigBuilder.fromUnderlay(underlay: JunosInterface) {
-    val ifcType = parseIfcType(underlay.name)
+    companion object {
+        fun parseIfcType(name: String): Class<out InterfaceType>? {
+            return when {
+                name.startsWith("em") -> EthernetCsmacd::class.java
+                name.startsWith("et") -> EthernetCsmacd::class.java
+                name.startsWith("fe") -> EthernetCsmacd::class.java
+                name.startsWith("fxp") -> EthernetCsmacd::class.java
+                name.startsWith("ge") -> EthernetCsmacd::class.java
+                name.startsWith("xe") -> EthernetCsmacd::class.java
+                name.startsWith("lo") -> SoftwareLoopback::class.java
+                name.startsWith("ae") -> Ieee8023adLag::class.java
+                else -> Other::class.java
+            }
+        }
 
-    name = underlay.name
-    description = underlay.description
-    type = ifcType
-    mtu = underlay.mtu?.uint32?.toInt()
-    isEnabled = parseEnableDisable(underlay.enableDisable)
-}
+        internal fun ConfigBuilder.fromUnderlay(underlay: JunosInterface) {
+            val ifcType = parseIfcType(underlay.name)
 
-internal fun parseIfcType(name: String): Class<out InterfaceType>? {
-    return when {
-        name.startsWith("em") -> EthernetCsmacd::class.java
-        name.startsWith("et") -> EthernetCsmacd::class.java
-        name.startsWith("fe") -> EthernetCsmacd::class.java
-        name.startsWith("fxp") -> EthernetCsmacd::class.java
-        name.startsWith("ge") -> EthernetCsmacd::class.java
-        name.startsWith("xe") -> EthernetCsmacd::class.java
-        name.startsWith("lo") -> SoftwareLoopback::class.java
-        name.startsWith("ae") -> Ieee8023adLag::class.java
-        else -> Other::class.java
-    }
-}
+            name = underlay.name
+            description = underlay.description
+            type = ifcType
+            mtu = underlay.mtu?.uint32?.toInt()
+            isEnabled = parseEnableDisable(underlay.enableDisable)
+        }
 
-internal fun parseEnableDisable(enableDisable: EnableDisable?): Boolean? {
-    return when (enableDisable) {
-        null -> true
-        is Case1 -> false
-        else -> false
+        internal fun parseEnableDisable(enableDisable: EnableDisable?): Boolean? {
+            return when (enableDisable) {
+                null -> true
+                is Case1 -> false
+                else -> false
+            }
+        }
     }
 }

@@ -107,7 +107,7 @@ class InterfaceHoldTimeConfigWriter(private val underlayAccess: UnderlayAccess) 
     }
 
     private fun isSupportedForInterface(deviceId: InstanceIdentifier<JunosHoldTime>): Boolean {
-        return when (parseIfcType(deviceId.firstKeyOf(JunosInterface::class.java).name)) {
+        return when (InterfaceConfigReader.parseIfcType(deviceId.firstKeyOf(JunosInterface::class.java).name)) {
             Ieee8023adLag::class.java -> false
             else -> true
         }

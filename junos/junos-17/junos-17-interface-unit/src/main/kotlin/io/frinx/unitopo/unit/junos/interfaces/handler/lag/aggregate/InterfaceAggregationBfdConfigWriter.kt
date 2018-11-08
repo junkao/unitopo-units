@@ -20,8 +20,8 @@ import io.fd.honeycomb.translate.spi.write.WriterCustomizer
 import io.fd.honeycomb.translate.write.WriteContext
 import io.fd.honeycomb.translate.write.WriteFailedException
 import io.frinx.unitopo.registry.spi.UnderlayAccess
+import io.frinx.unitopo.unit.junos.interfaces.handler.InterfaceConfigReader
 import io.frinx.unitopo.unit.junos.interfaces.handler.InterfaceReader
-import io.frinx.unitopo.unit.junos.interfaces.handler.parseIfcType
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.bfd.rev171024.bfd.top.bfd.Config
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.Interface
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.Ipaddr
@@ -100,10 +100,12 @@ class InterfaceAggregationBfdConfigWriter(private val underlayAccess: UnderlayAc
                 .child(JunosBfdLivenessDetection::class.java)
     }
 
-    private fun isSupportedForInterface(deviceId: InstanceIdentifier<JunosBfdLivenessDetection>): Boolean {
-        return when (parseIfcType(deviceId.firstKeyOf(JunosInterface::class.java).name)) {
-            Ieee8023adLag::class.java -> true
-            else -> false
+    companion object {
+        fun isSupportedForInterface(deviceId: InstanceIdentifier<JunosBfdLivenessDetection>): Boolean {
+            return when (InterfaceConfigReader.parseIfcType(deviceId.firstKeyOf(JunosInterface::class.java).name)) {
+                Ieee8023adLag::class.java -> true
+                else -> false
+            }
         }
     }
 }

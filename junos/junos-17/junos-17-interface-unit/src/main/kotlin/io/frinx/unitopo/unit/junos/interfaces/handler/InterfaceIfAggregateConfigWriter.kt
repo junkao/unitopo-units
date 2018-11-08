@@ -84,7 +84,7 @@ class InterfaceIfAggregateConfigWriter(private val underlayAccess: UnderlayAcces
 
     private fun isSupportedForInterface(id: InstanceIdentifier<Config1>) {
         val ifcName = id.firstKeyOf(Interface::class.java).name
-        val ifcType = parseIfcType(ifcName)
+        val ifcType = InterfaceConfigReader.parseIfcType(ifcName)
         require(ifcType === EthernetCsmacd::class.java) {
             """Ethernet interface aggregation configuration is supported only on ethernet interfaces.
                 Cannot configure interface $ifcName of type $ifcType""".trimIndent()

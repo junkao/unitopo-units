@@ -19,8 +19,8 @@ package io.frinx.unitopo.unit.junos.interfaces.handler.lag.aggregate
 import io.fd.honeycomb.translate.spi.write.WriterCustomizer
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.unitopo.registry.spi.UnderlayAccess
+import io.frinx.unitopo.unit.junos.interfaces.handler.InterfaceConfigReader
 import io.frinx.unitopo.unit.junos.interfaces.handler.InterfaceReader
-import io.frinx.unitopo.unit.junos.interfaces.handler.parseIfcType
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.aggregate.rev161222.aggregation.logical.top.aggregation.Config
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.juniper.rev171024.IfLagJuniperAug
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.juniper.rev171024.JuniperIfAggregateConfig
@@ -100,7 +100,7 @@ class InterfaceAggregationConfigWriter(private val underlayAccess: UnderlayAcces
     }
 
     private fun isSupportedForInterface(deviceId: InstanceIdentifier<Config>) {
-        val ifcType = parseIfcType(deviceId.firstKeyOf(Interface::class.java).name)
+        val ifcType = InterfaceConfigReader.parseIfcType(deviceId.firstKeyOf(Interface::class.java).name)
         require(ifcType === Ieee8023adLag::class.java) {
             "Cannot configure aggregate config on non LAG interface ${deviceId.firstKeyOf(Interface::class.java).name}"
         }
