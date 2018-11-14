@@ -32,6 +32,7 @@
   <modules>
     <module>junos-18-models</module>
     <module>junos-18-configuration-metadata-unit</module>
+    <module>junos-18-interface-unit</module>
   </modules>
 
   <build>
