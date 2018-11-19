@@ -118,6 +118,11 @@
                 <artifactId>junos-18-interface-unit</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>io.frinx.unitopo</groupId>
+                <artifactId>junos-18-network-instance-unit</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 
             <!-- Cisco XR -->
             <dependency>
@@ -188,4 +193,3 @@
         </dependencies>
     </dependencyManagement>
 </project>
-
