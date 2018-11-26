@@ -69,10 +69,9 @@ class MemberConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCus
         private fun isSupportedMemberInterface(id: InstanceIdentifier<Config>) {
             val ifcName = id.firstKeyOf(Member::class.java).`interface`
             val ifcType = InterfaceConfigReader.parseIfcType(ifcName)
-            Preconditions.checkArgument(ifcType === EthernetCsmacd::class.java) {
+            Preconditions.checkArgument(ifcType === EthernetCsmacd::class.java,
                 """Ethernet interface aggregation configuration is supported only on ethernet interfaces.
-                Cannot configure interface $ifcName of type $ifcType""".trimIndent()
-            }
+                Cannot configure interface $ifcName of type $ifcType""")
         }
     }
 }
