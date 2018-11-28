@@ -69,13 +69,13 @@ class VrfConfigWriterTest {
         val dataCap = ArgumentCaptor
                 .forClass(DataObject::class.java) as ArgumentCaptor<Instance>
 
-        Mockito.doNothing().`when`(underlayAccess).put(Mockito.any(), Mockito.any())
+        Mockito.doNothing().`when`(underlayAccess).merge(Mockito.any(), Mockito.any())
 
         // test
         target.writeCurrentAttributes(id, config, writeContext)
 
         // capture
-        Mockito.verify(underlayAccess, Mockito.times(1)).put(idCap.capture(), dataCap.capture())
+        Mockito.verify(underlayAccess, Mockito.times(1)).merge(idCap.capture(), dataCap.capture())
 
         // verify capture-length
         Assert.assertThat(idCap.allValues.size, CoreMatchers.`is`(1))

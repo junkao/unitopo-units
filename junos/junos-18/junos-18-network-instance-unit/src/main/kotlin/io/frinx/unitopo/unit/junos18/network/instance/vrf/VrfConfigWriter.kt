@@ -63,7 +63,9 @@ class VrfConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCustom
         }
 
         val (vrfIid, vrf) = getVrfData(dataAfter, InstanceBuilder())
-        underlayAccess.put(vrfIid, vrf)
+        // We should use merge method because this container may have attributes that are not covered by OpenConfig,
+        // and it will be deleted.
+        underlayAccess.merge(vrfIid, vrf)
     }
 
     private fun getVrfData(data: Config, vrfBuilder: InstanceBuilder): Pair<IID<Instance>, Instance> {
