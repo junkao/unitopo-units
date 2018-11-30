@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.frinx.unitopo.unit.xr6.bgp.common
+package io.frinx.unitopo.handlers.bgp
 
 import io.fd.honeycomb.translate.spi.write.ListWriterCustomizer
 import io.fd.honeycomb.translate.util.RWUtils

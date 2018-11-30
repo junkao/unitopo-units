@@ -20,7 +20,7 @@ import io.fd.honeycomb.translate.util.RWUtils
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.openconfig.network.instance.NetworInstance
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.xr6.bgp.common.BgpWriter
+import io.frinx.unitopo.handlers.bgp.BgpWriter
 import io.frinx.unitopo.unit.xr6.bgp.handler.GlobalAfiSafiConfigWriter
 import io.frinx.unitopo.unit.xr6.bgp.handler.getAfiSafis
 import io.frinx.unitopo.unit.xr6.bgp.handler.toUnderlay

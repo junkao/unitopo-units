@@ -38,9 +38,9 @@ class GlobalAfiSafiReaderTest : AbstractNetconfHandlerTest() {
         val afiSafi = GlobalAfiSafiReader.parseAfiSafi(parseGetCfgResponse(DATA_NODES,
                 BgpProtocolReader.UNDERLAY_BGP.child(Instance::class.java, InstanceKey(CiscoIosXrString("default")))),
             NetworkInstanceKey("default"))
-        Assert.assertEquals(listOf(IPV4UNICAST::class.java, IPV6UNICAST::class.java, L3VPNIPV6UNICAST::class.java,
-            L3VPNIPV4UNICAST::class.java)
-                .map { AfiSafiKey(it) }, afiSafi)
+        Assert.assertEquals(listOf(IPV4UNICAST::class.java, IPV6UNICAST::class.java, L3VPNIPV4UNICAST::class.java,
+            L3VPNIPV6UNICAST::class.java)
+                .map { AfiSafiKey(it) }, afiSafi.sortedBy { it.afiSafiName.simpleName })
 
         val afiSafiVrf = GlobalAfiSafiReader.parseAfiSafi(parseGetCfgResponse(DATA_NODES,
                 BgpProtocolReader.UNDERLAY_BGP.child(Instance::class.java, InstanceKey(CiscoIosXrString("default")))),

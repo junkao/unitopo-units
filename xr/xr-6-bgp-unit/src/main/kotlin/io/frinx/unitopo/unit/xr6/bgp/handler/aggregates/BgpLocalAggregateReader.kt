@@ -19,7 +19,7 @@ package io.frinx.unitopo.unit.xr6.bgp.handler.aggregates
 import io.fd.honeycomb.translate.read.ReadContext
 import io.frinx.openconfig.network.instance.NetworInstance
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.network.instance.protocol.bgp.common.BgpListReader
+import io.frinx.unitopo.handlers.bgp.BgpListReader
 import io.frinx.unitopo.unit.xr6.bgp.IID
 import io.frinx.unitopo.unit.xr6.bgp.handler.BgpProtocolReader
 import io.frinx.unitopo.unit.xr6.bgp.handler.GlobalAfiSafiReader

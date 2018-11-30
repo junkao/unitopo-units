@@ -37,8 +37,8 @@ class NeighborReaderTest : AbstractNetconfHandlerTest() {
                 BgpProtocolReader.UNDERLAY_BGP.child(Instance::class.java, InstanceKey(CiscoIosXrString("default")))),
             NetworkInstanceKey("default"))
 
-        Assert.assertEquals(listOf("4004::1", "10.1.0.4", "2.3.4.5").map { NeighborKey(IpAddress(it.toCharArray())) },
-            parseNeighbors)
+        Assert.assertEquals(listOf("10.1.0.4", "2.3.4.5", "4004::1").map { NeighborKey(IpAddress(it.toCharArray())) },
+            parseNeighbors.sortedBy { String(it.neighborAddress.value) })
 
         val parseNeighborsVrf = NeighborReader.parseNeighbors(parseGetCfgResponse(DATA_NODES,
                 BgpProtocolReader.UNDERLAY_BGP.child(Instance::class.java, InstanceKey(CiscoIosXrString("default")))),

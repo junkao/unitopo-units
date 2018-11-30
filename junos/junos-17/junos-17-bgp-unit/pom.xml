@@ -39,7 +39,7 @@
     <dependencies>
         <dependency>
             <groupId>io.frinx.unitopo</groupId>
-            <artifactId>network-instance-unit</artifactId>
+            <artifactId>common-handlers</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

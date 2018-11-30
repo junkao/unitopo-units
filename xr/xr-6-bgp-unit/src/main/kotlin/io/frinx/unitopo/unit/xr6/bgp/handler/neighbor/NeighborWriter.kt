@@ -26,7 +26,7 @@ import io.frinx.unitopo.unit.xr6.bgp.UnderlayNeighborBuilder
 import io.frinx.unitopo.unit.xr6.bgp.UnderlayNeighborKey
 import io.frinx.unitopo.unit.xr6.bgp.UnderlayVrfNeighborBuilder
 import io.frinx.unitopo.unit.xr6.bgp.UnderlayVrfNeighborKey
-import io.frinx.unitopo.unit.xr6.bgp.common.BgpListWriter
+import io.frinx.unitopo.handlers.bgp.BgpListWriter
 import io.frinx.unitopo.unit.xr6.bgp.handler.GlobalConfigWriter
 import io.frinx.unitopo.unit.xr6.bgp.handler.GlobalConfigWriter.Companion.XR_BGP_INSTANCE_NAME
 import io.frinx.unitopo.unit.xr6.bgp.handler.toUnderlay

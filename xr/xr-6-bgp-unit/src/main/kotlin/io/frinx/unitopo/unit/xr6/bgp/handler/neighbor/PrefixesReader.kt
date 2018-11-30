@@ -18,7 +18,7 @@ package io.frinx.unitopo.unit.xr6.bgp.handler.neighbor
 
 import io.fd.honeycomb.translate.read.ReadContext
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.network.instance.protocol.bgp.common.BgpReader
+import io.frinx.unitopo.handlers.bgp.BgpReader
 import io.frinx.unitopo.unit.xr6.bgp.UnderlayOperNeighbor
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.oper.rev150827.BgpAfi
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.neighbor.afi.safi.list.AfiSafi

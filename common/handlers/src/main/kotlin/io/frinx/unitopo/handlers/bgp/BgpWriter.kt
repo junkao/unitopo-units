@@ -14,31 +14,31 @@
  * limitations under the License.
  */
 
-package io.frinx.unitopo.unit.network.instance.protocol.bgp.common
+package io.frinx.unitopo.handlers.bgp
 
-import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
-import io.fd.honeycomb.translate.spi.read.OperReaderCustomizer
-import io.frinx.translate.unit.commons.handler.spi.TypedReader
+import io.fd.honeycomb.translate.spi.write.WriterCustomizer
+import io.fd.honeycomb.translate.util.RWUtils
+import io.frinx.translate.unit.commons.handler.spi.TypedWriter
+import io.frinx.unitopo.unit.network.instance.common.L3VrfReader
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.Config
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.ProtocolKey
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.policy.types.rev160512.BGP
-import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
+import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
+import java.util.AbstractMap
 
-interface BgpReader<O : DataObject, B : Builder<O>> : TypedReader<O, B> {
+interface BgpWriter<O : DataObject> : TypedWriter<O>, WriterCustomizer<O> {
 
     override fun getKey(): ProtocolKey {
         return ProtocolKey(TYPE, null)
     }
 
+    override fun getParentCheck(id: InstanceIdentifier<O>) = AbstractMap.SimpleEntry(
+                RWUtils.cutId(id, NetworkInstance::class.java).child(Config::class.java),
+                L3VrfReader.L3VRF_CHECK)
+
     companion object {
         val TYPE: Class<BGP> = BGP::class.java
-        val NAME: String = "default"
     }
-
-    /**
-     * Union mixin of Bgp reader and Config reader.
-     */
-    interface BgpConfigReader<O : DataObject, B : Builder<O>> : BgpReader<O, B>, ConfigReaderCustomizer<O, B>
-
-    interface BgpOperReader<O : DataObject, B : Builder<O>> : BgpReader<O, B>, OperReaderCustomizer<O, B>
 }
