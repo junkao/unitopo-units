@@ -67,5 +67,9 @@ abstract class AbstractNetconfHandlerTest {
         return type.targetType.cast(value)
     }
 
-    protected fun getResourceAsString(name: String) = javaClass.getResource(name).readText(Charsets.UTF_8)
+    protected fun getResourceAsString(name: String) = AbstractNetconfHandlerTest.getResourceAsString(javaClass, name)
+
+    companion object {
+        fun getResourceAsString(clazz: Class<*>, name: String) = clazz.getResource(name).readText(Charsets.UTF_8)
+    }
 }
