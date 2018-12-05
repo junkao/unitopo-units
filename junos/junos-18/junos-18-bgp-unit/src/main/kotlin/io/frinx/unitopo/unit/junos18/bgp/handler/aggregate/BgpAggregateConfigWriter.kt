@@ -1,0 +1,81 @@
+/*
+ * Copyright © 2018 Frinx and others.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.frinx.unitopo.unit.junos18.bgp.handler.aggregate
+
+import io.fd.honeycomb.translate.write.WriteContext
+import io.frinx.unitopo.registry.spi.UnderlayAccess
+import io.frinx.unitopo.handlers.bgp.BgpWriter
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.extension.rev180323.NiProtAggAug
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.local.routing.rev170515.local.aggregate.top.local.aggregates.aggregate.Config
+import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.common.types.rev180101.PolicyAlgebra
+import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.routing.instances.rev180101.rib_aggregate_type.RouteBuilder
+import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.common.types.rev180101.Ipprefix as JunodIpPrefix
+import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
+
+open class BgpAggregateConfigWriter(private val access: UnderlayAccess) : BgpWriter<Config> {
+
+    override fun writeCurrentAttributesForType(
+        instanceIdentifier: IID<Config>,
+        config: Config,
+        writeContext: WriteContext
+    ) {
+        val (vrfKey, aggregateKey) = BgpAggregateConfigReader.extractKeys(instanceIdentifier)
+        val underlayId = BgpAggregateConfigReader.getUnderlayId(
+            vrfKey.name,
+            String(aggregateKey.prefix.value))
+        val routeBuilder = RouteBuilder()
+
+        routeBuilder.fromOpenConfig(config)
+        access.put(underlayId, routeBuilder.build())
+    }
+
+    override fun updateCurrentAttributesForType(
+        id: IID<Config>,
+        dataBefore: Config,
+        dataAfter: Config,
+        writeContext: WriteContext
+    ) {
+        writeCurrentAttributesForType(id, dataAfter, writeContext)
+    }
+
+    override fun deleteCurrentAttributesForType(
+        instanceIdentifier: IID<Config>,
+        config: Config,
+        writeContext: WriteContext
+    ) {
+        val (vrfKey, aggregateKey) = BgpAggregateConfigReader.extractKeys(instanceIdentifier)
+        val underlayId = BgpAggregateConfigReader.getUnderlayId(
+            vrfKey.name,
+            String(aggregateKey.prefix.value))
+
+        access.delete(underlayId)
+    }
+
+    companion object {
+        private fun RouteBuilder.fromOpenConfig(config: Config) {
+            name = JunodIpPrefix(String(config.prefix.value))
+
+            val aug = config.getAugmentation(NiProtAggAug::class.java)
+            val policy = aug?.let {
+                it.applyPolicy.orEmpty()
+                    .map { PolicyAlgebra(it) }
+                    .toList()
+            }
+            setPolicy(policy)
+        }
+    }
+}

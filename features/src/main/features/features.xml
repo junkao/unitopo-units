@@ -108,6 +108,7 @@
         <bundle>mvn:io.frinx.unitopo/junos-18-models/{{VERSION}}</bundle>
         <bundle>mvn:io.frinx.unitopo/junos-18-interface-unit/{{VERSION}}</bundle>
         <bundle>mvn:io.frinx.unitopo/junos-18-network-instance-unit/{{VERSION}}</bundle>
+        <bundle>mvn:io.frinx.unitopo/junos-18-bgp-unit/{{VERSION}}</bundle>
         <bundle>mvn:io.frinx.unitopo/junos-18-configuration-metadata-unit/{{VERSION}}</bundle>
     </feature>
 
