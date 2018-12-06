@@ -32,6 +32,7 @@ import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.interfaces.
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.interfaces.rev180101.interfaces.group.interfaces.Interface as JunosInterface
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.interfaces.rev180101.interfaces.group.interfaces.InterfaceBuilder as JunosInterfaceBuilder
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.interfaces.rev180101.interfaces.group.interfaces.InterfaceKey as JunosInterfaceKey
+import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.interfaces.rev180101.interfaces_type.Unit as JunosInterfaceUnit
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
 class InterfaceReader(private val underlayAccess: UnderlayAccess) :
@@ -108,6 +109,18 @@ class InterfaceReader(private val underlayAccess: UnderlayAccess) :
                     LogicalDatastoreType.CONFIGURATION)
                     .checkedGet().orNull()
             }
+        }
+
+        fun readUnitCfg(
+            underlayAccess: UnderlayAccess,
+            name: String,
+            unitId: Long,
+            handler: (JunosInterfaceUnit) -> Unit
+        ) {
+            readInterface(underlayAccess, name)
+                // Invoke handler with read UnitCfg
+                .let { it?.unit?.first { it1 -> it1.name == unitId.toString() }
+                    ?.let { it2 -> handler(it2) } }
         }
     }
 }

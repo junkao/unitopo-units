@@ -73,6 +73,10 @@
                     </aggregated-ether-options>
                     <flexible-vlan-tagging></flexible-vlan-tagging>
                     <unit>
+                        <name>0</name>
+                        <disable></disable>
+                    </unit>
+                    <unit>
                         <name>46</name>
                         <description>SBM-P-00000827-19</description>
                         <family>

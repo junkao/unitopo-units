@@ -30,8 +30,13 @@ import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.junos18.interfaces.handler.InterfaceConfigReader
 import io.frinx.unitopo.unit.junos18.interfaces.handler.InterfaceConfigWriter
 import io.frinx.unitopo.unit.junos18.interfaces.handler.InterfaceReader
+import io.frinx.unitopo.unit.junos18.interfaces.handler.subinterfaces.SubinterfaceConfigReader
+import io.frinx.unitopo.unit.junos18.interfaces.handler.subinterfaces.SubinterfaceConfigWriter
+import io.frinx.unitopo.unit.junos18.interfaces.handler.subinterfaces.SubinterfaceReader
 import io.frinx.unitopo.unit.utils.NoopListWriter
+import io.frinx.unitopo.unit.utils.NoopWriter
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.InterfacesBuilder
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.SubinterfacesBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.`$YangModuleInfoImpl` as InterfacesYangInfo
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.interfaces.rev180101.`$YangModuleInfoImpl` as UnderlayInterfacesYangInfo
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.root.rev180101.`$YangModuleInfoImpl` as UnderlayConfRootYangModuleInfo
@@ -71,12 +76,20 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
     private fun provideWriters(wRegistry: ModifiableWriterRegistryBuilder, underlayAccess: UnderlayAccess) {
         wRegistry.add(GenericListWriter(IIDs.IN_INTERFACE, NoopListWriter()))
         wRegistry.add(GenericWriter(IIDs.IN_IN_CONFIG, InterfaceConfigWriter(underlayAccess)))
+
+        wRegistry.add(GenericWriter(IIDs.IN_IN_SUBINTERFACES, NoopWriter()))
+        wRegistry.add(GenericListWriter(IIDs.IN_IN_SU_SUBINTERFACE, NoopListWriter()))
+        wRegistry.add(GenericWriter(IIDs.IN_IN_SU_SU_CONFIG, SubinterfaceConfigWriter(underlayAccess)))
     }
 
     private fun provideReaders(rRegistry: ModifiableReaderRegistryBuilder, underlayAccess: UnderlayAccess) {
         rRegistry.addStructuralReader(IIDs.INTERFACES, InterfacesBuilder::class.java)
         rRegistry.add(GenericConfigListReader(IIDs.IN_INTERFACE, InterfaceReader(underlayAccess)))
         rRegistry.add(GenericConfigReader(IIDs.IN_IN_CONFIG, InterfaceConfigReader(underlayAccess)))
+
+        rRegistry.addStructuralReader(IIDs.IN_IN_SUBINTERFACES, SubinterfacesBuilder::class.java)
+        rRegistry.add(GenericConfigListReader(IIDs.IN_IN_SU_SUBINTERFACE, SubinterfaceReader(underlayAccess)))
+        rRegistry.add(GenericConfigReader(IIDs.IN_IN_SU_SU_CONFIG, SubinterfaceConfigReader(underlayAccess)))
     }
 
     override fun toString(): String = "Junos 18.2 interface translate unit"
