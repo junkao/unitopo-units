@@ -75,6 +75,7 @@
                     <unit>
                         <name>0</name>
                         <disable></disable>
+                        <vlan-id>4000</vlan-id>
                     </unit>
                     <unit>
                         <name>46</name>

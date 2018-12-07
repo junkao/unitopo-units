@@ -94,6 +94,7 @@ class SubinterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : Wri
             }
             name = dataAfter.index.toString()
             description = dataAfter.description
+            key = JunosInterfaceUnitKey(name)
         }
 
         // If isEnabled is null, it determines that subinterface is enabled
