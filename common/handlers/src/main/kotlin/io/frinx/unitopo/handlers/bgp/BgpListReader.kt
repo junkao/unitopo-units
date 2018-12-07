@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.frinx.unitopo.unit.network.instance.protocol.bgp.common
+package io.frinx.unitopo.handlers.bgp
 
 import io.fd.honeycomb.translate.spi.read.ConfigListReaderCustomizer
 import io.fd.honeycomb.translate.spi.read.OperListReaderCustomizer

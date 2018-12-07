@@ -34,16 +34,10 @@
             <artifactId>handlers</artifactId>
             <version>${project.version}</version>
         </dependency>
-
         <dependency>
-            <groupId>io.frinx.openconfig</groupId>
-            <artifactId>openconfig-network-instance</artifactId>
-            <version>${openconfig.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.frinx.openconfig</groupId>
-            <artifactId>openconfig-policy</artifactId>
-            <version>${openconfig.version}</version>
+            <groupId>io.frinx.unitopo</groupId>
+            <artifactId>network-instance-unit</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>

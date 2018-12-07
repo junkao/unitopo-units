@@ -24,7 +24,7 @@ import io.frinx.unitopo.unit.network.instance.As.Companion.asToDotNotation
 import io.frinx.unitopo.unit.xr6.bgp.IID
 import io.frinx.unitopo.unit.xr6.bgp.UnderlayDefaultVrfGlobal
 import io.frinx.unitopo.unit.xr6.bgp.UnderlayVrfGlobal
-import io.frinx.unitopo.unit.xr6.bgp.common.BgpWriter
+import io.frinx.unitopo.handlers.bgp.BgpWriter
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.Instance
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.InstanceKey
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.instance.InstanceAs

@@ -17,7 +17,7 @@
 package io.frinx.unitopo.unit.xr6.bgp.handler.aggregates
 
 import io.fd.honeycomb.translate.read.ReadContext
-import io.frinx.unitopo.unit.network.instance.protocol.bgp.common.BgpReader
+import io.frinx.unitopo.handlers.bgp.BgpReader
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.local.routing.rev170515.local.aggregate.top.local.aggregates.Aggregate
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.local.routing.rev170515.local.aggregate.top.local.aggregates.AggregateBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.local.routing.rev170515.local.aggregate.top.local.aggregates.aggregate.Config

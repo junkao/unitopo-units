@@ -20,7 +20,7 @@ import io.fd.honeycomb.translate.read.ReadContext
 import io.frinx.openconfig.network.instance.NetworInstance
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.network.instance.As.Companion.asFromDotNotation
-import io.frinx.unitopo.unit.network.instance.protocol.bgp.common.BgpReader
+import io.frinx.unitopo.handlers.bgp.BgpReader
 import io.frinx.unitopo.unit.xr6.bgp.UnderlayNeighbor
 import io.frinx.unitopo.unit.xr6.bgp.UnderlayVrfNeighbor
 import io.frinx.unitopo.unit.xr6.bgp.handler.BgpProtocolReader
