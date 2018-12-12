@@ -14,42 +14,30 @@
  * limitations under the License.
  */
 
-package io.frinx.unitopo.unit.network.instance.common.def
+package io.frinx.unitopo.handlers.network.instance
 
-import io.fd.honeycomb.translate.read.ReadContext
-import io.fd.honeycomb.translate.read.ReadFailedException
 import io.fd.honeycomb.translate.spi.read.ConfigListReaderCustomizer
-import io.frinx.openconfig.network.instance.NetworInstance.DEFAULT_NETWORK
+import io.fd.honeycomb.translate.spi.read.ListReaderCustomizer
 import io.frinx.translate.unit.commons.handler.spi.CompositeListReader
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.NetworkInstancesBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstanceBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstanceKey
+import org.opendaylight.yangtools.concepts.Builder
+import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class DefaultReader :
-    ConfigListReaderCustomizer<NetworkInstance, NetworkInstanceKey, NetworkInstanceBuilder>,
-    CompositeListReader.Child<NetworkInstance, NetworkInstanceKey, NetworkInstanceBuilder> {
+open class NetworkInstanceReader(
+    readers: ArrayList<ListReaderCustomizer<NetworkInstance, NetworkInstanceKey, NetworkInstanceBuilder>>
+) : ConfigListReaderCustomizer<NetworkInstance, NetworkInstanceKey, NetworkInstanceBuilder>,
+    CompositeListReader<NetworkInstance, NetworkInstanceKey, NetworkInstanceBuilder>(readers),
+    ListReaderCustomizer<NetworkInstance, NetworkInstanceKey, NetworkInstanceBuilder> {
 
-    override fun getBuilder(p0: InstanceIdentifier<NetworkInstance>): NetworkInstanceBuilder {
-        // NOOP
-        throw UnsupportedOperationException("Should not be invoked")
+    override fun merge(builder: Builder<out DataObject>, list: List<NetworkInstance>) {
+        (builder as NetworkInstancesBuilder).networkInstance = list
     }
 
-    @Throws(ReadFailedException::class)
-    override fun getAllIds(
-        instanceIdentifier: InstanceIdentifier<NetworkInstance>,
-        readContext: ReadContext
-    ): List<NetworkInstanceKey> {
-        return listOf(DEFAULT_NETWORK)
-    }
-
-    @Throws(ReadFailedException::class)
-    override fun readCurrentAttributes(
-        instanceIdentifier: InstanceIdentifier<NetworkInstance>,
-        networkInstanceBuilder: NetworkInstanceBuilder,
-        readContext: ReadContext
-    ) {
-        val name = instanceIdentifier.firstKeyOf(NetworkInstance::class.java).name
-        networkInstanceBuilder.name = name
+    override fun getBuilder(instanceIdentifier: InstanceIdentifier<NetworkInstance>): NetworkInstanceBuilder {
+        return NetworkInstanceBuilder()
     }
 }

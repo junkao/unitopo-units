@@ -20,7 +20,7 @@ import io.fd.honeycomb.translate.util.RWUtils
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.openconfig.network.instance.NetworInstance
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.network.instance.As.Companion.asToDotNotation
+import io.frinx.unitopo.unit.utils.As.Companion.asToDotNotation
 import io.frinx.unitopo.unit.xr6.bgp.IID
 import io.frinx.unitopo.unit.xr6.bgp.UnderlayDefaultVrfGlobal
 import io.frinx.unitopo.unit.xr6.bgp.UnderlayVrfGlobal

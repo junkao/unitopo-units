@@ -19,7 +19,7 @@ package io.frinx.unitopo.handlers.bgp
 import io.fd.honeycomb.translate.spi.write.WriterCustomizer
 import io.fd.honeycomb.translate.util.RWUtils
 import io.frinx.translate.unit.commons.handler.spi.TypedWriter
-import io.frinx.unitopo.unit.network.instance.common.L3VrfReader
+import io.frinx.unitopo.handlers.l3vrf.L3VrfReader
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.Config
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.ProtocolKey

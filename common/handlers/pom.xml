@@ -36,10 +36,23 @@
         </dependency>
         <dependency>
             <groupId>io.frinx.unitopo</groupId>
-            <artifactId>network-instance-unit</artifactId>
+            <artifactId>utils-unit</artifactId>
             <version>${project.version}</version>
         </dependency>
 
+        <!-- Openconfig models -->
+        <dependency>
+            <groupId>io.frinx.openconfig</groupId>
+            <artifactId>openconfig-network-instance</artifactId>
+            <version>${openconfig.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.frinx.openconfig</groupId>
+            <artifactId>openconfig-policy</artifactId>
+            <version>${openconfig.version}</version>
+        </dependency>
+
+        <!-- Opendaylight dependencies -->
         <dependency>
             <groupId>org.opendaylight.mdsal</groupId>
             <artifactId>yang-binding</artifactId>

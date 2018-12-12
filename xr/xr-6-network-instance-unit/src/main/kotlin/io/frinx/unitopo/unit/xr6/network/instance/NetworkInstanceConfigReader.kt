@@ -18,13 +18,13 @@ package io.frinx.unitopo.unit.xr6.network.instance
 
 import io.fd.honeycomb.translate.spi.read.ReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.network.instance.common.def.DefaultConfigReader
+import io.frinx.unitopo.handlers.network.instance.def.DefaultConfigReader
 import io.frinx.unitopo.unit.xr6.network.instance.l2p2p.L2P2PConfigReader
 import io.frinx.unitopo.unit.xr6.network.instance.l2vsi.L2VSIConfigReader
 import io.frinx.unitopo.unit.xr6.network.instance.vrf.VrfConfigReader
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.Config
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.ConfigBuilder
-import io.frinx.unitopo.unit.network.instance.NetworkInstanceConfigReader
+import io.frinx.unitopo.handlers.network.instance.NetworkInstanceConfigReader
 
 class NetworkInstanceConfigReader(cli: UnderlayAccess)
     : NetworkInstanceConfigReader(object : ArrayList<ReaderCustomizer<Config, ConfigBuilder>>() {

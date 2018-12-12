@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.frinx.unitopo.unit.network.instance
+package io.frinx.unitopo.handlers.network.instance
 
 import io.fd.honeycomb.rpc.RpcService
 import io.fd.honeycomb.translate.impl.read.GenericConfigReader
@@ -22,10 +22,10 @@ import io.fd.honeycomb.translate.impl.write.GenericWriter
 import io.fd.honeycomb.translate.read.registry.ModifiableReaderRegistryBuilder
 import io.fd.honeycomb.translate.write.registry.ModifiableWriterRegistryBuilder
 import io.frinx.openconfig.openconfig.network.instance.IIDs
+import io.frinx.unitopo.handlers.network.instance.protocol.ProtocolConfigReader
+import io.frinx.unitopo.handlers.network.instance.protocol.ProtocolStateReader
 import io.frinx.unitopo.registry.spi.TranslateUnit
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.network.instance.protocol.ProtocolConfigReader
-import io.frinx.unitopo.unit.network.instance.protocol.ProtocolStateReader
 import io.frinx.unitopo.unit.utils.NoopWriter
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.NetworkInstancesBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.InterfacesBuilder
@@ -36,7 +36,7 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.insta
 abstract class NetworkInstanceUnit : TranslateUnit {
 
     override fun getYangSchemas(): Set<YangModuleInfo> = setOf(
-            NetInstanceYangInfo.getInstance()
+        NetInstanceYangInfo.getInstance()
     )
 
     override fun getRpcs(underlayAccess: UnderlayAccess): Set<RpcService<*, *>> = emptySet()

@@ -18,8 +18,8 @@ package io.frinx.unitopo.unit.xr6.network.instance
 
 import io.fd.honeycomb.translate.spi.read.ReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.network.instance.NetworkInstanceStateReader
-import io.frinx.unitopo.unit.network.instance.common.def.DefaultStateReader
+import io.frinx.unitopo.handlers.network.instance.NetworkInstanceStateReader
+import io.frinx.unitopo.handlers.network.instance.def.DefaultStateReader
 import io.frinx.unitopo.unit.xr6.network.instance.l2p2p.L2P2PStateReader
 import io.frinx.unitopo.unit.xr6.network.instance.l2vsi.L2VSIStateReader
 import io.frinx.unitopo.unit.xr6.network.instance.vrf.VrfStateReader

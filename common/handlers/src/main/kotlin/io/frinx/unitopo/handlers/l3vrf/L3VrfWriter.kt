@@ -14,23 +14,22 @@
  * limitations under the License.
  */
 
-package io.frinx.unitopo.unit.network.instance.common
+package io.frinx.unitopo.handlers.l3vrf
 
 import io.fd.honeycomb.translate.util.RWUtils
 import io.frinx.translate.unit.commons.handler.spi.TypedWriter
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.Config
 import org.opendaylight.yangtools.yang.binding.DataObject
-import org.opendaylight.yangtools.yang.binding.Identifiable
-import org.opendaylight.yangtools.yang.binding.Identifier
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 import java.util.AbstractMap
 import java.util.function.Function
 
-interface L3VrfListWriter<O : DataObject, K : Identifier<O>> : TypedWriter<O> where O : Identifiable<K> {
+interface L3VrfWriter<O : DataObject> : TypedWriter<O> {
 
-    override fun getParentCheck(id: InstanceIdentifier<O>?) =
-        AbstractMap.SimpleEntry<InstanceIdentifier<out DataObject>, Function<DataObject, Boolean>>(
+    override fun getParentCheck(
+        id: InstanceIdentifier<O>?
+    ) = AbstractMap.SimpleEntry<InstanceIdentifier<out DataObject>, Function<DataObject, Boolean>>(
             RWUtils.cutId(id!!, NetworkInstance::class.java).child(Config::class.java),
-            L3VrfReader.L3VRF_CHECK)
+        L3VrfReader.L3VRF_CHECK)
 }

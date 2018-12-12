@@ -18,11 +18,11 @@ package io.frinx.unitopo.unit.junos17.network.instance
 import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.read.ReadFailedException
 import io.fd.honeycomb.translate.spi.read.ListReaderCustomizer
+import io.frinx.unitopo.handlers.l3vrf.L3VrfListReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.junos17.bgp.handler.BgpProtocolReader
 import io.frinx.unitopo.unit.junos.ospf.handler.OspfProtocolReader
-import io.frinx.unitopo.unit.network.instance.common.L3VrfListReader
-import io.frinx.unitopo.unit.network.instance.protocol.ProtocolReaderComposite
+import io.frinx.unitopo.handlers.network.instance.protocol.ProtocolReaderComposite
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.Protocol
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.ProtocolBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.ProtocolKey

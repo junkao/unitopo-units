@@ -73,11 +73,6 @@
         </dependency>
         <dependency>
             <groupId>io.frinx.unitopo</groupId>
-            <artifactId>network-instance-unit</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.frinx.unitopo</groupId>
             <artifactId>junos-17-models</artifactId>
             <version>${project.version}</version>
         </dependency>

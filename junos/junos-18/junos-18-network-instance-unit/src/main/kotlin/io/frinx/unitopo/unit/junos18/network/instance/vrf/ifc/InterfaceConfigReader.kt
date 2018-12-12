@@ -17,9 +17,9 @@
 package io.frinx.unitopo.unit.junos18.network.instance.vrf.ifc
 
 import io.fd.honeycomb.translate.read.ReadContext
+import io.frinx.unitopo.handlers.l3vrf.L3VrfReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.junos18.network.instance.vrf.VrfReader
-import io.frinx.unitopo.unit.network.instance.common.L3VrfReader
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.interfaces.Interface
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.interfaces.InterfaceBuilder

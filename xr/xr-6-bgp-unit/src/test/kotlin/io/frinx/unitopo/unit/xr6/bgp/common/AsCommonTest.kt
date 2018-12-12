@@ -17,10 +17,10 @@
 package io.frinx.unitopo.unit.xr6.bgp.common
 
 import io.frinx.unitopo.unit.utils.AbstractNetconfHandlerTest
-import io.frinx.unitopo.unit.network.instance.As.Companion.MAX_AS_2BYTE
-import io.frinx.unitopo.unit.network.instance.As.Companion.MAX_AS_4BYTE
-import io.frinx.unitopo.unit.network.instance.As.Companion.asFromDotNotation
-import io.frinx.unitopo.unit.network.instance.As.Companion.asToDotNotation
+import io.frinx.unitopo.unit.utils.As.Companion.MAX_AS_2BYTE
+import io.frinx.unitopo.unit.utils.As.Companion.MAX_AS_4BYTE
+import io.frinx.unitopo.unit.utils.As.Companion.asFromDotNotation
+import io.frinx.unitopo.unit.utils.As.Companion.asToDotNotation
 import org.junit.Assert
 import org.junit.Test
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.types.inet.rev170403.AsNumber

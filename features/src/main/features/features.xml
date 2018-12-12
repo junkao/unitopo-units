@@ -43,7 +43,6 @@
         <bundle>mvn:io.frinx.translate.unit.commons/handlers/{{VERSION}}</bundle>
         <bundle>wrap:mvn:io.fd.honeycomb/translate-utils/${hc.version}</bundle>
         <bundle>wrap:mvn:io.frinx.unitopo/common-handlers/{{VERSION}}</bundle>
-        <bundle>mvn:io.frinx.unitopo/network-instance-unit/{{VERSION}}</bundle>
         <bundle>mvn:io.frinx.unitopo/utils-unit/{{VERSION}}</bundle>
     </feature>
 

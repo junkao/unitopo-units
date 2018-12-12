@@ -21,7 +21,7 @@ import io.fd.honeycomb.translate.spi.write.WriterCustomizer
 import io.frinx.translate.unit.commons.handler.spi.CompositeWriter
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.junos18.network.instance.vrf.VrfConfigWriter
-import io.frinx.unitopo.unit.network.instance.common.def.DefaultConfigWriter
+import io.frinx.unitopo.handlers.network.instance.def.DefaultConfigWriter
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.Config
 
 class NetworkInstanceConfigWriter(access: UnderlayAccess) :

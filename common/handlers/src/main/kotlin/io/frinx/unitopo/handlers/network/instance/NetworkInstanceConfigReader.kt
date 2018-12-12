@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.frinx.unitopo.unit.network.instance
+package io.frinx.unitopo.handlers.network.instance
 
 import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
 import io.fd.honeycomb.translate.spi.read.ReaderCustomizer
@@ -27,7 +27,7 @@ import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
 open class NetworkInstanceConfigReader(readers: ArrayList<ReaderCustomizer<Config, ConfigBuilder>>) :
-        ConfigReaderCustomizer<Config, ConfigBuilder>, CompositeReader<Config, ConfigBuilder>(readers),
+    ConfigReaderCustomizer<Config, ConfigBuilder>, CompositeReader<Config, ConfigBuilder>(readers),
     ReaderCustomizer<Config, ConfigBuilder> {
 
     override fun getBuilder(instanceIdentifier: InstanceIdentifier<Config>): ConfigBuilder {

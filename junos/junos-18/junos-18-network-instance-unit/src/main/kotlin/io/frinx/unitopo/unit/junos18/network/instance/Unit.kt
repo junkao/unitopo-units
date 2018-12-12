@@ -28,12 +28,12 @@ import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.junos18.network.instance.vrf.ifc.InterfaceConfigReader
 import io.frinx.unitopo.unit.junos18.network.instance.vrf.ifc.InterfaceConfigWriter
 import io.frinx.unitopo.unit.junos18.network.instance.vrf.ifc.InterfaceReader
+import io.frinx.unitopo.handlers.network.instance.NetworkInstanceUnit
 import io.frinx.unitopo.unit.junos18.network.instance.vrf.protocol.ProtocolConfigWriter
 import io.frinx.unitopo.unit.junos18.network.instance.vrf.protocol.ProtocolReader
 import io.frinx.unitopo.unit.junos18.network.instance.vrf.protocol.aggregate.AggregateConfigReader
 import io.frinx.unitopo.unit.junos18.network.instance.vrf.protocol.aggregate.AggregateConfigWriter
 import io.frinx.unitopo.unit.junos18.network.instance.vrf.protocol.aggregate.AggregateReader
-import io.frinx.unitopo.unit.network.instance.NetworkInstanceUnit
 import io.frinx.unitopo.unit.utils.NoopListWriter
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.extension.rev180323.NiProtAggAug
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.local.routing.rev170515.local.aggregate.top.LocalAggregatesBuilder

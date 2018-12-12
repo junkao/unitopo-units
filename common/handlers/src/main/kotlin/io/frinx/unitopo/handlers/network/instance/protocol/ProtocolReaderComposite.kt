@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.frinx.unitopo.unit.network.instance.protocol
+package io.frinx.unitopo.handlers.network.instance.protocol
 
 import io.fd.honeycomb.translate.spi.read.ListReaderCustomizer
 import io.frinx.translate.unit.commons.handler.spi.CompositeListReader
@@ -27,7 +27,7 @@ import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
 open class ProtocolReaderComposite(readers: ArrayList<ListReaderCustomizer<Protocol, ProtocolKey, ProtocolBuilder>>) :
-        CompositeListReader<Protocol, ProtocolKey, ProtocolBuilder>(readers),
+    CompositeListReader<Protocol, ProtocolKey, ProtocolBuilder>(readers),
     ListReaderCustomizer<Protocol, ProtocolKey, ProtocolBuilder> {
 
     override fun merge(builder: Builder<out DataObject>, list: List<Protocol>) {

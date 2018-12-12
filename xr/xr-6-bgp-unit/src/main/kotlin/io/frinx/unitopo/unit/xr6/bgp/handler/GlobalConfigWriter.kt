@@ -19,7 +19,7 @@ package io.frinx.unitopo.unit.xr6.bgp.handler
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.openconfig.network.instance.NetworInstance
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.network.instance.As.Companion.asToDotNotation
+import io.frinx.unitopo.unit.utils.As.Companion.asToDotNotation
 import io.frinx.unitopo.handlers.bgp.BgpReader
 import io.frinx.unitopo.unit.xr6.bgp.IID
 import io.frinx.unitopo.unit.xr6.bgp.UnderlayBgp

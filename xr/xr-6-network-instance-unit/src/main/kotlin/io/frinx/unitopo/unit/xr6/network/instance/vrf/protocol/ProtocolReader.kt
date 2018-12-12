@@ -19,9 +19,9 @@ package io.frinx.unitopo.unit.xr6.network.instance.vrf.protocol
 import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.read.ReadFailedException
 import io.fd.honeycomb.translate.spi.read.ListReaderCustomizer
+import io.frinx.unitopo.handlers.l3vrf.L3VrfListReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.network.instance.common.L3VrfListReader
-import io.frinx.unitopo.unit.network.instance.protocol.ProtocolReaderComposite
+import io.frinx.unitopo.handlers.network.instance.protocol.ProtocolReaderComposite
 import io.frinx.unitopo.unit.xr6.bgp.handler.BgpProtocolReader
 import io.frinx.unitopo.unit.xr6.lr.handler.StaticProtocolReader
 import io.frinx.unitopo.unit.xr6.ospf.handler.OspfProtocolReader

@@ -19,8 +19,8 @@ package io.frinx.unitopo.unit.xr6.ospf.handler.table
 import io.fd.honeycomb.translate.read.ReadContext
 import io.frinx.translate.unit.commons.handler.spi.CompositeListReader
 import io.frinx.openconfig.network.instance.NetworInstance
+import io.frinx.unitopo.handlers.l3vrf.L3VrfListReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.network.instance.common.L3VrfListReader
 import io.frinx.unitopo.unit.xr6.ospf.handler.OspfProtocolReader
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev151109.OspfRedistProtocol
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev151109.ospf.Processes

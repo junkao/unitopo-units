@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.frinx.unitopo.unit.network.instance
+package io.frinx.unitopo.handlers.network.instance
 
 import io.fd.honeycomb.translate.spi.read.ReaderCustomizer
 import io.frinx.translate.unit.commons.handler.spi.CompositeReader
@@ -25,8 +25,7 @@ import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
 open class NetworkInstanceStateReader(readers: ArrayList<ReaderCustomizer<State, StateBuilder>>) :
-    CompositeReader<State, StateBuilder>(
-        readers), ReaderCustomizer<State, StateBuilder> {
+    CompositeReader<State, StateBuilder>(readers), ReaderCustomizer<State, StateBuilder> {
 
     override fun getBuilder(instanceIdentifier: InstanceIdentifier<State>): StateBuilder {
         return StateBuilder()

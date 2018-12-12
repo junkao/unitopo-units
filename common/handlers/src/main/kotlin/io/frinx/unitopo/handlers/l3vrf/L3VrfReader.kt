@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.frinx.unitopo.unit.network.instance.common
+package io.frinx.unitopo.handlers.l3vrf
 
 import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
 import io.fd.honeycomb.translate.spi.read.OperReaderCustomizer
@@ -39,7 +39,8 @@ interface L3VrfReader<O : DataObject, B : Builder<O>> : TypedReader<O, B> {
 
     companion object {
         val L3VRF_CHECK = Function { config: DataObject ->
-            (config as Config).type == L3VRF::class.java || config.type == DEFAULTINSTANCE::class.java }
+            (config as Config).type == L3VRF::class.java || config.type == DEFAULTINSTANCE::class.java
+        }
     }
 
     interface L3VrfConfigReader<O : DataObject, B : Builder<O>> : L3VrfReader<O, B>, ConfigReaderCustomizer<O, B>
