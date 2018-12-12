@@ -63,6 +63,7 @@ class SubinterfaceConfigWriterTest {
         private val IF_NAME = "ae2220"
         private val SUBIF_INDEX = 0L
         private val IF_ENABLED = false
+        private val DESCRIPTION = "ae2220-description-update"
 
         private val IID_CONFIG = IIDs.INTERFACES
             .child(Interface::class.java, InterfaceKey(IF_NAME))
@@ -73,6 +74,7 @@ class SubinterfaceConfigWriterTest {
         private val CONFIG = ConfigBuilder()
             .setIndex(SUBIF_INDEX)
             .setEnabled(IF_ENABLED)
+            .setDescription(DESCRIPTION)
             .build()
 
         private val NATIVE_IID = InterfaceReader.JUNOS_IFCS
@@ -84,6 +86,7 @@ class SubinterfaceConfigWriterTest {
         private val NATIVE_CONFIG = JunosInterfaceUnitBuilder(DATA_JUNOS_IFC)
             .setName(SUBIF_INDEX.toString())
             .setEnableDisable(UNIT_IS_ENABLE)
+            .setDescription(DESCRIPTION)
             .build()
     }
 
@@ -234,13 +237,16 @@ class SubinterfaceConfigWriterTest {
 
     @Test
     fun testUpdateCurrentAttributes() {
+        val NEW_DESCRIPTION = "$DESCRIPTION - update"
         val configBefore = ConfigBuilder(CONFIG)
             .build()
         val configAfter = ConfigBuilder(CONFIG)
             .setEnabled(!CONFIG.isEnabled)
+            .setDescription(NEW_DESCRIPTION)
             .build()
         val expectedConfig = JunosInterfaceUnitBuilder(NATIVE_CONFIG)
             .setEnableDisable(JunosCase1Builder().setDisable(null).build())
+            .setDescription(NEW_DESCRIPTION)
             .build()
 
         val idCap = ArgumentCaptor

@@ -63,6 +63,7 @@ class SubinterfaceConfigReaderTest {
 
         Assert.assertThat(builder.index, CoreMatchers.equalTo(subIfIndex))
         Assert.assertThat(builder.isEnabled, CoreMatchers.equalTo(false))
+        Assert.assertThat(builder.description, CoreMatchers.`is`(CoreMatchers.nullValue()))
     }
 
     @Test
@@ -80,6 +81,7 @@ class SubinterfaceConfigReaderTest {
 
         Assert.assertThat(builder.index, CoreMatchers.equalTo(subIfIndex))
         Assert.assertThat(builder.isEnabled, CoreMatchers.equalTo(true))
+        Assert.assertThat(builder.description, CoreMatchers.equalTo("SBM-P-00000827-19"))
     }
 
     @Test

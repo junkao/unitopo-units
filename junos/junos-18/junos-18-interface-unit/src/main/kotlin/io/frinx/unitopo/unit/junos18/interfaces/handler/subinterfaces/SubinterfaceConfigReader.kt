@@ -63,6 +63,7 @@ class SubinterfaceConfigReader(private val underlayAccess: UnderlayAccess)
         internal fun ConfigBuilder.fromUnderlay(junosUnit: JunosInterfaceUnit) {
             index = junosUnit.name.toLong()
             isEnabled = parseEnableDisable(junosUnit.enableDisable)
+            description = junosUnit.description
         }
     }
 }
