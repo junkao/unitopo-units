@@ -54,6 +54,7 @@
         <bundle>mvn:io.frinx.unitopo/xr-7-models/{{VERSION}}</bundle>
         <bundle>mvn:io.frinx.unitopo/xr-7-init-unit/{{VERSION}}</bundle>
         <bundle>mvn:io.frinx.unitopo/xr-7-interface-unit/{{VERSION}}</bundle>
+        <bundle>mvn:io.frinx.unitopo/xr-7-network-instance-unit/{{VERSION}}</bundle>
     </feature>
 
     <feature name='unified-topology-unit-xr-6' version='${project.version}'>

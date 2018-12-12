@@ -48,6 +48,7 @@
         <module>xr-7-models</module>
         <module>xr-7-init-unit</module>
         <module>xr-7-interface-unit</module>
+        <module>xr-7-network-instance-unit</module>
     </modules>
 
     <build>
