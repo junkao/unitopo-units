@@ -315,6 +315,12 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
+      <groupId>io.frinx.unitopo</groupId>
+      <artifactId>junos-18-bgp-unit</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
       <groupId>io.frinx.translate.unit.commons</groupId>
       <artifactId>utils</artifactId>
       <version>${translate.unit.commons.version}</version>

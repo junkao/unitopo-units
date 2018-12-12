@@ -34,6 +34,7 @@
     <module>junos-18-configuration-metadata-unit</module>
     <module>junos-18-interface-unit</module>
     <module>junos-18-network-instance-unit</module>
+    <module>junos-18-bgp-unit</module>
   </modules>
 
   <build>
