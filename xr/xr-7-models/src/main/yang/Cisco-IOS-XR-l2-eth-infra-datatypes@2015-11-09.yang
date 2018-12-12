@@ -36,7 +36,7 @@ module Cisco-IOS-XR-l2-eth-infra-datatypes {
     description
       "IOS XR 6.0 revision.";
   }
-/***
+
   typedef Vs-mode {
     type enumeration {
       enum trunk {
@@ -49,7 +49,8 @@ module Cisco-IOS-XR-l2-eth-infra-datatypes {
       }
     }
     description "Vs mode";
-  }***/
+  }
+
   typedef Vlan-tag-or-cvp {
     type union {
       type enumeration {

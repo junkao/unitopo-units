@@ -672,7 +672,7 @@ module Cisco-IOS-XR-l2-eth-infra-cfg {
           description "VLAN identifier";
         }
       }
-/***
+
       container vlan-switched {
         description "VLAN Switch interface configuration";
         leaf mode {
@@ -702,7 +702,7 @@ module Cisco-IOS-XR-l2-eth-infra-cfg {
             "Comma-separated, increasing sequence of VLAN
             Ids or VLAN ranges";
         }
-      }***/
+      }
       leaf tunneling-ethertype {
         type enumeration {
           enum 0x9100 {
