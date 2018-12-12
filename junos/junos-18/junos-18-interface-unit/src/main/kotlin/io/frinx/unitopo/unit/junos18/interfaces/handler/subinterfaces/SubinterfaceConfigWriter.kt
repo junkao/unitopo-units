@@ -93,6 +93,7 @@ class SubinterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : Wri
                 enableDisable = UNIT_IS_ENABLED
             }
             name = dataAfter.index.toString()
+            description = dataAfter.description
         }
 
         // If isEnabled is null, it determines that subinterface is enabled
