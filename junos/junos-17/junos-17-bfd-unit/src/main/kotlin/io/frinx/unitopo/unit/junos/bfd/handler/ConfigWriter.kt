@@ -47,17 +47,6 @@ class ConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCustomize
         underlayAccess.delete(underlayBfdLivenessDetectionId)
     }
 
-    override fun updateCurrentAttributes(
-        iid: InstanceIdentifier<Config>,
-        dataBefore: Config,
-        dataAfter: Config,
-        context: WriteContext
-    ) {
-        checkInterfaceType(iid)
-        val (underlayBfdLivenessDetectionId, underlayBfdLivenessDetection) = getData(iid, dataAfter)
-        underlayAccess.merge(underlayBfdLivenessDetectionId, underlayBfdLivenessDetection)
-    }
-
     companion object {
         private fun getData(id: InstanceIdentifier<Config>, dataAfter: Config):
             Pair<InstanceIdentifier<BfdLivenessDetection>, BfdLivenessDetection> {
