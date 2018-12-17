@@ -75,7 +75,6 @@ open class InterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : W
             if (underlayBefore != null) InterfaceConfigurationBuilder(underlayBefore) else
                 InterfaceConfigurationBuilder()
 
-        val patten = ifcName.value
         ifcCfgBuilder
             .setInterfaceName(ifcName)
             .setActive(interfaceActive)
@@ -91,15 +90,16 @@ open class InterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : W
                 val mtus = MtusBuilder().setMtu(listOf(mtu)).build()
                 ifcCfgBuilder.setMtus(mtus).build()
             }
-        } else if (dataAfter.type != EthernetCsmacd::class.java) {
+        } else if (dataAfter.type == EthernetCsmacd::class.java) {
+            ifcCfgBuilder.setShutdown(dataAfter.isEnabled)
+        } else {
             throw WriteFailedException(id, "Interface type " +
-                dataAfter.type.toString() + " is not supported")
+                    dataAfter.type.toString() + " is not supported")
         }
+
         val underlayIfcCfg = ifcCfgBuilder.build()
         return Pair(underlayId, underlayIfcCfg)
     }
-
-    private fun Config.shutdown() = isEnabled == null || !isEnabled
 
     private fun getId(id: InstanceIdentifier<Config>):
         Triple<InterfaceActive, InterfaceName, InstanceIdentifier<InterfaceConfiguration>> {

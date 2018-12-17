@@ -561,7 +561,8 @@ module Cisco-IOS-XR-bundlemgr-cfg {
       description
         "Link Aggregation Control Protocol per-interface
         configuration (for bundle or member)";
-
+      // If this container is present, an error occurs when mounting
+/***
       container cisco-extensions {
         presence "Indicates a cisco-extensions node is configured.";
         description "Enable bundle Cisco extensions";
@@ -576,7 +577,7 @@ module Cisco-IOS-XR-bundlemgr-cfg {
             "Specific Cisco extension to enable / disable";
         }
       }
-
+***/
       container timeout {
         description "Set timeout values for LACP-related timers";
         leaf rx-default {

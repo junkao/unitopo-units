@@ -41,7 +41,7 @@ open class InterfaceConfigReader(private val underlayAccess: UnderlayAccess) :
         readContext: ReadContext
     ) {
         val name = instanceIdentifier.firstKeyOf(Interface::class.java).name
-        InterfaceReader.readInterfaceCfg(underlayAccess, name, { configBuilder.fromUnderlay(it) })
+        InterfaceReader.readInterfaceCfg(underlayAccess, name, { configBuilder.fromUnderlay(it, name) })
     }
 
     override fun merge(builder: Builder<out DataObject>, config: Config) {
@@ -49,8 +49,9 @@ open class InterfaceConfigReader(private val underlayAccess: UnderlayAccess) :
     }
 }
 
-fun ConfigBuilder.fromUnderlay(underlay: InterfaceConfiguration) {
-    name = underlay.interfaceName.value
+fun ConfigBuilder.fromUnderlay(underlay: InterfaceConfiguration, ifcName: String) {
+    name = ifcName
+    type = parseIfcType(ifcName)
     description = underlay.description
     isEnabled = underlay.isShutdown == null
     mtu = underlay.mtus?.mtu?.get(0)?.mtu?.toInt()

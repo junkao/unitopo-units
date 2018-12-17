@@ -21,6 +21,7 @@ import io.fd.honeycomb.translate.spi.read.ConfigListReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr7.interfaces.handler.InterfaceReader
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.ipv4.top.ipv4.addresses.AddressKey
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.Interface
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.SubinterfacesBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.subinterfaces.Subinterface
@@ -39,10 +40,17 @@ open class SubinterfaceReader(private val underlayAccess: UnderlayAccess) :
             .checkedGet()
             .orNull()
         val subIfcKeys = InterfaceReader.getInterfaceIds(configurations)
-            .filter { InterfaceReader.isSubinterface(it.name) }
-            .filter { it.name.startsWith(ifcName) }
-            .map { InterfaceReader.getSubinterfaceKey(it.name) }
-        return subIfcKeys.toMutableList()
+                .filter { InterfaceReader.isSubinterface(it.name) }
+                .filter { it.name.startsWith(ifcName) }
+                .map { InterfaceReader.getSubinterfaceKey(it.name) }
+
+        val ipv4Keys = mutableListOf<AddressKey>()
+        InterfaceReader.readInterfaceCfg(underlayAccess, ifcName,
+                { Ipv4AddressReader.extractAddresses(it, ipv4Keys) })
+
+        return if (!ipv4Keys.isEmpty())
+            subIfcKeys.plus(SubinterfaceKey(ZERO_SUBINTERFACE_ID)).toMutableList() else
+            subIfcKeys.toMutableList()
     }
 
     override fun readCurrentAttributes(

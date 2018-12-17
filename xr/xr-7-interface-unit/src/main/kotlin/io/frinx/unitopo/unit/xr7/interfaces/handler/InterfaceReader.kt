@@ -67,7 +67,7 @@ open class InterfaceReader(private val underlayAccess: UnderlayAccess) :
 
         // Just set the name (if there is such interface)
         if (interfaceExists(configurations, instanceIdentifier)) {
-            interfaceBuilder.name = instanceIdentifier.firstKeyOf(Interface::class.java).name
+            interfaceBuilder.name = getInterfaceName(instanceIdentifier.firstKeyOf(Interface::class.java).name)
         }
     }
 
@@ -132,6 +132,14 @@ open class InterfaceReader(private val underlayAccess: UnderlayAccess) :
 
         fun isSubinterface(name: String): Boolean {
             return SUBINTERFACE_NAME.matcher(name).matches()
+        }
+
+        fun getInterfaceName(name: String): String {
+            val matcher = SUBINTERFACE_NAME.matcher(name)
+            return when (matcher.matches()) {
+                true -> matcher.group("ifcId")
+                else -> name
+            }
         }
 
         fun getSubinterfaceKey(name: String): SubinterfaceKey {
