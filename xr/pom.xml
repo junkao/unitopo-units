@@ -51,6 +51,7 @@
         <module>xr-7-network-instance-unit</module>
         <module>xr-7-configuration-metadata-unit</module>
         <module>xr-7-evpn-unit</module>
+        <module>xr-7-logging-unit</module>
     </modules>
 
     <build>
