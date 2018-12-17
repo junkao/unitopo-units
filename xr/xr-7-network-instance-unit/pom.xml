@@ -33,8 +33,8 @@
     <description>
         Unified topology unit for XR network instance.
         Compatible with:
-            IOS XR 7
-              - 7.0.0 - 7.x.x
+        IOS XR 7
+        - 7.0.0 - 7.x.x
     </description>
 
     <dependencies>
