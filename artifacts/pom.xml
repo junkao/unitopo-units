@@ -120,6 +120,11 @@
             </dependency>
             <dependency>
                 <groupId>io.frinx.unitopo</groupId>
+                <artifactId>junos-18-acl-unit</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.frinx.unitopo</groupId>
                 <artifactId>junos-18-bgp-unit</artifactId>
                 <version>${project.version}</version>
             </dependency>
