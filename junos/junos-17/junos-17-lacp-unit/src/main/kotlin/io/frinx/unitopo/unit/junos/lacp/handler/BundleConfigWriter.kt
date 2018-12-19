@@ -50,17 +50,6 @@ class BundleConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCus
         underlayAccess.delete(underlayBfdLivenessDetectionId)
     }
 
-    override fun updateCurrentAttributes(
-        iid: InstanceIdentifier<Config>,
-        dataBefore: Config,
-        dataAfter: Config,
-        context: WriteContext
-    ) {
-        isSupportedBundleId(iid)
-        val (underlayBfdLivenessDetectionId, underlayBfdLivenessDetectionCfg) = getData(iid, dataAfter)
-        underlayAccess.merge(underlayBfdLivenessDetectionId, underlayBfdLivenessDetectionCfg)
-    }
-
     companion object {
         private fun getData(iid: InstanceIdentifier<Config>, dataAfter: Config): Pair<InstanceIdentifier<Lacp>, Lacp> {
             val underlayId = getUnderlayId(iid)
