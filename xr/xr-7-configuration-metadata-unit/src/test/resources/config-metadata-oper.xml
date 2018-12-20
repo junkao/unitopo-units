@@ -1,0 +1,134 @@
+<?xml version="1.0"?>
+<!--
+  ~ Copyright © 2018 Frinx and others.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<rpc-reply message-id="101" xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+    <data>
+        <config-manager xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-config-cfgmgr-exec-oper">
+            <global>
+                <config-commit>
+                    <commits>
+                        <commit>
+                            <commit>2</commit>
+                            <commit-id>1000000002</commit-id>
+                            <user-id>root</user-id>
+                            <line>N/A</line>
+                            <comment>config change for callhome smart licensing</comment>
+                            <timestamp>Thu Oct 11 11:30:28 2018</timestamp>
+                            <client-name>CALLHOME</client-name>
+                        </commit>
+                        <commit>
+                            <commit>1</commit>
+                            <timestamp>Thu Oct 11 11:30:03 2018</timestamp>
+                            <commit-id>1000000001</commit-id>
+                            <user-id>SYSTEM</user-id>
+                            <line>con0_RP0_CPU0</line>
+                            <client-name>Setup Dialog</client-name>
+                        </commit>
+                        <commit>
+                            <commit>4</commit>
+                            <timestamp>Thu Oct 11 17:17:11 2018</timestamp>
+                            <commit-id>1000000004</commit-id>
+                            <user-id>sbbt</user-id>
+                            <line>con0_RP0_CPU0</line>
+                            <client-name>CLI</client-name>
+                        </commit>
+                        <commit>
+                            <commit>3</commit>
+                            <timestamp>Thu Oct 11 13:03:41 2018</timestamp>
+                            <commit-id>1000000003</commit-id>
+                            <user-id>sbbt</user-id>
+                            <line>con0_RP0_CPU0</line>
+                            <client-name>CLI</client-name>
+                        </commit>
+                        <commit>
+                            <commit>6</commit>
+                            <timestamp>Thu Oct 11 17:23:47 2018</timestamp>
+                            <commit-id>1000000006</commit-id>
+                            <user-id>sbbt</user-id>
+                            <line>con0_RP0_CPU0</line>
+                            <client-name>CLI</client-name>
+                        </commit>
+                        <commit>
+                            <commit>5</commit>
+                            <timestamp>Thu Oct 11 17:22:49 2018</timestamp>
+                            <commit-id>1000000005</commit-id>
+                            <user-id>sbbt</user-id>
+                            <line>con0_RP0_CPU0</line>
+                            <client-name>CLI</client-name>
+                        </commit>
+                        <commit>
+                            <commit>8</commit>
+                            <timestamp>Thu Oct 18 20:45:43 2018</timestamp>
+                            <commit-id>1000000008</commit-id>
+                            <user-id>aptn</user-id>
+                            <line>vty1:node0_RP0_CPU0</line>
+                            <client-name>CLI</client-name>
+                        </commit>
+                        <commit>
+                            <commit>7</commit>
+                            <timestamp>Tue Oct 16 09:42:15 2018</timestamp>
+                            <commit-id>1000000007</commit-id>
+                            <user-id>sbbt</user-id>
+                            <line>vty1:node0_RP0_CPU0</line>
+                            <client-name>CLI</client-name>
+                        </commit>
+                        <commit>
+                            <commit>9</commit>
+                            <timestamp>Tue Oct 30 18:41:35 2018</timestamp>
+                            <commit-id>1000000009</commit-id>
+                            <user-id>aptn</user-id>
+                            <line>vty0:node0_RP0_CPU0</line>
+                            <client-name>CLI</client-name>
+                        </commit>
+                        <commit>
+                            <commit>11</commit>
+                            <timestamp>Tue Oct 30 18:52:45 2018</timestamp>
+                            <commit-id>1000000011</commit-id>
+                            <user-id>aptn</user-id>
+                            <line>vty0:node0_RP0_CPU0</line>
+                            <client-name>CLI</client-name>
+                        </commit>
+                        <commit>
+                            <commit>10</commit>
+                            <timestamp>Tue Oct 30 18:42:49 2018</timestamp>
+                            <commit-id>1000000010</commit-id>
+                            <user-id>aptn</user-id>
+                            <line>vty0:node0_RP0_CPU0</line>
+                            <client-name>CLI</client-name>
+                        </commit>
+                        <commit>
+                            <commit>13</commit>
+                            <timestamp>Thu Nov  1 19:54:22 2018</timestamp>
+                            <commit-id>1000000013</commit-id>
+                            <user-id>aptn</user-id>
+                            <line>vty0:node0_RP0_CPU0</line>
+                            <client-name>CLI</client-name>
+                        </commit>
+                        <commit>
+                            <commit>12</commit>
+                            <timestamp>Thu Nov  1 19:52:03 2018</timestamp>
+                            <commit-id>1000000012</commit-id>
+                            <user-id>aptn</user-id>
+                            <line>vty0:node0_RP0_CPU0</line>
+                            <client-name>CLI</client-name>
+                        </commit>
+                    </commits>
+                </config-commit>
+            </global>
+        </config-manager>
+    </data>
+</rpc-reply>
