@@ -25,6 +25,11 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.acl.rev170526
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.InterfaceId
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.interfaces.rev180101.Configuration1
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.interfaces.rev180101.interfaces.group.Interfaces
+import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.interfaces.rev180101.interfaces.group.interfaces.Interface
+import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.interfaces.rev180101.interfaces.group.interfaces.InterfaceKey
+import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.interfaces.rev180101.interfaces_type.UnitKey
+import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.interfaces.rev180101.interfaces_type.unit.Family
+import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.interfaces.rev180101.interfaces_type.unit.family.Inet
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.root.rev180101.Configuration
 import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
@@ -32,6 +37,8 @@ import java.util.regex.Pattern
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.acl.rev170526.acl.interfaces.top.interfaces.Interface as AclInterface
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.acl.rev170526.acl.interfaces.top.interfaces.InterfaceBuilder as AclInterfaceBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.acl.rev170526.acl.interfaces.top.interfaces.InterfaceKey as AclInterfaceKey
+import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.interfaces.rev180101.interfaces_type.Unit as JunosInterfaceUnit
+import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.interfaces.rev180101.interfaces_type.unit.family.inet.Filter as Ipv4Filter
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
 class AclInterfaceReader(private val underlayAccess: UnderlayAccess) :
@@ -70,5 +77,24 @@ class AclInterfaceReader(private val underlayAccess: UnderlayAccess) :
         val JUNOS_IFCS = JUNOS_IFCS_AUG.child(Interfaces::class.java)!!
 
         val INTERFACE_ID_PATTERN = Pattern.compile("(?<interface>[^\\.]+)\\.(?<unit>.*)")
+
+        fun getUnderlayIpv4FilterId(ifcName: String): IID<Ipv4Filter> {
+            val matcher = INTERFACE_ID_PATTERN.matcher(ifcName)
+
+            return if (matcher.matches()) {
+                getUnderlayIpv4FilterId(matcher.group("interface"), matcher.group("unit"))
+            } else {
+                getUnderlayIpv4FilterId(ifcName, "0")
+            }
+        }
+
+        fun getUnderlayIpv4FilterId(ifcName: String, unitName: String): IID<Ipv4Filter> {
+            return JUNOS_IFCS
+                .child(Interface::class.java, InterfaceKey(ifcName))
+                .child(JunosInterfaceUnit::class.java, UnitKey(unitName))
+                .child(Family::class.java)
+                .child(Inet::class.java)
+                .child(Ipv4Filter::class.java)
+        }
     }
 }
