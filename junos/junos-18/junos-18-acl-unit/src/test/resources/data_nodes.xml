@@ -1,0 +1,148 @@
+<!--
+  ~ Copyright © 2018 Frinx and others.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<rpc-reply xmlns="urn:ietf:params:xml:ns:netconf:base:1.0" message-id="m-1">
+    <data>
+        <configuration xmlns="http://yang.juniper.net/junos/conf/root"
+                       xmlns:a="http://xml.juniper.net/junos/18.2R1/junos"
+                       a:commit-seconds="1541564107"
+                       a:commit-user="root"
+                       a:commit-localtime="2018-11-07 04:15:07 UTC">
+            <interfaces xmlns="http://yang.juniper.net/junos/conf/interfaces">
+                <interface>
+                    <name>ms-0/2/0</name>
+                    <services-options>
+                        <syslog>
+                            <host>
+                                <name>local</name>
+                                <contents>
+                                    <name>services</name>
+                                    <any></any>
+                                </contents>
+                            </host>
+                        </syslog>
+                    </services-options>
+                    <unit>
+                        <name>46</name>
+                        <rpm>
+                            <client-delegate-probes></client-delegate-probes>
+                        </rpm>
+                        <family>
+                            <inet>
+                                <address>
+                                    <name>10.128.178.94/32</name>
+                                </address>
+                            </inet>
+                        </family>
+                    </unit>
+                    <unit>
+                        <name>0</name>
+                        <family>
+                            <inet></inet>
+                        </family>
+                    </unit>
+                </interface>
+                <interface>
+                    <name>ae2220</name>
+                    <description>ae2220-description</description>
+                    <traps></traps>
+                    <mtu>2000</mtu>
+                    <encapsulation>flexible-ethernet-services</encapsulation>
+                    <aggregated-ether-options>
+                        <ethernet-switch-profile>
+                            <tag-protocol-id>0x8100</tag-protocol-id>
+                        </ethernet-switch-profile>
+                        <lacp>
+                            <periodic>fast</periodic>
+                            <accept-data></accept-data>
+                            <active></active>
+                        </lacp>
+                    </aggregated-ether-options>
+                    <flexible-vlan-tagging></flexible-vlan-tagging>
+                    <unit>
+                        <name>0</name>
+                        <disable></disable>
+                    </unit>
+                    <unit>
+                        <name>46</name>
+                        <description>SBM-P-00000827-19</description>
+                        <family>
+                            <inet>
+                                <filter>
+                                    <input>
+                                        <filter-name>FBF-MS-THU-RETURN-INPUT</filter-name>
+                                    </input>
+                                    <output>
+                                        <filter-name>FBF-MS-THU-RETURN-OUTPUT</filter-name>
+                                    </output>
+                                </filter>
+                                <address>
+                                    <name>10.128.178.94/28</name>
+                                    <vrrp-group>
+                                        <name>46</name>
+                                        <virtual-address>10.128.178.81</virtual-address>
+                                    </vrrp-group>
+                                </address>
+                            </inet>
+                        </family>
+                        <vlan-tags>
+                            <inner>0x8100:1636</inner>
+                            <outer>0x8100:1061</outer>
+                        </vlan-tags>
+                    </unit>
+                    <unit>
+                        <name>56</name>
+                        <family>
+                            <inet>
+                                <filter>
+                                    <output>
+                                        <filter-name>FBF-MS-THU-RETURN-OUTPUT-ONLY</filter-name>
+                                    </output>
+                                </filter>
+                            </inet>
+                        </family>
+                    </unit>
+                    <unit>
+                        <name>66</name>
+                        <family>
+                            <inet>
+                                <filter>
+                                    <input>
+                                        <filter-name>FBF-MS-THU-RETURN-INPUT-ONLY</filter-name>
+                                    </input>
+                                </filter>
+                            </inet>
+                        </family>
+                    </unit>
+
+                </interface>
+                <interface>
+                    <name>fxp0</name>
+                    <unit>
+                        <name>0</name>
+                        <family>
+                            <inet>
+                                <address>
+                                    <name>10.1.12.43/16</name>
+                                </address>
+                            </inet>
+                        </family>
+                    </unit>
+                </interface>
+            </interfaces>
+        </configuration>
+    </data>
+</rpc-reply>
