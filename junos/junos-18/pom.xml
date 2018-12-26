@@ -36,6 +36,7 @@
     <module>junos-18-network-instance-unit</module>
     <module>junos-18-acl-unit</module>
     <module>junos-18-bgp-unit</module>
+    <module>junos-18-probe-unit</module>
   </modules>
 
   <build>

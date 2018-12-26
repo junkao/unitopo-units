@@ -1,0 +1,56 @@
+<!--
+  ~ Copyright © 2018 Frinx and others.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<rpc-reply xmlns="urn:ietf:params:xml:ns:netconf:base:1.0" message-id="m-1">
+    <data>
+        <configuration xmlns="http://yang.juniper.net/junos/conf/root"
+                       xmlns:a="http://xml.juniper.net/junos/18.2R1/junos"
+                       a:commit-seconds="1541564107"
+                       a:commit-user="root"
+                       a:commit-localtime="2018-11-07 04:15:07 UTC">
+            <services xmlns="http://yang.juniper.net/junos/conf/services">
+                <rpm>
+                    <probe>
+                        <name>MS00</name>
+                        <delegate-probes></delegate-probes>
+                        <test>
+                            <name>ae2220.46_SBM-P-00000827-19</name>
+                            <source-address>10.128.178.94</source-address>
+                            <destination-interface>ms-0/2/0.46</destination-interface>
+                            <target>
+                                <address>10.128.178.82</address>
+                            </target>
+                        </test>
+                        <test>
+                            <name>ae2220.46_SBM-P-00000827-19_1</name>
+                            <source-address>10.128.178.94</source-address>
+                            <destination-interface>ms-0/2/0.46</destination-interface>
+                            <target>
+                                <address>10.128.178.84</address>
+                            </target>
+                        </test>
+                    </probe>
+                    <probe>
+                        <name>APPLE00</name>
+                    </probe>
+                    <probe>
+                        <name>APPLE01</name>
+                    </probe>
+                </rpm>
+            </services>
+        </configuration>
+    </data>
+</rpc-reply>
