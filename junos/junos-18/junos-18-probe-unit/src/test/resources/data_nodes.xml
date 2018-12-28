@@ -36,10 +36,10 @@
                         </test>
                         <test>
                             <name>ae2220.46_SBM-P-00000827-19_1</name>
-                            <source-address>10.128.178.94</source-address>
-                            <destination-interface>ms-0/2/0.46</destination-interface>
+                            <source-address>11.128.178.94</source-address>
+                            <destination-interface>ms-1/2/0.46</destination-interface>
                             <target>
-                                <address>10.128.178.84</address>
+                                <address>11.128.178.84</address>
                             </target>
                         </test>
                     </probe>

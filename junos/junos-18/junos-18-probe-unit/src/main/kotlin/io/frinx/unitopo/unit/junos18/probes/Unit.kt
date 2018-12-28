@@ -31,11 +31,20 @@ import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.junos18.probes.handler.ProbeConfigReader
 import io.frinx.unitopo.unit.junos18.probes.handler.ProbeConfigWriter
 import io.frinx.unitopo.unit.junos18.probes.handler.ProbeReader
+import io.frinx.unitopo.unit.junos18.probes.handler.test.ProbeTargetConfigReader
+import io.frinx.unitopo.unit.junos18.probes.handler.test.ProbeTargetConfigWriter
+import io.frinx.unitopo.unit.junos18.probes.handler.test.ProbeTestConfigReader
+import io.frinx.unitopo.unit.junos18.probes.handler.test.ProbeTestConfigWriter
+import io.frinx.unitopo.unit.junos18.probes.handler.test.ProbeTestReader
 import io.frinx.unitopo.unit.utils.NoopListWriter
+import io.frinx.unitopo.unit.utils.NoopWriter
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.probes.rev170905.openconfig.probes.top.ProbesBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.probes.rev170905.probes.top.probe.Config
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.probes.rev170905.probes.top.probe.TestsBuilder
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.probes.rev170905.test.target.TargetBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.probes.juniper.rev181203.`$YangModuleInfoImpl` as ProbeJunosExtYangInfo
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.probes.rev170905.`$YangModuleInfoImpl` as ProbeYangInfo
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.probes.rev170905.probe.tests.top.test.Config as TestConfig
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.probes.types.rev170905.`$YangModuleInfoImpl` as ProbeTypesYangInfo
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.common.types.rev180101.`$YangModuleInfoImpl` as UnderlayJunosCommonTypesYangInfo
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.root.rev180101.`$YangModuleInfoImpl` as UnderlayConfRootYangModuleInfo
@@ -80,6 +89,14 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
         wRegistry.add(GenericListWriter(IIDs.PR_PROBE, NoopListWriter()))
         wRegistry.subtreeAdd(PR_PR_CONFIG_SUBTREE,
             GenericWriter(IIDs.PR_PR_CONFIG, ProbeConfigWriter(underlayAccess)))
+
+        wRegistry.add(GenericWriter(IIDs.PR_PR_TESTS, NoopWriter()))
+        wRegistry.add(GenericListWriter(IIDs.PR_PR_TE_TEST, NoopListWriter()))
+        wRegistry.subtreeAdd(PR_PR_TE_TE_CONFIG_SUBTREE,
+            GenericWriter(IIDs.PR_PR_TE_TE_CONFIG, ProbeTestConfigWriter(underlayAccess)))
+
+        wRegistry.add(GenericWriter(IIDs.PR_PR_TE_TE_TARGET, NoopWriter()))
+        wRegistry.add(GenericWriter(IIDs.PR_PR_TE_TE_TA_CONFIG, ProbeTargetConfigWriter(underlayAccess)))
     }
 
     private fun provideReaders(rRegistry: ModifiableReaderRegistryBuilder, underlayAccess: UnderlayAccess) {
@@ -87,6 +104,14 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
         rRegistry.add(GenericListReader(IIDs.PR_PROBE, ProbeReader(underlayAccess)))
         rRegistry.subtreeAdd(PR_PR_CONFIG_SUBTREE,
             GenericConfigReader(IIDs.PR_PR_CONFIG, ProbeConfigReader(underlayAccess)))
+
+        rRegistry.addStructuralReader(IIDs.PR_PR_TESTS, TestsBuilder::class.java)
+        rRegistry.add(GenericListReader(IIDs.PR_PR_TE_TEST, ProbeTestReader(underlayAccess)))
+        rRegistry.subtreeAdd(PR_PR_TE_TE_CONFIG_SUBTREE,
+            GenericConfigReader(IIDs.PR_PR_TE_TE_CONFIG, ProbeTestConfigReader(underlayAccess)))
+
+        rRegistry.addStructuralReader(IIDs.PR_PR_TE_TE_TARGET, TargetBuilder::class.java)
+        rRegistry.add(GenericConfigReader(IIDs.PR_PR_TE_TE_TA_CONFIG, ProbeTargetConfigReader(underlayAccess)))
     }
 
     override fun toString(): String = "Junos 18.2 probe translate unit"
@@ -95,6 +120,11 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
         private val PR_PR_CONFIG_SUBTREE_ROOT = IID.create(Config::class.java)
         private val PR_PR_CONFIG_SUBTREE = setOf(
             RWUtils.cutIdFromStart(IIDs.PR_PR_CO_AUG_CONFIG3, PR_PR_CONFIG_SUBTREE_ROOT)
+        )
+
+        private val PR_PR_TE_TE_CONFIG_SUBTREE_ROOT = IID.create(TestConfig::class.java)
+        private val PR_PR_TE_TE_CONFIG_SUBTREE = setOf(
+            RWUtils.cutIdFromStart(IIDs.PR_PR_TE_TE_CO_AUG_CONFIG4, PR_PR_TE_TE_CONFIG_SUBTREE_ROOT)
         )
     }
 }
