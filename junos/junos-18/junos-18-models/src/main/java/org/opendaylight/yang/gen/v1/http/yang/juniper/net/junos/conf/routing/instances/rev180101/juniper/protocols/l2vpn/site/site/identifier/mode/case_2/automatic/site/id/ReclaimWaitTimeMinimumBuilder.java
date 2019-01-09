@@ -11,6 +11,9 @@ import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.routing.ins
  *
  */
 public class ReclaimWaitTimeMinimumBuilder {
+    private ReclaimWaitTimeMinimumBuilder() {
+        //Exists only to defeat instantiation.
+    }
 
     public static org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.routing.instances.rev180101.juniper.protocols.l2vpn.site.site.identifier.mode.case_2.automatic.site.id.ReclaimWaitTime.Minimum getDefaultInstance(java.lang.String defaultValue) {
         throw new java.lang.UnsupportedOperationException("Not yet implemented");

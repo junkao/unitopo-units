@@ -11,6 +11,9 @@ import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.routing.ins
  *
  */
 public class LevelIpv6MulticastMetricBuilder {
+    private LevelIpv6MulticastMetricBuilder() {
+        //Exists only to defeat instantiation.
+    }
 
     public static org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.routing.instances.rev180101.juniper.protocols.isis._interface.Level.Ipv6MulticastMetric getDefaultInstance(java.lang.String defaultValue) {
         throw new java.lang.UnsupportedOperationException("Not yet implemented");

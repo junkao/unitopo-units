@@ -11,6 +11,9 @@ import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.routing.ins
  *
  */
 public class MakeBeforeBreakTeardownTimeoutBuilder {
+    private MakeBeforeBreakTeardownTimeoutBuilder() {
+        //Exists only to defeat instantiation.
+    }
 
     public static org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.routing.instances.rev180101.periodic_oam.bfd.liveness.detection.failure.action.action.choice.case_2.MakeBeforeBreak.TeardownTimeout getDefaultInstance(java.lang.String defaultValue) {
         throw new java.lang.UnsupportedOperationException("Not yet implemented");

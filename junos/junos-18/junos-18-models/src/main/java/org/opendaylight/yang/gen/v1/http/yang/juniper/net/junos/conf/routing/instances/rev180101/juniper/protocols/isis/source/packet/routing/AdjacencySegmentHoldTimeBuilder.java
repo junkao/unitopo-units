@@ -11,6 +11,9 @@ import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.routing.ins
  *
  */
 public class AdjacencySegmentHoldTimeBuilder {
+    private AdjacencySegmentHoldTimeBuilder() {
+        //Exists only to defeat instantiation.
+    }
 
     public static org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.routing.instances.rev180101.juniper.protocols.isis.source.packet.routing.AdjacencySegment.HoldTime getDefaultInstance(java.lang.String defaultValue) {
         throw new java.lang.UnsupportedOperationException("Not yet implemented");

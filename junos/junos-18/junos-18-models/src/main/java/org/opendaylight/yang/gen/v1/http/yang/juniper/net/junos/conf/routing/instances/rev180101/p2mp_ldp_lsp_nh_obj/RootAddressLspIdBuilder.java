@@ -11,6 +11,9 @@ import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.routing.ins
  *
  */
 public class RootAddressLspIdBuilder {
+    private RootAddressLspIdBuilder() {
+        //Exists only to defeat instantiation.
+    }
 
     public static org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.routing.instances.rev180101.p2mp_ldp_lsp_nh_obj.RootAddress.LspId getDefaultInstance(java.lang.String defaultValue) {
         throw new java.lang.UnsupportedOperationException("Not yet implemented");

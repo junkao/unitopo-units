@@ -45,25 +45,6 @@
        description "Groups from which to inherit configuration data";
        type string;
      }
-     list apply-macro {
-       key name;
-       ordered-by user;
-       description "Macro and parameters for commit script expansion";
-       uses apply-macro-type;
-     }
-     container jsrc-partition {
-       description "JSRC partition configuration";
-       leaf jsrc-partition-name {
-         description "JSRC partition name";
-         type string {
-           length "1 .. 63";
-         }
-       }
-     }
-     container jsrc {
-       description "JSRC partition configuration";
-       uses jsrc-options;
-     }
      list session-limit-group {
        key name;
        ordered-by user;
@@ -95,42 +76,6 @@
      list data {
        key name;
        uses macro-data-type;
-     }
-   }
-   grouping jsrc-options {
-     uses apply-advanced;
-     list partition {
-       key name;
-       ordered-by user;
-       description "JSRC partition definition";
-       leaf name {
-         description "JSRC partition name";
-         type string {
-           length "1 .. 63";
-         }
-       }
-       uses apply-advanced;
-       leaf diameter-instance {
-         description "JSRC diameter instance";
-         type string {
-           length "1 .. 63";
-         }
-         mandatory true;
-       }
-       leaf destination-realm {
-         description "JSRC destination realm";
-         type string {
-           length "1 .. 63";
-         }
-         mandatory true;
-       }
-       leaf destination-host {
-         description "JSRC destination host";
-         type string {
-           length "1 .. 63";
-         }
-         mandatory true;
-       }
      }
    }
    grouping apply-advanced {

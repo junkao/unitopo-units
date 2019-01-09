@@ -11,6 +11,9 @@ import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.root.rev180
  *
  */
 public class SessionLimitGroupMaximumSessionsBuilder {
+    private SessionLimitGroupMaximumSessionsBuilder() {
+        //Exists only to defeat instantiation.
+    }
 
     public static org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.root.rev180101.juniper.config.SessionLimitGroup.MaximumSessions getDefaultInstance(java.lang.String defaultValue) {
         throw new java.lang.UnsupportedOperationException("Not yet implemented");
