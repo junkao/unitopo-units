@@ -61,7 +61,6 @@ class Unit(private val registry: TranslationUnitCollector) : Unit() {
 
     override fun getYangSchemas() = setOf(
         InterfacesYangInfo.getInstance(),
-        UnderlayInterfacesYangInfo.getInstance(),
         InterfaceTypesYangInfo.getInstance(),
         StatisticsYangInfo.getInstance()
     )
