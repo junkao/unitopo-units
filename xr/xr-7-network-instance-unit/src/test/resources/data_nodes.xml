@@ -29,6 +29,23 @@
             </interface-configuration>
             <interface-configuration>
                 <active>act</active>
+                <interface-name>Bundle-Ether65533</interface-name>
+                <interface-virtual></interface-virtual>
+                <qos xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-qos-ma-cfg">
+                    <input>
+                        <service-policy>
+                            <service-policy-name>input_test</service-policy-name>
+                        </service-policy>
+                    </input>
+                    <output>
+                        <service-policy>
+                            <service-policy-name>output_test</service-policy-name>
+                        </service-policy>
+                    </output>
+                </qos>
+            </interface-configuration>
+            <interface-configuration>
+                <active>act</active>
                 <interface-name>Bundle-Ether301</interface-name>
                 <interface-virtual></interface-virtual>
                 <mtus>
