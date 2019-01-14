@@ -10,7 +10,7 @@ submodule Cisco-IOS-XR-ipv4-bgp-oper-sub1 {
 
   import ietf-yang-types { prefix "yang"; }
 
-  import Cisco-IOS-XR-types { prefix "xr"; }
+  import Cisco-IOS-XR-types { prefix "xr"; revision-date "2015-06-29"; }
 
   /*** META INFORMATION ***/
 

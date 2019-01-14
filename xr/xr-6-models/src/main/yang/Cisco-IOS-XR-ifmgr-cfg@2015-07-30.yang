@@ -9,7 +9,7 @@ module Cisco-IOS-XR-ifmgr-cfg {
 
   /*** LINKAGE (IMPORTS / INCLUDES) ***/
 
-  import Cisco-IOS-XR-types { prefix "xr"; }
+  import Cisco-IOS-XR-types { prefix "xr"; revision-date "2015-06-29"; }
 
   /*** META INFORMATION ***/
 
