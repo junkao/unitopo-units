@@ -54,10 +54,10 @@ class SubinterfaceReaderTest : AbstractNetconfHandlerTest() {
     companion object {
         private val NC_HELPER = NetconfAccessHelper("/data_nodes.xml")
         private val IID_SUB_INTERFACE = InstanceIdentifier
-            .create(Interfaces::class.java)
-            .child(Interface::class.java, InterfaceKey("Bundle-Ether301"))
-            .child(Subinterfaces::class.java)
-            .child(Subinterface::class.java, SubinterfaceKey(1))
+                .create(Interfaces::class.java)
+                .child(Interface::class.java, InterfaceKey("Bundle-Ether301"))
+                .child(Subinterfaces::class.java)
+                .child(Subinterface::class.java, SubinterfaceKey(1))
     }
 
     @Test
@@ -77,12 +77,12 @@ class SubinterfaceReaderTest : AbstractNetconfHandlerTest() {
     fun testMerge() {
         val listBuilder = SubinterfacesBuilder()
         val list: MutableList<Subinterface> = mutableListOf(
-            SubinterfaceBuilder().apply {
-                this.index = 1L
-            }.build(),
-            SubinterfaceBuilder().apply {
-                this.index = 2L
-            }.build()
+                SubinterfaceBuilder().apply {
+                    this.index = 1L
+                }.build(),
+                SubinterfaceBuilder().apply {
+                    this.index = 2L
+                }.build()
         )
         target.merge(listBuilder, list)
         Assert.assertSame(listBuilder.subinterface, list)

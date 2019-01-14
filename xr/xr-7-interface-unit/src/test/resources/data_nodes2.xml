@@ -21,41 +21,19 @@
                 <active>act</active>
                 <interface-name>TenGigE0/0/0/2</interface-name>
                 <shutdown></shutdown>
-                <bundle-member xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-bundlemgr-cfg">
-                    <id>
-                        <bundle-id>65535</bundle-id>
-                        <port-activity>passive</port-activity>
-                    </id>
-                </bundle-member>
-                <lacp xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-bundlemgr-cfg">
-                    <period-short>true</period-short>
-                </lacp>
             </interface-configuration>
             <interface-configuration>
                 <active>act</active>
                 <interface-name>GigabitEthernet0/0/0/0</interface-name>
                 <description>IF_DESCRIPTION-001</description>
+                <dampening>
+                    <args>specify-all</args>
+                    <half-life>10</half-life>
+                    <reuse-threshold>11</reuse-threshold>
+                    <suppress-threshold>12</suppress-threshold>
+                    <suppress-time>13</suppress-time>
+                </dampening>
                 <shutdown></shutdown>
-                <ipv4-network xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-ipv4-io-cfg">
-                    <addresses>
-                        <primary>
-                            <address>10.1.5.28</address>
-                            <netmask>255.255.0.0</netmask>
-                        </primary>
-                    </addresses>
-                </ipv4-network>
-            </interface-configuration>
-            <interface-configuration>
-                <active>act</active>
-                <interface-name>GigabitEthernet0/0/0/0.1</interface-name>
-                <description>IF_DESCRIPTION-001</description>
-                <shutdown></shutdown>
-                <vlan-sub-configuration xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-l2-eth-infra-cfg">
-                    <vlan-identifier>
-                        <vlan-type>vlan-type-dot1q</vlan-type>
-                        <first-tag>22</first-tag>
-                    </vlan-identifier>
-                </vlan-sub-configuration>
             </interface-configuration>
             <interface-configuration>
                 <active>act</active>
@@ -86,15 +64,6 @@
                 <active>act</active>
                 <interface-name>Bundle-Ether301.1</interface-name>
                 <interface-mode-non-physical>default</interface-mode-non-physical>
-                <vlan-sub-configuration xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-l2-eth-infra-cfg">
-                    <vlan-identifier>
-                        <vlan-type>vlan-type-dot1q</vlan-type>
-                        <first-tag>22</first-tag>
-                    </vlan-identifier>
-                </vlan-sub-configuration>
-                <statistics xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-statsd-cfg">
-                    <load-interval>60</load-interval>
-                </statistics>
             </interface-configuration>
         </interface-configurations>
     </data>

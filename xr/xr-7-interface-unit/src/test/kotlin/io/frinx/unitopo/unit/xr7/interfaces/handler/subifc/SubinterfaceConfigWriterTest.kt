@@ -61,17 +61,17 @@ class SubinterfaceConfigWriterTest : AbstractNetconfHandlerTest() {
         private val NATIVE_ACT = InterfaceActive("act")
         private val NATIVE_IFC_NAME = InterfaceName("Bundle-Ether301.1")
         private val IID_SUB_INTERFACE_CONFIG = InstanceIdentifier
-            .create(Interfaces::class.java)
-            .child(Interface::class.java, InterfaceKey("Bundle-Ether301"))
-            .child(Subinterfaces::class.java)
-            .child(Subinterface::class.java, SubinterfaceKey(1))
-            .child(Config::class.java)
+                .create(Interfaces::class.java)
+                .child(Interface::class.java, InterfaceKey("Bundle-Ether301"))
+                .child(Subinterfaces::class.java)
+                .child(Subinterface::class.java, SubinterfaceKey(1))
+                .child(Config::class.java)
         private val NATIVE_IID: KeyedInstanceIdentifier<InterfaceConfiguration,
-            InterfaceConfigurationKey> =
-            KeyedInstanceIdentifier
-                .create(InterfaceConfigurations::class.java)
-                .child(InterfaceConfiguration::class.java,
-                    InterfaceConfigurationKey(NATIVE_ACT, NATIVE_IFC_NAME))
+                InterfaceConfigurationKey> =
+                KeyedInstanceIdentifier
+                        .create(InterfaceConfigurations::class.java)
+                        .child(InterfaceConfiguration::class.java,
+                                InterfaceConfigurationKey(NATIVE_ACT, NATIVE_IFC_NAME))
     }
 
     @Before
@@ -94,9 +94,9 @@ class SubinterfaceConfigWriterTest : AbstractNetconfHandlerTest() {
         }.build()
 
         val idCap = ArgumentCaptor
-            .forClass(InstanceIdentifier::class.java) as ArgumentCaptor<InstanceIdentifier<InterfaceConfiguration>>
+                .forClass(InstanceIdentifier::class.java) as ArgumentCaptor<InstanceIdentifier<InterfaceConfiguration>>
         val dataCap = ArgumentCaptor
-            .forClass(DataObject::class.java) as ArgumentCaptor<InterfaceConfiguration>
+                .forClass(DataObject::class.java) as ArgumentCaptor<InterfaceConfiguration>
 
         Mockito.doNothing().`when`(underlayAccess).put(Mockito.any(), Mockito.any())
 
@@ -112,12 +112,12 @@ class SubinterfaceConfigWriterTest : AbstractNetconfHandlerTest() {
 
         // verify captured values
         Assert.assertThat(
-            idCap.allValues.get(0),
-            CoreMatchers.equalTo(NATIVE_IID) as Matcher<in InstanceIdentifier<InterfaceConfiguration>>
+                idCap.allValues.get(0),
+                CoreMatchers.equalTo(NATIVE_IID) as Matcher<in InstanceIdentifier<InterfaceConfiguration>>
         )
         Assert.assertThat(
-            dataCap.allValues[0],
-            CoreMatchers.equalTo(expectedConfig) as Matcher<in InterfaceConfiguration>
+                dataCap.allValues[0],
+                CoreMatchers.equalTo(expectedConfig) as Matcher<in InterfaceConfiguration>
         )
     }
 
@@ -128,7 +128,7 @@ class SubinterfaceConfigWriterTest : AbstractNetconfHandlerTest() {
         }.build()
 
         val idCap = ArgumentCaptor.forClass(InstanceIdentifier::class.java)
-            as ArgumentCaptor<InstanceIdentifier<InterfaceConfiguration>>
+                as ArgumentCaptor<InstanceIdentifier<InterfaceConfiguration>>
 
         Mockito.doNothing().`when`(underlayAccess).delete(Mockito.any())
 
@@ -137,16 +137,16 @@ class SubinterfaceConfigWriterTest : AbstractNetconfHandlerTest() {
 
         // capture
         Mockito.verify(underlayAccess, Mockito.times(1))
-            .delete(idCap.capture())
+                .delete(idCap.capture())
 
         // verify capture-length
         Assert.assertThat(idCap.allValues.size, CoreMatchers.`is`(1))
 
         // verify captured values
         Assert.assertThat(
-            idCap.allValues[0],
-            CoreMatchers.equalTo(NATIVE_IID)
-                as Matcher<in InstanceIdentifier<InterfaceConfiguration>>
+                idCap.allValues[0],
+                CoreMatchers.equalTo(NATIVE_IID)
+                        as Matcher<in InstanceIdentifier<InterfaceConfiguration>>
         )
     }
 }

@@ -13,11 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.frinx.unitopo.unit.xr7.interfaces.handler
+package io.frinx.unitopo.unit.xr7.interfaces.handler.subifc
 
 import io.fd.honeycomb.translate.spi.write.WriterCustomizer
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.unitopo.registry.spi.UnderlayAccess
+import io.frinx.unitopo.unit.xr7.interfaces.handler.InterfaceReader
+import io.frinx.unitopo.unit.xr7.interfaces.handler.subifc.SubinterfaceReader.Companion.ZERO_SUBINTERFACE_ID
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907.InterfaceActive
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907._interface.configurations.InterfaceConfiguration
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907._interface.configurations.InterfaceConfigurationKey
@@ -25,30 +27,34 @@ import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.infra.st
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.infra.statsd.cfg.rev170501._interface.configurations._interface.configuration.Statistics
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.infra.statsd.cfg.rev170501._interface.configurations._interface.configuration.StatisticsBuilder
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.xr.types.rev180629.InterfaceName
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.cisco.rev171024.statistics.top.statistics.Config
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.Interface
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.cisco.rev171024.statistics.top.statistics.Config
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.subinterfaces.Subinterface
+import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-open class InterfaceStatisticsConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCustomizer<Config> {
+class SubinterfaceStatisticsConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCustomizer<Config> {
 
-    override fun writeCurrentAttributes(
-        id: org.opendaylight.yangtools.yang.binding.InstanceIdentifier<Config>,
-        dataAfter: Config,
-        wtc: WriteContext
-    ) {
+    override fun writeCurrentAttributes(id: InstanceIdentifier<Config>, dataAfter: Config, wtc: WriteContext) {
+        if (id.firstKeyOf(Subinterface::class.java).index == ZERO_SUBINTERFACE_ID) {
+            return
+        }
+
         val (underlayId, underlayIfcCfg) = getData(id, dataAfter)
-        underlayAccess.put(underlayId, underlayIfcCfg)
+        underlayAccess.merge(underlayId, underlayIfcCfg)
     }
 
-    override fun deleteCurrentAttributes(
-        id: org.opendaylight.yangtools.yang.binding.InstanceIdentifier<Config>,
-        dataAfter: Config,
-        wtc: WriteContext
-    ) {
-        underlayAccess.delete(getId(id))
+    override fun deleteCurrentAttributes(id: InstanceIdentifier<Config>, dataAfter: Config, wtc: WriteContext) {
+        if (id.firstKeyOf(Subinterface::class.java).index == ZERO_SUBINTERFACE_ID) {
+            return
+        }
+
+        val (_, _, underlayId) = getId(id)
+
+        underlayAccess.delete(underlayId)
     }
 
     override fun updateCurrentAttributes(
-        id: org.opendaylight.yangtools.yang.binding.InstanceIdentifier<Config>,
+        id: InstanceIdentifier<Config>,
         dataBefore: Config,
         dataAfter: Config,
         writeContext: WriteContext
@@ -60,33 +66,36 @@ open class InterfaceStatisticsConfigWriter(private val underlayAccess: UnderlayA
         }
     }
 
-    private fun getData(
-        id: org.opendaylight.yangtools.yang.binding.InstanceIdentifier<Config>,
-        dataAfter: Config
-    ):
-        Pair<org.opendaylight.yangtools.yang.binding.InstanceIdentifier<Statistics>, Statistics> {
-        val underlayId = getId(id)
+    private fun getData(id: InstanceIdentifier<Config>, dataAfter: Config):
+        Pair<InstanceIdentifier<Statistics>, Statistics>
+    {
+        val (interfaceActive, ifcName, underlayId) = getId(id)
 
         val ifcCfgBuilder = StatisticsBuilder()
 
         val underlayIfcCfg = ifcCfgBuilder
-            .setLoadInterval(dataAfter.loadInterval)
-            .build()
+                .setLoadInterval(dataAfter.loadInterval)
+                .build()
 
         return Pair(underlayId, underlayIfcCfg)
     }
 
-    private fun getId(
-        id: org.opendaylight.yangtools.yang.binding.InstanceIdentifier<Config>
-    ): org.opendaylight.yangtools.yang.binding.InstanceIdentifier<Statistics> {
+    private fun getId(id: InstanceIdentifier<Config>):
+        Triple<InterfaceActive,
+        InterfaceName,
+        org.opendaylight.yangtools.yang.binding.InstanceIdentifier<Statistics>> {
+        // TODO supporting only "act" interfaces
 
         val interfaceActive = InterfaceActive("act")
-        val ifcName = InterfaceName(id.firstKeyOf(Interface::class.java).name)
+        val underlaySubifcName = InterfaceName(
+                SubinterfaceReader.getSubIfcName(id.firstKeyOf(Interface::class.java).name,
+                        id.firstKeyOf(Subinterface::class.java).index))
 
         val underlayId = InterfaceReader.IFC_CFGS
-            .child(InterfaceConfiguration::class.java, InterfaceConfigurationKey(interfaceActive, ifcName))
-            .augmentation(InterfaceConfiguration1::class.java)
-            .child(Statistics::class.java)
-        return underlayId
+                .child(InterfaceConfiguration::class.java,
+                        InterfaceConfigurationKey(interfaceActive, underlaySubifcName))
+                .augmentation(InterfaceConfiguration1::class.java)
+                .child(Statistics::class.java)
+        return Triple(interfaceActive, underlaySubifcName, underlayId)
     }
 }

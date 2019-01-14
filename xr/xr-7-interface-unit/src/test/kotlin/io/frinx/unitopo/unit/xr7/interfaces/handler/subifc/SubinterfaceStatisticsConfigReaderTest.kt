@@ -17,72 +17,68 @@
 package io.frinx.unitopo.unit.xr7.interfaces.handler.subifc
 
 import io.fd.honeycomb.translate.read.ReadContext
+import io.frinx.openconfig.openconfig.interfaces.IIDs
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.utils.AbstractNetconfHandlerTest
 import io.frinx.unitopo.unit.utils.NetconfAccessHelper
+import org.hamcrest.CoreMatchers
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.Interfaces
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.cisco.rev171024.Subinterface1
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.cisco.rev171024.statistics.top.Statistics
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.cisco.rev171024.statistics.top.StatisticsBuilder
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.cisco.rev171024.statistics.top.statistics.Config
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.Interface
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.InterfaceKey
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.Subinterfaces
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.subinterfaces.Subinterface
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.subinterfaces.SubinterfaceBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.subinterfaces.SubinterfaceKey
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.subinterfaces.subinterface.Config
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.subinterfaces.subinterface.ConfigBuilder
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.cisco.rev171024.statistics.top.statistics.ConfigBuilder
 
-class SubinterfaceConfigReaderTest : AbstractNetconfHandlerTest() {
+class SubinterfaceStatisticsConfigReaderTest : AbstractNetconfHandlerTest() {
     @Mock
     private lateinit var readContext: ReadContext
 
-    private lateinit var underlayAccess: UnderlayAccess
-
-    private lateinit var target: SubinterfaceConfigReader
+    private val underlayAccess: UnderlayAccess = NetconfAccessHelper("/data_nodes.xml")
+    private lateinit var target: SubinterfaceStatisticsConfigReader
 
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
-        underlayAccess = Mockito.spy(NetconfAccessHelper(NC_HELPER))
-        target = Mockito.spy(SubinterfaceConfigReader(underlayAccess))
+
+        target = SubinterfaceStatisticsConfigReader(underlayAccess)
     }
 
     companion object {
-        private val NC_HELPER = NetconfAccessHelper("/data_nodes.xml")
-        private val IID_SUB_INTERFACE_CONFIG = InstanceIdentifier
-                .create(Interfaces::class.java)
-                .child(Interface::class.java, InterfaceKey("Bundle-Ether301"))
+        val ifName = "Bundle-Ether301"
+        val id = IIDs.INTERFACES
+                .child(Interface::class.java, InterfaceKey(ifName))
                 .child(Subinterfaces::class.java)
-                .child(Subinterface::class.java, SubinterfaceKey(1))
+                .child(Subinterface::class.java, SubinterfaceKey(1L))
+                .augmentation(Subinterface1::class.java).child(Statistics::class.java)
                 .child(Config::class.java)
     }
 
     @Test
     fun testReadCurrentAttributes() {
+        val loadinterval = 60L
         val builder = ConfigBuilder()
-        target.readCurrentAttributes(IID_SUB_INTERFACE_CONFIG, builder, readContext)
-        Assert.assertEquals(1L, builder.build().index)
-    }
 
-    @Test
-    fun testGetBuilder() {
-        val builder = target.getBuilder(IID_SUB_INTERFACE_CONFIG)
-        Assert.assertTrue(builder is ConfigBuilder)
+        target.readCurrentAttributes(id, builder, readContext)
+        Assert.assertThat(builder.loadInterval, CoreMatchers.equalTo(loadinterval))
     }
 
     @Test
     fun testMerge() {
-        val builder = SubinterfaceBuilder()
-        val config = ConfigBuilder().apply {
-            this.index = 1L
-        }.build()
+        val config = Mockito.mock(Config::class.java)
+        val parentBuilder = StatisticsBuilder()
 
-        target.merge(builder, config)
-        Assert.assertSame(builder.config, config)
+        target.merge(parentBuilder, config)
+
+        Assert.assertThat(parentBuilder.config, CoreMatchers.sameInstance(config))
     }
 }

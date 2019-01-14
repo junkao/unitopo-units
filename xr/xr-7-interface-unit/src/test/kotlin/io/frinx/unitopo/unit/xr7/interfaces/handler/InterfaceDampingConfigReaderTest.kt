@@ -27,48 +27,51 @@ import org.junit.Test
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.damping.rev171024.Interface1
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.damping.rev171024.damping.top.Damping
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.damping.rev171024.damping.top.damping.Config
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.damping.rev171024.damping.top.damping.ConfigBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.Interfaces
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.Interface
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.InterfaceKey
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces._interface.Config
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces._interface.ConfigBuilder
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class InterfaceConfigReaderTest : AbstractNetconfHandlerTest() {
+class InterfaceDampingConfigReaderTest : AbstractNetconfHandlerTest() {
     @Mock
     private lateinit var readContext: ReadContext
 
     private lateinit var underlayAccess: UnderlayAccess
 
-    private lateinit var target: InterfaceConfigReader
+    private lateinit var target: InterfaceDampingConfigReader
 
     companion object {
-        private val NC_HELPER = NetconfAccessHelper("/data_nodes.xml")
+        private val NC_HELPER = NetconfAccessHelper("/data_nodes2.xml")
     }
 
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
         underlayAccess = Mockito.spy(NetconfAccessHelper(NC_HELPER))
-        target = Mockito.spy(InterfaceConfigReader(underlayAccess))
+        target = Mockito.spy(InterfaceDampingConfigReader(underlayAccess))
     }
 
     @Test
     fun testReadCurrentAttributes() {
-
-        val ifName = "Bundle-Ether302"
-        val description = "ST004-002MG-01[BE200]"
-        val mtu = 9114
-
-        val id = InstanceIdentifier
-                .create(Interfaces::class.java)
-                .child(Interface::class.java, InterfaceKey(ifName)).child(Config::class.java)
+        val ifName = "GigabitEthernet0/0/0/0"
+        val halfLife = 10
+        val maxsuppress = 12
+        val reuse = 11
+        val suppress = 13
         val configBuilder = ConfigBuilder()
+        val id = InstanceIdentifier
+            .create(Interfaces::class.java)
+            .child(Interface::class.java, InterfaceKey(ifName)).augmentation(Interface1::class.java)
+            .child(Damping::class.java).child(Config::class.java)
 
         target.readCurrentAttributes(id, configBuilder, readContext)
-
-        Assert.assertThat(configBuilder.name, CoreMatchers.equalTo(ifName))
-        Assert.assertThat(configBuilder.description, CoreMatchers.equalTo(description))
-        Assert.assertThat(configBuilder.mtu, CoreMatchers.equalTo(mtu))
+        Assert.assertThat(configBuilder.halfLife.toInt(), CoreMatchers.equalTo(halfLife))
+        Assert.assertThat(configBuilder.maxSuppress.toInt(), CoreMatchers.equalTo(maxsuppress))
+        Assert.assertThat(configBuilder.reuse.toInt(), CoreMatchers.equalTo(reuse))
+        Assert.assertThat(configBuilder.suppress.toInt(), CoreMatchers.equalTo(suppress))
     }
 }

@@ -74,14 +74,14 @@ class InterfaceReaderTest : AbstractNetconfHandlerTest() {
         val result = target.getAllIds(id, readContext)
 
         Assert.assertThat(
-            result.map { it.name },
-            Matchers.containsInAnyOrder(
-                "GigabitEthernet0/0/0/0",
-                "TenGigE0/0/0/2",
-                "Bundle-Ether301",
-                    "Bundle-Ether302",
-                    "Bundle-Ether300"
-            )
+                result.map { it.name },
+                Matchers.containsInAnyOrder(
+                        "GigabitEthernet0/0/0/0",
+                        "TenGigE0/0/0/2",
+                        "Bundle-Ether301",
+                        "Bundle-Ether302",
+                        "Bundle-Ether300"
+                )
         )
     }
 

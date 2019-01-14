@@ -74,31 +74,31 @@ open class SubinterfaceConfigWriter(private val underlayAccess: UnderlayAccess) 
     companion object {
 
         fun getId(id: InstanceIdentifier<out DataObject>):
-            Triple<InterfaceActive, InterfaceName, InstanceIdentifier<InterfaceConfiguration>> {
+                Triple<InterfaceActive, InterfaceName, InstanceIdentifier<InterfaceConfiguration>> {
             val interfaceActive = InterfaceActive("act")
 
             val underlaySubifcName = InterfaceName(
-                SubinterfaceReader.getSubIfcName(id.firstKeyOf(Interface::class.java).name,
-                    id.firstKeyOf(Subinterface::class.java).index))
+                    SubinterfaceReader.getSubIfcName(id.firstKeyOf(Interface::class.java).name,
+                            id.firstKeyOf(Subinterface::class.java).index))
 
             val underlayId = InterfaceReader.IFC_CFGS.child(InterfaceConfiguration::class.java,
-                InterfaceConfigurationKey(interfaceActive, underlaySubifcName))
+                    InterfaceConfigurationKey(interfaceActive, underlaySubifcName))
 
             return Triple(interfaceActive, underlaySubifcName, underlayId)
         }
 
         fun getData(id: InstanceIdentifier<Config>, dataAfter: Config):
-            Pair<InstanceIdentifier<InterfaceConfiguration>, InterfaceConfiguration> {
+                Pair<InstanceIdentifier<InterfaceConfiguration>, InterfaceConfiguration> {
             val (interfaceActive, ifcName, underlayId) = getId(id)
 
             val ifcCfgBuilder = InterfaceConfigurationBuilder()
 
             val underlayIfcCfg = ifcCfgBuilder
-                .setInterfaceName(ifcName)
-                .setActive(interfaceActive)
-                .setInterfaceModeNonPhysical(InterfaceModeEnum.Default)
-                .setDescription(dataAfter.description)
-                .build()
+                    .setInterfaceName(ifcName)
+                    .setActive(interfaceActive)
+                    .setInterfaceModeNonPhysical(InterfaceModeEnum.Default)
+                    .setDescription(dataAfter.description)
+                    .build()
             return Pair(underlayId, underlayIfcCfg)
         }
     }

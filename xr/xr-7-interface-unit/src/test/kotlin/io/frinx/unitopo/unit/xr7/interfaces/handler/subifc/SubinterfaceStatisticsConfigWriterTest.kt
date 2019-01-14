@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.frinx.unitopo.unit.xr7.interfaces.handler
+package io.frinx.unitopo.unit.xr7.interfaces.handler.subifc
 
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.unitopo.registry.spi.UnderlayAccess
@@ -31,91 +31,86 @@ import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907.InterfaceActive
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907.InterfaceConfigurations
-import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907.InterfaceModeEnum
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907._interface.configurations.InterfaceConfiguration
-import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907._interface.configurations.InterfaceConfigurationBuilder
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907._interface.configurations.InterfaceConfigurationKey
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.infra.statsd.cfg.rev170501.InterfaceConfiguration1
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.infra.statsd.cfg.rev170501._interface.configurations._interface.configuration.StatisticsBuilder
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.xr.types.rev180629.InterfaceName
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.cisco.rev171024.Subinterface1
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.Interfaces
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.Interface
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.InterfaceKey
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces._interface.Config
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces._interface.ConfigBuilder
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.iana._if.type.rev140508.Ieee8023adLag
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.Subinterfaces
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.subinterfaces.Subinterface
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.subinterfaces.SubinterfaceKey
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.cisco.rev171024.statistics.top.Statistics
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.cisco.rev171024.statistics.top.statistics.Config
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.cisco.rev171024.statistics.top.statistics.ConfigBuilder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
-import org.opendaylight.yangtools.yang.binding.KeyedInstanceIdentifier
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.infra.statsd.cfg.rev170501._interface.configurations._interface.configuration.Statistics as underlayStatictics
 
-class InterfaceConfigWriterTest : AbstractNetconfHandlerTest() {
+class SubinterfaceStatisticsConfigWriterTest : AbstractNetconfHandlerTest() {
     @Mock
     private lateinit var writeContext: WriteContext
 
     private lateinit var underlayAccess: UnderlayAccess
 
-    private lateinit var target: InterfaceConfigWriter
+    private lateinit var target: SubinterfaceStatisticsConfigWriter
 
     companion object {
         private val NC_HELPER = NetconfAccessHelper("/data_nodes.xml")
-        private val IF_NAME = "Bundle-Ether300"
-        private val IF_DESCRIPTION = "IF_DESCRIPTION-001"
-        private val IF_TYPE = Ieee8023adLag::class.java
+        val LOAD_INTERVAL = 60L
 
-        private val NATIVE_ACT = InterfaceActive("act")
-        private val NATIVE_IF_MODE_NON_PHYS: InterfaceModeEnum? = null
-        private val NATIVE_IF_NAME = InterfaceName(IF_NAME)
-
-        private val IID_CONFIG = KeyedInstanceIdentifier
+        private val IID_CONFIG = InstanceIdentifier
                 .create(Interfaces::class.java)
-                .child(Interface::class.java, InterfaceKey(IF_NAME))
-                .child(Config::class.java)
+                .child(Interface::class.java, InterfaceKey("Bundle-Ether301"))
+                .child(Subinterfaces::class.java)
+                .child(Subinterface::class.java, SubinterfaceKey(1))
+                .augmentation(Subinterface1::class.java).child(Statistics::class.java)
+                    .child(Config::class.java)
 
         private val CONFIG = ConfigBuilder()
-                .setName(IF_NAME)
-                .setDescription(IF_DESCRIPTION)
-                .setType(IF_TYPE)
+                .setLoadInterval(LOAD_INTERVAL)
                 .build()
 
-        private val NATIVE_IID: KeyedInstanceIdentifier<InterfaceConfiguration, InterfaceConfigurationKey> =
-                KeyedInstanceIdentifier
-                        .create(InterfaceConfigurations::class.java)
-                        .child(InterfaceConfiguration::class.java,
-                            InterfaceConfigurationKey(NATIVE_ACT, NATIVE_IF_NAME))
+        private val NATIVE_ACT = InterfaceActive("act")
+        private val NATIVE_IFC_NAME = InterfaceName("Bundle-Ether301.1")
+        private val NATIVE_IID = InstanceIdentifier.create(InterfaceConfigurations::class.java)
+                .child(InterfaceConfiguration::class.java, InterfaceConfigurationKey(NATIVE_ACT, NATIVE_IFC_NAME))
+                .augmentation(InterfaceConfiguration1::class.java)
+                .child(underlayStatictics::class.java)
 
-        private val NATIVE_CONFIG = InterfaceConfigurationBuilder()
-                .setActive(NATIVE_ACT)
-                .setDescription(IF_DESCRIPTION)
-                .setInterfaceVirtual(true)
-                .setInterfaceName(NATIVE_IF_NAME)
-                .setInterfaceModeNonPhysical(NATIVE_IF_MODE_NON_PHYS)
-                .build()
+        private val DATA_IFC = NC_HELPER.read(NATIVE_IID).checkedGet().get()
+        private val NATIVE_CONFIG = StatisticsBuilder(DATA_IFC).setLoadInterval(LOAD_INTERVAL).build()
     }
 
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
         underlayAccess = Mockito.spy(NetconfAccessHelper(NC_HELPER))
-        target = Mockito.spy(InterfaceConfigWriter(underlayAccess))
+        target = SubinterfaceStatisticsConfigWriter(underlayAccess)
     }
 
     @Test
     fun testWriteCurrentAttributes() {
         val config = ConfigBuilder(CONFIG) // not customize
                 .build()
-        val expectedConfig = InterfaceConfigurationBuilder(NATIVE_CONFIG) // not customize
+        val expectedConfig = StatisticsBuilder(NATIVE_CONFIG) // not customize
                 .build()
 
         val idCap = ArgumentCaptor
-                .forClass(InstanceIdentifier::class.java) as ArgumentCaptor<InstanceIdentifier<InterfaceConfiguration>>
+                .forClass(InstanceIdentifier::class.java) as ArgumentCaptor<InstanceIdentifier<underlayStatictics>>
         val dataCap = ArgumentCaptor
-                .forClass(DataObject::class.java) as ArgumentCaptor<InterfaceConfiguration>
+                .forClass(DataObject::class.java) as ArgumentCaptor<underlayStatictics>
 
-        Mockito.doNothing().`when`(underlayAccess).put(Mockito.any(), Mockito.any())
+        Mockito.doNothing().`when`(underlayAccess).merge(Mockito.any(), Mockito.any())
 
         // test
         target.writeCurrentAttributes(IID_CONFIG, config, writeContext)
 
         // capture
-        Mockito.verify(underlayAccess, Mockito.times(1)).put(idCap.capture(), dataCap.capture())
+        Mockito.verify(underlayAccess, Mockito.times(1)).merge(idCap.capture(), dataCap.capture())
 
         // verify capture-length
         Assert.assertThat(idCap.allValues.size, CoreMatchers.`is`(1))
@@ -124,21 +119,20 @@ class InterfaceConfigWriterTest : AbstractNetconfHandlerTest() {
         // verify captured values
         Assert.assertThat(
                 idCap.allValues[0],
-                CoreMatchers.equalTo(NATIVE_IID) as Matcher<in InstanceIdentifier<InterfaceConfiguration>>
+                CoreMatchers.equalTo(NATIVE_IID) as Matcher<in InstanceIdentifier<underlayStatictics>>
         )
         Assert.assertThat(
                 dataCap.allValues[0],
                 CoreMatchers.equalTo(expectedConfig)
         )
     }
-
     @Test
     fun testDeleteCurrentAttributes() {
         val config = ConfigBuilder(CONFIG) // not customize
                 .build()
 
         val idCap = ArgumentCaptor
-                .forClass(InstanceIdentifier::class.java) as ArgumentCaptor<InstanceIdentifier<InterfaceConfiguration>>
+                .forClass(InstanceIdentifier::class.java) as ArgumentCaptor<InstanceIdentifier<underlayStatictics>>
 
         Mockito.doNothing().`when`(underlayAccess).delete(Mockito.any())
 
@@ -154,33 +148,34 @@ class InterfaceConfigWriterTest : AbstractNetconfHandlerTest() {
         // verify captured values
         Assert.assertThat(
                 idCap.allValues[0],
-                CoreMatchers.equalTo(NATIVE_IID) as Matcher<in InstanceIdentifier<InterfaceConfiguration>>
+                CoreMatchers.equalTo(NATIVE_IID) as Matcher<in InstanceIdentifier<underlayStatictics>>
         )
     }
 
     @Test
     fun testUpdateCurrentAttributes() {
+        val LOAD_INTERVAL_AFTER = 300L
         val configBefore = ConfigBuilder(CONFIG) // not customize
                 .build()
         val configAfter = ConfigBuilder(CONFIG)
-                .setDescription(CONFIG.description + "-after")
+                .setLoadInterval(LOAD_INTERVAL_AFTER)
                 .build()
-        val expectedConfig = InterfaceConfigurationBuilder(NATIVE_CONFIG)
-                .setDescription(configAfter.description)
+        val expectedConfig = StatisticsBuilder(NATIVE_CONFIG)
+                .setLoadInterval(configAfter.loadInterval)
                 .build()
 
         val idCap = ArgumentCaptor
-                .forClass(InstanceIdentifier::class.java) as ArgumentCaptor<InstanceIdentifier<InterfaceConfiguration>>
+                .forClass(InstanceIdentifier::class.java) as ArgumentCaptor<InstanceIdentifier<underlayStatictics>>
         val dataCap = ArgumentCaptor
-                .forClass(DataObject::class.java) as ArgumentCaptor<InterfaceConfiguration>
+                .forClass(DataObject::class.java) as ArgumentCaptor<underlayStatictics>
 
-        Mockito.doNothing().`when`(underlayAccess).put(Mockito.any(), Mockito.any())
+        Mockito.doNothing().`when`(underlayAccess).merge(Mockito.any(), Mockito.any())
 
         // test
         target.updateCurrentAttributes(IID_CONFIG, configBefore, configAfter, writeContext)
 
         // capture
-        Mockito.verify(underlayAccess, Mockito.times(1)).put(idCap.capture(), dataCap.capture())
+        Mockito.verify(underlayAccess, Mockito.times(1)).merge(idCap.capture(), dataCap.capture())
 
         // verify capture-length
         Assert.assertThat(idCap.allValues.size, CoreMatchers.`is`(1))
@@ -189,7 +184,7 @@ class InterfaceConfigWriterTest : AbstractNetconfHandlerTest() {
         // verify captured values
         Assert.assertThat(
                 idCap.allValues[0],
-                CoreMatchers.equalTo(NATIVE_IID) as Matcher<in InstanceIdentifier<InterfaceConfiguration>>
+                CoreMatchers.equalTo(NATIVE_IID) as Matcher<in InstanceIdentifier<underlayStatictics>>
         )
         Assert.assertThat(
                 dataCap.allValues[0],
