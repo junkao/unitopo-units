@@ -11,11 +11,11 @@ module Cisco-IOS-XR-ipv6-ma-cfg {
 
   import ietf-inet-types { prefix "inet"; }
 
-  import Cisco-IOS-XR-types { prefix "xr"; }
+  import Cisco-IOS-XR-types { prefix "xr"; revision-date "2015-06-29"; }
 
-  import Cisco-IOS-XR-ip-iarm-datatypes { prefix "dt1"; }
+  import Cisco-IOS-XR-ip-iarm-datatypes { prefix "dt1"; revision-date "2015-01-07"; }
 
-  import Cisco-IOS-XR-ifmgr-cfg { prefix "a1"; }
+  import Cisco-IOS-XR-ifmgr-cfg { prefix "a1"; revision-date "2015-07-30";}
 
   /*** META INFORMATION ***/
 

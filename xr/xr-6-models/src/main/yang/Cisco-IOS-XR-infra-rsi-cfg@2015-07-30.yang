@@ -11,9 +11,9 @@ module Cisco-IOS-XR-infra-rsi-cfg {
 
   import Cisco-IOS-XR-types { prefix "xr"; revision-date "2015-06-29"; }
 
-  import Cisco-IOS-XR-ifmgr-cfg { prefix "a1"; }
+  import Cisco-IOS-XR-ifmgr-cfg { prefix "a1"; revision-date "2015-07-30";}
 
-  import Cisco-IOS-XR-snmp-agent-cfg { prefix "a2"; }
+  import Cisco-IOS-XR-snmp-agent-cfg { prefix "a2"; revision-date "2015-10-27";}
 
   /*** META INFORMATION ***/
 

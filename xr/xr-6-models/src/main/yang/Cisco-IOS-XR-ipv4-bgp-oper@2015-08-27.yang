@@ -13,7 +13,7 @@ module Cisco-IOS-XR-ipv4-bgp-oper {
 
   import Cisco-IOS-XR-types { prefix "xr"; revision-date "2015-06-29"; }
 
-  import Cisco-IOS-XR-ipv4-bgp-datatypes { prefix "dt1"; }
+  import Cisco-IOS-XR-ipv4-bgp-datatypes { prefix "dt1"; revision-date "2015-08-27"; }
 
   include Cisco-IOS-XR-ipv4-bgp-oper-sub1 {
     revision-date 2015-08-27;

@@ -13,11 +13,11 @@ module Cisco-IOS-XR-l2-eth-infra-cfg {
 
   import Cisco-IOS-XR-types { prefix "xr"; revision-date "2015-06-29"; }
 
-  import Cisco-IOS-XR-l2-eth-infra-datatypes { prefix "dt1"; }
+  import Cisco-IOS-XR-l2-eth-infra-datatypes { prefix "dt1"; revision-date "2015-11-09"; }
 
-  import Cisco-IOS-XR-ifmgr-cfg { prefix "a1"; }
+  import Cisco-IOS-XR-ifmgr-cfg { prefix "a1"; revision-date "2015-07-30";}
 
-  import Cisco-IOS-XR-l2vpn-cfg { prefix "a2"; }
+  import Cisco-IOS-XR-l2vpn-cfg { prefix "a2"; revision-date "2015-11-09"; }
 
   /*** META INFORMATION ***/
 

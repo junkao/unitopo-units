@@ -13,11 +13,11 @@ module Cisco-IOS-XR-ipv4-bgp-cfg {
 
   import Cisco-IOS-XR-types { prefix "xr"; revision-date "2015-06-29"; }
 
-  import Cisco-IOS-XR-ipv4-bgp-datatypes { prefix "dt1"; }
+  import Cisco-IOS-XR-ipv4-bgp-datatypes { prefix "dt1"; revision-date "2015-08-27"; }
 
-  import Cisco-IOS-XR-infra-rsi-cfg { prefix "a1"; }
+  import Cisco-IOS-XR-infra-rsi-cfg { prefix "a1"; revision-date "2015-07-30"; }
 
-  import Cisco-IOS-XR-snmp-agent-cfg { prefix "a2"; }
+  import Cisco-IOS-XR-snmp-agent-cfg { prefix "a2"; revision-date "2015-10-27";}
 
   /*** META INFORMATION ***/
 
