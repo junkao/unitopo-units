@@ -8,7 +8,7 @@ submodule Cisco-IOS-XR-l2-eth-infra-oper-sub2 {
 
   import ietf-yang-types { prefix "yang"; }
 
-  import Cisco-IOS-XR-types { prefix "xr"; }
+  import Cisco-IOS-XR-types { prefix "xr"; revision-date "2015-06-29"; }
 
   /*** META INFORMATION ***/
 

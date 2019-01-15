@@ -6,7 +6,7 @@ submodule Cisco-IOS-XR-ifmgr-oper-sub1 {
 
   /*** LINKAGE (IMPORTS / INCLUDES) ***/
 
-  import Cisco-IOS-XR-types { prefix "xr"; }
+  import Cisco-IOS-XR-types { prefix "xr"; revision-date "2015-06-29"; }
 
   include Cisco-IOS-XR-ifmgr-oper-sub2 {
     revision-date 2015-07-30;
