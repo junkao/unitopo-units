@@ -71,6 +71,11 @@
             <artifactId>openconfig-vlan</artifactId>
             <version>${openconfig.version}</version>
         </dependency>
+        <dependency>
+            <groupId>io.frinx.openconfig</groupId>
+            <artifactId>openconfig-if-ip</artifactId>
+            <version>${openconfig.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.opendaylight.mdsal.model</groupId>

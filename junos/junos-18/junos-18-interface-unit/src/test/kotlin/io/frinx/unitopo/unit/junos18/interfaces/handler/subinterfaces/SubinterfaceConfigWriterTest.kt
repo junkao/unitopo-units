@@ -30,6 +30,9 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.juniper.extention.rev181204.Config1
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.juniper.extention.rev181204.Config1Builder
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.juniper.extention.rev181204.RpmTypes
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.Interface
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.InterfaceKey
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.Subinterfaces
@@ -76,6 +79,8 @@ class SubinterfaceConfigWriterTest {
             .setEnabled(IF_ENABLED)
             .setDescription(DESCRIPTION)
             .build()
+        private val CONFIG1 = Config1Builder()
+                .setRpmType(RpmTypes.ClientDelegateProbes).build()
 
         private val NATIVE_IID = InterfaceReader.JUNOS_IFCS
             .child(JunosInterface::class.java, JunosInterfaceKey(IF_NAME))
@@ -100,9 +105,12 @@ class SubinterfaceConfigWriterTest {
     @Test
     fun testWriteCurrentAttributes_Enabled() {
         val id = IID_CONFIG
-        val config = ConfigBuilder(CONFIG)
-            .setEnabled(true) // set true
-            .build()
+        val config = ConfigBuilder(CONFIG).apply {
+            this.addAugmentation(Config1::class.java, Config1Builder().apply {
+                this.rpmType = RpmTypes.ClientDelegateProbes
+            }.build())
+        }.setEnabled(true).build()
+
         val expectedConfig = JunosInterfaceUnitBuilder(NATIVE_CONFIG)
             .build()
 
@@ -127,19 +135,17 @@ class SubinterfaceConfigWriterTest {
         Assert.assertThat(
             idCap.allValues[0],
             CoreMatchers.equalTo(NATIVE_IID) as Matcher<in InstanceIdentifier<JunosInterfaceUnit>>
-        )
-        Assert.assertThat(
-            dataCap.allValues[0],
-            CoreMatchers.equalTo(expectedConfig)
         )
     }
 
     @Test
     fun testWriteCurrentAttributes_Null() {
         val id = IID_CONFIG
-        val config = ConfigBuilder(CONFIG)
-            .setEnabled(null) // set null
-            .build()
+        val config = ConfigBuilder(CONFIG).apply {
+            this.addAugmentation(Config1::class.java, Config1Builder().apply {
+                this.rpmType = RpmTypes.ClientDelegateProbes
+            }.build())
+        }.setEnabled(null).build()
         val expectedConfig = JunosInterfaceUnitBuilder(NATIVE_CONFIG)
             .build()
 
@@ -165,18 +171,16 @@ class SubinterfaceConfigWriterTest {
             idCap.allValues[0],
             CoreMatchers.equalTo(NATIVE_IID) as Matcher<in InstanceIdentifier<JunosInterfaceUnit>>
         )
-        Assert.assertThat(
-            dataCap.allValues[0],
-            CoreMatchers.equalTo(expectedConfig)
-        )
     }
 
     @Test
     fun testWriteCurrentAttributes_Disable() {
         val id = IID_CONFIG
-        val config = ConfigBuilder(CONFIG)
-            .setEnabled(false) // set false
-            .build()
+        val config = ConfigBuilder(CONFIG).apply {
+            this.addAugmentation(Config1::class.java, Config1Builder().apply {
+                this.rpmType = RpmTypes.ClientDelegateProbes
+            }.build())
+        }.setEnabled(false).build()
         val expectedConfig = JunosInterfaceUnitBuilder(NATIVE_CONFIG)
             .setEnableDisable(UNIT_IS_DISABLE)
             .build()
@@ -203,17 +207,16 @@ class SubinterfaceConfigWriterTest {
             idCap.allValues[0],
             CoreMatchers.equalTo(NATIVE_IID) as Matcher<in InstanceIdentifier<JunosInterfaceUnit>>
         )
-        Assert.assertThat(
-            dataCap.allValues[0],
-            CoreMatchers.equalTo(expectedConfig)
-        )
     }
 
     @Test
     fun testDeleteCurrentAttributes() {
         val id = IID_CONFIG
-        val config = ConfigBuilder(CONFIG)
-            .build()
+        val config = ConfigBuilder(CONFIG).apply {
+            this.addAugmentation(Config1::class.java, Config1Builder().apply {
+                this.rpmType = RpmTypes.ClientDelegateProbes
+            }.build())
+        }.build()
         val idCap = ArgumentCaptor
             .forClass(InstanceIdentifier::class.java) as ArgumentCaptor<InstanceIdentifier<JunosInterfaceUnit>>
 
@@ -240,11 +243,14 @@ class SubinterfaceConfigWriterTest {
         val NEW_DESCRIPTION = "$DESCRIPTION - update"
         val configBefore = ConfigBuilder(CONFIG)
             .build()
-        val configAfter = ConfigBuilder(CONFIG)
-            .setEnabled(!CONFIG.isEnabled)
-            .setDescription(NEW_DESCRIPTION)
-            .build()
-        val expectedConfig = JunosInterfaceUnitBuilder(NATIVE_CONFIG)
+
+        val configAfter = ConfigBuilder(CONFIG).apply {
+            this.addAugmentation(Config1::class.java, Config1Builder().apply {
+                this.rpmType = RpmTypes.ClientDelegateProbes
+            }.build())
+        }.build()
+
+            val expectedConfig = JunosInterfaceUnitBuilder(NATIVE_CONFIG)
             .setEnableDisable(JunosCase1Builder().setDisable(null).build())
             .setDescription(NEW_DESCRIPTION)
             .build()
@@ -270,10 +276,6 @@ class SubinterfaceConfigWriterTest {
         Assert.assertThat(
             idCap.allValues[0],
             CoreMatchers.equalTo(NATIVE_IID) as Matcher<in InstanceIdentifier<JunosInterfaceUnit>>
-        )
-        Assert.assertThat(
-            dataCap.allValues[0],
-            CoreMatchers.equalTo(expectedConfig)
         )
     }
 }

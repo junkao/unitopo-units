@@ -51,7 +51,11 @@
                     <unit>
                         <name>0</name>
                         <family>
-                            <inet></inet>
+                            <inet>
+                                <address>
+                                    <name>10.128.178.94/32</name>
+                                </address>
+                            </inet>
                         </family>
                     </unit>
                 </interface>

@@ -20,6 +20,7 @@ import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.spi.read.ConfigListReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.ipv4.top.ipv4.addresses.AddressKey
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.InterfacesBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.Interface
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.InterfaceBuilder
@@ -33,7 +34,10 @@ import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.interfaces.
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.interfaces.rev180101.interfaces.group.interfaces.InterfaceBuilder as JunosInterfaceBuilder
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.interfaces.rev180101.interfaces.group.interfaces.InterfaceKey as JunosInterfaceKey
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.interfaces.rev180101.interfaces_type.Unit as JunosInterfaceUnit
+import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.interfaces.rev180101.interfaces_type.unit.family.inet.Address as JunosInterfaceUnitAddress
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.ip.vrrp.top.vrrp.VrrpGroupKey
+import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.interfaces.rev180101.interfaces_type.unit.family.inet.address.VrrpGroup as JunosVrrpGroup
 
 class InterfaceReader(private val underlayAccess: UnderlayAccess) :
     ConfigListReaderCustomizer<Interface, InterfaceKey, InterfaceBuilder> {
@@ -121,6 +125,56 @@ class InterfaceReader(private val underlayAccess: UnderlayAccess) :
                 // Invoke handler with read UnitCfg
                 .let { it?.unit?.first { it1 -> it1.name == unitId.toString() }
                     ?.let { it2 -> handler(it2) } }
+        }
+
+        fun readUnitAddress(
+            underlayAccess: UnderlayAccess,
+            ifcName: String,
+            subIfcId: Long,
+            addressKey: AddressKey,
+            handler: (JunosInterfaceUnitAddress) -> Unit
+        ) {
+            readInterface(underlayAccess, ifcName)
+                    // Invoke handler with read UnitAddress
+                    .let {
+                        it?.unit?.first { it1 -> it1.name == subIfcId.toString() }
+                                ?.family?.inet?.address
+                                ?.first { address -> address.name.value.contains(addressKey.ip.value) }
+                                ?.let { it2 -> handler(it2) }
+                    }
+        }
+        fun readUnitVrrpGroup(
+            underlayAccess: UnderlayAccess,
+            ifcName: String,
+            subIfcId: Long,
+            vrrpGroupKey: VrrpGroupKey,
+            handler: (JunosVrrpGroup) -> Unit
+        ) {
+            readInterface(underlayAccess, ifcName)
+                    // Invoke handler with read UnitAddress
+                    .let {
+                        it?.unit?.first {
+                            it1 -> it1.name == subIfcId.toString()
+                        }?.family?.inet?.address?.map {
+                            if (it.vrrpGroup?.size == 0) {
+                                null
+                            } else {
+                                it.vrrpGroup?.filter {
+                                    val x: (
+                                        v: JunosVrrpGroup
+                                    )
+                                    -> Boolean = {
+                                        it.name.toShort().equals(vrrpGroupKey.virtualRouterId)
+                                    }
+                                    x(it)
+                                }?.get(0)
+                            }
+                        }?.map {
+                            it?.let {
+                                handler(it)
+                            }
+                        }
+                    }
         }
     }
 }
