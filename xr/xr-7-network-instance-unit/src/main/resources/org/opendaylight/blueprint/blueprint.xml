@@ -24,7 +24,7 @@
   <reference id="unifiedTranslationRegistry"
     interface="io.frinx.unitopo.registry.api.TranslationUnitCollector"/>
 
-  <bean id="xrIfcUnit"
+  <bean id="xr7NetworkInstanceUnit"
     class="io.frinx.unitopo.unit.xr7.network.instance.Unit"
     init-method="init" destroy-method="close">
     <argument ref="unifiedTranslationRegistry" />
