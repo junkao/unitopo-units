@@ -91,7 +91,13 @@ open class InterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : W
                 ifcCfgBuilder.setMtus(mtus).build()
             }
         } else if (dataAfter.type == EthernetCsmacd::class.java) {
-            ifcCfgBuilder.setShutdown(dataAfter.isEnabled)
+            ifcCfgBuilder.apply {
+                if (dataAfter.isEnabled) {
+                    isShutdown = null
+                } else {
+                    isShutdown = true
+                }
+            }
         } else {
             throw WriteFailedException(id, "Interface type " +
                     dataAfter.type.toString() + " is not supported")
