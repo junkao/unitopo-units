@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
-  ~ Copyright © 2018 Frinx and others.
+  ~ Copyright © 2019 Frinx and others.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -27,13 +27,24 @@
     </parent>
 
     <groupId>io.frinx.unitopo</groupId>
-    <artifactId>unitopo-units-xr</artifactId>
+    <artifactId>unitopo-units-xr-6</artifactId>
     <version>3.1.7.rc14-frinx-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
-        <module>xr-6</module>
-        <module>xr-7</module>
+        <module>xr-6-bgp-unit</module>
+        <module>xr-6-cdp-unit</module>
+        <module>xr-6-configuration-metadata-unit</module>
+        <module>xr-6-init-unit</module>
+        <module>xr-6-interface-unit</module>
+        <module>xr-6-ip6-unit</module>
+        <module>xr-6-lldp-unit</module>
+        <module>xr-6-lr-unit</module>
+        <module>xr-6-models</module>
+        <module>xr-6-network-instance-unit</module>
+        <module>xr-6-ospf-unit</module>
+        <module>xr-6-platform-unit</module>
+        <module>xr-6-routing-policy-unit</module>
     </modules>
 
     <build>
