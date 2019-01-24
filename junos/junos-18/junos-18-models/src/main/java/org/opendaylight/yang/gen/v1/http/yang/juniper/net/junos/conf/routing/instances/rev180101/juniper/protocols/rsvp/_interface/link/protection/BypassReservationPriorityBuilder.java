@@ -11,9 +11,6 @@ import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.routing.ins
  *
  */
 public class BypassReservationPriorityBuilder {
-    private BypassReservationPriorityBuilder() {
-        //Exists only to defeat instantiation.
-    }
 
     public static org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.routing.instances.rev180101.juniper.protocols.rsvp._interface.link.protection.Bypass.ReservationPriority getDefaultInstance(java.lang.String defaultValue) {
         throw new java.lang.UnsupportedOperationException("Not yet implemented");

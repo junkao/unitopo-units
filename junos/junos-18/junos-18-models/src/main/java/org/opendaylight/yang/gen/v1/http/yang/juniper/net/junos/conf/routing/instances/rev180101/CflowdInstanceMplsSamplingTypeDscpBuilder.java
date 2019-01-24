@@ -11,9 +11,6 @@ import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.routing.ins
  *
  */
 public class CflowdInstanceMplsSamplingTypeDscpBuilder {
-    private CflowdInstanceMplsSamplingTypeDscpBuilder() {
-        //Exists only to defeat instantiation.
-    }
 
     public static org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.routing.instances.rev180101.CflowdInstanceMplsSamplingType.Dscp getDefaultInstance(java.lang.String defaultValue) {
         throw new java.lang.UnsupportedOperationException("Not yet implemented");
