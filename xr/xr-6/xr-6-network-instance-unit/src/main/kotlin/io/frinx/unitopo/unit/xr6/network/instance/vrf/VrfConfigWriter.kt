@@ -16,9 +16,9 @@
 
 package io.frinx.unitopo.unit.xr6.network.instance.vrf
 
-import io.fd.honeycomb.translate.spi.write.WriterCustomizer
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.openconfig.network.instance.NetworInstance
+import io.frinx.translate.unit.commons.handler.spi.CompositeChildWriter
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.infra.rsi.cfg.rev150730.VrfAddressFamily
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.infra.rsi.cfg.rev150730.VrfSubAddressFamily
@@ -37,34 +37,36 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.openconfig.ty
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.openconfig.types.rev170113.IPV6
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
-class VrfConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCustomizer<Config> {
+class VrfConfigWriter(private val underlayAccess: UnderlayAccess) : CompositeChildWriter<Config> {
 
-    override fun deleteCurrentAttributes(iid: IID<Config>, dataBefore: Config, wtc: WriteContext) {
+    override fun deleteCurrentAttributesWResult(iid: IID<Config>, dataBefore: Config, wtc: WriteContext): Boolean {
 
         if (dataBefore.type != L3VRF::class.java) {
-            return
+            return false
         }
 
         if (dataBefore.name == NetworInstance.DEFAULT_NETWORK_NAME)
-            return
+            return false
 
         val vrfIid = getVrfIdentifier(dataBefore.name)
 
         underlayAccess.delete(vrfIid)
+        return true
     }
 
-    override fun updateCurrentAttributes(
+    override fun updateCurrentAttributesWResult(
         id: org.opendaylight.yangtools.yang.binding.InstanceIdentifier<Config>,
         dataBefore: Config,
         dataAfter: Config,
         writeContext: WriteContext
-    ) {
+    ): Boolean {
+
         if (dataAfter.type != L3VRF::class.java) {
-            return
+            return false
         }
 
         if (dataAfter.name == NetworInstance.DEFAULT_NETWORK_NAME)
-            return
+            return false
 
         val vrfIid = getVrfIdentifier(dataAfter.name)
         val vrfBuilder = underlayAccess.read(vrfIid).checkedGet()
@@ -73,18 +75,20 @@ class VrfConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCustom
 
         val (_, vrf) = getVrfData(dataAfter, vrfBuilder)
         underlayAccess.put(vrfIid, vrf)
+        return true
     }
 
-    override fun writeCurrentAttributes(iid: IID<Config>, dataAfter: Config, wtc: WriteContext) {
+    override fun writeCurrentAttributesWResult(iid: IID<Config>, dataAfter: Config, wtc: WriteContext): Boolean {
         if (dataAfter.type != L3VRF::class.java) {
-            return
+            return false
         }
 
         if (dataAfter.name == NetworInstance.DEFAULT_NETWORK_NAME)
-            return
+            return false
 
         val (vrfIid, vrf) = getVrfData(dataAfter, VrfBuilder())
         underlayAccess.merge(vrfIid, vrf)
+        return true
     }
 
     private fun getVrfData(data: Config, vrfBuilder: VrfBuilder): Pair<IID<Vrf>, Vrf> {

@@ -16,36 +16,39 @@
 
 package io.frinx.unitopo.unit.xr6.network.instance.l2p2p
 
-import io.fd.honeycomb.translate.spi.write.WriterCustomizer
 import io.fd.honeycomb.translate.write.WriteContext
+import io.frinx.translate.unit.commons.handler.spi.CompositeChildWriter
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.Config
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class L2P2PConfigWriter(private val cli: UnderlayAccess) : WriterCustomizer<Config> {
+class L2P2PConfigWriter(private val cli: UnderlayAccess) : CompositeChildWriter<Config> {
 
-    override fun writeCurrentAttributes(
+    override fun writeCurrentAttributesWResult(
         instanceIdentifier: InstanceIdentifier<Config>,
         config: Config,
         writeContext: WriteContext
-    ) {
+    ): Boolean {
         // NOOP at this level
+        return true
     }
 
-    override fun updateCurrentAttributes(
+    override fun updateCurrentAttributesWResult(
         id: InstanceIdentifier<Config>,
         dataBefore: Config,
         dataAfter: Config,
         writeContext: WriteContext
-    ) {
+    ): Boolean {
         // NOOP at this level
+        return true
     }
 
-    override fun deleteCurrentAttributes(
+    override fun deleteCurrentAttributesWResult(
         instanceIdentifier: InstanceIdentifier<Config>,
         config: Config,
         writeContext: WriteContext
-    ) {
+    ): Boolean {
         // NOOP at this level
+        return true
     }
 }

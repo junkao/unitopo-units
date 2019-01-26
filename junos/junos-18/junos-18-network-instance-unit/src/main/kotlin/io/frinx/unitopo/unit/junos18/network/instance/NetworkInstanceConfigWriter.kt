@@ -17,7 +17,7 @@
 package io.frinx.unitopo.unit.junos18.network.instance
 
 import com.google.common.collect.Lists
-import io.fd.honeycomb.translate.spi.write.WriterCustomizer
+import io.frinx.translate.unit.commons.handler.spi.CompositeChildWriter
 import io.frinx.translate.unit.commons.handler.spi.CompositeWriter
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.junos18.network.instance.vrf.VrfConfigWriter
@@ -25,7 +25,7 @@ import io.frinx.unitopo.handlers.network.instance.def.DefaultConfigWriter
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.Config
 
 class NetworkInstanceConfigWriter(access: UnderlayAccess) :
-    CompositeWriter<Config>(Lists.newArrayList<WriterCustomizer<Config>>(
+    CompositeWriter<Config>(Lists.newArrayList<CompositeChildWriter<Config>>(
         DefaultConfigWriter(),
         VrfConfigWriter(access))
     )
