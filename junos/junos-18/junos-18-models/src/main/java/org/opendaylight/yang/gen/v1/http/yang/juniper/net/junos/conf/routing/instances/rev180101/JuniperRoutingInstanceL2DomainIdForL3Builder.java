@@ -11,9 +11,6 @@ import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.routing.ins
  *
  */
 public class JuniperRoutingInstanceL2DomainIdForL3Builder {
-    private JuniperRoutingInstanceL2DomainIdForL3Builder() {
-        //Exists only to defeat instantiation.
-    }
 
     public static org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.routing.instances.rev180101.JuniperRoutingInstance.L2DomainIdForL3 getDefaultInstance(java.lang.String defaultValue) {
         throw new java.lang.UnsupportedOperationException("Not yet implemented");
