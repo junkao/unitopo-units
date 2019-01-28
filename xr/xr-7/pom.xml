@@ -32,6 +32,7 @@
     <packaging>pom</packaging>
 
     <modules>
+	<module>xr-7-bgp-unit</module>
         <module>xr-7-configuration-metadata-unit</module>
         <module>xr-7-evpn-unit</module>
         <module>xr-7-init-unit</module>
