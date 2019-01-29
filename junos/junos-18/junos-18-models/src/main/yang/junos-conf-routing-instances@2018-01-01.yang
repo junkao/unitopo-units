@@ -28,9 +28,6 @@
    augment /jc:configuration {
      uses routing-instances-group;
    }
-   augment /jc:configuration/jc:groups {
-     uses routing-instances-group;
-   }
    grouping routing-instances-group {
      container routing-instances {
        description "Routing instance configuration";
@@ -254,15 +251,6 @@
          }
        }
      }
-     container l2vpn-id {
-       description "Layer-2 vpn-id for this instance";
-       uses apply-advanced;
-       leaf community {
-         description "L2VPN ID community for FEC129 VPLS/VPWS with BGP auto-discovery";
-         type string {
-         }
-       }
-     }
      leaf no-vrf-advertise {
        description "Don't advertise this instance to remote PEs";
        type empty;
@@ -274,10 +262,6 @@
      container routing-options {
        description "Protocol-independent routing option configuration";
        uses juniper-routing-options;
-     }
-     container forwarding-options {
-       description "Forwarding options configuration";
-       uses juniper-forwarding-options;
      }
      container protocols {
        description "Routing protocol configuration";
@@ -4376,18 +4360,6 @@
          uses juniper-protocols-router-discovery;
        }
      }
-     container bridge-domains {
-       description "Bridge domain configuration";
-       uses apply-advanced;
-       list domain {
-         key name;
-         uses juniper-bridge-domains;
-       }
-     }
-     container switch-options {
-       description "L2 options for routing-instance of type virtual-switch";
-       uses juniper-routing-instance-switch-options;
-     }
      leaf layer3-domain-identifier {
        description "Layer3 domain identifier";
        type union {
@@ -4408,15 +4380,6 @@
          type uint32 {
            range "2 .. 4095";
          }
-       }
-     }
-     container vlans {
-       description "VLAN configuration";
-       uses apply-advanced;
-       list vlan {
-         key name;
-         description "Virtual LAN";
-         uses vlan-types;
        }
      }
    }
@@ -6639,7 +6602,6 @@
      }
      container authentication {
        description "DHCP authentication";
-       uses authentication-type;
      }
      container liveness-detection {
        description "DHCP client liveness detection processing";
