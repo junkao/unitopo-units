@@ -74,6 +74,27 @@ class ProbeTestConfigReaderTest {
     }
 
     @Test
+    fun testReadCurrentAttributesSourceIsNull() {
+        val probeName = "APPLE01"
+        val probeTestName = "ae2220.46_SBM-P-00000827-19_2"
+        val id = IIDs.PROBES
+            .child(Probe::class.java, ProbeKey(probeName))
+            .child(ProbeTests::class.java)
+            .child(ProbeTest::class.java, ProbeTestKey(probeTestName))
+            .child(Config::class.java)
+
+        val builder = ConfigBuilder()
+
+        target.readCurrentAttributes(id, builder, readContext)
+
+        Assert.assertThat(builder.name, CoreMatchers.equalTo(probeTestName))
+        Assert.assertThat(builder.source, CoreMatchers.`is`(CoreMatchers.nullValue()))
+        Assert.assertThat(
+            builder.getAugmentation(JuniperExtConfigAug::class.java),
+            CoreMatchers.`is`(CoreMatchers.nullValue()))
+    }
+
+    @Test
     fun testMerge() {
         val config = Mockito.mock(Config::class.java)
         val parentBuilder = ProbeTestBuilder()

@@ -71,8 +71,9 @@ class ProbeTestConfigReader(private val underlayAccess: UnderlayAccess) :
         private fun ConfigBuilder.fromUnderlay(test: JunosTest) {
             val juniperAugBuilder = JuniperExtConfigAugBuilder()
 
-            source = IpAddress(test.sourceAddress.value.toCharArray())
-
+            if (test.sourceAddress != null) {
+                source = IpAddress(test.sourceAddress.value.toCharArray())
+            }
             juniperAugBuilder.fromUnderlay(test)
             if (!juniperAugBuilder.isEmpty()) {
                 addAugmentation(JuniperExtConfigAug::class.java, juniperAugBuilder.build())

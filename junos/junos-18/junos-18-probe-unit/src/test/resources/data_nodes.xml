@@ -48,6 +48,12 @@
                     </probe>
                     <probe>
                         <name>APPLE01</name>
+                        <test>
+                            <name>ae2220.46_SBM-P-00000827-19_2</name>
+                            <target>
+                                <address>11.128.178.86</address>
+                            </target>
+                        </test>
                     </probe>
                 </rpm>
             </services>
