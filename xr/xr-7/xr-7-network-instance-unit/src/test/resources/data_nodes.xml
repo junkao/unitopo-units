@@ -83,5 +83,41 @@
                 <vrf xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rsi-cfg">mmi</vrf>
             </interface-configuration>
         </interface-configurations>
+        <bgp xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-ipv4-bgp-cfg">
+            <instance>
+                <instance-name>default</instance-name>
+                <instance-as>
+                    <as>0</as>
+                    <four-byte-as>
+                        <as>17676</as>
+                        <bgp-running></bgp-running>
+                        <default-vrf>
+                            <global>
+                                <global-afs>
+                                    <global-af>
+                                        <af-name>vpnv4-unicast</af-name>
+                                        <enable></enable>
+                                    </global-af>
+                                </global-afs>
+                            </global>
+                        </default-vrf>
+                        <vrfs>
+                            <vrf>
+                                <vrf-name>THU</vrf-name>
+                                <vrf-global>
+                                    <exists></exists>
+                                    <route-distinguisher>
+                                        <type>as</type>
+                                        <as-xx>0</as-xx>
+                                        <as>17676</as>
+                                        <as-index>4100</as-index>
+                                    </route-distinguisher>
+                                </vrf-global>
+                            </vrf>
+                        </vrfs>
+                    </four-byte-as>
+                </instance-as>
+            </instance>
+        </bgp>
     </data>
 </rpc-reply>
