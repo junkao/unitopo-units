@@ -54,6 +54,7 @@ import org.opendaylight.yangtools.yang.binding.YangModuleInfo
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev180615.`$YangModuleInfoImpl` as UnderlayIpv4BgpConfigYangModule
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.`$YangModuleInfoImpl` as BgpYangModule
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.neighbor.base.AfiSafisBuilder as NeighborAfiSafisBuilder
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.local.routing.rev170515.`$YangModuleInfoImpl` as LocalAggregatesYangModule
 
 class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
     private var reg: TranslationUnitCollector.Registration? = null
@@ -69,7 +70,8 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
     }
 
     override fun getYangSchemas(): Set<YangModuleInfo> = setOf(
-        BgpYangModule.getInstance()
+        BgpYangModule.getInstance(),
+        LocalAggregatesYangModule.getInstance()
     )
 
     override fun getUnderlayYangSchemas(): Set<YangModuleInfo> = setOf(
