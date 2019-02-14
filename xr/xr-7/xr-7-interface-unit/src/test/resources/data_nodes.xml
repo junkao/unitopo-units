@@ -43,6 +43,7 @@
                             <netmask>255.255.0.0</netmask>
                         </primary>
                     </addresses>
+                    <mtu>65535</mtu>
                 </ipv4-network>
             </interface-configuration>
             <interface-configuration>
