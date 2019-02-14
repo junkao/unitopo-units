@@ -148,15 +148,15 @@ open class InterfaceReader(private val underlayAccess: UnderlayAccess) :
             Preconditions.checkState(matcher.matches())
             return SubinterfaceKey(matcher.group("subifcIndex").toLong())
         }
-    }
-}
 
-internal fun parseIfcType(name: String): Class<out InterfaceType> {
-    return when {
-        name.startsWith("HundredGigE") -> EthernetCsmacd::class.java
-        name.startsWith("TenGigE") -> EthernetCsmacd::class.java
-        name.startsWith("GigabitEthernet") -> EthernetCsmacd::class.java
-        name.startsWith("Bundle-Ether") -> Ieee8023adLag::class.java
-        else -> Other::class.java
+        fun parseIfcType(name: String): Class<out InterfaceType> {
+            return when {
+                name.startsWith("HundredGigE") -> EthernetCsmacd::class.java
+                name.startsWith("TenGigE") -> EthernetCsmacd::class.java
+                name.startsWith("GigabitEthernet") -> EthernetCsmacd::class.java
+                name.startsWith("Bundle-Ether") -> Ieee8023adLag::class.java
+                else -> Other::class.java
+            }
+        }
     }
 }

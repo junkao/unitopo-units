@@ -37,6 +37,8 @@ import io.frinx.unitopo.unit.xr7.interfaces.handler.InterfaceDampingConfigWriter
 import io.frinx.unitopo.unit.xr7.interfaces.handler.InterfaceReader
 import io.frinx.unitopo.unit.xr7.interfaces.handler.InterfaceStatisticsConfigReader
 import io.frinx.unitopo.unit.xr7.interfaces.handler.InterfaceStatisticsConfigWriter
+import io.frinx.unitopo.unit.xr7.interfaces.handler.aggregate.AggregateConfigReader
+import io.frinx.unitopo.unit.xr7.interfaces.handler.aggregate.AggregateConfigWriter
 import io.frinx.unitopo.unit.xr7.interfaces.handler.ethernet.EthernetConfigReader
 import io.frinx.unitopo.unit.xr7.interfaces.handler.ethernet.EthernetConfigWriter
 import io.frinx.unitopo.unit.xr7.interfaces.handler.subifc.Ipv4ConfigWriter
@@ -53,6 +55,8 @@ import io.frinx.unitopo.unit.xr7.interfaces.handler.subifc.vlan.SubinterfaceVlan
 import io.frinx.unitopo.unit.xr7.interfaces.handler.subifc.vlan.SubinterfaceVlanConfigWriter
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.damping.rev171024.IfDampAugBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.damping.rev171024.damping.top.DampingBuilder
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.aggregate.rev161222.Interface1Builder as AggregateInterface1Builder
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.aggregate.rev161222.aggregation.logical.top.AggregationBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.cisco.rev171024.IfCiscoStatsAugBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.cisco.rev171024.statistics.top.StatisticsBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ethernet.rev161222.Interface1Builder
@@ -72,8 +76,10 @@ import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.infra.st
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.io.cfg.rev180111.`$YangModuleInfoImpl` as UnderlayIpv4YangInfo
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.l2.eth.infra.cfg.rev180615.`$YangModuleInfoImpl` as UnderlayInfraYangInfo
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.l2.eth.infra.datatypes.rev151109.`$YangModuleInfoImpl` as UnderlayDatatypesYangInfo
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.mdrv.lib.cfg.rev151109.`$YangModuleInfoImpl` as UnderlayMdrvLibYangInfo
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.xr.types.rev180629.`$YangModuleInfoImpl` as UnderlayTypesYangInfo
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.damping.rev171024.`$YangModuleInfoImpl` as DampingYangInfo
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.aggregate.ext.rev180926.`$YangModuleInfoImpl` as AggregateExtYangInfo
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.aggregate.rev161222.`$YangModuleInfoImpl` as AggregateYangInfo
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.cisco.rev171024.IfSubifCiscoStatsAugBuilder as SubInt1Builder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.cisco.rev171024.`$YangModuleInfoImpl` as StatisticsYangInfo
@@ -85,6 +91,8 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.lacp.rev17050
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.vlan.rev170714.Subinterface1Builder as VlanAugBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.vlan.rev170714.`$YangModuleInfoImpl` as VlanYangInfo
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.iana._if.type.rev140508.`$YangModuleInfoImpl` as InterfaceTypesYangInfo
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.aggregate.rev161222.aggregation.logical.top.aggregation.Config
+import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
 class Unit(private val registry: TranslationUnitCollector) : Unit() {
     private var reg: TranslationUnitCollector.Registration? = null
@@ -107,7 +115,8 @@ class Unit(private val registry: TranslationUnitCollector) : Unit() {
         LacpLagMemberYangInfo.getInstance(),
         EthernetYangInfo.getInstance(),
         AggregateYangInfo.getInstance(),
-        DampingYangInfo.getInstance()
+        DampingYangInfo.getInstance(),
+        AggregateExtYangInfo.getInstance()
     )
 
     override fun getUnderlayYangSchemas() = UNDERLAY_SCHEMAS
@@ -161,6 +170,14 @@ class Unit(private val registry: TranslationUnitCollector) : Unit() {
                 IIDs.IN_IN_AUG_INTERFACE1_ET_CONFIG)),
             GenericWriter(IIDs.IN_IN_AUG_INTERFACE1_ET_CONFIG, EthernetConfigWriter(underlayAccess)),
             IIDs.IN_IN_CONFIG)
+
+        // if-aggregation
+        wRegistry.add(GenericWriter(IIDs.INT_INT_AUG_INTERFACE1, NoopWriter()))
+        wRegistry.add(GenericWriter(IIDs.IN_IN_AUG_INTERFACE1_AGGREGATION, NoopWriter()))
+        wRegistry.subtreeAddAfter(setOf(
+                RWUtils.cutIdFromStart(IIDs.IN_IN_AG_CO_AUG_IFLAGAUG, InstanceIdentifier.create(Config::class.java))),
+                GenericWriter(IIDs.IN_IN_AUG_INTERFACE1_AG_CONFIG, AggregateConfigWriter(underlayAccess)),
+                IIDs.IN_IN_CONFIG)
     }
 
     private fun provideReaders(rRegistry: ModifiableReaderRegistryBuilder, underlayAccess: UnderlayAccess) {
@@ -208,6 +225,13 @@ class Unit(private val registry: TranslationUnitCollector) : Unit() {
             RWUtils.cutIdFromStart(io.frinx.openconfig.openconfig.lacp.IIDs.IN_IN_ET_CO_AUG_CONFIG1,
                 IIDs.IN_IN_AUG_INTERFACE1_ET_CONFIG)),
             GenericConfigReader(IIDs.IN_IN_AUG_INTERFACE1_ET_CONFIG, EthernetConfigReader(underlayAccess)))
+
+        // if-aggregation
+        rRegistry.addStructuralReader(IIDs.INT_INT_AUG_INTERFACE1, AggregateInterface1Builder::class.java)
+        rRegistry.addStructuralReader(IIDs.IN_IN_AUG_INTERFACE1_AGGREGATION, AggregationBuilder::class.java)
+        rRegistry.subtreeAdd(setOf(
+                RWUtils.cutIdFromStart(IIDs.IN_IN_AG_CO_AUG_IFLAGAUG, InstanceIdentifier.create(Config::class.java))),
+                GenericConfigReader(IIDs.IN_IN_AUG_INTERFACE1_AG_CONFIG, AggregateConfigReader(underlayAccess)))
     }
 
     override fun toString(): String = "Cisco-IOS-XR-ifmgr-cfg@2017-09-07 interface translate unit"
@@ -220,7 +244,8 @@ class Unit(private val registry: TranslationUnitCollector) : Unit() {
             UnderlayInfraStatsdInfo.getInstance(),
             UnderlayIpv4YangInfo.getInstance(),
             UnderlayTypesYangInfo.getInstance(),
-            UnderlayBundleMgrYangInfo.getInstance()
+            UnderlayBundleMgrYangInfo.getInstance(),
+            UnderlayMdrvLibYangInfo.getInstance()
         )
     }
 }
