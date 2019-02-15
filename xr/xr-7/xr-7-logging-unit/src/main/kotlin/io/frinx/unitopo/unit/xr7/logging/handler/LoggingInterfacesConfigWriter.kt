@@ -18,19 +18,18 @@ package io.frinx.unitopo.unit.xr7.logging.handler
 
 import io.fd.honeycomb.translate.spi.write.WriterCustomizer
 import io.fd.honeycomb.translate.write.WriteContext
-import io.fd.honeycomb.translate.write.WriteFailedException
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907.InterfaceActive
-import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907.InterfaceConfigurations
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907._interface.configurations.InterfaceConfiguration
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907._interface.configurations.InterfaceConfigurationBuilder
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907._interface.configurations.InterfaceConfigurationKey
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.xr.types.rev180629.InterfaceName
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.event.types.rev171024.LINKUPDOWN
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.logging.rev171024.logging.interfaces.structural.interfaces.Interface
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.logging.rev171024.logging.interfaces.structural.interfaces._interface.Config
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
-open class LoggingInterfacesConfigWriter(private val underlayAccess: UnderlayAccess) :
+class LoggingInterfacesConfigWriter(private val underlayAccess: UnderlayAccess) :
     WriterCustomizer<Config> {
 
     override fun writeCurrentAttributes(
@@ -38,8 +37,20 @@ open class LoggingInterfacesConfigWriter(private val underlayAccess: UnderlayAcc
         dataAfter: Config,
         writeContext: WriteContext
     ) {
-        val (underlayId, underlayIfcCfg) = getData(instanceIdentifier, dataAfter, null)
+        require(dataAfter.interfaceId.value.startsWith("Bundle-Ether")) {
+            "${dataAfter.interfaceId.value} Physical interface is not supported"
+        }
+        val (underlayId, underlayIfcCfg) = getData(instanceIdentifier, dataAfter)
         underlayAccess.put(underlayId, underlayIfcCfg)
+    }
+
+    override fun updateCurrentAttributes(
+        id: IID<Config>,
+        dataBefore: Config,
+        dataAfter: Config,
+        writeContext: WriteContext
+    ) {
+        writeCurrentAttributes(id, dataAfter, writeContext)
     }
 
     override fun deleteCurrentAttributes(
@@ -58,32 +69,47 @@ open class LoggingInterfacesConfigWriter(private val underlayAccess: UnderlayAcc
         underlayAccess.put(underlayId, underlayConfig)
     }
 
-    fun getData(id: IID<Config>, data: Config, underlayBefore: InterfaceConfiguration?):
+    fun getData(id: IID<Config>, data: Config):
         Pair<IID<InterfaceConfiguration>, InterfaceConfiguration> {
         val underlayId = getId(id)
+        val underlayBefore: InterfaceConfiguration? = underlayAccess.read(underlayId)
+            .checkedGet()
+            .orNull()
         val ifcCfgBuilder =
             if (underlayBefore != null) InterfaceConfigurationBuilder(underlayBefore) else
                 InterfaceConfigurationBuilder()
-        ifcCfgBuilder.setInterfaceName(InterfaceName(data.interfaceId.value))
-        ifcCfgBuilder.setActive(InterfaceActive("act"))
-        ifcCfgBuilder.setInterfaceVirtual(true)
-        if (data.interfaceId.value.startsWith("Bundle-Ether")) {
-            ifcCfgBuilder.setLinkStatus(true)
-        } else {
-            throw WriteFailedException(id, data.interfaceId.value + " Physical interface is not supported")
-        }
 
-        val underlayIfcCfg = ifcCfgBuilder.build()
-        return Pair(underlayId, underlayIfcCfg)
+        ifcCfgBuilder
+            .setInterfaceName(InterfaceName(data.interfaceId.value))
+            .setActive(InterfaceActive("act"))
+            .setInterfaceVirtual(true)
+            .setInterfaceModeNonPhysical(null)
+            .setLinkStatus(data.getLinkStatus())
+
+        return Pair(underlayId, ifcCfgBuilder.build())
     }
 
     fun getId(id: IID<Config>):
         IID<InterfaceConfiguration> {
         val interfaceActive = InterfaceActive("act")
         val ifcName = InterfaceName(id.firstKeyOf(Interface::class.java).interfaceId.value)
-        val IFC_CFGS = IID.create(InterfaceConfigurations::class.java)
-        val underlayId = IFC_CFGS.child(InterfaceConfiguration::class.java,
+
+        return LoggingInterfacesReader.IFC_CFGS.child(InterfaceConfiguration::class.java,
             InterfaceConfigurationKey(interfaceActive, ifcName))
-        return underlayId
+    }
+
+    companion object {
+        private fun Config.hasLinkUpDownEvent(): Boolean {
+            return enabledLoggingForEvent.orEmpty()
+                .map { it.eventName }
+                .contains(LINKUPDOWN::class.java)
+        }
+
+        private fun Config.getLinkStatus(): Boolean? {
+            if (hasLinkUpDownEvent()) {
+                return true
+            }
+            return null
+        }
     }
 }

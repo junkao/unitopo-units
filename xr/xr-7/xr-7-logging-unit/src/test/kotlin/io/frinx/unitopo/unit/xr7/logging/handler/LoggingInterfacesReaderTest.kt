@@ -48,19 +48,19 @@ class LoggingInterfacesReaderTest : AbstractNetconfHandlerTest() {
     fun setUp() {
         MockitoAnnotations.initMocks(this)
         underlayAccess = Mockito.spy(NetconfAccessHelper(NC_HELPER))
-        target = Mockito.spy(LoggingInterfacesReader(underlayAccess))
+        target = LoggingInterfacesReader(underlayAccess)
     }
 
     @Test
     fun testReadCurrentAttributes() {
 
-        val ifName = "Bundle-Ether302"
+        val ifName = "Bundle-Ether301"
         val id = InstanceIdentifier
             .create(Interfaces::class.java)
         val interfaceBuilder = InterfacesBuilder()
 
         target.readCurrentAttributes(id, interfaceBuilder, readContext)
 
-        Assert.assertThat(interfaceBuilder.`interface`.get(0).interfaceId.value, CoreMatchers.equalTo(ifName))
+        Assert.assertThat(interfaceBuilder.`interface`[0].interfaceId.value, CoreMatchers.equalTo(ifName))
     }
 }
