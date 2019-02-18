@@ -39,8 +39,6 @@ class Ipv4AddressReader(private val underlayAccess: UnderlayAccess) :
         (builder as AddressesBuilder).address = readData
     }
 
-    override fun getBuilder(id: InstanceIdentifier<Address>): AddressBuilder = AddressBuilder()
-
     override fun readCurrentAttributes(id: InstanceIdentifier<Address>, builder: AddressBuilder, ctx: ReadContext) {
         builder.ip = id.firstKeyOf(Address::class.java).ip
     }

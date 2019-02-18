@@ -80,8 +80,6 @@ class SubinterfaceReader(private val underlayAccess: UnderlayAccess) :
         (builder as SubinterfacesBuilder).subinterface = readData
     }
 
-    override fun getBuilder(p0: InstanceIdentifier<Subinterface>): SubinterfaceBuilder = SubinterfaceBuilder()
-
     companion object {
         const val ZERO_SUBINTERFACE_ID = 0L
         fun getSubIfcName(ifcName: String, subifcIdx: Long) = ifcName + "." + subifcIdx

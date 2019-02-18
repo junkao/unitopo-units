@@ -34,10 +34,6 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 class InterfaceConfigReader(private val underlayAccess: UnderlayAccess) :
     ConfigReaderCustomizer<Config, ConfigBuilder> {
 
-    override fun getBuilder(instanceIdentifier: IID<Config>): ConfigBuilder {
-        return ConfigBuilder()
-    }
-
     @Throws(ReadFailedException::class)
     override fun readCurrentAttributes(
         instanceIdentifier: IID<Config>,

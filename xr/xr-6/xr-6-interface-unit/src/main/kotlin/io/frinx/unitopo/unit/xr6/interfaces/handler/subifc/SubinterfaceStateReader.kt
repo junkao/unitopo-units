@@ -53,8 +53,6 @@ class SubinterfaceStateReader(private val underlayAccess: UnderlayAccess) : Oper
         InterfaceReader.readInterfaceCfg(underlayAccess, subifcName, { builder.fromUnderlay(it) })
         InterfaceReader.readInterfaceProps(underlayAccess, subifcName, { builder.fromUnderlayProps(it) })
     }
-
-    override fun getBuilder(id: InstanceIdentifier<State>): StateBuilder = StateBuilder()
 }
 
 private const val SUBINTERFACE_SEPARATOR = "."

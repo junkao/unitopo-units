@@ -35,8 +35,6 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
 class Ipv4ConfigReader(private val underlayAccess: UnderlayAccess) : ConfigReaderCustomizer<Config, ConfigBuilder> {
 
-    override fun getBuilder(id: InstanceIdentifier<Config>): ConfigBuilder = ConfigBuilder()
-
     override fun readCurrentAttributes(id: InstanceIdentifier<Config>, builder: ConfigBuilder, ctx: ReadContext) {
         // For now, only subinterface with ID ZERO_SUBINTERFACE_ID can have IP
         if (id.firstKeyOf(Subinterface::class.java).index != 0L) {

@@ -57,8 +57,6 @@ class SubinterfaceConfigReader(private val underlayAccess: UnderlayAccess) :
         val subifcName = getSubIfcName(ifcName, subifcIndex)
         InterfaceReader.readInterfaceCfg(underlayAccess, subifcName, { builder.fromUnderlay(it) })
     }
-
-    override fun getBuilder(instanceIdentifier: InstanceIdentifier<Config>) = ConfigBuilder()
 }
 
 private fun ConfigBuilder.fromUnderlay(underlay: InterfaceConfiguration) {

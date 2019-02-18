@@ -36,8 +36,6 @@ import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.op
 
 class InterfaceStateReader(private val underlayAccess: UnderlayAccess) : OperReaderCustomizer<State, StateBuilder> {
 
-    override fun getBuilder(instanceIdentifier: InstanceIdentifier<State>): StateBuilder = StateBuilder()
-
     @Throws(ReadFailedException::class)
     override fun readCurrentAttributes(
         instanceIdentifier: InstanceIdentifier<State>,

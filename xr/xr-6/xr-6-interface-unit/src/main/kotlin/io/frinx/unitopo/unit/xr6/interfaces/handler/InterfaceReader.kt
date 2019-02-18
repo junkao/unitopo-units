@@ -60,8 +60,6 @@ class InterfaceReader(private val underlayAccess: UnderlayAccess) :
         (builder as InterfacesBuilder).`interface` = list
     }
 
-    override fun getBuilder(instanceIdentifier: IID<Interface>): InterfaceBuilder = InterfaceBuilder()
-
     @Throws(ReadFailedException::class)
     override fun readCurrentAttributes(
         instanceIdentifier: IID<Interface>,

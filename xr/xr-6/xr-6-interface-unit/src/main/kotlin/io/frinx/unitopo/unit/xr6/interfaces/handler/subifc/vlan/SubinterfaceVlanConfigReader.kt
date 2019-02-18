@@ -45,8 +45,6 @@ class SubinterfaceVlanConfigReader(private val underlayAccess: UnderlayAccess) :
         InterfaceReader.readInterfaceCfg(underlayAccess, subIfcName, { builder.fromUnderlay(it) })
     }
 
-    override fun getBuilder(id: InstanceIdentifier<Config>) = ConfigBuilder()
-
     override fun merge(parentBuilder: Builder<out DataObject>, readValue: Config) {
         (parentBuilder as VlanBuilder).config = readValue
     }
