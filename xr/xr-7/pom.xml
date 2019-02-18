@@ -39,6 +39,7 @@
         <module>xr-7-interface-unit</module>
         <module>xr-7-logging-unit</module>
         <module>xr-7-models</module>
+        <module>xr-7-ospf-unit</module>
         <module>xr-7-network-instance-unit</module>
     </modules>
 
