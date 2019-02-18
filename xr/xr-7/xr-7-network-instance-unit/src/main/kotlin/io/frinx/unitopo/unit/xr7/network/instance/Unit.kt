@@ -30,6 +30,7 @@ import io.frinx.unitopo.unit.utils.NoopWriter
 import io.frinx.unitopo.unit.xr7.network.instance.policy.forwarding.PolicyForwardingInterfaceConfigReader
 import io.frinx.unitopo.unit.xr7.network.instance.policy.forwarding.PolicyForwardingInterfaceConfigWriter
 import io.frinx.unitopo.unit.xr7.network.instance.policy.forwarding.PolicyForwardingInterfaceReader
+import io.frinx.unitopo.unit.xr7.network.instance.vrf.protocol.ProtocolReader
 import io.frinx.unitopo.unit.xr7.network.instance.vrf.ifc.VrfInterfaceConfigReader
 import io.frinx.unitopo.unit.xr7.network.instance.vrf.ifc.VrfInterfaceConfigWriter
 import io.frinx.unitopo.unit.xr7.network.instance.vrf.ifc.VrfInterfaceReader
@@ -43,8 +44,14 @@ import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cf
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.qos.ma.cfg.rev180227.`$YangModuleInfoImpl` as UnderlayQosMaCfgYangInfo
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.pf.interfaces.extension.cisco.rev171109.`$YangModuleInfoImpl` as PfNwYangModuleInfoImpl
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.policy.forwarding.rev170621.`$YangModuleInfoImpl` as PfYangModuleInfoImpl
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.infra.rsi.cfg.rev180615.`$YangModuleInfoImpl` as UnderlayVRFYangInto
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.extension.rev180323.`$YangModuleInfoImpl` as BgpExtensionYangModuleInfo
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.`$YangModuleInfoImpl` as BgpYangModule
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.`$YangModuleInfoImpl` as NetworkInstanceYangModule
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.local.routing.rev170515.`$YangModuleInfoImpl` as LocalRoutingYangModuleInfo
 
 class Unit(private val registry: TranslationUnitCollector) : NetworkInstanceUnit() {
+
     private var reg: TranslationUnitCollector.Registration? = null
 
     fun init() {
@@ -57,19 +64,21 @@ class Unit(private val registry: TranslationUnitCollector) : NetworkInstanceUnit
 
     override fun getYangSchemas() = setOf(
         PfYangModuleInfoImpl.getInstance(),
-        PfNwYangModuleInfoImpl.getInstance()
+        PfNwYangModuleInfoImpl.getInstance(),
+        NetworkInstanceYangModule.getInstance(),
+        BgpYangModule.getInstance(),
+        BgpExtensionYangModuleInfo.getInstance(),
+        LocalRoutingYangModuleInfo.getInstance()
     )
 
     override fun getUnderlayYangSchemas(): Set<YangModuleInfo> = setOf(
         UnderlayInterfacesYangInfo.getInstance(),
-        UnderlayQosMaCfgYangInfo.getInstance()
+        UnderlayQosMaCfgYangInfo.getInstance(),
+        UnderlayVRFYangInto.getInstance()
     )
 
     override fun provideSpecificWriters(wRegistry: ModifiableWriterRegistryBuilder, underlayAccess: UnderlayAccess) {
-        wRegistry.add(GenericWriter(IIDs.NE_NE_CONFIG, NoopWriter()))
-        wRegistry.add(GenericWriter(IIDs.NE_NE_INTERINSTANCEPOLICIES, NoopWriter()))
-        wRegistry.add(GenericWriter(IIDs.NE_NE_IN_APPLYPOLICY, NoopWriter()))
-        wRegistry.add(GenericWriter(IIDs.NE_NE_IN_AP_CONFIG, NoopWriter()))
+        wRegistry.add(GenericWriter(IIDs.NE_NE_PR_PR_CONFIG, NoopWriter()))
         wRegistry.add(GenericWriter(IIDs.NE_NE_IN_INTERFACE, NoopWriter()))
         wRegistry.addAfter(GenericWriter(IIDs.NE_NE_IN_IN_CONFIG, VrfInterfaceConfigWriter(underlayAccess)),
             IIDs.NE_NE_CONFIG)
@@ -95,6 +104,7 @@ class Unit(private val registry: TranslationUnitCollector) : NetworkInstanceUnit
             GenericConfigListReader(IIDs.NE_NE_PO_IN_INTERFACE, PolicyForwardingInterfaceReader(underlayAccess)))
         rRegistry.add(
             GenericConfigReader(IIDs.NE_NE_PO_IN_IN_CONFIG, PolicyForwardingInterfaceConfigReader(underlayAccess)))
+        rRegistry.add(GenericConfigListReader(IIDs.NE_NE_PR_PROTOCOL, ProtocolReader(underlayAccess)))
     }
 
     override fun toString(): String = "Cisco-IOS-XR-ifmgr-cfg@2017-09-07 VRF of interface translate unit"

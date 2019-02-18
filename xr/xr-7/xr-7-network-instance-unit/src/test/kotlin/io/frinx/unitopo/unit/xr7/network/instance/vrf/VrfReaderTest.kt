@@ -71,12 +71,14 @@ class VrfReaderTest : AbstractNetconfHandlerTest() {
     @Test
     fun testGetAllIds() {
         val list = target.getAllIds(IID_NETWORK_INSTANCE, readContext)
+        // the list should contains iids from interface block and bgp block
         Assert.assertThat(
             list.map { it.name },
             Matchers.containsInAnyOrder(
                 "default",
                 VRF_IM1,
-                VRF_IM2
+                VRF_IM2,
+                "THU"
             )
         )
     }

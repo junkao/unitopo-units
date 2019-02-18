@@ -21,6 +21,7 @@ import io.fd.honeycomb.translate.spi.read.ConfigListReaderCustomizer
 import io.frinx.openconfig.network.instance.NetworInstance
 import io.frinx.translate.unit.commons.handler.spi.CompositeListReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
+import io.frinx.unitopo.unit.xr7.bgp.handler.BgpProtocolReader
 import io.frinx.unitopo.unit.xr7.interfaces.handler.InterfaceReader
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.infra.rsi.cfg.rev180615.InterfaceConfiguration1
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.NetworkInstancesBuilder
@@ -58,9 +59,8 @@ open class VrfReader(private val underlayAccess: UnderlayAccess) :
 
     companion object {
         private fun parseIds(underlayAccess: UnderlayAccess): MutableList<NetworkInstanceKey> {
-            // todo only support vrf referenced from sub-interfaces now.
-            // vrf referenced from interface, bgp and ospf should be added in the future
-            return underlayAccess.read(InterfaceReader.IFC_CFGS)
+            // add vrf names defined in interface
+            val list = underlayAccess.read(InterfaceReader.IFC_CFGS)
                 .checkedGet()
                 .orNull()
                 ?.let {
@@ -69,10 +69,33 @@ open class VrfReader(private val underlayAccess: UnderlayAccess) :
                     }?.map {
                         it.getAugmentation(InterfaceConfiguration1::class.java)?.vrf
                     }?.filterNotNull()?.map {
-                        NetworkInstanceKey(it.value)
+                        it.value
                     }
                 }.orEmpty()
                 .toMutableList()
+
+            // add vrf names defined in bgp
+            underlayAccess.read(BgpProtocolReader.UNDERLAY_BGP)
+                .checkedGet()
+                .orNull()
+                ?.let {
+                    it.instance?.filter {
+                        it.instanceName.value == "default"
+                    }?.get(0)?.let { // there is only 1 "default" instance
+                        it?.instanceAs?.map {
+                            it?.fourByteAs?.map {
+                                it?.vrfs?.vrf?.map {
+                                    list.add(it.vrfName.value)
+                                }
+                            }
+                        }
+                    }
+                }
+
+            // get a distinct list
+            return list.distinct().map {
+                NetworkInstanceKey(it)
+            }.toMutableList()
         }
     }
 }
