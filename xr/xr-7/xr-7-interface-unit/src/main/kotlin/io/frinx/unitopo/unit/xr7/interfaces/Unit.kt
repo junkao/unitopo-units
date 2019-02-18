@@ -47,6 +47,8 @@ import io.frinx.unitopo.unit.xr7.interfaces.handler.subifc.SubinterfaceConfigWri
 import io.frinx.unitopo.unit.xr7.interfaces.handler.subifc.SubinterfaceReader
 import io.frinx.unitopo.unit.xr7.interfaces.handler.subifc.SubinterfaceStatisticsConfigReader
 import io.frinx.unitopo.unit.xr7.interfaces.handler.subifc.SubinterfaceStatisticsConfigWriter
+import io.frinx.unitopo.unit.xr7.interfaces.handler.subifc.ipv4.Ipv4MtuConfigReader
+import io.frinx.unitopo.unit.xr7.interfaces.handler.subifc.ipv4.Ipv4MtuConfigWriter
 import io.frinx.unitopo.unit.xr7.interfaces.handler.subifc.vlan.SubinterfaceVlanConfigReader
 import io.frinx.unitopo.unit.xr7.interfaces.handler.subifc.vlan.SubinterfaceVlanConfigWriter
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.damping.rev171024.IfDampAugBuilder
@@ -143,6 +145,9 @@ class Unit(private val registry: TranslationUnitCollector) : Unit() {
             SubinterfaceStatisticsConfigWriter(underlayAccess)),
             IIDs.IN_IN_SU_SU_CONFIG)
 
+        wRegistry.addAfter(GenericWriter(IfIpIIDs.IN_IN_SU_SU_AUG_SUBINTERFACE1_IP_CONFIG,
+                Ipv4MtuConfigWriter(underlayAccess)),
+                setOf(IIDs.IN_IN_SU_SU_CONFIG, IfIpIIDs.IN_IN_SU_SU_AUG_SUBINTERFACE1_IPV4))
         wRegistry.add(GenericWriter(IfIpIIDs.IN_IN_SU_SU_AUG_SUBINTERFACE1_IP_AD_ADDRESS, NoopWriter()))
         wRegistry.addAfter(GenericWriter(IfIpIIDs.IN_IN_SU_SU_AUG_SUBINTERFACE1_IP_AD_AD_CONFIG,
             Ipv4ConfigWriter(underlayAccess)), NetworkInstanceIIDs.NE_NE_IN_IN_CONFIG)
@@ -188,6 +193,8 @@ class Unit(private val registry: TranslationUnitCollector) : Unit() {
         rRegistry.addStructuralReader(IfIpIIDs.IN_IN_SU_SU_AUG_SUBINTERFACE1, Subinterface1Builder::class.java)
         rRegistry.addStructuralReader(IfIpIIDs.IN_IN_SU_SU_AUG_SUBINTERFACE1_IPV4, Ipv4Builder::class.java)
         rRegistry.addStructuralReader(IfIpIIDs.IN_IN_SU_SU_AUG_SUBINTERFACE1_IP_ADDRESSES, AddressesBuilder::class.java)
+        rRegistry.add(GenericConfigReader(IfIpIIDs.IN_IN_SU_SU_AUG_SUBINTERFACE1_IP_CONFIG,
+            Ipv4MtuConfigReader(underlayAccess)))
         rRegistry.add(GenericConfigListReader(IfIpIIDs.IN_IN_SU_SU_AUG_SUBINTERFACE1_IP_AD_ADDRESS,
             Ipv4AddressReader(underlayAccess)))
         rRegistry.add(GenericConfigReader(IfIpIIDs.IN_IN_SU_SU_AUG_SUBINTERFACE1_IP_AD_AD_CONFIG,
