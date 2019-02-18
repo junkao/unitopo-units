@@ -19,11 +19,18 @@
         <interface-configurations xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg">
             <interface-configuration>
                 <active>act</active>
+                <interface-name>Bundle-Ether301</interface-name>
+                <interface-virtual></interface-virtual>
+                <description>ST004-002MG-01[BE100]</description>
+                <interface-mode-non-physical>default</interface-mode-non-physical>
+                <link-status></link-status>
+            </interface-configuration>
+            <interface-configuration>
+                <active>act</active>
                 <interface-name>Bundle-Ether302</interface-name>
                 <interface-virtual></interface-virtual>
                 <description>ST004-002MG-01[BE200]</description>
                 <interface-mode-non-physical>default</interface-mode-non-physical>
-                <link-status></link-status>
             </interface-configuration>
         </interface-configurations>
     </data>

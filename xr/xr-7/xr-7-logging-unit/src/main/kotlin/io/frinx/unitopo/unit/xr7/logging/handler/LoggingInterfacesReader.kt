@@ -16,6 +16,7 @@
 
 package io.frinx.unitopo.unit.xr7.logging.handler
 
+import com.google.common.annotations.VisibleForTesting
 import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess
@@ -43,11 +44,6 @@ import java.util.Collections
 
 open class LoggingInterfacesReader(private val underlayAccess: UnderlayAccess) :
     ConfigReaderCustomizer<Interfaces, InterfacesBuilder> {
-
-    val LINK_UP_DOWN_EVENT: EnabledLoggingForEvent = EnabledLoggingForEventBuilder()
-        .setEventName(LINKUPDOWN::class.java)
-        .build()
-    val LINK_UP_DOWN_EVENT_LIST: List<EnabledLoggingForEvent> = Collections.singletonList(LINK_UP_DOWN_EVENT)
 
     override fun getBuilder(p0: InstanceIdentifier<Interfaces>): InterfacesBuilder {
         return InterfacesBuilder()
@@ -87,18 +83,16 @@ open class LoggingInterfacesReader(private val underlayAccess: UnderlayAccess) :
         (parentBuilder as LoggingBuilder).setInterfaces(readValue)
     }
 
-    fun getIfcConfig(ifcId: InterfaceId): Config {
+    private fun getIfcConfig(ifcId: InterfaceId): Config {
         return ConfigBuilder()
             .setInterfaceId(ifcId)
             .setEnabledLoggingForEvent(LINK_UP_DOWN_EVENT_LIST)
             .build()
     }
 
-    fun readAllInterfaceNamesFromNative(
+    private fun readAllInterfaceNamesFromNative(
         underlayAccess: UnderlayAccess
     ): List<String> {
-        val IFC_CFGS = InstanceIdentifier.create(InterfaceConfigurations::class.java)!!
-
         val configurations = underlayAccess.read(IFC_CFGS, LogicalDatastoreType.CONFIGURATION)
             .checkedGet()
             .orNull()
@@ -108,5 +102,16 @@ open class LoggingInterfacesReader(private val underlayAccess: UnderlayAccess) :
                 }
             }?.toList()
         return configurations.orEmpty()
+    }
+
+    companion object {
+        val IFC_CFGS = InstanceIdentifier.create(InterfaceConfigurations::class.java)!!
+
+        private val LINK_UP_DOWN_EVENT: EnabledLoggingForEvent = EnabledLoggingForEventBuilder()
+            .setEventName(LINKUPDOWN::class.java)
+            .build()
+
+        @VisibleForTesting
+        val LINK_UP_DOWN_EVENT_LIST: List<EnabledLoggingForEvent> = Collections.singletonList(LINK_UP_DOWN_EVENT)
     }
 }
