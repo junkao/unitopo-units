@@ -23,6 +23,7 @@ import io.frinx.unitopo.handlers.l3vrf.L3VrfListReader
 import io.frinx.unitopo.handlers.network.instance.protocol.ProtocolReaderComposite
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr7.bgp.handler.BgpProtocolReader
+import io.frinx.unitopo.unit.xr7.ospf.handler.OspfProtocolReader
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.Protocol
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.ProtocolBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.ProtocolKey
@@ -67,6 +68,7 @@ class ProtocolReader(cli: UnderlayAccess) :
         ProtocolReaderComposite(object : ArrayList<ListReaderCustomizer<Protocol, ProtocolKey, ProtocolBuilder>>() {
             init {
                 add(BgpProtocolReader(cli))
+                add(OspfProtocolReader(cli))
             }
         })
 }

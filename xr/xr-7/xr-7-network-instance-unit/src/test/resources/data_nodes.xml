@@ -119,5 +119,27 @@
                 </instance-as>
             </instance>
         </bgp>
+        <ospf xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-ipv4-ospf-cfg">
+            <processes>
+                <process>
+                    <process-name>400</process-name>
+                    <vrfs>
+                        <vrf>
+                            <vrf-name>THU</vrf-name>
+                            <area-addresses>
+                                <area-address>
+                                    <address>10.1.1.1</address>
+                                    <name-scopes>
+                                        <name-scope>
+                                            <interface-name>GigabitEthernet1/1/1/1.1</interface-name>
+                                        </name-scope>
+                                    </name-scopes>
+                                </area-address>
+                            </area-addresses>
+                        </vrf>
+                    </vrfs>
+                </process>
+            </processes>
+        </ospf>
     </data>
 </rpc-reply>
