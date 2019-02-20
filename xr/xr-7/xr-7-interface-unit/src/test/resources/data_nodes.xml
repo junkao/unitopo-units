@@ -73,7 +73,6 @@
             <interface-configuration>
                 <active>act</active>
                 <interface-name>Bundle-Ether300</interface-name>
-                <interface-mode-non-physical>default</interface-mode-non-physical>
             </interface-configuration>
             <interface-configuration>
                 <active>act</active>
@@ -96,6 +95,15 @@
                 <statistics xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-statsd-cfg">
                     <load-interval>60</load-interval>
                 </statistics>
+            </interface-configuration>
+            <interface-configuration>
+                <active>act</active>
+                <interface-name>Bundle-Ether3000</interface-name>
+                <interface-mode-non-physical>default</interface-mode-non-physical>
+                <lacp xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-bundlemgr-cfg">
+                    <system-mac>00:00:00:00:08:00</system-mac>
+                </lacp>
+                <mac-addr xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-mdrv-lib-cfg">02:8a:96:00:00:00</mac-addr>
             </interface-configuration>
         </interface-configurations>
     </data>

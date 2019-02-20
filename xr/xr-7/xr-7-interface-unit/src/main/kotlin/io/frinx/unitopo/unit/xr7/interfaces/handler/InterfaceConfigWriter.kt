@@ -79,7 +79,6 @@ open class InterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : W
             .setInterfaceName(ifcName)
             .setActive(interfaceActive)
             .setDescription(dataAfter.description)
-            .setInterfaceModeNonPhysical(null)
         if (dataAfter.type == Ieee8023adLag::class.java) {
             ifcCfgBuilder.setInterfaceVirtual(true)
             if (dataAfter.mtu != null) {

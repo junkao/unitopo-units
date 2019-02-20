@@ -20,7 +20,6 @@ import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr7.interfaces.handler.InterfaceReader
-import io.frinx.unitopo.unit.xr7.interfaces.handler.parseIfcType
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907._interface.configurations.InterfaceConfiguration
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.Interface
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ethernet.rev161222.ethernet.top.EthernetBuilder
@@ -55,7 +54,7 @@ open class EthernetConfigReader(private val underlayAccess: UnderlayAccess) :
         readContext: ReadContext
     ) {
         val ifcName = instanceIdentifier.firstKeyOf(Interface::class.java).name
-        if (!PHYS_IFC_TYPES.contains(parseIfcType(ifcName))) {
+        if (!PHYS_IFC_TYPES.contains(InterfaceReader.parseIfcType(ifcName))) {
             return
         }
         InterfaceReader.readInterfaceCfg(underlayAccess, ifcName, { configBuilder.fromUnderlay(it) })

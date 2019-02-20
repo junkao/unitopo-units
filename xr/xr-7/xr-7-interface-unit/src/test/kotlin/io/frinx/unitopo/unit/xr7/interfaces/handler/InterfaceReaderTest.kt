@@ -60,9 +60,9 @@ class InterfaceReaderTest : AbstractNetconfHandlerTest() {
     @Test
     fun testParseIfcType() {
         val expected: Class<out InterfaceType> = Ieee8023adLag::class.java
-        Assert.assertThat(parseIfcType("Bundle-Ether100"), CoreMatchers.equalTo(expected))
+        Assert.assertThat(InterfaceReader.parseIfcType("Bundle-Ether100"), CoreMatchers.equalTo(expected))
         Assert.assertThat(
-                parseIfcType("GigabitEthernet0/0/0/5"),
+                InterfaceReader.parseIfcType("GigabitEthernet0/0/0/5"),
                 CoreMatchers.equalTo(EthernetCsmacd::class.java as? Class<out InterfaceType>)
         )
     }
@@ -80,7 +80,8 @@ class InterfaceReaderTest : AbstractNetconfHandlerTest() {
                         "TenGigE0/0/0/2",
                         "Bundle-Ether301",
                         "Bundle-Ether302",
-                        "Bundle-Ether300"
+                        "Bundle-Ether300",
+                        "Bundle-Ether3000"
                 )
         )
     }
