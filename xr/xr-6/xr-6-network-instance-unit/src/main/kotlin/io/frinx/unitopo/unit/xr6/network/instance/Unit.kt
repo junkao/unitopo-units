@@ -29,6 +29,7 @@ import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.handlers.network.instance.NetworkInstanceUnit
 import io.frinx.unitopo.unit.utils.NoopListWriter
 import io.frinx.unitopo.unit.utils.NoopWriter
+import io.frinx.unitopo.unit.xr6.network.instance.vrf.ifc.VrfInterfaceConfigReader
 import io.frinx.unitopo.unit.xr6.network.instance.vrf.ifc.VrfInterfaceConfigWriter
 import io.frinx.unitopo.unit.xr6.network.instance.vrf.ifc.VrfInterfaceReader
 import io.frinx.unitopo.unit.xr6.network.instance.vrf.protocol.LocalAggregateConfigReader
@@ -121,6 +122,7 @@ class Unit(private val registry: TranslationUnitCollector) : NetworkInstanceUnit
             NetworkInstanceConfigReader(underlayAccess)))
 
         rRegistry.add(GenericConfigListReader(IIDs.NE_NE_IN_INTERFACE, VrfInterfaceReader(underlayAccess)))
+        rRegistry.add(GenericConfigReader(IIDs.NE_NE_IN_IN_CONFIG, VrfInterfaceConfigReader()))
 
         rRegistry.add(GenericConfigListReader(IIDs.NE_NE_PR_PROTOCOL, ProtocolReader(underlayAccess)))
 
