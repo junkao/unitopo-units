@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package io.frinx.unitopo.unit.xr7.evpn.handler.group.handler.group.coreifc
+package io.frinx.unitopo.unit.xr7.evpn.handler.group.coreifc
 
 import io.fd.honeycomb.translate.spi.write.WriterCustomizer
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.xr7.evpns.handler.EvpnGroupListReader
+import io.frinx.unitopo.unit.xr7.evpn.handler.group.EvpnGroupListReader
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.l2vpn.cfg.rev180615.EvpnGroupIdRange
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.l2vpn.cfg.rev180615.evpn.evpn.tables.evpn.groups.EvpnGroupKey
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.l2vpn.cfg.rev180615.evpn.evpn.tables.evpn.groups.evpn.group.EvpnGroupCoreInterfaces

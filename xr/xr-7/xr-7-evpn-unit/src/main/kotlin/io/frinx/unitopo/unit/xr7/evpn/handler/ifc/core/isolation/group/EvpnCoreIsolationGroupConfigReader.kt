@@ -19,7 +19,7 @@ package io.frinx.unitopo.unit.xr7.evpn.handler.ifc.core.isolation.group
 import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.xr7.evpns.handler.EvpnGroupListReader
+import io.frinx.unitopo.unit.xr7.evpn.handler.group.EvpnGroupListReader
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.l2vpn.cfg.rev180615.evpn.evpn.tables.EvpnInterfaces
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.l2vpn.cfg.rev180615.evpn.evpn.tables.evpn.interfaces.EvpnInterface

@@ -19,7 +19,6 @@ package io.frinx.unitopo.unit.xr7.evpn.handler.ifc
 import io.fd.honeycomb.translate.spi.write.ListWriterCustomizer
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.xr7.evpns.handler.EvpnInterfaceListReader
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.xr.types.rev180629.InterfaceName
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.evpn.rev181112.evpn.interfaces.interfaces.Interface
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.evpn.rev181112.evpn.interfaces.interfaces.InterfaceKey
