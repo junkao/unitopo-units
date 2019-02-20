@@ -29,4 +29,9 @@
     init-method="init" destroy-method="close">
     <argument ref="unifiedTranslationRegistry" />
   </bean>
+  <bean id="xr623NetworkInstanceUnit"
+        class="io.frinx.unitopo.unit.xr623.network.instance.Unit"
+        init-method="init" destroy-method="close">
+    <argument ref="unifiedTranslationRegistry" />
+  </bean>
 </blueprint>

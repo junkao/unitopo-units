@@ -48,7 +48,7 @@ abstract class AbstractNetconfHandlerTest {
         return moduleInfoBackedContext
     }
 
-    private fun getModels(): Collection<YangModuleInfo> {
+    open fun getModels(): Collection<YangModuleInfo> {
         return BindingReflections.loadModuleInfos()
     }
 

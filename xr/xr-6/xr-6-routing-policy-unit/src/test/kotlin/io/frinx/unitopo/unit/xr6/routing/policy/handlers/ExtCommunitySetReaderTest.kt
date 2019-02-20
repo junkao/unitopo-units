@@ -25,9 +25,19 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.policy.re
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.policy.rev170730.ext.community.set.top.ext.community.sets.ExtCommunitySetKey
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.policy.rev170730.ext.community.set.top.ext.community.sets.ext.community.set.ConfigBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.types.rev170202.BgpExtCommunityType
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.`$YangModuleInfoImpl` as UnderlayIpv4BgpConfigYangModule
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.infra.rsi.cfg.rev150730.`$YangModuleInfoImpl` as UnderlayInfraRsConfigYangModule
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
+import org.opendaylight.yangtools.yang.binding.YangModuleInfo
 
 class ExtCommunitySetReaderTest : AbstractNetconfHandlerTest() {
+
+    override fun getModels(): Collection<YangModuleInfo> {
+        return setOf(
+            UnderlayIpv4BgpConfigYangModule.getInstance(),
+            UnderlayInfraRsConfigYangModule.getInstance()
+            )
+    }
 
     private val DATA_NODES = getResourceAsString("/vrf-conf.xml")
 
