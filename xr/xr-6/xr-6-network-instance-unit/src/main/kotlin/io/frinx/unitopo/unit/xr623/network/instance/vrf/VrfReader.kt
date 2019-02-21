@@ -22,6 +22,7 @@ import io.frinx.openconfig.network.instance.NetworInstance
 import io.frinx.translate.unit.commons.handler.spi.CompositeListReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr6.interfaces.handler.InterfaceReader
+import io.frinx.unitopo.unit.xr623.ospf.handler.OspfProtocolReader
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.infra.rsi.cfg.rev161219.InterfaceConfiguration1
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.NetworkInstancesBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
@@ -73,17 +74,16 @@ open class VrfReader(private val underlayAccess: UnderlayAccess) :
                 }.orEmpty()
                 .toMutableList()
 
-            // TODO: add vrf names defined in ospf
-//            underlayAccess.read(OspfProtocolReader.UNDERLAY_OSPF)
-//                .checkedGet()
-//                .orNull()
-//                ?.let {
-//                    it.process?.map {
-//                        it?.vrfs?.vrf?.map {
-//                            list.add(it.vrfName.value)
-//                        }
-//                    }
-//                }
+            underlayAccess.read(OspfProtocolReader.UNDERLAY_OSPF)
+                .checkedGet()
+                .orNull()
+                ?.let {
+                    it.process?.map {
+                        it?.vrfs?.vrf?.map {
+                            list.add(it.vrfName.value)
+                        }
+                    }
+                }
 
             // get a distinct list
             return list.distinct().map {

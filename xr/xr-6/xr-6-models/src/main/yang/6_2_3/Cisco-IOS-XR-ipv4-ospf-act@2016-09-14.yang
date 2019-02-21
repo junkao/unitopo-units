@@ -4,7 +4,7 @@ module Cisco-IOS-XR-ipv4-ospf-act {
    
     prefix "ospf-act";
 
-    import Cisco-IOS-XR-types { prefix "xr"; }
+    import Cisco-IOS-XR-types { prefix "xr"; revision-date "2015-06-29"; }
 
     import ietf-inet-types { prefix "inet"; }
    

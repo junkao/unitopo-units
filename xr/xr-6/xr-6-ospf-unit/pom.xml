@@ -110,6 +110,20 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- Netconf testing dependencies-->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>utils-unit</artifactId>
+            <type>test-jar</type>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.netconf</groupId>
+            <artifactId>sal-netconf-connector</artifactId>
+            <version>${mdsal-old.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
