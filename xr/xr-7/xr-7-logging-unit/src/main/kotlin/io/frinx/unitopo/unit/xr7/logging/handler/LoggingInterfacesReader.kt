@@ -76,7 +76,10 @@ open class LoggingInterfacesReader(private val underlayAccess: UnderlayAccess) :
                 this.config = getIfcConfig(this.interfaceId)
             }.build()
         }.toList()
-        builder.setInterface(ifcList)
+
+        if (ifcList.isNotEmpty()) {
+            builder.setInterface(ifcList)
+        }
     }
 
     override fun merge(parentBuilder: Builder<out DataObject>, readValue: Interfaces) {
