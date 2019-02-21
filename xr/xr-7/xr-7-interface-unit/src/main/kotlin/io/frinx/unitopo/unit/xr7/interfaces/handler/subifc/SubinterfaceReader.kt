@@ -21,6 +21,10 @@ import io.fd.honeycomb.translate.spi.read.ConfigListReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr7.interfaces.handler.InterfaceReader
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907._interface.configurations.InterfaceConfiguration
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907._interface.configurations._interface.configuration.mtus.MtuKey
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.io.cfg.rev180111.InterfaceConfiguration1
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.xr.types.rev180629.CiscoIosXrString
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.ipv4.top.ipv4.addresses.AddressKey
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.Interface
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.SubinterfacesBuilder
@@ -48,7 +52,11 @@ open class SubinterfaceReader(private val underlayAccess: UnderlayAccess) :
         InterfaceReader.readInterfaceCfg(underlayAccess, ifcName,
                 { Ipv4AddressReader.extractAddresses(it, ipv4Keys) })
 
-        return if (!ipv4Keys.isEmpty())
+        val mtuKeys = mutableListOf<MtuKey>()
+        InterfaceReader.readInterfaceCfg(underlayAccess, ifcName,
+            { extractMtus(it, mtuKeys) })
+
+        return if (!ipv4Keys.isEmpty() || !mtuKeys.isEmpty())
             subIfcKeys.plus(SubinterfaceKey(ZERO_SUBINTERFACE_ID)).toMutableList() else
             subIfcKeys.toMutableList()
     }
@@ -70,5 +78,15 @@ open class SubinterfaceReader(private val underlayAccess: UnderlayAccess) :
     companion object {
         const val ZERO_SUBINTERFACE_ID = 0L
         fun getSubIfcName(ifcName: String, subifcIdx: Long) = ifcName + "." + subifcIdx
+
+        fun extractMtus(ifcCfg: InterfaceConfiguration, keys: MutableList<MtuKey>) {
+            ifcCfg.getAugmentation(InterfaceConfiguration1::class.java)?.let {
+                it.ipv4Network?.let {
+                    it.mtu?.let {
+                        keys.add(MtuKey(CiscoIosXrString(it.toString())))
+                    }
+                }
+            }
+        }
     }
 }
