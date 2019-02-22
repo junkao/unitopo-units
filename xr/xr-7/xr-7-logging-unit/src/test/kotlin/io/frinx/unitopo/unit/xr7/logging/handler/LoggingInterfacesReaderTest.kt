@@ -17,6 +17,7 @@
 package io.frinx.unitopo.unit.xr7.logging.handler
 
 import io.fd.honeycomb.translate.read.ReadContext
+import io.frinx.openconfig.openconfig.logging.IIDs
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.utils.AbstractNetconfHandlerTest
 import io.frinx.unitopo.unit.utils.NetconfAccessHelper
@@ -27,9 +28,7 @@ import org.junit.Test
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.logging.rev171024.logging.interfaces.structural.Interfaces
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.logging.rev171024.logging.interfaces.structural.InterfacesBuilder
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
 class LoggingInterfacesReaderTest : AbstractNetconfHandlerTest() {
 
@@ -42,6 +41,7 @@ class LoggingInterfacesReaderTest : AbstractNetconfHandlerTest() {
 
     companion object {
         private val NC_HELPER = NetconfAccessHelper("/data_nodes.xml")
+        private val NC_ALL_DISABLE = NetconfAccessHelper("/data_nodes_all_disable.xml")
     }
 
     @Before
@@ -52,15 +52,24 @@ class LoggingInterfacesReaderTest : AbstractNetconfHandlerTest() {
     }
 
     @Test
-    fun testReadCurrentAttributes() {
-
+    fun testReadCurrentAttributesNormal() {
         val ifName = "Bundle-Ether301"
-        val id = InstanceIdentifier
-            .create(Interfaces::class.java)
-        val interfaceBuilder = InterfacesBuilder()
+        val interfacesBuilder = InterfacesBuilder()
 
-        target.readCurrentAttributes(id, interfaceBuilder, readContext)
+        target.readCurrentAttributes(IIDs.LO_INTERFACES, interfacesBuilder, readContext)
 
-        Assert.assertThat(interfaceBuilder.`interface`[0].interfaceId.value, CoreMatchers.equalTo(ifName))
+        Assert.assertThat(interfacesBuilder.`interface`[0].interfaceId.value, CoreMatchers.equalTo(ifName))
+    }
+
+    @Test
+    fun testReadCurrentAttributesAllDisable() {
+        underlayAccess = Mockito.spy(NetconfAccessHelper(NC_ALL_DISABLE))
+        target = LoggingInterfacesReader(underlayAccess)
+
+        val interfacesBuilder = InterfacesBuilder()
+
+        target.readCurrentAttributes(IIDs.LO_INTERFACES, interfacesBuilder, readContext)
+
+        Assert.assertThat(interfacesBuilder.`interface`, CoreMatchers.nullValue())
     }
 }
