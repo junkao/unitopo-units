@@ -42,22 +42,25 @@ class Ipv4AddressReader(private val underlayAccess: UnderlayAccess) :
     override fun getBuilder(id: InstanceIdentifier<Address>): AddressBuilder = AddressBuilder()
 
     override fun readCurrentAttributes(id: InstanceIdentifier<Address>, builder: AddressBuilder, ctx: ReadContext) {
-        // For now, only subinterface with ID ZERO_SUBINTERFACE_ID can have IP
-        if (id.firstKeyOf(Subinterface::class.java).index != 0L) {
-            return
-        }
-
         builder.ip = id.firstKeyOf(Address::class.java).ip
     }
 
     override fun getAllIds(id: InstanceIdentifier<Address>, context: ReadContext): MutableList<AddressKey> {
         val name = id.firstKeyOf(Interface::class.java).name
 
-        // Getting all configurations and filtering here due to:
-        //  - interfaces in underlay are keyed by: name + state compared to only ifc name in openconfig models
-        //  - the read is performed in multiple places and with caching its for free
+//        // Getting all configurations and filtering here due to:
+//        //  - interfaces in underlay are keyed by: name + state compared to only ifc name in openconfig models
+//        //  - the read is performed in multiple places and with caching its for free
+//        val keys = mutableListOf<AddressKey>()
+//        InterfaceReader.readInterfaceCfg(underlayAccess, name, { extractAddresses(it, keys) })
+//        return keys
+        val ifcIndex = id.firstKeyOf(Subinterface::class.java).index
+        val subIfcName = when (ifcIndex) {
+            SubinterfaceReader.ZERO_SUBINTERFACE_ID -> name
+            else -> SubinterfaceReader.getSubIfcName(name, ifcIndex)
+        }
         val keys = mutableListOf<AddressKey>()
-        InterfaceReader.readInterfaceCfg(underlayAccess, name, { extractAddresses(it, keys) })
+        InterfaceReader.readInterfaceCfg(underlayAccess, subIfcName, { extractAddresses(it, keys) })
         return keys
     }
 

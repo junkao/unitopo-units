@@ -204,6 +204,10 @@
                                     <l2-transport>false</l2-transport>
                                     <bandwidth>0</bandwidth>
                                 </interface>
+                                <interface>
+                                    <interface-name>GigabitEthernet0/0/0/0.2147483647</interface-name>
+                                    <interface>GigabitEthernet0/0/0/0.1</interface>
+                                </interface>
                             </interfaces>
                         </locationview>
                     </locationviews>
@@ -389,10 +393,60 @@
                                 <l2-transport>false</l2-transport>
                                 <bandwidth>0</bandwidth>
                             </interface>
+                            <interface>
+                                <interface-name>GigabitEthernet0/0/0/0.2147483647</interface-name>
+                                <interface>GigabitEthernet0/0/0/0.1</interface>
+                            </interface>
                         </interfaces>
                     </system-view>
                 </data-node>
             </data-nodes>
         </interface-properties>
+
+        <interface-configurations xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg">
+            <interface-configuration>
+                <active>act</active>
+                <interface-name>GigabitEthernet0/0/0/0.2147483647</interface-name>
+                <interface-mode-non-physical>default</interface-mode-non-physical>
+                <description>testdescription</description>
+                <ipv4-network xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-ipv4-io-cfg">
+                    <addresses>
+                        <primary>
+                            <netmask>255.255.0.0</netmask>
+                            <address>172.0.0.1</address>
+                        </primary>
+                    </addresses>
+                    <mtu>65535</mtu>
+                </ipv4-network>
+                <vrf xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rsi-cfg">testvrf</vrf>
+                <statistics xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-statsd-cfg">
+                    <load-interval>600</load-interval>
+                </statistics>
+                <vlan-sub-configuration xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-l2-eth-infra-cfg">
+                    <vlan-identifier>
+                        <vlan-type>vlan-type-dot1q</vlan-type>
+                        <first-tag>4094</first-tag>
+                    </vlan-identifier>
+                </vlan-sub-configuration>
+            </interface-configuration>
+            <interface-configuration>
+                <active>act</active>
+                <interface-name>Bundle-Ether100</interface-name>
+                <interface-virtual></interface-virtual>
+                <description>test</description>
+            </interface-configuration>
+            <interface-configuration>
+                <active>act</active>
+                <interface-name>MgmtEth0/RP0/CPU0/0</interface-name>
+                <ipv4-network xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-ipv4-io-cfg">
+                    <addresses>
+                        <primary>
+                            <netmask>255.255.0.0</netmask>
+                            <address>10.1.12.39</address>
+                        </primary>
+                    </addresses>
+                </ipv4-network>
+            </interface-configuration>
+        </interface-configurations>
     </data>
 </rpc-reply>

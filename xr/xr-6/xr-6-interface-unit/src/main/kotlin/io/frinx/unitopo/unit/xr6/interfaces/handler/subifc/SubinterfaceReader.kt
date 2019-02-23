@@ -84,5 +84,6 @@ class SubinterfaceReader(private val underlayAccess: UnderlayAccess) :
 
     companion object {
         const val ZERO_SUBINTERFACE_ID = 0L
+        fun getSubIfcName(ifcName: String, subifcIdx: Long) = ifcName + "." + subifcIdx
     }
 }

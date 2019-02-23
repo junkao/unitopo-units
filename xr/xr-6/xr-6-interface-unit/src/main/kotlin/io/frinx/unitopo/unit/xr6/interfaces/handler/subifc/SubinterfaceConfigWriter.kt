@@ -64,8 +64,11 @@ class SubinterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : Wri
         dataAfter: Config,
         writeContext: WriteContext
     ) {
-        deleteCurrentAttributes(id, dataBefore, writeContext)
-        writeCurrentAttributes(id, dataAfter, writeContext)
+        if (id.firstKeyOf(Subinterface::class.java).index == ZERO_SUBINTERFACE_ID) {
+            return
+        }
+        val (underlayId, underlayIfcCfg) = getData(id, dataAfter)
+        underlayAccess.merge(underlayId, underlayIfcCfg)
     }
 
     companion object {
