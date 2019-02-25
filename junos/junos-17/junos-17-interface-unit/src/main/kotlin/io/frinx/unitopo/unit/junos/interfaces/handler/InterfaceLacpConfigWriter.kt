@@ -21,6 +21,7 @@ import io.fd.honeycomb.translate.util.RWUtils
 import io.fd.honeycomb.translate.write.WriteContext
 import io.fd.honeycomb.translate.write.WriteFailedException
 import io.frinx.unitopo.registry.spi.UnderlayAccess
+import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.config.interfaces.Interface
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.config.interfaces.InterfaceKey
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ethernet.rev161222.ethernet.top.ethernet.Config
@@ -58,12 +59,21 @@ class InterfaceLacpConfigWriter(private val underlayAccess: UnderlayAccess) :
     ) {
         val bundleId = context.readBefore(RWUtils.cutId(id, Config::class.java)).get()
             ?.getAugmentation(Config1::class.java)?.aggregateId
-        try {
-            underlayAccess.delete(InterfaceReader.IFCS.child(Interface::class.java, InterfaceKey(bundleId))
+        val interfaceList = underlayAccess.read(InterfaceReader.IFCS, LogicalDatastoreType.CONFIGURATION)
+            .checkedGet()
+            .orNull()?.let {
+                it.`interface`.orEmpty()
+                .filter { it.gigetherOptions?.ieee8023ad?.bundle?.interfaceDevice?.value.equals(bundleId) }
+                .toList()
+            }.orEmpty()
+
+        if (interfaceList.size < 2)
+            try {
+                underlayAccess.delete(InterfaceReader.IFCS.child(Interface::class.java, InterfaceKey(bundleId))
                     .child(AggregatedEtherOptions::class.java).child(Lacp::class.java))
-        } catch (e: Exception) {
-            throw WriteFailedException(id, e)
-        }
+            } catch (e: Exception) {
+                throw WriteFailedException(id, e)
+            }
     }
 
     override fun updateCurrentAttributes(
