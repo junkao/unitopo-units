@@ -19,6 +19,7 @@ package io.frinx.unitopo.unit.xr7.network.instance.policy.forwarding
 import com.google.common.annotations.VisibleForTesting
 import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.spi.read.ConfigListReaderCustomizer
+import io.frinx.openconfig.network.instance.NetworInstance
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907.InterfaceConfigurations
@@ -27,6 +28,7 @@ import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cf
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.qos.ma.cfg.rev180227.InterfaceConfiguration1
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.xr.types.rev180629.InterfaceName
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.InterfaceId
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.policy.forwarding.rev170621.pf.interfaces.structural.InterfacesBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.policy.forwarding.rev170621.pf.interfaces.structural.interfaces.Interface
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.policy.forwarding.rev170621.pf.interfaces.structural.interfaces.InterfaceBuilder
@@ -38,7 +40,10 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 open class PolicyForwardingInterfaceReader(private val underlayAccess: UnderlayAccess) :
     ConfigListReaderCustomizer<Interface, InterfaceKey, InterfaceBuilder> {
     override fun getAllIds(instanceIdentifier: IID<Interface>, readContext: ReadContext): List<InterfaceKey> {
-
+        val vrfName = instanceIdentifier.firstKeyOf(NetworkInstance::class.java).name
+        if (vrfName != NetworInstance.DEFAULT_NETWORK_NAME) {
+            return emptyList()
+        }
         val configurations = underlayAccess.read(IFC_CFGS, LogicalDatastoreType.CONFIGURATION)
             .checkedGet()
             .orNull()

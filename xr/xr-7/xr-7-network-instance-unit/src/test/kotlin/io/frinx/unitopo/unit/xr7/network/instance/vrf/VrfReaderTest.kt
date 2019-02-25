@@ -50,7 +50,6 @@ class VrfReaderTest : AbstractNetconfHandlerTest() {
     }
 
     companion object {
-        val DATA_NODES = getResourceAsString(javaClass, "/data_nodes.xml")
         val NC_HELPER = NetconfAccessHelper("/data_nodes.xml")
         val BUN_ETH_301_1 = "Bundle-Ether301.1"
         val BUN_ETH_301_2 = "Bundle-Ether301.2"

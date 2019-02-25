@@ -17,7 +17,6 @@
 package io.frinx.unitopo.unit.xr7.network.instance.policy.forwarding
 
 import io.fd.honeycomb.translate.read.ReadContext
-import io.frinx.openconfig.openconfig.network.instance.IIDs
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.utils.AbstractNetconfHandlerTest
 import io.frinx.unitopo.unit.utils.NetconfAccessHelper
@@ -30,10 +29,14 @@ import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.InterfaceId
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.NetworkInstances
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstanceKey
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.policy.forwarding.rev170621.pf.interfaces.structural.Interfaces
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.policy.forwarding.rev170621.pf.interfaces.structural.interfaces.Interface
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.policy.forwarding.rev170621.pf.interfaces.structural.interfaces.InterfaceBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.policy.forwarding.rev170621.pf.interfaces.structural.interfaces.InterfaceKey
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.policy.forwarding.rev170621.policy.forwarding.top.PolicyForwarding
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
 class PolicyForwardingInterfaceReaderTest : AbstractNetconfHandlerTest() {
@@ -57,7 +60,12 @@ class PolicyForwardingInterfaceReaderTest : AbstractNetconfHandlerTest() {
 
     @Test
     fun testGetAllIds() {
-        val id = IIDs.NE_NE_PO_IN_INTERFACE
+        val id = InstanceIdentifier
+            .create(NetworkInstances::class.java)
+            .child(NetworkInstance::class.java, NetworkInstanceKey("default"))
+            .child(PolicyForwarding::class.java)
+            .child(Interfaces::class.java)
+            .child(Interface::class.java)
 
         val result = target.getAllIds(id, readContext)
 
