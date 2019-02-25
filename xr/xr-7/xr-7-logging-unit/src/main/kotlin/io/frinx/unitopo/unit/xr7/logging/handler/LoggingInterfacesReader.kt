@@ -39,7 +39,6 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.logging.rev17
 import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
-import org.opendaylight.yangtools.yang.binding.KeyedInstanceIdentifier
 import java.util.Collections
 
 open class LoggingInterfacesReader(private val underlayAccess: UnderlayAccess) :
@@ -59,8 +58,7 @@ open class LoggingInterfacesReader(private val underlayAccess: UnderlayAccess) :
             it.startsWith("Bundle-Ether")
         }.filter {
             val key = InterfaceConfigurationKey(InterfaceActive("act"), InterfaceName(it))
-            val iid: KeyedInstanceIdentifier<InterfaceConfiguration, InterfaceConfigurationKey> =
-                KeyedInstanceIdentifier
+            val iid = InstanceIdentifier
                     .create(InterfaceConfigurations::class.java)
                     .child(InterfaceConfiguration::class.java,
                         key)

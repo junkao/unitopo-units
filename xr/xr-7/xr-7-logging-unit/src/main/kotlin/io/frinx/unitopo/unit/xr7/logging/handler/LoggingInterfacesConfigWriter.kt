@@ -19,7 +19,9 @@ package io.frinx.unitopo.unit.xr7.logging.handler
 import io.fd.honeycomb.translate.spi.write.WriterCustomizer
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.unitopo.registry.spi.UnderlayAccess
+import io.frinx.unitopo.unit.xr7.interfaces.handler.InterfaceReader
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907.InterfaceActive
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907.InterfaceModeEnum
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907._interface.configurations.InterfaceConfiguration
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907._interface.configurations.InterfaceConfigurationBuilder
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907._interface.configurations.InterfaceConfigurationKey
@@ -59,38 +61,30 @@ class LoggingInterfacesConfigWriter(private val underlayAccess: UnderlayAccess) 
         writeContext: WriteContext
     ) {
         val underlayId = getId(id)
-        val before: InterfaceConfiguration? = underlayAccess.read(underlayId)
+        val before = underlayAccess.read(underlayId)
             .checkedGet()
             .get()
         val underlayConfig = InterfaceConfigurationBuilder(before)
             .setLinkStatus(null)
-            .setInterfaceModeNonPhysical(null)
             .build()
         underlayAccess.put(underlayId, underlayConfig)
     }
 
-    fun getData(id: IID<Config>, data: Config):
+    private fun getData(id: IID<Config>, data: Config):
         Pair<IID<InterfaceConfiguration>, InterfaceConfiguration> {
         val underlayId = getId(id)
-        val underlayBefore: InterfaceConfiguration? = underlayAccess.read(underlayId)
+        val underlayBefore = underlayAccess.read(underlayId)
             .checkedGet()
             .orNull()
         val ifcCfgBuilder =
             if (underlayBefore != null) InterfaceConfigurationBuilder(underlayBefore) else
-                InterfaceConfigurationBuilder()
+                createNewBuilder(data.interfaceId.value)
 
-        ifcCfgBuilder
-            .setInterfaceName(InterfaceName(data.interfaceId.value))
-            .setActive(InterfaceActive("act"))
-            .setInterfaceVirtual(true)
-            .setInterfaceModeNonPhysical(null)
-            .setLinkStatus(data.getLinkStatus())
-
+        ifcCfgBuilder.setLinkStatus(data.getLinkStatus())
         return Pair(underlayId, ifcCfgBuilder.build())
     }
 
-    fun getId(id: IID<Config>):
-        IID<InterfaceConfiguration> {
+    private fun getId(id: IID<Config>): IID<InterfaceConfiguration> {
         val interfaceActive = InterfaceActive("act")
         val ifcName = InterfaceName(id.firstKeyOf(Interface::class.java).interfaceId.value)
 
@@ -110,6 +104,20 @@ class LoggingInterfacesConfigWriter(private val underlayAccess: UnderlayAccess) 
                 return true
             }
             return null
+        }
+
+        private fun createNewBuilder(name: String): InterfaceConfigurationBuilder {
+            val ifcCfgBuilder = InterfaceConfigurationBuilder()
+                .setActive(InterfaceActive("act"))
+                .setInterfaceName(InterfaceName(name))
+
+            if (InterfaceReader.isSubinterface(name)) {
+                ifcCfgBuilder.setInterfaceModeNonPhysical(InterfaceModeEnum.Default)
+            } else {
+                ifcCfgBuilder.setInterfaceVirtual(true)
+            }
+
+            return ifcCfgBuilder
         }
     }
 }
