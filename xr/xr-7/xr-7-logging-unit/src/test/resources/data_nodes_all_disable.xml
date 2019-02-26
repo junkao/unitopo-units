@@ -31,6 +31,18 @@
                 <description>ST004-002MG-01[BE200]</description>
                 <interface-mode-non-physical>default</interface-mode-non-physical>
             </interface-configuration>
+            <interface-configuration>
+                <active>act</active>
+                <interface-name>Bundle-Ether303.3</interface-name>
+                <description>ST004-002MG-01[BE300]</description>
+                <interface-mode-non-physical>default</interface-mode-non-physical>
+            </interface-configuration>
+            <interface-configuration>
+                <active>act</active>
+                <interface-name>Bundle-Ether304.4</interface-name>
+                <description>ST004-002MG-01[BE400]</description>
+                <interface-mode-non-physical>default</interface-mode-non-physical>
+            </interface-configuration>
         </interface-configurations>
     </data>
 </rpc-reply>

@@ -22,6 +22,7 @@ import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.utils.AbstractNetconfHandlerTest
 import io.frinx.unitopo.unit.utils.NetconfAccessHelper
 import org.hamcrest.CoreMatchers
+import org.hamcrest.Matchers
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -53,12 +54,12 @@ class LoggingInterfacesReaderTest : AbstractNetconfHandlerTest() {
 
     @Test
     fun testReadCurrentAttributesNormal() {
-        val ifName = "Bundle-Ether301"
         val interfacesBuilder = InterfacesBuilder()
 
         target.readCurrentAttributes(IIDs.LO_INTERFACES, interfacesBuilder, readContext)
 
-        Assert.assertThat(interfacesBuilder.`interface`[0].interfaceId.value, CoreMatchers.equalTo(ifName))
+        Assert.assertThat(interfacesBuilder.`interface`.map { it.interfaceId.value },
+            Matchers.containsInAnyOrder("Bundle-Ether301", "Bundle-Ether304.4"))
     }
 
     @Test

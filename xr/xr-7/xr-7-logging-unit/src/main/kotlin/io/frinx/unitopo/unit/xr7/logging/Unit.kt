@@ -69,15 +69,15 @@ class Unit(private val registry: TranslationUnitCollector) : Unit() {
         provideWriters(wRegistry, underlayAccess)
     }
 
-    open fun provideWriters(writeRegistry: ModifiableWriterRegistryBuilder, underlayAccess: UnderlayAccess) {
+    private fun provideWriters(writeRegistry: ModifiableWriterRegistryBuilder, underlayAccess: UnderlayAccess) {
         writeRegistry.add(GenericListWriter(LG_IIDS.LO_IN_INTERFACE, NoopListWriter()))
         writeRegistry.subtreeAddAfter(setOf(
             RWUtils.cutIdFromStart(LG_IIDS.LO_IN_IN_CO_ENABLEDLOGGINGFOREVENT, IFC_CFG_ID)),
             GenericWriter(LG_IIDS.LO_IN_IN_CONFIG, LoggingInterfacesConfigWriter(underlayAccess)),
-            IN_IIDs.IN_IN_CONFIG)
+            IN_IIDs.IN_IN_SU_SU_CONFIG)
     }
 
-    open fun provideReaders(rRegistry: ModifiableReaderRegistryBuilder, underlayAccess: UnderlayAccess) {
+    private fun provideReaders(rRegistry: ModifiableReaderRegistryBuilder, underlayAccess: UnderlayAccess) {
         rRegistry.addStructuralReader(LG_IIDS.LOGGING, LoggingBuilder::class.java)
         rRegistry.subtreeAdd(setOf(
             RWUtils.cutIdFromStart(LG_IIDS.LO_IN_INTERFACE, IFCS_ID),
@@ -91,7 +91,7 @@ class Unit(private val registry: TranslationUnitCollector) : Unit() {
     companion object {
         private val IFCS_ID = InstanceIdentifier.create(LoggingInterfaces::class.java)
         private val IFC_CFG_ID = InstanceIdentifier.create(LoggingInterfaceConfig::class.java)
-        val UNDERLAY_SCHEMAS = setOf(
+        private val UNDERLAY_SCHEMAS = setOf(
             UnderlayInterfacesYangInfo.getInstance(),
             Underlayinfradatatypes.getInstance()
         )

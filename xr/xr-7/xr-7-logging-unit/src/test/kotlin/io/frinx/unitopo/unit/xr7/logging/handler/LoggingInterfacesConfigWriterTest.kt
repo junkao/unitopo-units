@@ -55,10 +55,10 @@ class LoggingInterfacesConfigWriterTest : AbstractNetconfHandlerTest() {
 
     companion object {
         private val NC_HELPER = NetconfAccessHelper("/data_nodes.xml")
+        private val NATIVE_ACT = InterfaceActive("act")
 
         // Open Config
         private val IF_NAME = "Bundle-Ether302"
-
         private val IID_CONFIG = InstanceIdentifier
             .create(Interfaces::class.java)
             .child(Interface::class.java, InterfaceKey(InterfaceId(IF_NAME)))
@@ -66,18 +66,31 @@ class LoggingInterfacesConfigWriterTest : AbstractNetconfHandlerTest() {
         private val CONFIG = ConfigBuilder()
             .setInterfaceId(InterfaceId(IF_NAME))
             .build()
-
         // netconf
         private val NATIVE_IF_NAME = InterfaceName(IF_NAME)
-        private val NATIVE_ACT = InterfaceActive("act")
-
         private val NATIVE_IID: KeyedInstanceIdentifier<InterfaceConfiguration, InterfaceConfigurationKey> =
             KeyedInstanceIdentifier
                 .create(InterfaceConfigurations::class.java)
                 .child(InterfaceConfiguration::class.java,
                     InterfaceConfigurationKey(NATIVE_ACT, NATIVE_IF_NAME))
-
         private val NATIVE_CONFIG = NC_HELPER.read(NATIVE_IID).get().get()
+
+        private val SUBIF_NAME = "Bundle-Ether303.3"
+        private val IID_SUBIF_CONFIG = InstanceIdentifier
+            .create(Interfaces::class.java)
+            .child(Interface::class.java, InterfaceKey(InterfaceId(SUBIF_NAME)))
+            .child(Config::class.java)
+        private val SUBIF_CONFIG = ConfigBuilder()
+            .setInterfaceId(InterfaceId(SUBIF_NAME))
+            .build()
+        // netconf
+        private val NATIVE_SUBIF_NAME = InterfaceName(SUBIF_NAME)
+        private val NATIVE_SUBIF_IID: KeyedInstanceIdentifier<InterfaceConfiguration, InterfaceConfigurationKey> =
+            KeyedInstanceIdentifier
+                .create(InterfaceConfigurations::class.java)
+                .child(InterfaceConfiguration::class.java,
+                    InterfaceConfigurationKey(NATIVE_ACT, NATIVE_SUBIF_NAME))
+        private val NATIVE_SUBIF_CONFIG = NC_HELPER.read(NATIVE_SUBIF_IID).get().get()
     }
 
     @Before
@@ -95,7 +108,6 @@ class LoggingInterfacesConfigWriterTest : AbstractNetconfHandlerTest() {
 
         val expectedConfig = InterfaceConfigurationBuilder(NATIVE_CONFIG)
             .setLinkStatus(true)
-            .setInterfaceModeNonPhysical(null)
             .build()
 
         val idCap = ArgumentCaptor
@@ -128,14 +140,13 @@ class LoggingInterfacesConfigWriterTest : AbstractNetconfHandlerTest() {
     }
 
     @Test
-    fun testUpdateCurrentAttributes() {
-        val config = ConfigBuilder(CONFIG)
-            .setEnabledLoggingForEvent(null)
+    fun testWriteCurrentAttributesSubinterface() {
+        val config = ConfigBuilder(SUBIF_CONFIG)
+            .setEnabledLoggingForEvent(LoggingInterfacesReader.LINK_UP_DOWN_EVENT_LIST)
             .build()
 
-        val expectedConfig = InterfaceConfigurationBuilder(NATIVE_CONFIG)
-            .setLinkStatus(null)
-            .setInterfaceModeNonPhysical(null)
+        val expectedConfig = InterfaceConfigurationBuilder(NATIVE_SUBIF_CONFIG)
+            .setLinkStatus(true)
             .build()
 
         val idCap = ArgumentCaptor
@@ -146,7 +157,47 @@ class LoggingInterfacesConfigWriterTest : AbstractNetconfHandlerTest() {
         Mockito.doNothing().`when`(underlayAccess).put(Mockito.any(), Mockito.any())
 
         // test
-        target.writeCurrentAttributes(IID_CONFIG, config, writeContext)
+        target.writeCurrentAttributes(IID_SUBIF_CONFIG, config, writeContext)
+
+        // capture
+        Mockito.verify(underlayAccess, Mockito.times(1)).put(idCap.capture(),
+            dataCap.capture())
+
+        // verify capture-length
+        Assert.assertThat(idCap.allValues.size, CoreMatchers.`is`(1))
+        Assert.assertThat(dataCap.allValues.size, CoreMatchers.`is`(1))
+
+        // verify captured values
+        Assert.assertThat(
+            idCap.allValues[0],
+            CoreMatchers.equalTo(NATIVE_SUBIF_IID) as Matcher<in InstanceIdentifier<InterfaceConfiguration>>
+        )
+        Assert.assertThat(
+            dataCap.allValues[0],
+            CoreMatchers.equalTo(expectedConfig) as Matcher<in InterfaceConfiguration>
+        )
+    }
+
+    @Test
+    fun testUpdateCurrentAttributes() {
+        val configBefore = Mockito.mock(Config::class.java)
+        val config = ConfigBuilder(CONFIG)
+            .setEnabledLoggingForEvent(null)
+            .build()
+
+        val expectedConfig = InterfaceConfigurationBuilder(NATIVE_CONFIG)
+            .setLinkStatus(null)
+            .build()
+
+        val idCap = ArgumentCaptor
+            .forClass(InstanceIdentifier::class.java) as ArgumentCaptor<InstanceIdentifier<InterfaceConfiguration>>
+        val dataCap = ArgumentCaptor
+            .forClass(DataObject::class.java) as ArgumentCaptor<InterfaceConfiguration>
+
+        Mockito.doNothing().`when`(underlayAccess).put(Mockito.any(), Mockito.any())
+
+        // test
+        target.updateCurrentAttributes(IID_CONFIG, configBefore, config, writeContext)
 
         // capture
         Mockito.verify(underlayAccess, Mockito.times(1)).put(idCap.capture(),
