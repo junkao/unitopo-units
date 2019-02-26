@@ -40,6 +40,13 @@
                 <interface-name>Bundle-Ether302</interface-name>
                 <interface-virtual></interface-virtual>
                 <description>ST004-002MG-01[BE200]</description>
+                <dampening>
+                    <args>specify-all</args>
+                    <half-life>20</half-life>
+                    <reuse-threshold>21</reuse-threshold>
+                    <suppress-threshold>22</suppress-threshold>
+                    <suppress-time>23</suppress-time>
+                </dampening>
                 <mtus>
                     <mtu>
                         <owner>etherbundle</owner>
