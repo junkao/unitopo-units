@@ -25,11 +25,5 @@ abstract class Unit : TranslateUnit {
 
     override fun toString(): String = "XR 7 init unit"
 
-    // TODO:
-    // For some reason transactional feature (means commit after multiple RPC) does not work on XR6.
-    // So auto committing is set to true, and every RPC will results a commit.
-    // But this is not we really want.
-    // When XR7 is implemented, we should do a test of transactional feature,
-    // and set auto committing to false if above has been corrected.
-    override fun useAutoCommit() = true
+    override fun useAutoCommit() = false
 }
