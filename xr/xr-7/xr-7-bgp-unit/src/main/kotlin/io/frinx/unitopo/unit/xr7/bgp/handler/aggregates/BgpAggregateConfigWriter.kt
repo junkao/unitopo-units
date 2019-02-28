@@ -45,10 +45,12 @@ import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.datatypes.rev170626.BgpAsRange
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.xr.types.rev180629.CiscoIosXrString
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.extension.rev180323.NiProtAggAug
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.global.afi.safi.list.AfiSafi
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.top.Bgp
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.types.rev170202.AFISAFITYPE
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.types.rev170202.IPV4UNICAST
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.local.routing.rev170515.local.aggregate.top.local.aggregates.Aggregate
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.local.routing.rev170515.local.aggregate.top.local.aggregates.AggregateKey
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.local.routing.rev170515.local.aggregate.top.local.aggregates.aggregate.Config
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.Protocols
@@ -70,25 +72,7 @@ open class BgpAggregateConfigWriter(private val access: UnderlayAccess) : BgpWri
         val vrfKey = id.firstKeyOf(NetworkInstance::class.java)
         val protocolKey = id.firstKeyOf(Protocol::class.java)
         val aggrKey = id.firstKeyOf(Aggregate::class.java)
-
-        val networkInstance = writeContext.readAfter(RWUtils.cutId(id,
-            NetworkInstance::class.java).child(Protocols::class.java)).get()
-        val bgp = getBgpGlobal(networkInstance)
-        requireNotNull(bgp,
-            { "BGP not configured for VRF: ${vrfKey.name}. Cannot configure networks" })
-
-        val asNumber = bgp!!.global?.config?.`as`
-        requireNotNull(asNumber,
-            { "BGP AS number not configured for VRF: ${vrfKey.name}. Cannot configure networks" })
-        asNumber!!
-
-        val afiSafis = bgp.getAfiSafis()
-        require(afiSafis.isNotEmpty(),
-            { "BGP does not contain any AFI SAFI for VRF: ${vrfKey.name}. Cannot configure networks" })
-
-        if (vrfKey == NetworInstance.DEFAULT_NETWORK) {
-            return
-        }
+        val (asNumber, afiSafis) = requires(writeContext, id)
         afiSafis.map {
             it.afiSafiName
         }.map {
@@ -96,17 +80,9 @@ open class BgpAggregateConfigWriter(private val access: UnderlayAccess) : BgpWri
         }.filterNotNull().forEach {
             val underlayId = getUnderlayId(asNumber, protocolKey, vrfKey.name,
                 aggrKey.prefix.getNetAddress(), aggrKey.prefix.getNetMask())
-            val builder = AggregateAddressBuilder().apply {
-                aggregateAddr = aggrKey.prefix.getNetAddress()
-                aggregatePrefix = aggrKey.prefix.getNetMask()
-                config.getAugmentation(NiProtAggAug::class.java)?.let {
-                    isSummaryOnly = it.isSummaryOnly
-                    it.applyPolicy?.get(0)?.let {
-                        routePolicyName = it
-                    }
-                }
-            }
-            access.put(underlayId, builder.build())
+            val builder =
+                aggregateBuilder(underlayId, aggrKey, config, false)
+            access.merge(underlayId, builder.build())
         }
     }
 
@@ -116,37 +92,31 @@ open class BgpAggregateConfigWriter(private val access: UnderlayAccess) : BgpWri
         dataAfter: Config,
         writeContext: WriteContext
     ) {
-        deleteCurrentAttributes(id, dataBefore, writeContext)
-        writeCurrentAttributes(id, dataAfter, writeContext)
+        val vrfKey = id.firstKeyOf(NetworkInstance::class.java)
+        val protocolKey = id.firstKeyOf(Protocol::class.java)
+        val aggrKey = id.firstKeyOf(Aggregate::class.java)
+        val (asNumber, afiSafis) = requires(writeContext, id)
+        afiSafis.map {
+            it.afiSafiName
+        }.map {
+            it.toUnderlay()
+        }.filterNotNull().forEach {
+            val underlayId = getUnderlayId(asNumber, protocolKey, vrfKey.name,
+                aggrKey.prefix.getNetAddress(), aggrKey.prefix.getNetMask())
+            val builder = aggregateBuilder(underlayId, aggrKey, dataAfter, true)
+            access.put(underlayId, builder.build())
+        }
     }
 
     override fun deleteCurrentAttributesForType(
-        id: org.opendaylight.yangtools.yang.binding.InstanceIdentifier<Config>,
+        id: IID<Config>,
         config: Config,
         writeContext: WriteContext
     ) {
         val vrfKey = id.firstKeyOf(NetworkInstance::class.java)
         val protocolKey = id.firstKeyOf(Protocol::class.java)
         val aggrKey = id.firstKeyOf(Aggregate::class.java)
-
-        val networkInstance = writeContext.readAfter(RWUtils.cutId(id,
-            NetworkInstance::class.java).child(Protocols::class.java)).get()
-        val bgp = getBgpGlobal(networkInstance)
-        requireNotNull(bgp,
-            { "BGP not configured for VRF: ${vrfKey.name}. Cannot configure networks" })
-
-        val asNumber = bgp!!.global?.config?.`as`
-        requireNotNull(asNumber,
-            { "BGP AS number not configured for VRF: ${vrfKey.name}. Cannot configure networks" })
-        asNumber!!
-
-        val afiSafis = bgp.getAfiSafis()
-        require(afiSafis.isNotEmpty(),
-            { "BGP does not contain any AFI SAFI for VRF: ${vrfKey.name}. Cannot configure networks" })
-
-        if (vrfKey == NetworInstance.DEFAULT_NETWORK) {
-            return
-        }
+        val (asNumber, afiSafis) = requires(writeContext, id)
         afiSafis.map {
             it.afiSafiName
         }.map {
@@ -164,8 +134,7 @@ open class BgpAggregateConfigWriter(private val access: UnderlayAccess) : BgpWri
         vrfName: String,
         addr: IpAddress,
         prefix: Int
-
-    ): IID<AggregateAddress>? {
+    ): IID<AggregateAddress> {
         val (aXX, aYY) = As.asToDotNotation(asN)
         return BgpProtocolReader.UNDERLAY_BGP
             .child(Instance::class.java, InstanceKey(CiscoIosXrString(key.name)))
@@ -178,6 +147,57 @@ open class BgpAggregateConfigWriter(private val access: UnderlayAccess) : BgpWri
             .child(VrfGlobalAf::class.java, VrfGlobalAfKey(BgpAddressFamily.Ipv4Unicast))
             .child(AggregateAddresses::class.java)
             .child(AggregateAddress::class.java, AggregateAddressKey(addr, prefix))
+    }
+
+    private fun readUnderlayData(id: IID<AggregateAddress>): AggregateAddressBuilder {
+        val underlayData = access.read(id).checkedGet().orNull()
+        return when (underlayData) {
+            null -> AggregateAddressBuilder()
+            else -> AggregateAddressBuilder(underlayData)
+        }
+    }
+
+    private fun aggregateBuilder(
+        underlayId: IID<AggregateAddress>,
+        aggrKey: AggregateKey,
+        config: Config,
+        update: Boolean
+    ) = when (update) {
+        true -> readUnderlayData(underlayId)
+        else -> AggregateAddressBuilder()
+    }.apply {
+        aggregateAddr = aggrKey.prefix.getNetAddress()
+        aggregatePrefix = aggrKey.prefix.getNetMask()
+        config.getAugmentation(NiProtAggAug::class.java)?.let {
+            isSummaryOnly = it.isSummaryOnly
+            it.applyPolicy?.get(0)?.let {
+                routePolicyName = it
+            }
+        }
+    }
+
+    private fun requires(context: WriteContext, id: IID<Config>): Pair<AsNumber, Set<AfiSafi>> {
+        val networkInstance = context.readAfter(RWUtils.cutId(id,
+            NetworkInstance::class.java).child(Protocols::class.java)).get()
+        val vrfKey = id.firstKeyOf(NetworkInstance::class.java)
+
+        require(vrfKey != NetworInstance.DEFAULT_NETWORK,
+            { "Can't write aggregation settings in default network-insance." })
+
+        val bgp = getBgpGlobal(networkInstance)
+        requireNotNull(bgp,
+            { "BGP not configured for VRF: ${vrfKey.name}. Cannot configure networks" })
+
+        val asNumber = bgp!!.global?.config?.`as`
+        requireNotNull(asNumber,
+            { "BGP AS number not configured for VRF: ${vrfKey.name}. Cannot configure networks" })
+        asNumber!!
+
+        val afiSafis = bgp.getAfiSafis()
+        require(afiSafis.isNotEmpty(),
+            { "BGP does not contain any AFI SAFI for VRF: ${vrfKey.name}. Cannot configure networks" })
+
+        return Pair(asNumber, afiSafis)
     }
 
     companion object {
