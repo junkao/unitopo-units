@@ -52,16 +52,16 @@ class InterfaceDampingConfigReaderTest : AbstractNetconfHandlerTest() {
     fun setUp() {
         MockitoAnnotations.initMocks(this)
         underlayAccess = Mockito.spy(NetconfAccessHelper(NC_HELPER))
-        target = Mockito.spy(InterfaceDampingConfigReader(underlayAccess))
+        target = InterfaceDampingConfigReader(underlayAccess)
     }
 
     @Test
-    fun testReadCurrentAttributes() {
+    fun testReadCurrentAttributesGigabitEthernet() {
         val ifName = "GigabitEthernet0/0/0/0"
-        val halfLife = 10
-        val maxsuppress = 12
-        val reuse = 11
-        val suppress = 13
+        val halfLife = 10L
+        val maxsuppress = 12L
+        val reuse = 11L
+        val suppress = 13L
         val configBuilder = ConfigBuilder()
         val id = InstanceIdentifier
             .create(Interfaces::class.java)
@@ -69,9 +69,45 @@ class InterfaceDampingConfigReaderTest : AbstractNetconfHandlerTest() {
             .child(Damping::class.java).child(Config::class.java)
 
         target.readCurrentAttributes(id, configBuilder, readContext)
-        Assert.assertThat(configBuilder.halfLife.toInt(), CoreMatchers.equalTo(halfLife))
-        Assert.assertThat(configBuilder.maxSuppress.toInt(), CoreMatchers.equalTo(maxsuppress))
-        Assert.assertThat(configBuilder.reuse.toInt(), CoreMatchers.equalTo(reuse))
-        Assert.assertThat(configBuilder.suppress.toInt(), CoreMatchers.equalTo(suppress))
+        Assert.assertThat(configBuilder.halfLife, CoreMatchers.equalTo(halfLife))
+        Assert.assertThat(configBuilder.maxSuppress, CoreMatchers.equalTo(maxsuppress))
+        Assert.assertThat(configBuilder.reuse, CoreMatchers.equalTo(reuse))
+        Assert.assertThat(configBuilder.suppress, CoreMatchers.equalTo(suppress))
+    }
+
+    @Test
+    fun testReadCurrentAttributesBundleEther() {
+        val ifName = "Bundle-Ether302"
+        val halfLife = 20L
+        val maxsuppress = 22L
+        val reuse = 21L
+        val suppress = 23L
+        val configBuilder = ConfigBuilder()
+        val id = InstanceIdentifier
+            .create(Interfaces::class.java)
+            .child(Interface::class.java, InterfaceKey(ifName)).augmentation(Interface1::class.java)
+            .child(Damping::class.java).child(Config::class.java)
+
+        target.readCurrentAttributes(id, configBuilder, readContext)
+        Assert.assertThat(configBuilder.halfLife, CoreMatchers.equalTo(halfLife))
+        Assert.assertThat(configBuilder.maxSuppress, CoreMatchers.equalTo(maxsuppress))
+        Assert.assertThat(configBuilder.reuse, CoreMatchers.equalTo(reuse))
+        Assert.assertThat(configBuilder.suppress, CoreMatchers.equalTo(suppress))
+    }
+
+    @Test
+    fun testReadCurrentAttributesOtherInterface() {
+        val ifName = "Loopback0"
+        val configBuilder = ConfigBuilder()
+        val id = InstanceIdentifier
+            .create(Interfaces::class.java)
+            .child(Interface::class.java, InterfaceKey(ifName)).augmentation(Interface1::class.java)
+            .child(Damping::class.java).child(Config::class.java)
+
+        target.readCurrentAttributes(id, configBuilder, readContext)
+        Assert.assertThat(configBuilder.halfLife, CoreMatchers.nullValue())
+        Assert.assertThat(configBuilder.maxSuppress, CoreMatchers.nullValue())
+        Assert.assertThat(configBuilder.reuse, CoreMatchers.nullValue())
+        Assert.assertThat(configBuilder.suppress, CoreMatchers.nullValue())
     }
 }

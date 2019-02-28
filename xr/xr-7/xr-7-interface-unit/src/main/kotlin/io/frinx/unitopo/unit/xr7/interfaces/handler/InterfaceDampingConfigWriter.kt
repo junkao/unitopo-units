@@ -29,18 +29,24 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.damping.rev17
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.Interface
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-open class InterfaceDampingConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCustomizer<Config> {
+class InterfaceDampingConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCustomizer<Config> {
 
     override fun writeCurrentAttributes(
         id: InstanceIdentifier<Config>,
         data: Config,
         writeContext: WriteContext
     ) {
+
+        val ifcName = id.firstKeyOf(Interface::class.java).name
+        require(InterfaceDampingConfigReader.isSupportedInterface(ifcName)) {
+            "Unsupported interface: $ifcName"
+        }
+
         if (!data.isEnabled) {
             return
         }
         underlayAccess.put(
-            getUnderlyId(id),
+            getUnderlayId(id),
             DampeningBuilder().formOpenConfig(data).build()
         )
     }
@@ -58,7 +64,7 @@ open class InterfaceDampingConfigWriter(private val underlayAccess: UnderlayAcce
         }
 
         underlayAccess.merge(
-            getUnderlyId(id),
+            getUnderlayId(id),
             DampeningBuilder().formOpenConfig(dataAfter).build()
         )
     }
@@ -68,10 +74,10 @@ open class InterfaceDampingConfigWriter(private val underlayAccess: UnderlayAcce
         dataBefore: Config,
         writeContext: WriteContext
     ) {
-        underlayAccess.delete(getUnderlyId(id))
+        underlayAccess.delete(getUnderlayId(id))
     }
 
-    private fun getUnderlyId(id: InstanceIdentifier<Config>):
+    private fun getUnderlayId(id: InstanceIdentifier<Config>):
         InstanceIdentifier<Dampening> {
         val interfaceActive = InterfaceActive("act")
         val ifcName = InterfaceName(id.firstKeyOf(Interface::class.java).name)
@@ -81,7 +87,7 @@ open class InterfaceDampingConfigWriter(private val underlayAccess: UnderlayAcce
     }
 }
 
-fun DampeningBuilder.formOpenConfig(data: Config): DampeningBuilder {
+private fun DampeningBuilder.formOpenConfig(data: Config): DampeningBuilder {
     halfLife = data.halfLife
     suppressTime = data.suppress
     suppressThreshold = data.maxSuppress

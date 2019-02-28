@@ -25,11 +25,12 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.damping.rev17
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.damping.rev171024.damping.top.damping.Config
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.damping.rev171024.damping.top.damping.ConfigBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.Interface
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.iana._if.type.rev140508.Other
 import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-open class InterfaceDampingConfigReader(private val underlayAccess: UnderlayAccess) :
+class InterfaceDampingConfigReader(private val underlayAccess: UnderlayAccess) :
     ConfigReaderCustomizer<Config, ConfigBuilder> {
     override fun readCurrentAttributes(
         instanceIdentifier: InstanceIdentifier<Config>,
@@ -38,12 +39,12 @@ open class InterfaceDampingConfigReader(private val underlayAccess: UnderlayAcce
     ) {
 
         val ifcName = instanceIdentifier.firstKeyOf(Interface::class.java).name
-        if (!ifcName.startsWith("Bundle-Ether")) {
+        if (isSupportedInterface(ifcName)) {
             InterfaceReader.readInterfaceCfg(underlayAccess, ifcName, { extractDamping(it, builder) })
         }
     }
 
-    fun extractDamping(ifcCfg: InterfaceConfiguration, builder: ConfigBuilder) {
+    private fun extractDamping(ifcCfg: InterfaceConfiguration, builder: ConfigBuilder) {
         ifcCfg.let {
             it.dampening?.let {
                 builder.fromUnderlay(it)
@@ -58,12 +59,18 @@ open class InterfaceDampingConfigReader(private val underlayAccess: UnderlayAcce
     override fun getBuilder(p0: InstanceIdentifier<Config>): ConfigBuilder {
         return ConfigBuilder()
     }
-}
 
-fun ConfigBuilder.fromUnderlay(dampening: Dampening) {
-    maxSuppress = dampening.suppressThreshold
-    suppress = dampening.suppressTime
-    reuse = dampening.reuseThreshold
-    halfLife = dampening.halfLife
-    isEnabled = true
+    companion object {
+        fun isSupportedInterface(name: String): Boolean {
+            return InterfaceReader.parseIfcType(name) != Other::class.java
+        }
+
+        private fun ConfigBuilder.fromUnderlay(dampening: Dampening) {
+            maxSuppress = dampening.suppressThreshold
+            suppress = dampening.suppressTime
+            reuse = dampening.reuseThreshold
+            halfLife = dampening.halfLife
+            isEnabled = true
+        }
+    }
 }

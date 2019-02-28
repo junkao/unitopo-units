@@ -30,7 +30,6 @@ import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907.InterfaceActive
-import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907.InterfaceConfigurations
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907._interface.configurations.InterfaceConfiguration
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907._interface.configurations.InterfaceConfigurationKey
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907._interface.configurations._interface.configuration.Dampening
@@ -56,13 +55,13 @@ class InterfaceDampingConfigWriterTest : AbstractNetconfHandlerTest() {
 
     companion object {
         private val NC_HELPER = NetconfAccessHelper("/data_nodes2.xml")
-        private val DATA_NODES = getResourceAsString(javaClass, "/data_nodes2.xml")
-        val IFC_CFGS = InstanceIdentifier.create(InterfaceConfigurations::class.java)!!
+
         // Open Config
         private val IF_NAME = "GigabitEthernet0/0/0/0"
-        private val IF_HALFLIFE = 10
-        private val IF_REUSE = 11
-        private val IF_MAXSUPPRESS = 13
+        private val IF_HALFLIFE = 10L
+        private val IF_REUSE = 11L
+        private val IF_SUPPRESS = 12L
+        private val IF_MAXSUPPRESS = 13L
 
         // netconf
         private val NATIVE_IF_NAME = InterfaceName(IF_NAME)
@@ -73,35 +72,43 @@ class InterfaceDampingConfigWriterTest : AbstractNetconfHandlerTest() {
             .child(Interface::class.java, InterfaceKey(IF_NAME)).augmentation(Interface1::class.java)
             .child(Damping::class.java).child(Config::class.java)
 
-        private val NATIVE_IID: InstanceIdentifier<Dampening> = IFC_CFGS
+        private val NATIVE_IID: InstanceIdentifier<Dampening> = InterfaceReader.IFC_CFGS
             .child(InterfaceConfiguration::class.java, InterfaceConfigurationKey(NATIVE_ACT, NATIVE_IF_NAME))
             .child(Dampening::class.java)
 
         private val NATIVE_CONFIG = DampeningBuilder()
-            .setHalfLife(IF_HALFLIFE.toLong())
-            .setReuseThreshold(IF_REUSE.toLong())
-            .setSuppressTime(IF_MAXSUPPRESS.toLong())
-            .setSuppressThreshold(IF_MAXSUPPRESS.toLong())
+            .setHalfLife(IF_HALFLIFE)
+            .setReuseThreshold(IF_REUSE)
+            .setSuppressTime(IF_SUPPRESS)
+            .setSuppressThreshold(IF_MAXSUPPRESS)
             .setArgs(Dampening.Args.SpecifyAll)
             .build()
+
+        private val BASE_CONFIG = ConfigBuilder().apply {
+            this.isEnabled = true
+            this.halfLife = IF_HALFLIFE
+            this.reuse = IF_REUSE
+            this.suppress = IF_SUPPRESS
+            this.maxSuppress = IF_MAXSUPPRESS
+        }.build()
+
+        private val ILLEGAL_IF_NAME = "Loopback0"
+        private val ILLEGAL_IID_CONFIG = InstanceIdentifier
+            .create(Interfaces::class.java)
+            .child(Interface::class.java, InterfaceKey(ILLEGAL_IF_NAME)).augmentation(Interface1::class.java)
+            .child(Damping::class.java).child(Config::class.java)
     }
 
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
-        underlayAccess = Mockito.spy(NetconfAccessHelper(InterfaceDampingConfigWriterTest.NC_HELPER))
+        underlayAccess = Mockito.spy(NetconfAccessHelper(NC_HELPER))
         target = InterfaceDampingConfigWriter(underlayAccess)
     }
 
     @Test
-    fun testWriteCurrentAttributes() {
-        val config = ConfigBuilder().apply {
-            this.isEnabled = true
-            this.setHalfLife(IF_HALFLIFE.toLong())
-            this.setReuse(IF_REUSE.toLong())
-            this.setSuppress(IF_MAXSUPPRESS.toLong())
-            this.setMaxSuppress(IF_MAXSUPPRESS.toLong())
-        }.build()
+    fun testWriteCurrentAttributesNormal() {
+        val config = ConfigBuilder(BASE_CONFIG).build()
         val expectedConfig = DampeningBuilder(NATIVE_CONFIG).build()
 
         val idCap = ArgumentCaptor
@@ -133,16 +140,19 @@ class InterfaceDampingConfigWriterTest : AbstractNetconfHandlerTest() {
         )
     }
 
+    @Test(expected = IllegalArgumentException::class)
+    fun testWriteCurrentAttributesOtherInterface() {
+        val config = ConfigBuilder(BASE_CONFIG).build()
+
+        // test
+        target.writeCurrentAttributes(ILLEGAL_IID_CONFIG, config, writeContext)
+    }
+
     @Test
     fun testDeleteCurrentAttributes() {
-        val config = ConfigBuilder().apply {
-            this.setHalfLife(IF_HALFLIFE.toLong())
-            this.setReuse(IF_REUSE.toLong())
-            this.setSuppress(IF_MAXSUPPRESS.toLong())
-            this.setMaxSuppress(IF_MAXSUPPRESS.toLong())
+        val config = ConfigBuilder(BASE_CONFIG).apply {
+            this.isEnabled = null
         }.build()
-        val expectedConfig = DampeningBuilder(NATIVE_CONFIG) // not customize
-            .build()
 
         val idCap = ArgumentCaptor
             .forClass(InstanceIdentifier::class.java) as ArgumentCaptor<InstanceIdentifier<InterfaceConfiguration>>
@@ -167,28 +177,21 @@ class InterfaceDampingConfigWriterTest : AbstractNetconfHandlerTest() {
 
     @Test
     fun testUpdateCurrentAttributes() {
-        val configBefore = ConfigBuilder().apply {
-            this.isEnabled = true
-            this.setHalfLife(IF_HALFLIFE.toLong())
-            this.setReuse(IF_REUSE.toLong())
-            this.setSuppress(IF_MAXSUPPRESS.toLong())
-            this.setMaxSuppress(IF_MAXSUPPRESS.toLong())
+        val configBefore = ConfigBuilder(BASE_CONFIG).build()
+        val configAfter = ConfigBuilder(BASE_CONFIG).apply {
+            this.halfLife = this.halfLife + 10L
+            this.reuse = this.reuse + 11L
+            this.suppress = this.suppress + 12L
+            this.maxSuppress = this.maxSuppress + 13L
         }.build()
-        val configAfter = ConfigBuilder().apply {
-            this.isEnabled = true
-            this.setHalfLife(10.toLong())
-            this.setReuse(11.toLong())
-            this.setSuppress(13.toLong())
-            this.setMaxSuppress(13.toLong())
-        }.build()
-        val expectedConfig = DampeningBuilder(NATIVE_CONFIG)
-            .setHalfLife(IF_HALFLIFE.toLong())
-            .setReuseThreshold(IF_REUSE.toLong())
-            .setSuppressTime(IF_MAXSUPPRESS.toLong())
-            .setSuppressThreshold(IF_MAXSUPPRESS.toLong())
+        val expectedConfig = DampeningBuilder()
+            .setArgs(Dampening.Args.SpecifyAll)
+            .setHalfLife(IF_HALFLIFE + 10L)
+            .setReuseThreshold(IF_REUSE + 11L)
+            .setSuppressTime(IF_SUPPRESS + 12L)
+            .setSuppressThreshold(IF_MAXSUPPRESS + 13L)
             .build()
 
-        val data_Cfg = parseGetCfgResponse(DATA_NODES, NATIVE_IID)
         val idCap = ArgumentCaptor
             .forClass(InstanceIdentifier::class.java) as ArgumentCaptor<InstanceIdentifier<InterfaceConfiguration>>
         val dataCap = ArgumentCaptor
