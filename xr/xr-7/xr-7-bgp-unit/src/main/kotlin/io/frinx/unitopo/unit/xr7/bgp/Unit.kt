@@ -26,7 +26,6 @@ import io.fd.honeycomb.translate.util.RWUtils
 import io.fd.honeycomb.translate.write.registry.ModifiableWriterRegistryBuilder
 import io.frinx.openconfig.openconfig.network.instance.IIDs
 import io.frinx.unitopo.registry.api.TranslationUnitCollector
-import io.frinx.unitopo.registry.spi.TranslateUnit
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.utils.NoopListWriter
 import io.frinx.unitopo.unit.xr7.bgp.handler.GlobalAfiSafiConfigReader
@@ -40,6 +39,7 @@ import io.frinx.unitopo.unit.xr7.bgp.handler.neighbor.NeighborReader
 import io.frinx.unitopo.unit.xr7.bgp.handler.neighbor.NeighborWriter
 import io.frinx.unitopo.unit.xr7.bgp.handler.neighbor.NeighborConfigReader
 import io.frinx.unitopo.unit.xr7.bgp.handler.neighbor.NeighborTransportConfigReader
+import io.frinx.unitopo.unit.xr7.init.Unit
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.global.base.AfiSafisBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.neighbor.afi.safi.list.afi.safi.Config
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.neighbor.afi.safi.list.AfiSafi
@@ -56,7 +56,7 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.neighbor.base.AfiSafisBuilder as NeighborAfiSafisBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.local.routing.rev170515.`$YangModuleInfoImpl` as LocalAggregatesYangModule
 
-class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
+class Unit(private val registry: TranslationUnitCollector) : Unit() {
     private var reg: TranslationUnitCollector.Registration? = null
 
     fun init() {

@@ -22,14 +22,14 @@ import io.fd.honeycomb.translate.read.registry.ModifiableReaderRegistryBuilder
 import io.fd.honeycomb.translate.write.registry.ModifiableWriterRegistryBuilder
 import io.frinx.openconfig.openconfig.configuration.metadata.IIDs
 import io.frinx.unitopo.registry.api.TranslationUnitCollector
-import io.frinx.unitopo.registry.spi.TranslateUnit
 import io.frinx.unitopo.registry.spi.UnderlayAccess
+import io.frinx.unitopo.unit.xr7.init.Unit
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.config.cfgmgr.exec.oper.rev170907.`$YangModuleInfoImpl` as CiscoCfgmgrExecOperYangInfo
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.xr.types.rev180629.`$YangModuleInfoImpl` as CiscoTypesYangInfo
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.configuration.metadata.rev180731.`$YangModuleInfoImpl` as OpenconfigConfigMetadata
 
-class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
+class Unit(private val registry: TranslationUnitCollector) : Unit() {
 
     override fun getUnderlayYangSchemas() = setOf(
         CiscoCfgmgrExecOperYangInfo.getInstance(),
