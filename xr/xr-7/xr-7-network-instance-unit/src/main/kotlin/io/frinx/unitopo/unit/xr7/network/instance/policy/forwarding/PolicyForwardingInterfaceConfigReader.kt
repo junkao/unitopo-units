@@ -32,7 +32,7 @@ import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
-open class PolicyForwardingInterfaceConfigReader(private val underlayAccess: UnderlayAccess) :
+class PolicyForwardingInterfaceConfigReader(private val underlayAccess: UnderlayAccess) :
     ConfigReaderCustomizer<Config, ConfigBuilder> {
     override fun getBuilder(instanceIdentifier: IID<Config>): ConfigBuilder {
         return ConfigBuilder()
@@ -47,35 +47,19 @@ open class PolicyForwardingInterfaceConfigReader(private val underlayAccess: Und
         configBuilder: ConfigBuilder,
         readContext: ReadContext
     ) {
-        val ifcName = instanceIdentifier.firstKeyOf(Interface::class.java).getInterfaceId().getValue()
-        if (ifcName.startsWith("Bundle-Ether")) {
-            PolicyForwardingInterfaceReader.readInterfaceCfg(underlayAccess,
-                ifcName,
-                { configBuilder.fromUnderlay(it) })
-        }
+        val ifcName = instanceIdentifier.firstKeyOf(Interface::class.java).interfaceId.value
+
+        PolicyForwardingInterfaceReader.readInterfaceCfg(underlayAccess, ifcName) { configBuilder.fromUnderlay(it) }
     }
 }
 
-fun ConfigBuilder.fromUnderlay(underlay: InterfaceConfiguration) {
+private fun ConfigBuilder.fromUnderlay(underlay: InterfaceConfiguration) {
+    val qos = underlay.getAugmentation(InterfaceConfiguration1::class.java).qos
 
-    if (underlay.getAugmentation(InterfaceConfiguration1::class.java) == null) {
-        return
-    }
     val niPfIfCiscoAugBuilder = NiPfIfCiscoAugBuilder()
-    niPfIfCiscoAugBuilder.inputServicePolicy = underlay
-        ?.getAugmentation(InterfaceConfiguration1::class.java)
-        ?.qos
-        ?.input
-        ?.servicePolicy
-        ?.get(0)
-        ?.servicePolicyName
-    niPfIfCiscoAugBuilder.outputServicePolicy = underlay
-        ?.getAugmentation(InterfaceConfiguration1::class.java)
-        ?.qos
-        ?.output
-        ?.servicePolicy
-        ?.get(0)
-        ?.servicePolicyName
+    PolicyForwardingInterfaceReader.getInputPolicy(qos).ifPresent { niPfIfCiscoAugBuilder.inputServicePolicy = it }
+    PolicyForwardingInterfaceReader.getOutputPolicy(qos).ifPresent { niPfIfCiscoAugBuilder.outputServicePolicy = it }
+
     addAugmentation(NiPfIfCiscoAug::class.java, niPfIfCiscoAugBuilder.build())
     interfaceId = InterfaceId(underlay.interfaceName.value)
 }

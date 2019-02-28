@@ -52,15 +52,15 @@ class PolicyForwardingInterfaceConfigReaderTest : AbstractNetconfHandlerTest() {
     fun setUp() {
         MockitoAnnotations.initMocks(this)
         underlayAccess = Mockito.spy(NetconfAccessHelper(NC_HELPER))
-        target = Mockito.spy(PolicyForwardingInterfaceConfigReader(underlayAccess))
+        target = PolicyForwardingInterfaceConfigReader(underlayAccess)
     }
 
     @Test
     fun testReadCurrentAttributes() {
 
         val ifName = "Bundle-Ether65533"
-        val inputServicePolicy = "input_test"
-        val outputServicePolicy = "output_test"
+        val inputServicePolicy = "input_test2"
+        val outputServicePolicy = "output_test2"
 
         val id = InstanceIdentifier
             .create(Interfaces::class.java)

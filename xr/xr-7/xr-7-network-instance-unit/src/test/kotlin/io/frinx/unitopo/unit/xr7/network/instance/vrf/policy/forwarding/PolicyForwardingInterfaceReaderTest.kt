@@ -55,7 +55,7 @@ class PolicyForwardingInterfaceReaderTest : AbstractNetconfHandlerTest() {
     fun setUp() {
         MockitoAnnotations.initMocks(this)
         underlayAccess = Mockito.spy(NetconfAccessHelper(NC_HELPER))
-        target = Mockito.spy(PolicyForwardingInterfaceReader(underlayAccess))
+        target = PolicyForwardingInterfaceReader(underlayAccess)
     }
 
     @Test
@@ -74,7 +74,8 @@ class PolicyForwardingInterfaceReaderTest : AbstractNetconfHandlerTest() {
                 it.interfaceId.value
             },
             Matchers.containsInAnyOrder(
-                "Bundle-Ether65533"
+                "Bundle-Ether65533",
+                "TenGigE0/0/0/8"
             )
         )
     }

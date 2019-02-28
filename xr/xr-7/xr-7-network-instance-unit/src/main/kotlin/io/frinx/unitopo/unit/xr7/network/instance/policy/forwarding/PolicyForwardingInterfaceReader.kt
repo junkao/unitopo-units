@@ -16,16 +16,17 @@
 
 package io.frinx.unitopo.unit.xr7.network.instance.policy.forwarding
 
-import com.google.common.annotations.VisibleForTesting
 import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.spi.read.ConfigListReaderCustomizer
 import io.frinx.openconfig.network.instance.NetworInstance
 import io.frinx.unitopo.registry.spi.UnderlayAccess
+import io.frinx.unitopo.unit.xr7.interfaces.handler.InterfaceReader
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907.InterfaceConfigurations
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907._interface.configurations.InterfaceConfiguration
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907._interface.configurations.InterfaceConfigurationBuilder
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.qos.ma.cfg.rev180227.InterfaceConfiguration1
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.qos.ma.cfg.rev180227.qos.Qos
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.xr.types.rev180629.InterfaceName
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.InterfaceId
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
@@ -33,24 +34,27 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.policy.forwar
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.policy.forwarding.rev170621.pf.interfaces.structural.interfaces.Interface
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.policy.forwarding.rev170621.pf.interfaces.structural.interfaces.InterfaceBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.policy.forwarding.rev170621.pf.interfaces.structural.interfaces.InterfaceKey
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.iana._if.type.rev140508.Other
 import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
+import java.util.Optional
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
-open class PolicyForwardingInterfaceReader(private val underlayAccess: UnderlayAccess) :
+class PolicyForwardingInterfaceReader(private val underlayAccess: UnderlayAccess) :
     ConfigListReaderCustomizer<Interface, InterfaceKey, InterfaceBuilder> {
     override fun getAllIds(instanceIdentifier: IID<Interface>, readContext: ReadContext): List<InterfaceKey> {
         val vrfName = instanceIdentifier.firstKeyOf(NetworkInstance::class.java).name
         if (vrfName != NetworInstance.DEFAULT_NETWORK_NAME) {
             return emptyList()
         }
-        val configurations = underlayAccess.read(IFC_CFGS, LogicalDatastoreType.CONFIGURATION)
+        return underlayAccess.read(IFC_CFGS, LogicalDatastoreType.CONFIGURATION)
             .checkedGet()
             .orNull()
-            ?.interfaceConfiguration?.filter {
-            it.getAugmentation(InterfaceConfiguration1::class.java)?.qos != null
-        }
-        return getInterfaceIds(configurations)
+            ?.interfaceConfiguration
+            ?.filter { isSupportedInterface(it.interfaceName.value) }
+            ?.filter { hasAnyPolicy(it) }
+            ?.map { InterfaceKey(InterfaceId(it.interfaceName.value)) }
+            .orEmpty()
     }
 
     override fun getBuilder(instanceIdentifier: IID<Interface>): InterfaceBuilder = InterfaceBuilder()
@@ -60,16 +64,8 @@ open class PolicyForwardingInterfaceReader(private val underlayAccess: UnderlayA
         interfaceBuilder: InterfaceBuilder,
         readContext: ReadContext
     ) {
-        val configurations = underlayAccess.read(IFC_CFGS, LogicalDatastoreType.CONFIGURATION)
-            .checkedGet()
-            .orNull()
-            ?.interfaceConfiguration?.filter {
-            it.interfaceName.value.startsWith("Bundle-Ether")
-        }
-        // Just set the name (if there is such interface)
-        if (interfaceExists(configurations, instanceIdentifier)) {
-            interfaceBuilder.interfaceId = instanceIdentifier.firstKeyOf(Interface::class.java).interfaceId
-        }
+        // Just set the name
+        interfaceBuilder.interfaceId = instanceIdentifier.firstKeyOf(Interface::class.java).interfaceId
     }
 
     override fun merge(builder: Builder<out DataObject>, list: List<Interface>) {
@@ -88,14 +84,11 @@ open class PolicyForwardingInterfaceReader(private val underlayAccess: UnderlayA
                 .orNull()
 
             configurations?.let {
-                it.`interfaceConfiguration`.orEmpty()
+                it.interfaceConfiguration.orEmpty()
                     .firstOrNull { it.interfaceName.value == name }
                     .let { handler(it ?: getDefaultIfcCfg(name)) }
             }
         }
-
-        fun interfaceExists(configurations: List<InterfaceConfiguration>?, name: IID<out DataObject>) =
-            getInterfaceIds(configurations).contains(name.firstKeyOf(Interface::class.java)!!)
 
         private fun getDefaultIfcCfg(name: String): InterfaceConfiguration {
             return InterfaceConfigurationBuilder().apply {
@@ -104,19 +97,30 @@ open class PolicyForwardingInterfaceReader(private val underlayAccess: UnderlayA
             }.build()
         }
 
-        fun getInterfaceIds(configuration: List<InterfaceConfiguration>?): List<InterfaceKey> {
-            return configuration
-                ?.let {
-                    parseInterfaceIds(it)
-                }.orEmpty()
+        fun isSupportedInterface(name: String): Boolean {
+            return when {
+                InterfaceReader.parseIfcType(name) == Other::class.java -> false
+                InterfaceReader.isSubinterface(name) -> false
+                else -> true
+            }
         }
 
-        @VisibleForTesting
-        fun parseInterfaceIds(it: List<InterfaceConfiguration>): List<InterfaceKey> {
-            return it
-                .map {
-                    InterfaceKey(InterfaceId(it.interfaceName.value))
-                }.toList()
+        private fun hasAnyPolicy(configuration: InterfaceConfiguration): Boolean {
+            val qos = configuration.getAugmentation(InterfaceConfiguration1::class.java)?.qos
+
+            return when {
+                getInputPolicy(qos).isPresent -> true
+                getOutputPolicy(qos).isPresent -> true
+                else -> false
+            }
+        }
+
+        fun getInputPolicy(qos: Qos?): Optional<String> {
+            return Optional.ofNullable(qos?.input?.servicePolicy?.getOrNull(0)?.servicePolicyName)
+        }
+
+        fun getOutputPolicy(qos: Qos?): Optional<String> {
+            return Optional.ofNullable(qos?.output?.servicePolicy?.getOrNull(0)?.servicePolicyName)
         }
     }
 }

@@ -30,7 +30,6 @@ import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.qos.ma.c
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.qos.ma.cfg.rev180227.qos.QosBuilder
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.qos.ma.cfg.rev180227.qos.qos.InputBuilder
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.qos.ma.cfg.rev180227.qos.qos.OutputBuilder
-import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.qos.ma.cfg.rev180227.service.policy.ServicePolicy
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.qos.ma.cfg.rev180227.service.policy.ServicePolicyBuilder
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.xr.types.rev180629.InterfaceName
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.pf.interfaces.extension.cisco.rev171109.NiPfIfCiscoAug
@@ -39,7 +38,7 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.policy.forwar
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.policy.forwarding.rev170621.pf.interfaces.structural.interfaces._interface.Config
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
-open class PolicyForwardingInterfaceConfigWriter(private val underlayAccess: UnderlayAccess) :
+class PolicyForwardingInterfaceConfigWriter(private val underlayAccess: UnderlayAccess) :
     WriterCustomizer<Config> {
     override fun writeCurrentAttributes(
         instanceIdentifier: IID<Config>,
@@ -47,38 +46,37 @@ open class PolicyForwardingInterfaceConfigWriter(private val underlayAccess: Und
         writeContext: WriteContext
     ) {
         requires(instanceIdentifier)
-        val pfIfAug: NiPfIfCiscoAug = dataAfter.getAugmentation(NiPfIfCiscoAug::class.java)
-        if (pfIfAug == null) {
-            return
-        }
+        val pfIfAug = dataAfter.getAugmentation(NiPfIfCiscoAug::class.java)
+        pfIfAug ?: return
+
         val inputBuilder = InputBuilder()
         val outputBuilder = OutputBuilder()
 
         // to update, must read now underlay config
-        val ifcName = instanceIdentifier.firstKeyOf(Interface::class.java).getInterfaceId().value
+        val ifcName = instanceIdentifier.firstKeyOf(Interface::class.java).interfaceId.value
         val ifcConfig = underlayAccess.read(
             PolicyForwardingInterfaceReader.IFC_CFGS,
             LogicalDatastoreType.CONFIGURATION)
             .checkedGet()
             .orNull()
             ?.let {
-                it.`interfaceConfiguration`.orEmpty()
+                it.interfaceConfiguration.orEmpty()
                     .firstOrNull { it.interfaceName.value == ifcName }
             }
         val qosBuilder = getQosBuilder(ifcConfig)
 
-        pfIfAug?.inputServicePolicy?.let {
+        pfIfAug.inputServicePolicy?.let {
             qosBuilder.setInput(inputBuilder
                 .setServicePolicy(
-                    listOf<ServicePolicy>(ServicePolicyBuilder().setServicePolicyName(it).build())
+                    listOf(ServicePolicyBuilder().setServicePolicyName(it).build())
                 )
                 .build()
             )
         }
-        pfIfAug?.outputServicePolicy?.let {
+        pfIfAug.outputServicePolicy?.let {
             qosBuilder.setOutput(outputBuilder
                 .setServicePolicy(
-                    listOf<ServicePolicy>(ServicePolicyBuilder().setServicePolicyName(it).build())
+                    listOf(ServicePolicyBuilder().setServicePolicyName(it).build())
                 )
                 .build()
             )
@@ -107,28 +105,30 @@ open class PolicyForwardingInterfaceConfigWriter(private val underlayAccess: Und
         underlayAccess.delete(underlayId)
     }
 
-    fun getId(id: IID<Config>):
-        IID<Qos> {
+    private fun getId(id: IID<Config>): IID<Qos> {
         val interfaceActive = InterfaceActive("act")
         val ifcName = InterfaceName(id.firstKeyOf(Interface::class.java).interfaceId.value)
         val IFC_CFGS = IID.create(InterfaceConfigurations::class.java)
-        val underlayId = IFC_CFGS.child(InterfaceConfiguration::class.java,
-            InterfaceConfigurationKey(interfaceActive, ifcName)).augmentation(InterfaceConfiguration1::class.java)
+        val underlayId = IFC_CFGS
+            .child(InterfaceConfiguration::class.java, InterfaceConfigurationKey(interfaceActive, ifcName))
+            .augmentation(InterfaceConfiguration1::class.java)
             .child(Qos::class.java)
         return underlayId
     }
 
-    fun requires(id: IID<Config>) {
+    private fun requires(id: IID<Config>) {
         val vrfName = id.firstKeyOf(NetworkInstance::class.java).name
-        require(vrfName == NetworInstance.DEFAULT_NETWORK_NAME,
-            { "Policy-forwarding is only supported in default network-instance, but was $vrfName" })
+        require(vrfName == NetworInstance.DEFAULT_NETWORK_NAME) {
+            "Policy-forwarding is only supported in default network-instance, but was $vrfName"
+        }
 
-        val ifcName = id.firstKeyOf(Interface::class.java).getInterfaceId().value
-        require(ifcName.startsWith("Bundle-Ether"),
-            { "Policy-forwarding is only supported in Bundle-Ether interface, but now is $ifcName" })
+        val ifcName = id.firstKeyOf(Interface::class.java).interfaceId.value
+        require(PolicyForwardingInterfaceReader.isSupportedInterface(ifcName)) {
+            "Policy-forwarding is supported in Bundle-Ether and Physical interface, but now is $ifcName"
+        }
     }
 
-    fun getQosBuilder(underlay: InterfaceConfiguration?): QosBuilder {
+    private fun getQosBuilder(underlay: InterfaceConfiguration?): QosBuilder {
         val qos = underlay?.getAugmentation(InterfaceConfiguration1::class.java)?.qos
         return when (qos) {
             null -> QosBuilder()
