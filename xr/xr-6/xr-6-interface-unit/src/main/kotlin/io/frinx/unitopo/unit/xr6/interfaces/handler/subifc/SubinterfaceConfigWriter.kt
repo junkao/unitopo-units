@@ -53,8 +53,7 @@ class SubinterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : Wri
             return
         }
 
-        val (underlayId, underlayIfcCfg) = getData(id, dataAfter)
-
+        val (underlayId, underlayIfcCfg) = getData(id, dataAfter, underlayAccess)
         underlayAccess.put(underlayId, underlayIfcCfg)
     }
 
@@ -64,18 +63,18 @@ class SubinterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : Wri
         dataAfter: Config,
         writeContext: WriteContext
     ) {
-        if (id.firstKeyOf(Subinterface::class.java).index == ZERO_SUBINTERFACE_ID) {
-            return
-        }
-        val (underlayId, underlayIfcCfg) = getData(id, dataAfter)
-        underlayAccess.merge(underlayId, underlayIfcCfg)
+        writeCurrentAttributes(id, dataAfter, writeContext)
     }
 
     companion object {
         fun isInterfaceVirtual(ifcName: InterfaceName) =
             ifcName.value.startsWith("Loopback") || ifcName.value.startsWith("null")
 
-        private fun Config.shutdown() = isEnabled == null || !isEnabled
+        private fun Config.shutdown() = when (isEnabled) {
+            null -> false
+            true -> false
+            else -> true
+        }
 
         public fun getId(id: InstanceIdentifier<out DataObject>):
                 Triple<InterfaceActive, InterfaceName, InstanceIdentifier<InterfaceConfiguration>> {
@@ -93,11 +92,17 @@ class SubinterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : Wri
             return Triple(interfaceActive, underlaySubifcName, underlayId)
         }
 
-        public fun getData(id: InstanceIdentifier<Config>, dataAfter: Config):
+        public fun getData(id: InstanceIdentifier<Config>, dataAfter: Config, access: UnderlayAccess):
                 Pair<InstanceIdentifier<InterfaceConfiguration>, InterfaceConfiguration> {
             val (interfaceActive, ifcName, underlayId) = getId(id)
 
-            val ifcCfgBuilder = InterfaceConfigurationBuilder()
+            val underlayBefore = access.read(underlayId)
+                .checkedGet()
+                .orNull()
+            val ifcCfgBuilder = when (underlayBefore) {
+                null -> InterfaceConfigurationBuilder()
+                else -> InterfaceConfigurationBuilder(underlayBefore)
+            }
             if (dataAfter.shutdown()) ifcCfgBuilder.isShutdown = true
 
             val underlayIfcCfg = ifcCfgBuilder
