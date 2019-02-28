@@ -20,12 +20,14 @@ import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr7.interfaces.handler.InterfaceReader
+import io.frinx.unitopo.unit.xr7.interfaces.handler.subifc.SubinterfaceReader
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907._interface.configurations.InterfaceConfiguration
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.io.cfg.rev180111.InterfaceConfiguration1
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.ipv4.top.Ipv4Builder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.ipv4.top.ipv4.Config
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.ipv4.top.ipv4.ConfigBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.Interface
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.subinterfaces.Subinterface
 import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
@@ -44,9 +46,12 @@ open class Ipv4MtuConfigReader(private val underlayAccess: UnderlayAccess)
         readContext: ReadContext
     ) {
         val ifcName = instanceIdentifier.firstKeyOf(Interface::class.java).name
-        if (!ifcName.startsWith("Bundle-Ether")) {
-            InterfaceReader.readInterfaceCfg(underlayAccess, ifcName, { extractIpv4Mtu(it, builder) })
+        val ifcIndex = instanceIdentifier.firstKeyOf(Subinterface::class.java).index
+        val subIfcName = when (ifcIndex) {
+            SubinterfaceReader.ZERO_SUBINTERFACE_ID -> ifcName
+            else -> SubinterfaceReader.getSubIfcName(ifcName, ifcIndex)
         }
+        InterfaceReader.readInterfaceCfg(underlayAccess, subIfcName, { extractIpv4Mtu(it, builder) })
     }
     private fun extractIpv4Mtu(ifcCfg: InterfaceConfiguration, builder: ConfigBuilder) {
         ifcCfg.getAugmentation(InterfaceConfiguration1::class.java)?.let {
