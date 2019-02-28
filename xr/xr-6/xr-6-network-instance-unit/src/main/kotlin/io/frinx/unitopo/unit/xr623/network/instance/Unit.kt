@@ -26,6 +26,7 @@ import io.frinx.unitopo.registry.api.TranslationUnitCollector
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.handlers.network.instance.NetworkInstanceUnit
 import io.frinx.unitopo.unit.utils.NoopWriter
+import io.frinx.unitopo.unit.xr623.network.instance.vrf.ifc.VrfInterfaceConfigReader
 import io.frinx.unitopo.unit.xr623.network.instance.vrf.protocol.ProtocolConfigWriter
 import io.frinx.unitopo.unit.xr623.network.instance.vrf.ifc.VrfInterfaceConfigWriter
 import io.frinx.unitopo.unit.xr623.network.instance.vrf.ifc.VrfInterfaceReader
@@ -56,7 +57,8 @@ open class Unit(private val registry: TranslationUnitCollector) : NetworkInstanc
         wRegistry.add(GenericWriter(IIDs.NE_NE_IN_INTERFACE, NoopWriter()))
         wRegistry.addAfter(GenericWriter(IIDs.NE_NE_IN_IN_CONFIG, VrfInterfaceConfigWriter(underlayAccess)),
             IIDs.NE_NE_CONFIG)
-        wRegistry.add(GenericWriter(IIDs.NE_NE_PR_PR_CONFIG, ProtocolConfigWriter(underlayAccess)))
+        wRegistry.addAfter(GenericWriter(IIDs.NE_NE_PR_PR_CONFIG, ProtocolConfigWriter(underlayAccess)),
+            IIDs.NE_NE_CONFIG)
     }
 
     override fun provideSpecificReaders(rRegistry: ModifiableReaderRegistryBuilder, underlayAccess: UnderlayAccess) {
@@ -64,6 +66,7 @@ open class Unit(private val registry: TranslationUnitCollector) : NetworkInstanc
         rRegistry.add(GenericConfigReader(IIDs.NE_NE_CONFIG, NetworkInstanceConfigReader()))
         rRegistry.add(GenericConfigListReader(IIDs.NE_NE_PR_PROTOCOL, ProtocolReader(underlayAccess)))
         rRegistry.add(GenericConfigListReader(IIDs.NE_NE_IN_INTERFACE, VrfInterfaceReader(underlayAccess)))
+        rRegistry.add(GenericConfigReader(IIDs.NE_NE_IN_IN_CONFIG, VrfInterfaceConfigReader()))
     }
 
     override fun toString(): String = "XR 6 (2016-12-19) network-instance translate unit"
