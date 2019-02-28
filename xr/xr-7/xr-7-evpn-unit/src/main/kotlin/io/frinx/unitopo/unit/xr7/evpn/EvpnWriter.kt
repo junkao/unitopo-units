@@ -48,9 +48,10 @@ open class EvpnWriter(private val underlayAccess: UnderlayAccess) : WriterCustom
         dataAfter: Evpn,
         writeContext: WriteContext
     ) {
-        val builder = NativeEvpnBuilder().apply {
-            this.isEnable = dataAfter.config.isEnabled
+        if (dataAfter.config.isEnabled) {
+            underlayAccess.merge(NATIVE_EVPN, NativeEvpnBuilder().build())
+        } else {
+            underlayAccess.delete(NATIVE_EVPN)
         }
-        underlayAccess.merge(NATIVE_EVPN, builder.build())
     }
 }

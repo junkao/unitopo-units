@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-package io.frinx.unitopo.unit.xr7.interfaces.handler
-
+package io.frinx.unitopo.unit.xr7.evpn.handler.ifc.core.isolation.group
 import io.fd.honeycomb.translate.read.ReadContext
 import io.frinx.openconfig.openconfig.evpn.IIDs
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.utils.AbstractNetconfHandlerTest
 import io.frinx.unitopo.unit.utils.NetconfAccessHelper
-import io.frinx.unitopo.unit.xr7.evpn.handler.ifc.core.isolation.group.EvpnCoreIsolationGroupConfigReader
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test

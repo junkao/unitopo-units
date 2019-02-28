@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package io.frinx.unitopo.unit.xr7.interfaces.handler
+package io.frinx.unitopo.unit.xr7.evpn
 
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.openconfig.openconfig.evpn.IIDs
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.utils.AbstractNetconfHandlerTest
 import io.frinx.unitopo.unit.utils.NetconfAccessHelper
-import io.frinx.unitopo.unit.xr7.evpn.EvpnWriter
 import org.hamcrest.CoreMatchers
 import org.hamcrest.Matcher
 import org.junit.Assert
@@ -108,34 +107,27 @@ class EvpnWriterTest : AbstractNetconfHandlerTest() {
                 this.isEnabled = false
             }.build())
         }.build()
-        val expected = NativeEvpnBuilder().apply {
-            this.isEnable = false
-        }.build()
 
         val idCap = ArgumentCaptor
             .forClass(InstanceIdentifier::class.java) as ArgumentCaptor<InstanceIdentifier<NativeEvpn>>
         val dataCap = ArgumentCaptor
             .forClass(DataObject::class.java) as ArgumentCaptor<NativeEvpn>
 
-        Mockito.doNothing().`when`(underlayAccess).merge(Mockito.any(), Mockito.any())
+        Mockito.doNothing().`when`(underlayAccess).delete(Mockito.any())
 
+        // test
         target.updateCurrentAttributes(IIDs.EVPN, dataBefore, dataAfter, writeContext)
 
         // capture
-        Mockito.verify(underlayAccess, Mockito.times(1)).merge(idCap.capture(), dataCap.capture())
+        Mockito.verify(underlayAccess, Mockito.times(1)).delete(idCap.capture())
 
         // verify capture-length
         Assert.assertThat(idCap.allValues.size, CoreMatchers.`is`(1))
-        Assert.assertThat(dataCap.allValues.size, CoreMatchers.`is`(1))
 
         // verify captured values
         Assert.assertThat(
             idCap.allValues[0],
             CoreMatchers.equalTo(NATIVE_IID) as Matcher<in InstanceIdentifier<NativeEvpn>>
-        )
-        Assert.assertThat(
-            dataCap.allValues[0],
-            CoreMatchers.equalTo(expected)
         )
     }
 
