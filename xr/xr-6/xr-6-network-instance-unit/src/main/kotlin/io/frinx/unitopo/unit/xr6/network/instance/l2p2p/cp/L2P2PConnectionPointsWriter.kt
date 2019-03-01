@@ -245,7 +245,7 @@ class L2P2PConnectionPointsWriter(private val underlayAccess: UnderlayAccess) : 
         // or if not present (we are configuring it right now) invoke SubinterfaceWriter to render the data
         val subinterfaceFromUnderlay = underlayAccess.read(underlayIfcId).get()
         val subinterfaceToConfigure = SubinterfaceConfigWriter.getData(subIfcId.child(SubinterfaceConfig::class.java),
-            subinterfaceData.config).second
+            subinterfaceData.config, underlayAccess).second
         val underlaySubifcConfiguration = requireNotNull(
                 subinterfaceFromUnderlay.or({ subinterfaceToConfigure }),
                 { "Cannot configure L2P2P on non-existent subinterface $underlayIfcName" })
