@@ -26,6 +26,18 @@
                 <active>act</active>
                 <interface-name>TenGigE0/0/0/8</interface-name>
                 <shutdown></shutdown>
+                <qos xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-qos-ma-cfg">
+                    <input>
+                        <service-policy>
+                            <service-policy-name>input_test1</service-policy-name>
+                        </service-policy>
+                    </input>
+                    <output>
+                        <service-policy>
+                            <service-policy-name>output_test1</service-policy-name>
+                        </service-policy>
+                    </output>
+                </qos>
             </interface-configuration>
             <interface-configuration>
                 <active>act</active>
@@ -34,12 +46,29 @@
                 <qos xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-qos-ma-cfg">
                     <input>
                         <service-policy>
-                            <service-policy-name>input_test</service-policy-name>
+                            <service-policy-name>input_test2</service-policy-name>
                         </service-policy>
                     </input>
                     <output>
                         <service-policy>
-                            <service-policy-name>output_test</service-policy-name>
+                            <service-policy-name>output_test2</service-policy-name>
+                        </service-policy>
+                    </output>
+                </qos>
+            </interface-configuration>
+            <interface-configuration>
+                <active>act</active>
+                <interface-name>Loopback0</interface-name>
+                <interface-virtual></interface-virtual>
+                <qos xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-qos-ma-cfg">
+                    <input>
+                        <service-policy>
+                            <service-policy-name>input_test3</service-policy-name>
+                        </service-policy>
+                    </input>
+                    <output>
+                        <service-policy>
+                            <service-policy-name>output_test4</service-policy-name>
                         </service-policy>
                     </output>
                 </qos>
