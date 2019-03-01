@@ -81,7 +81,8 @@ class InterfaceReaderTest : AbstractNetconfHandlerTest() {
                         "Bundle-Ether301",
                         "Bundle-Ether302",
                         "Bundle-Ether300",
-                        "Bundle-Ether3000"
+                        "Bundle-Ether3000",
+                        "Bundle-Ether4001"
                 )
         )
     }

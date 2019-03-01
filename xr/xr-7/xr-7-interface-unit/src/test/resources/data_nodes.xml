@@ -105,6 +105,26 @@
                 </lacp>
                 <mac-addr xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-mdrv-lib-cfg">02:8a:96:00:00:00</mac-addr>
             </interface-configuration>
+            <interface-configuration>
+                <active>act</active>
+                <interface-name>Bundle-Ether4001</interface-name>
+                <interface-virtual></interface-virtual>
+            </interface-configuration>
+            <interface-configuration>
+                <active>act</active>
+                <interface-name>Bundle-Ether4001.10</interface-name>
+                <interface-mode-non-physical>default</interface-mode-non-physical>
+                <carrier-delay xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-l2-eth-infra-cfg">
+                    <carrier-delay-up>100</carrier-delay-up>
+                    <carrier-delay-down>0</carrier-delay-down>
+                </carrier-delay>
+            </interface-configuration>
+            <interface-configuration>
+                <active>act</active>
+                <interface-name>Bundle-Ether4001.20</interface-name>
+                <interface-mode-non-physical>default</interface-mode-non-physical>
+            </interface-configuration>
+
         </interface-configurations>
     </data>
 </rpc-reply>

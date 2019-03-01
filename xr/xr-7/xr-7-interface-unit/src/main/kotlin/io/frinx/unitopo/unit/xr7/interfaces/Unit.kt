@@ -41,32 +41,37 @@ import io.frinx.unitopo.unit.xr7.interfaces.handler.aggregate.AggregateConfigRea
 import io.frinx.unitopo.unit.xr7.interfaces.handler.aggregate.AggregateConfigWriter
 import io.frinx.unitopo.unit.xr7.interfaces.handler.ethernet.EthernetConfigReader
 import io.frinx.unitopo.unit.xr7.interfaces.handler.ethernet.EthernetConfigWriter
-import io.frinx.unitopo.unit.xr7.interfaces.handler.subifc.Ipv4ConfigWriter
 import io.frinx.unitopo.unit.xr7.interfaces.handler.subifc.Ipv4AddressReader
 import io.frinx.unitopo.unit.xr7.interfaces.handler.subifc.Ipv4ConfigReader
+import io.frinx.unitopo.unit.xr7.interfaces.handler.subifc.Ipv4ConfigWriter
 import io.frinx.unitopo.unit.xr7.interfaces.handler.subifc.SubinterfaceConfigReader
 import io.frinx.unitopo.unit.xr7.interfaces.handler.subifc.SubinterfaceConfigWriter
 import io.frinx.unitopo.unit.xr7.interfaces.handler.subifc.SubinterfaceReader
 import io.frinx.unitopo.unit.xr7.interfaces.handler.subifc.SubinterfaceStatisticsConfigReader
 import io.frinx.unitopo.unit.xr7.interfaces.handler.subifc.SubinterfaceStatisticsConfigWriter
+import io.frinx.unitopo.unit.xr7.interfaces.handler.subifc.holdtime.HoldTimeConfigReader
+import io.frinx.unitopo.unit.xr7.interfaces.handler.subifc.holdtime.HoldTimeConfigWriter
 import io.frinx.unitopo.unit.xr7.interfaces.handler.subifc.ipv4.Ipv4MtuConfigReader
 import io.frinx.unitopo.unit.xr7.interfaces.handler.subifc.ipv4.Ipv4MtuConfigWriter
 import io.frinx.unitopo.unit.xr7.interfaces.handler.subifc.vlan.SubinterfaceVlanConfigReader
 import io.frinx.unitopo.unit.xr7.interfaces.handler.subifc.vlan.SubinterfaceVlanConfigWriter
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.damping.rev171024.IfDampAugBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.damping.rev171024.damping.top.DampingBuilder
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.aggregate.rev161222.Interface1Builder as AggregateInterface1Builder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.aggregate.rev161222.aggregation.logical.top.AggregationBuilder
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.aggregate.rev161222.aggregation.logical.top.aggregation.Config
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.cisco.rev171024.IfCiscoStatsAugBuilder
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.cisco.rev171024.IfSubifCiscoHoldTimeAugBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.cisco.rev171024.statistics.top.StatisticsBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ethernet.rev161222.Interface1Builder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ethernet.rev161222.ethernet.top.EthernetBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.Subinterface1Builder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.ipv4.top.Ipv4Builder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.ipv4.top.ipv4.AddressesBuilder
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222._interface.phys.holdtime.top.HoldTimeBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.InterfacesBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.SubinterfacesBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.vlan.rev170714.vlan.logical.top.VlanBuilder
+import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 import io.frinx.openconfig.openconfig._if.ip.IIDs as IfIpIIDs
 import io.frinx.openconfig.openconfig.network.instance.IIDs as NetworkInstanceIIDs
 import io.frinx.openconfig.openconfig.vlan.IIDs as VlanIIDs
@@ -80,6 +85,7 @@ import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.mdrv.lib
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.xr.types.rev180629.`$YangModuleInfoImpl` as UnderlayTypesYangInfo
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.damping.rev171024.`$YangModuleInfoImpl` as DampingYangInfo
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.aggregate.ext.rev180926.`$YangModuleInfoImpl` as AggregateExtYangInfo
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.aggregate.rev161222.Interface1Builder as AggregateInterface1Builder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.aggregate.rev161222.`$YangModuleInfoImpl` as AggregateYangInfo
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.cisco.rev171024.IfSubifCiscoStatsAugBuilder as SubInt1Builder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.cisco.rev171024.`$YangModuleInfoImpl` as StatisticsYangInfo
@@ -91,8 +97,6 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.lacp.rev17050
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.vlan.rev170714.Subinterface1Builder as VlanAugBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.vlan.rev170714.`$YangModuleInfoImpl` as VlanYangInfo
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.iana._if.type.rev140508.`$YangModuleInfoImpl` as InterfaceTypesYangInfo
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.aggregate.rev161222.aggregation.logical.top.aggregation.Config
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
 class Unit(private val registry: TranslationUnitCollector) : Unit() {
     private var reg: TranslationUnitCollector.Registration? = null
@@ -178,6 +182,13 @@ class Unit(private val registry: TranslationUnitCollector) : Unit() {
                 RWUtils.cutIdFromStart(IIDs.IN_IN_AG_CO_AUG_IFLAGAUG, InstanceIdentifier.create(Config::class.java))),
                 GenericWriter(IIDs.IN_IN_AUG_INTERFACE1_AG_CONFIG, AggregateConfigWriter(underlayAccess)),
                 IIDs.IN_IN_CONFIG)
+
+        // hold-time(sub-interface)
+        wRegistry.add(GenericWriter(IIDs.IN_IN_SU_SU_AUG_IFSUBIFCISCOHOLDTIMEAUG, NoopWriter()))
+        wRegistry.add(GenericWriter(IIDs.IN_IN_SU_SU_AUG_IFSUBIFCISCOHOLDTIMEAUG_HOLDTIME, NoopWriter()))
+        wRegistry.addAfter(GenericWriter(IIDs.IN_IN_SU_SU_AUG_IFSUBIFCISCOHOLDTIMEAUG_HO_CONFIG,
+            HoldTimeConfigWriter(underlayAccess)),
+            IIDs.IN_IN_SU_SU_CONFIG)
     }
 
     private fun provideReaders(rRegistry: ModifiableReaderRegistryBuilder, underlayAccess: UnderlayAccess) {
@@ -232,6 +243,14 @@ class Unit(private val registry: TranslationUnitCollector) : Unit() {
         rRegistry.subtreeAdd(setOf(
                 RWUtils.cutIdFromStart(IIDs.IN_IN_AG_CO_AUG_IFLAGAUG, InstanceIdentifier.create(Config::class.java))),
                 GenericConfigReader(IIDs.IN_IN_AUG_INTERFACE1_AG_CONFIG, AggregateConfigReader(underlayAccess)))
+
+        // hold-time(sub-interface)
+        rRegistry.addStructuralReader(IIDs.IN_IN_SU_SU_AUG_IFSUBIFCISCOHOLDTIMEAUG,
+            IfSubifCiscoHoldTimeAugBuilder::class.java)
+        rRegistry.addStructuralReader(IIDs.IN_IN_SU_SU_AUG_IFSUBIFCISCOHOLDTIMEAUG_HOLDTIME,
+            HoldTimeBuilder::class.java)
+        rRegistry.add(GenericConfigReader(IIDs.IN_IN_SU_SU_AUG_IFSUBIFCISCOHOLDTIMEAUG_HO_CONFIG,
+            HoldTimeConfigReader(underlayAccess)))
     }
 
     override fun toString(): String = "Cisco-IOS-XR-ifmgr-cfg@2017-09-07 interface translate unit"
