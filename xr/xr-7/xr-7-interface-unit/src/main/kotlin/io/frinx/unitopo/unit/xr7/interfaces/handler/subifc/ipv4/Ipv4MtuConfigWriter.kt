@@ -20,6 +20,7 @@ import io.fd.honeycomb.translate.spi.write.WriterCustomizer
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr7.interfaces.handler.InterfaceReader
+import io.frinx.unitopo.unit.xr7.interfaces.handler.subifc.SubinterfaceReader
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907.InterfaceActive
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907._interface.configurations.InterfaceConfiguration
@@ -31,6 +32,7 @@ import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.io.
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.io.cfg.rev180111._interface.configurations._interface.configuration.Ipv4NetworkBuilder
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.xr.types.rev180629.InterfaceName
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.Interface
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.subinterfaces.Subinterface
 
 open class Ipv4MtuConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCustomizer<Config> {
     override fun writeCurrentAttributes(
@@ -82,10 +84,16 @@ open class Ipv4MtuConfigWriter(private val underlayAccess: UnderlayAccess) : Wri
         id: org.opendaylight.yangtools.yang.binding.InstanceIdentifier<Config>
     ): InstanceIdentifier<Ipv4Network> {
         val interfaceActive = InterfaceActive("act")
-        val ifcName = InterfaceName(id.firstKeyOf(Interface::class.java).name)
+        val ifcName = InterfaceName(id.firstKeyOf(Interface::class.java).name).value
+        val ifcIndex = id.firstKeyOf(Subinterface::class.java).index
+        val subIfcName = when (ifcIndex) {
+            SubinterfaceReader.ZERO_SUBINTERFACE_ID -> ifcName
+            else -> SubinterfaceReader.getSubIfcName(ifcName, ifcIndex)
+        }
         return InterfaceReader.IFC_CFGS
-                .child(InterfaceConfiguration::class.java, InterfaceConfigurationKey(interfaceActive, ifcName))
-                .augmentation(InterfaceConfiguration1::class.java)
-                .child(Ipv4Network::class.java)
+            .child(InterfaceConfiguration::class.java,
+                InterfaceConfigurationKey(interfaceActive, InterfaceName(subIfcName)))
+            .augmentation(InterfaceConfiguration1::class.java)
+            .child(Ipv4Network::class.java)
     }
 }
