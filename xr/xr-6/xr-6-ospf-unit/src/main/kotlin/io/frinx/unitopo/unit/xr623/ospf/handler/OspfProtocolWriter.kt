@@ -77,6 +77,7 @@ open class OspfProtocolWriter(private val underlayAccess: UnderlayAccess) : Ospf
 
         val builder = processBuilder
             .setKey(ProcessKey(CiscoIosXrString(processName)))
+            .setStart(true)
             .apply {
                 if (NetworInstance.DEFAULT_NETWORK_NAME != vrfName) {
                     // reuse existing configuration if present
@@ -89,11 +90,11 @@ open class OspfProtocolWriter(private val underlayAccess: UnderlayAccess) : Ospf
                         .setVrf(Collections.singletonList(
                             vrfBuilder
                                 .setKey(VrfKey(CiscoIosXrString(vrfName)))
+                                .setVrfStart(true)
                                 .build())
                         )
                         .build()
                 }
-                this.setStart(true)
             }
         return Pair(processIid, builder.build())
     }
