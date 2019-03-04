@@ -53,12 +53,18 @@ open class VrfInterfaceReader(private val underlayAccess: UnderlayAccess) :
     override fun getBuilder(id: InstanceIdentifier<Interface>): InterfaceBuilder = InterfaceBuilder()
 
     override fun getAllIdsForType(id: InstanceIdentifier<Interface>, context: ReadContext): List<InterfaceKey> {
-        val vrfName = id.firstKeyOf(NetworkInstance::class.java).name
+        val vrf = id.firstKeyOf(NetworkInstance::class.java)
+        if (vrf == NetworInstance.DEFAULT_NETWORK) {
+            return emptyList()
+        }
+        val vrfName = vrf.name
         val allIfcs = underlayAccess.read(InterfaceReader.IFC_CFGS)
                 .checkedGet()
                 .orNull()?.interfaceConfiguration ?: emptyList<InterfaceConfiguration>()
 
-        return allIfcs.filter { it.getVrf() == vrfName }
+        return allIfcs.filter {
+            it.getVrf() == vrfName && InterfaceReader.isSubinterface(it.interfaceName.value)
+        }
                 .map { InterfaceKey(it.interfaceName.value) }
                 .toList()
     }
@@ -66,8 +72,8 @@ open class VrfInterfaceReader(private val underlayAccess: UnderlayAccess) :
 
 fun InterfaceConfiguration.getVrf(): String {
     getAugmentation(InterfaceConfiguration1::class.java)?.let {
-        return it.vrf?.value ?: NetworInstance.DEFAULT_NETWORK_NAME
+        return it.vrf?.value ?: ""
     }
 
-    return NetworInstance.DEFAULT_NETWORK_NAME
+    return ""
 }

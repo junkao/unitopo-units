@@ -32,6 +32,7 @@ import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.infra.rs
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.xr.types.rev180629.CiscoIosXrString
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.xr.types.rev180629.InterfaceName
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.interfaces.Interface
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.interfaces._interface.Config
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
@@ -42,6 +43,11 @@ open class VrfInterfaceConfigWriter(private val underlayAccess: UnderlayAccess) 
         if (vrfName == NetworInstance.DEFAULT_NETWORK_NAME || dataBefore.id == null) {
             return
         }
+        val interfaceName = iid.firstKeyOf(Interface::class.java).id
+        require(InterfaceReader.isSubinterface(interfaceName)) {
+            "Only vrf of sub-interface is supported to write."
+        }
+
         val builder = underlayAccess.read(getInterfaceConfigurationIdentifier(dataBefore.id))
             .checkedGet()
             .or(InterfaceConfigurationBuilder().build())
@@ -63,6 +69,10 @@ open class VrfInterfaceConfigWriter(private val underlayAccess: UnderlayAccess) 
             return
         }
 
+        val interfaceName = iid.firstKeyOf(Interface::class.java).id
+        require(InterfaceReader.isSubinterface(interfaceName)) {
+            "Only vrf of sub-interface is supported to write."
+        }
         val matcher = InterfaceReader.SUBINTERFACE_NAME.matcher(data.id)
         matcher.find()
         val ifcName = matcher.group("ifcId")
