@@ -20,6 +20,7 @@ import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr6.interfaces.handler.InterfaceReader
+import io.frinx.unitopo.unit.xr6.interfaces.handler.parseIfcType
 import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.SubinterfaceReader
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev150730._interface.configurations.InterfaceConfiguration
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.io.cfg.rev150730.InterfaceConfiguration1
@@ -28,6 +29,7 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.ipv4.top.ipv4.ConfigBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.Interface
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.subinterfaces.Subinterface
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.iana._if.type.rev140508.EthernetCsmacd
 import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
@@ -55,7 +57,7 @@ open class Ipv4MtuConfigReader(private val underlayAccess: UnderlayAccess)
             else -> SubinterfaceReader.getSubIfcName(ifcName, ifcIndex)
         }
 
-        if (!subIfcName.startsWith("Bundle-Ether")) {
+        if (isSupportedInterface(subIfcName)) {
             InterfaceReader.readInterfaceCfg(underlayAccess, subIfcName, { extractIpv4Mtu(it, builder) })
         }
     }
@@ -65,6 +67,12 @@ open class Ipv4MtuConfigReader(private val underlayAccess: UnderlayAccess)
             it.ipv4Network?.let {
                 builder.mtu = it.mtu?.toInt()
             }
+        }
+    }
+
+    companion object {
+        fun isSupportedInterface(ifcName: String): Boolean {
+            return parseIfcType(ifcName) == EthernetCsmacd::class.java
         }
     }
 }
