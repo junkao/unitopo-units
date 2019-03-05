@@ -41,6 +41,9 @@ open class Ipv4MtuConfigWriter(private val underlayAccess: UnderlayAccess) : Wri
         dataAfter: Config,
         wtc: WriteContext
     ) {
+        val ifcName = id.firstKeyOf(Interface::class.java).name
+        require(Ipv4MtuConfigReader.isSupportedInterface(ifcName)) { "Unsupported interface: $ifcName" }
+
         val (underlayId, underlayIfcCfg) = getData(id, dataAfter)
         underlayAccess.merge(underlayId, underlayIfcCfg)
     }
@@ -75,7 +78,7 @@ open class Ipv4MtuConfigWriter(private val underlayAccess: UnderlayAccess) : Wri
     }
 
     private fun getData(
-        id: org.opendaylight.yangtools.yang.binding.InstanceIdentifier<Config>,
+        id: InstanceIdentifier<Config>,
         dataAfter: Config
     ): Pair<InstanceIdentifier<Ipv4Network>, Ipv4Network> {
         val underlayId = getId(id)
@@ -86,7 +89,7 @@ open class Ipv4MtuConfigWriter(private val underlayAccess: UnderlayAccess) : Wri
     }
 
     private fun getId(
-        id: org.opendaylight.yangtools.yang.binding.InstanceIdentifier<Config>
+        id: InstanceIdentifier<Config>
     ): InstanceIdentifier<Ipv4Network> {
         val interfaceActive = InterfaceActive("act")
         val ifcName = InterfaceName(id.firstKeyOf(Interface::class.java).name).value

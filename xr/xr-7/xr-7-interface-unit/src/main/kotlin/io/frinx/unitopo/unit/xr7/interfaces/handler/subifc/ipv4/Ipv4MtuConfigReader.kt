@@ -28,6 +28,7 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.ipv4.top.ipv4.ConfigBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.Interface
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.subinterfaces.Subinterface
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.iana._if.type.rev140508.EthernetCsmacd
 import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
@@ -51,13 +52,20 @@ open class Ipv4MtuConfigReader(private val underlayAccess: UnderlayAccess)
             SubinterfaceReader.ZERO_SUBINTERFACE_ID -> ifcName
             else -> SubinterfaceReader.getSubIfcName(ifcName, ifcIndex)
         }
-        InterfaceReader.readInterfaceCfg(underlayAccess, subIfcName, { extractIpv4Mtu(it, builder) })
+        if (isSupportedInterface(subIfcName)) {
+            InterfaceReader.readInterfaceCfg(underlayAccess, subIfcName, { extractIpv4Mtu(it, builder) })
+        }
     }
     private fun extractIpv4Mtu(ifcCfg: InterfaceConfiguration, builder: ConfigBuilder) {
         ifcCfg.getAugmentation(InterfaceConfiguration1::class.java)?.let {
             it.ipv4Network?.let {
                 builder.mtu = it.mtu?.toInt()
             }
+        }
+    }
+    companion object {
+        fun isSupportedInterface(ifcName: String): Boolean {
+            return InterfaceReader.parseIfcType(ifcName) == EthernetCsmacd::class.java
         }
     }
 }

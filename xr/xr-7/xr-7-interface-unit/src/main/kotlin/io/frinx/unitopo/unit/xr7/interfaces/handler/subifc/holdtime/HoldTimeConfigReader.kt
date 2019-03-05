@@ -28,6 +28,7 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.re
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222._interface.phys.holdtime.top.hold.time.ConfigBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.Interface
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.subinterfaces.Subinterface
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.iana._if.type.rev140508.Ieee8023adLag
 import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
@@ -64,11 +65,8 @@ class HoldTimeConfigReader(private val underlayAccess: UnderlayAccess)
     }
 
     companion object {
-        private fun isSupportedInterface(name: String): Boolean {
-            return when {
-                name.startsWith("Bundle-Ether") -> true
-                else -> false
-            }
+        fun isSupportedInterface(name: String): Boolean {
+            return InterfaceReader.parseIfcType(name) == Ieee8023adLag::class.java
         }
 
         private fun ConfigBuilder.fromUnderlay(underlay: InterfaceConfiguration6) {

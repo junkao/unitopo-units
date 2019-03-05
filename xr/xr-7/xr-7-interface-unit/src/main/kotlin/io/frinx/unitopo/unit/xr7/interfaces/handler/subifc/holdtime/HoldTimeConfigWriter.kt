@@ -40,6 +40,9 @@ class HoldTimeConfigWriter(private val underlayAccess: UnderlayAccess) : WriterC
         dataAfter: Config,
         wtc: WriteContext
     ) {
+        val ifcName = id.firstKeyOf(Interface::class.java).name
+        require(HoldTimeConfigReader.isSupportedInterface(ifcName)) { "Unsupported interface: $ifcName" }
+
         val underlayId = getId(id)
         val builder = CarrierDelayBuilder().fromOpenConfig(dataAfter)
         underlayAccess.merge(underlayId, builder.build())
