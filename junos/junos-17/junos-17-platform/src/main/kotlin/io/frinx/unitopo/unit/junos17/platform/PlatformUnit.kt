@@ -20,8 +20,8 @@ import io.fd.honeycomb.rpc.RpcService
 import io.frinx.openconfig.openconfig.platform.IIDs
 import io.fd.honeycomb.translate.impl.read.GenericOperListReader
 import io.fd.honeycomb.translate.impl.read.GenericOperReader
-import io.fd.honeycomb.translate.read.registry.ModifiableReaderRegistryBuilder
-import io.fd.honeycomb.translate.write.registry.ModifiableWriterRegistryBuilder
+import io.fd.honeycomb.translate.spi.builder.CustomizerAwareReadRegistryBuilder
+import io.fd.honeycomb.translate.spi.builder.CustomizerAwareWriteRegistryBuilder
 import io.frinx.unitopo.registry.api.TranslationUnitCollector
 import io.frinx.unitopo.registry.spi.TranslateUnit
 import io.frinx.unitopo.registry.spi.UnderlayAccess
@@ -58,19 +58,19 @@ class PlatformUnit(private val registry: TranslationUnitCollector) : TranslateUn
     override fun getRpcs(context: UnderlayAccess) = emptySet<RpcService<*, *>>()
 
     override fun provideHandlers(
-        rRegistry: ModifiableReaderRegistryBuilder,
-        wRegistry: ModifiableWriterRegistryBuilder,
+        rRegistry: CustomizerAwareReadRegistryBuilder,
+        wRegistry: CustomizerAwareWriteRegistryBuilder,
         access: UnderlayAccess
     ) {
         provideReaders(rRegistry, access)
         provideWriters(wRegistry, access)
     }
 
-    private fun provideWriters(wRegistry: ModifiableWriterRegistryBuilder, access: UnderlayAccess) {
+    private fun provideWriters(wRegistry: CustomizerAwareWriteRegistryBuilder, access: UnderlayAccess) {
         // no-op
     }
 
-    private fun provideReaders(rRegistry: ModifiableReaderRegistryBuilder, access: UnderlayAccess) {
+    private fun provideReaders(rRegistry: CustomizerAwareReadRegistryBuilder, access: UnderlayAccess) {
         rRegistry.addStructuralReader(IIDs.COMPONENTS, ComponentsBuilder::class.java)
         rRegistry.add(GenericOperListReader(IIDs.CO_COMPONENT, ComponentReader(access)))
         rRegistry.add(GenericOperReader(IIDs.CO_CO_CONFIG, ComponentConfigReader()))

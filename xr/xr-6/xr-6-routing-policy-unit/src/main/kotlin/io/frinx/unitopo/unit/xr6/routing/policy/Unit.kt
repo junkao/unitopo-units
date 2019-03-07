@@ -19,8 +19,8 @@ package io.frinx.unitopo.unit.xr6.routing.policy
 import io.fd.honeycomb.rpc.RpcService
 import io.fd.honeycomb.translate.impl.read.GenericConfigListReader
 import io.fd.honeycomb.translate.impl.write.GenericWriter
-import io.fd.honeycomb.translate.read.registry.ModifiableReaderRegistryBuilder
-import io.fd.honeycomb.translate.write.registry.ModifiableWriterRegistryBuilder
+import io.fd.honeycomb.translate.spi.builder.CustomizerAwareReadRegistryBuilder
+import io.fd.honeycomb.translate.spi.builder.CustomizerAwareWriteRegistryBuilder
 import io.frinx.openconfig.openconfig.bgp.IIDs as BgpIIDs
 import io.frinx.openconfig.openconfig.network.instance.IIDs as NeIIDs
 import io.frinx.openconfig.openconfig.policy.IIDs
@@ -71,15 +71,15 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
     override fun getRpcs(context: UnderlayAccess) = emptySet<RpcService<out DataObject, out DataObject>>()
 
     override fun provideHandlers(
-        rRegistry: ModifiableReaderRegistryBuilder,
-        wRegistry: ModifiableWriterRegistryBuilder,
+        rRegistry: CustomizerAwareReadRegistryBuilder,
+        wRegistry: CustomizerAwareWriteRegistryBuilder,
         access: UnderlayAccess
     ) {
         provideReaders(rRegistry, access)
         provideWriters(wRegistry, access)
     }
 
-    private fun provideWriters(wRegistry: ModifiableWriterRegistryBuilder, access: UnderlayAccess) {
+    private fun provideWriters(wRegistry: CustomizerAwareWriteRegistryBuilder, access: UnderlayAccess) {
         // provide writers
         wRegistry.add(GenericWriter<RoutingPolicy>(IIDs.ROUTINGPOLICY, NoopWriter()))
         wRegistry.add(GenericWriter<DefinedSets>(IIDs.RO_DEFINEDSETS, NoopWriter()))
@@ -92,7 +92,7 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
             ExtCommunitySetConfigWriter(access)), NeIIDs.NE_NE_CONFIG)
     }
 
-    private fun provideReaders(rRegistry: ModifiableReaderRegistryBuilder, access: UnderlayAccess) {
+    private fun provideReaders(rRegistry: CustomizerAwareReadRegistryBuilder, access: UnderlayAccess) {
         // provide readers
         rRegistry.addStructuralReader(IIDs.ROUTINGPOLICY, RoutingPolicyBuilder::class.java)
         rRegistry.addStructuralReader(IIDs.RO_DEFINEDSETS, DefinedSetsBuilder::class.java)

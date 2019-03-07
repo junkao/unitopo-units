@@ -20,9 +20,9 @@ import io.fd.honeycomb.rpc.RpcService
 import io.fd.honeycomb.translate.impl.read.GenericConfigReader
 import io.fd.honeycomb.translate.impl.write.GenericListWriter
 import io.fd.honeycomb.translate.impl.write.GenericWriter
-import io.fd.honeycomb.translate.read.registry.ModifiableReaderRegistryBuilder
+import io.fd.honeycomb.translate.spi.builder.CustomizerAwareReadRegistryBuilder
 import io.fd.honeycomb.translate.util.RWUtils
-import io.fd.honeycomb.translate.write.registry.ModifiableWriterRegistryBuilder
+import io.fd.honeycomb.translate.spi.builder.CustomizerAwareWriteRegistryBuilder
 import io.frinx.unitopo.registry.api.TranslationUnitCollector
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.utils.NoopListWriter
@@ -61,15 +61,15 @@ class Unit(private val registry: TranslationUnitCollector) : Unit() {
     override fun getRpcs(underlayAccess: UnderlayAccess) = emptySet<RpcService<*, *>>()
 
     override fun provideHandlers(
-        rRegistry: ModifiableReaderRegistryBuilder,
-        wRegistry: ModifiableWriterRegistryBuilder,
+        rRegistry: CustomizerAwareReadRegistryBuilder,
+        wRegistry: CustomizerAwareWriteRegistryBuilder,
         underlayAccess: UnderlayAccess
     ) {
         provideReaders(rRegistry, underlayAccess)
         provideWriters(wRegistry, underlayAccess)
     }
 
-    private fun provideWriters(writeRegistry: ModifiableWriterRegistryBuilder, underlayAccess: UnderlayAccess) {
+    private fun provideWriters(writeRegistry: CustomizerAwareWriteRegistryBuilder, underlayAccess: UnderlayAccess) {
         writeRegistry.add(GenericListWriter(LG_IIDS.LO_IN_INTERFACE, NoopListWriter()))
         writeRegistry.subtreeAddAfter(setOf(
             RWUtils.cutIdFromStart(LG_IIDS.LO_IN_IN_CO_ENABLEDLOGGINGFOREVENT, IFC_CFG_ID)),
@@ -77,7 +77,7 @@ class Unit(private val registry: TranslationUnitCollector) : Unit() {
             IN_IIDs.IN_IN_SU_SU_CONFIG)
     }
 
-    private fun provideReaders(rRegistry: ModifiableReaderRegistryBuilder, underlayAccess: UnderlayAccess) {
+    private fun provideReaders(rRegistry: CustomizerAwareReadRegistryBuilder, underlayAccess: UnderlayAccess) {
         rRegistry.addStructuralReader(LG_IIDS.LOGGING, LoggingBuilder::class.java)
         rRegistry.subtreeAdd(setOf(
             RWUtils.cutIdFromStart(LG_IIDS.LO_IN_INTERFACE, IFCS_ID),

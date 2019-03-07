@@ -19,8 +19,8 @@ package io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.ip6.r170303
 import io.fd.honeycomb.translate.impl.read.GenericConfigListReader
 import io.fd.honeycomb.translate.impl.read.GenericConfigReader
 import io.fd.honeycomb.translate.impl.write.GenericWriter
-import io.fd.honeycomb.translate.read.registry.ModifiableReaderRegistryBuilder
-import io.fd.honeycomb.translate.write.registry.ModifiableWriterRegistryBuilder
+import io.fd.honeycomb.translate.spi.builder.CustomizerAwareReadRegistryBuilder
+import io.fd.honeycomb.translate.spi.builder.CustomizerAwareWriteRegistryBuilder
 import io.frinx.openconfig.openconfig._if.ip.IIDs
 import io.frinx.unitopo.registry.api.TranslationUnitCollector
 import io.frinx.unitopo.registry.spi.UnderlayAccess
@@ -37,13 +37,13 @@ class Unit(registry: TranslationUnitCollector) : Unit(registry) {
             org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco
                 .ios.xr.ipv6.ma.cfg.rev170303.`$YangModuleInfoImpl`.getInstance())
 
-    override fun provideWriters(wRegistry: ModifiableWriterRegistryBuilder, underlayAccess: UnderlayAccess) {
+    override fun provideWriters(wRegistry: CustomizerAwareWriteRegistryBuilder, underlayAccess: UnderlayAccess) {
         wRegistry.add(GenericWriter(IIDs.IN_IN_SU_SU_AUG_SUBINTERFACE2_IP_AD_ADDRESS, Ipv6AddressWriter()))
         wRegistry.addAfter(GenericWriter(IIDs.IN_IN_SU_SU_AUG_SUBINTERFACE2_IP_AD_AD_CONFIG,
             Ipv6ConfigWriter(underlayAccess)), NetworkInstanceIIDs.NE_NE_IN_IN_CONFIG)
     }
 
-    override fun provideReaders(rRegistry: ModifiableReaderRegistryBuilder, underlayAccess: UnderlayAccess) {
+    override fun provideReaders(rRegistry: CustomizerAwareReadRegistryBuilder, underlayAccess: UnderlayAccess) {
         rRegistry.addStructuralReader(IIDs.IN_IN_SU_SU_AUG_SUBINTERFACE2, Subinterface2Builder::class.java)
         rRegistry.addStructuralReader(IIDs.IN_IN_SU_SU_AUG_SUBINTERFACE2_IPV6, Ipv6Builder::class.java)
         rRegistry.addStructuralReader(IIDs.IN_IN_SU_SU_AUG_SUBINTERFACE2_IP_ADDRESSES, AddressesBuilder::class.java)

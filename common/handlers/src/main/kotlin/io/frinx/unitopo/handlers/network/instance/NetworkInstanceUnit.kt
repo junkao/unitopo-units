@@ -19,8 +19,8 @@ import io.fd.honeycomb.rpc.RpcService
 import io.fd.honeycomb.translate.impl.read.GenericConfigReader
 import io.fd.honeycomb.translate.impl.read.GenericOperReader
 import io.fd.honeycomb.translate.impl.write.GenericWriter
-import io.fd.honeycomb.translate.read.registry.ModifiableReaderRegistryBuilder
-import io.fd.honeycomb.translate.write.registry.ModifiableWriterRegistryBuilder
+import io.fd.honeycomb.translate.spi.builder.CustomizerAwareReadRegistryBuilder
+import io.fd.honeycomb.translate.spi.builder.CustomizerAwareWriteRegistryBuilder
 import io.frinx.openconfig.openconfig.network.instance.IIDs
 import io.frinx.unitopo.handlers.network.instance.protocol.ProtocolConfigReader
 import io.frinx.unitopo.handlers.network.instance.protocol.ProtocolStateReader
@@ -42,8 +42,8 @@ abstract class NetworkInstanceUnit : TranslateUnit {
     override fun getRpcs(underlayAccess: UnderlayAccess): Set<RpcService<*, *>> = emptySet()
 
     override fun provideHandlers(
-        rRegistry: ModifiableReaderRegistryBuilder,
-        wRegistry: ModifiableWriterRegistryBuilder,
+        rRegistry: CustomizerAwareReadRegistryBuilder,
+        wRegistry: CustomizerAwareWriteRegistryBuilder,
         underlayAccess: UnderlayAccess
     ) {
         provideReaders(rRegistry)
@@ -52,13 +52,13 @@ abstract class NetworkInstanceUnit : TranslateUnit {
         provideSpecificWriters(wRegistry, underlayAccess)
     }
 
-    private fun provideWriters(wRegistry: ModifiableWriterRegistryBuilder) {
+    private fun provideWriters(wRegistry: CustomizerAwareWriteRegistryBuilder) {
         // FIXME noop
         wRegistry.add(GenericWriter(IIDs.NE_NETWORKINSTANCE, NoopWriter()))
         wRegistry.add(GenericWriter(IIDs.NE_NE_PR_PROTOCOL, NoopWriter()))
     }
 
-    private fun provideReaders(rRegistry: ModifiableReaderRegistryBuilder) {
+    private fun provideReaders(rRegistry: CustomizerAwareReadRegistryBuilder) {
         rRegistry.addStructuralReader(IIDs.NETWORKINSTANCES, NetworkInstancesBuilder::class.java)
 
         rRegistry.addStructuralReader(IIDs.NE_NE_PROTOCOLS, ProtocolsBuilder::class.java)
@@ -68,9 +68,9 @@ abstract class NetworkInstanceUnit : TranslateUnit {
         rRegistry.addStructuralReader(IIDs.NE_NE_INTERFACES, InterfacesBuilder::class.java)
     }
 
-    abstract fun provideSpecificWriters(wRegistry: ModifiableWriterRegistryBuilder, underlayAccess: UnderlayAccess)
+    abstract fun provideSpecificWriters(wRegistry: CustomizerAwareWriteRegistryBuilder, underlayAccess: UnderlayAccess)
 
-    abstract fun provideSpecificReaders(rRegistry: ModifiableReaderRegistryBuilder, underlayAccess: UnderlayAccess)
+    abstract fun provideSpecificReaders(rRegistry: CustomizerAwareReadRegistryBuilder, underlayAccess: UnderlayAccess)
 
     override fun toString(): String = "Network-instance translate unit"
 }

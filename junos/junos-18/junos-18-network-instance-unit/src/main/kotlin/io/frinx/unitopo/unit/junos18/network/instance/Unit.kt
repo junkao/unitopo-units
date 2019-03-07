@@ -20,8 +20,8 @@ import io.fd.honeycomb.translate.impl.read.GenericConfigListReader
 import io.fd.honeycomb.translate.impl.read.GenericConfigReader
 import io.fd.honeycomb.translate.impl.write.GenericListWriter
 import io.fd.honeycomb.translate.impl.write.GenericWriter
-import io.fd.honeycomb.translate.read.registry.ModifiableReaderRegistryBuilder
-import io.fd.honeycomb.translate.write.registry.ModifiableWriterRegistryBuilder
+import io.fd.honeycomb.translate.spi.builder.CustomizerAwareReadRegistryBuilder
+import io.fd.honeycomb.translate.spi.builder.CustomizerAwareWriteRegistryBuilder
 import io.frinx.openconfig.openconfig.network.instance.IIDs
 import io.frinx.unitopo.registry.api.TranslationUnitCollector
 import io.frinx.unitopo.registry.spi.UnderlayAccess
@@ -74,34 +74,34 @@ class Unit(private val registry: TranslationUnitCollector) : NetworkInstanceUnit
         UnderlayRoutingInstanceYangModuleInfo.getInstance()
     )
 
-    override fun provideSpecificWriters(wRegistry: ModifiableWriterRegistryBuilder, underlayAccess: UnderlayAccess) {
-        wRegistry.addAfter(GenericWriter(IIDs.NE_NE_CONFIG, NetworkInstanceConfigWriter(underlayAccess)),
+    override fun provideSpecificWriters(wRegistry: CustomizerAwareWriteRegistryBuilder, underlay: UnderlayAccess) {
+        wRegistry.addAfter(GenericWriter(IIDs.NE_NE_CONFIG, NetworkInstanceConfigWriter(underlay)),
             /*handle after ifc configuration*/ io.frinx.openconfig.openconfig.interfaces.IIDs.IN_IN_CONFIG)
 
         wRegistry.add(GenericListWriter(IIDs.NE_NE_IN_INTERFACE, NoopListWriter()))
-        wRegistry.add(GenericWriter(IIDs.NE_NE_IN_IN_CONFIG, InterfaceConfigWriter(underlayAccess)))
+        wRegistry.add(GenericWriter(IIDs.NE_NE_IN_IN_CONFIG, InterfaceConfigWriter(underlay)))
 
-        wRegistry.add(GenericWriter(IIDs.NE_NE_PR_PR_CONFIG, ProtocolConfigWriter(underlayAccess)))
+        wRegistry.add(GenericWriter(IIDs.NE_NE_PR_PR_CONFIG, ProtocolConfigWriter(underlay)))
 
         wRegistry.add(GenericListWriter(IIDs.NE_NE_PR_PR_LO_AGGREGATE, NoopListWriter()))
         wRegistry.subtreeAdd(NE_NE_PR_PR_LO_AG_CONFIG_SUBTREE,
-            GenericWriter(IIDs.NE_NE_PR_PR_LO_AG_CONFIG, AggregateConfigWriter(underlayAccess)))
+            GenericWriter(IIDs.NE_NE_PR_PR_LO_AG_CONFIG, AggregateConfigWriter(underlay)))
     }
 
-    override fun provideSpecificReaders(rRegistry: ModifiableReaderRegistryBuilder, underlayAccess: UnderlayAccess) {
-        rRegistry.add(GenericConfigListReader(IIDs.NE_NETWORKINSTANCE, NetworkInstanceReader(underlayAccess)))
+    override fun provideSpecificReaders(rRegistry: CustomizerAwareReadRegistryBuilder, underlay: UnderlayAccess) {
+        rRegistry.add(GenericConfigListReader(IIDs.NE_NETWORKINSTANCE, NetworkInstanceReader(underlay)))
         rRegistry.add(GenericConfigReader<NetworkInstanceConfig, NetworkInstanceConfigBuilder>(
-            IIDs.NE_NE_CONFIG, NetworkInstanceConfigReader(underlayAccess)))
+            IIDs.NE_NE_CONFIG, NetworkInstanceConfigReader(underlay)))
 
-        rRegistry.add(GenericConfigListReader(IIDs.NE_NE_IN_INTERFACE, InterfaceReader(underlayAccess)))
-        rRegistry.add(GenericConfigReader(IIDs.NE_NE_IN_IN_CONFIG, InterfaceConfigReader(underlayAccess)))
+        rRegistry.add(GenericConfigListReader(IIDs.NE_NE_IN_INTERFACE, InterfaceReader(underlay)))
+        rRegistry.add(GenericConfigReader(IIDs.NE_NE_IN_IN_CONFIG, InterfaceConfigReader(underlay)))
 
-        rRegistry.add(GenericConfigListReader(IIDs.NE_NE_PR_PROTOCOL, ProtocolReader(underlayAccess)))
+        rRegistry.add(GenericConfigListReader(IIDs.NE_NE_PR_PROTOCOL, ProtocolReader(underlay)))
         rRegistry.addStructuralReader(IIDs.NE_NE_PR_PR_LOCALAGGREGATES, LocalAggregatesBuilder::class.java)
-        rRegistry.add(GenericConfigListReader(IIDs.NE_NE_PR_PR_LO_AGGREGATE, AggregateReader(underlayAccess)))
+        rRegistry.add(GenericConfigListReader(IIDs.NE_NE_PR_PR_LO_AGGREGATE, AggregateReader(underlay)))
         rRegistry.subtreeAdd(
             NE_NE_PR_PR_LO_AG_CONFIG_SUBTREE,
-            GenericConfigReader(IIDs.NE_NE_PR_PR_LO_AG_CONFIG, AggregateConfigReader(underlayAccess)))
+            GenericConfigReader(IIDs.NE_NE_PR_PR_LO_AG_CONFIG, AggregateConfigReader(underlay)))
     }
 
     override fun toString(): String = "Junos 18.2 network-instance translate unit"
