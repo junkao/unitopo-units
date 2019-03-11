@@ -26,6 +26,7 @@ import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cf
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.xr.types.rev150629.InterfaceName
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.Interface
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces._interface.Config
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.iana._if.type.rev140508.Ieee8023adLag
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.iana._if.type.rev140508.SoftwareLoopback
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.interfaces.rev140508.InterfaceType
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
@@ -103,7 +104,7 @@ class InterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : Writer
 
     companion object {
         private fun isVirtualInterface(type: Class<out InterfaceType>): Boolean {
-            return type == SoftwareLoopback::class.java
+            return type == SoftwareLoopback::class.java || type == Ieee8023adLag::class.java
         }
     }
 }
