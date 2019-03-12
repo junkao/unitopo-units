@@ -397,6 +397,10 @@
                                 <interface-name>GigabitEthernet0/0/0/0.2147483647</interface-name>
                                 <interface>GigabitEthernet0/0/0/0.1</interface>
                             </interface>
+                            <interface>
+                                <interface-name>Bundle-Ether100</interface-name>
+                                <interface>Bundle-Ether100</interface>
+                            </interface>
                         </interfaces>
                     </system-view>
                 </data-node>
@@ -404,6 +408,22 @@
         </interface-properties>
 
         <interface-configurations xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg">
+            <interface-configuration>
+                <active>act</active>
+                <interface-name>GigabitEthernet0/0/0/0</interface-name>
+                <description>IF_DESCRIPTION-001</description>
+                <dampening>
+                    <args>specify-all</args>
+                    <half-life>10</half-life>
+                    <reuse-threshold>11</reuse-threshold>
+                    <suppress-threshold>12</suppress-threshold>
+                    <suppress-time>13</suppress-time>
+                </dampening>
+                <shutdown></shutdown>
+                <statistics xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-statsd-cfg">
+                    <load-interval>60</load-interval>
+                </statistics>
+            </interface-configuration>
             <interface-configuration>
                 <active>act</active>
                 <interface-name>GigabitEthernet0/0/0/0.2147483647</interface-name>
@@ -432,6 +452,13 @@
             <interface-configuration>
                 <active>act</active>
                 <interface-name>Bundle-Ether100</interface-name>
+                <dampening>
+                    <args>specify-all</args>
+                    <half-life>10</half-life>
+                    <reuse-threshold>11</reuse-threshold>
+                    <suppress-threshold>12</suppress-threshold>
+                    <suppress-time>13</suppress-time>
+                </dampening>
                 <interface-virtual></interface-virtual>
                 <description>test</description>
             </interface-configuration>
