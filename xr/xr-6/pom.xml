@@ -43,6 +43,7 @@
         <module>xr-6-models</module>
         <module>xr-6-network-instance-unit</module>
         <module>xr-6-ospf-unit</module>
+        <module>xr-6-isis-unit</module>
         <module>xr-6-platform-unit</module>
         <module>xr-6-routing-policy-unit</module>
     </modules>

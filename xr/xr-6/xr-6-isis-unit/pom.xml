@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright © 2018 Frinx and others.
+  ~ Copyright © 2019 Frinx and others.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -15,8 +15,6 @@
   ~ limitations under the License.
   -->
 
-<!-- vi: set et smarttab sw=4 tabstop=4: -->
-
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
@@ -28,15 +26,8 @@
         <relativePath>../../../kotlin-unit-parent</relativePath>
     </parent>
 
-    <artifactId>xr-6-network-instance-unit</artifactId>
+    <artifactId>xr-6-isis-unit</artifactId>
     <packaging>bundle</packaging>
-    <description>
-        Unified topology unit for XR network instance.
-        Compatible with:
-            IOS XR 6
-              - 6.0.0 - 6.2.2
-        According to: https://github.com/YangModels/yang/tree/master/vendor/cisco/xr
-    </description>
 
     <dependencies>
         <dependency>
@@ -45,38 +36,18 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>xr-6-interface-unit</artifactId>
+            <groupId>io.frinx.unitopo</groupId>
+            <artifactId>xr-6-init-unit</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>xr-6-bgp-unit</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>xr-6-ospf-unit</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>xr-6-isis-unit</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>xr-6-lr-unit</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>xr-6-ip6-unit</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>io.frinx.unitopo</groupId>
             <artifactId>utils-unit</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.frinx.unitopo</groupId>
+            <artifactId>common-handlers</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -92,30 +63,15 @@
             <version>${hc.version}</version>
         </dependency>
 
-        <!-- Models unified -->
+        <!-- Openconfig models -->
+        <dependency>
+            <groupId>io.frinx.openconfig</groupId>
+            <artifactId>openconfig-isis</artifactId>
+            <version>${openconfig.version}</version>
+        </dependency>
         <dependency>
             <groupId>io.frinx.openconfig</groupId>
             <artifactId>openconfig-network-instance</artifactId>
-            <version>${openconfig.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.frinx.openconfig</groupId>
-            <artifactId>openconfig-types</artifactId>
-            <version>${openconfig.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.frinx.openconfig</groupId>
-            <artifactId>openconfig-bgp</artifactId>
-            <version>${openconfig.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.frinx.openconfig</groupId>
-            <artifactId>openconfig-interfaces</artifactId>
-            <version>${openconfig.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.frinx.openconfig</groupId>
-            <artifactId>openconfig-local-routing</artifactId>
             <version>${openconfig.version}</version>
         </dependency>
         <dependency>
@@ -124,28 +80,43 @@
             <version>${openconfig.version}</version>
         </dependency>
         <dependency>
-            <groupId>io.frinx.openconfig</groupId>
-            <artifactId>openconfig-vlan</artifactId>
-            <version>${openconfig.version}</version>
+            <groupId>org.opendaylight.mdsal.model</groupId>
+            <artifactId>ietf-yang-types-20130715</artifactId>
         </dependency>
-        <dependency>
-            <groupId>io.frinx.openconfig</groupId>
-            <artifactId>openconfig-policy</artifactId>
-            <version>${openconfig.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.frinx.openconfig</groupId>
-            <artifactId>openconfig-if-ip</artifactId>
-            <version>${openconfig.version}</version>
-        </dependency>
-
         <dependency>
             <groupId>org.opendaylight.mdsal.model</groupId>
             <artifactId>ietf-inet-types-2013-07-15</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.opendaylight.mdsal</groupId>
-            <artifactId>yang-binding</artifactId>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>yang-common</artifactId>
+        </dependency>
+
+        <!-- Testing Dependencies -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Netconf testing dependencies-->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>utils-unit</artifactId>
+            <type>test-jar</type>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.netconf</groupId>
+            <artifactId>sal-netconf-connector</artifactId>
+            <version>${mdsal-old.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

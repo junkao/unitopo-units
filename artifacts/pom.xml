@@ -134,7 +134,7 @@
                 <version>${project.version}</version>
             </dependency>
 
-            <!-- Cisco XR -->
+            <!-- Cisco XR-6 -->
             <dependency>
                 <groupId>io.frinx.unitopo</groupId>
                 <artifactId>xr-6-bgp-unit</artifactId>
@@ -195,6 +195,13 @@
                 <artifactId>xr-6-configuration-metadata-unit</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>io.frinx.unitopo</groupId>
+                <artifactId>xr-6-isis-unit</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- Cisco XR-7 -->
             <dependency>
                 <groupId>io.frinx.unitopo</groupId>
                 <artifactId>xr-7-init-unit</artifactId>

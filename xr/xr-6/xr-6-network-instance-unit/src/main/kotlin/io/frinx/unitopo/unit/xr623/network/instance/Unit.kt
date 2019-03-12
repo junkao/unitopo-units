@@ -22,18 +22,21 @@ import io.fd.honeycomb.translate.impl.write.GenericWriter
 import io.fd.honeycomb.translate.spi.builder.CustomizerAwareReadRegistryBuilder
 import io.fd.honeycomb.translate.spi.builder.CustomizerAwareWriteRegistryBuilder
 import io.frinx.openconfig.openconfig.network.instance.IIDs
+import io.frinx.unitopo.handlers.network.instance.NetworkInstanceUnit
 import io.frinx.unitopo.registry.api.TranslationUnitCollector
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.handlers.network.instance.NetworkInstanceUnit
 import io.frinx.unitopo.unit.utils.NoopWriter
 import io.frinx.unitopo.unit.xr623.network.instance.vrf.ifc.VrfInterfaceConfigReader
-import io.frinx.unitopo.unit.xr623.network.instance.vrf.protocol.ProtocolConfigWriter
 import io.frinx.unitopo.unit.xr623.network.instance.vrf.ifc.VrfInterfaceConfigWriter
 import io.frinx.unitopo.unit.xr623.network.instance.vrf.ifc.VrfInterfaceReader
+import io.frinx.unitopo.unit.xr623.network.instance.vrf.protocol.ProtocolConfigWriter
 import io.frinx.unitopo.unit.xr623.network.instance.vrf.protocol.ProtocolReader
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.clns.isis.cfg.rev151109.`$YangModuleInfoImpl` as UnderlayIsisYangInfo
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.clns.isis.datatypes.rev151109.`$YangModuleInfoImpl` as UnderlayIsisTypesYangInfo
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev150730.`$YangModuleInfoImpl` as UnderlayInterfacesYangInfo
-import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.infra.rsi.cfg.rev161219.`$YangModuleInfoImpl` as UnderlayVRFYangInto
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.infra.rsi.cfg.rev161219.`$YangModuleInfoImpl` as UnderlayVRFYangInfo
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.xr.types.rev150629.`$YangModuleInfoImpl` as UnderlayTypesYangInfo
 
 open class Unit(private val registry: TranslationUnitCollector) : NetworkInstanceUnit() {
 
@@ -49,7 +52,10 @@ open class Unit(private val registry: TranslationUnitCollector) : NetworkInstanc
 
     override fun getUnderlayYangSchemas(): Set<YangModuleInfo> = setOf(
             UnderlayInterfacesYangInfo.getInstance(),
-            UnderlayVRFYangInto.getInstance()
+            UnderlayVRFYangInfo.getInstance(),
+            UnderlayIsisYangInfo.getInstance(),
+            UnderlayIsisTypesYangInfo.getInstance(),
+            UnderlayTypesYangInfo.getInstance()
     )
 
     override fun provideSpecificWriters(wRegistry: CustomizerAwareWriteRegistryBuilder, underlay: UnderlayAccess) {
