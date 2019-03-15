@@ -23,6 +23,9 @@ import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cf
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev150730._interface.configurations.InterfaceConfiguration
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev150730._interface.configurations.InterfaceConfigurationBuilder
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev150730._interface.configurations.InterfaceConfigurationKey
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev150730._interface.configurations._interface.configuration.MtusBuilder
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev150730._interface.configurations._interface.configuration.mtus.MtuBuilder
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.xr.types.rev150629.CiscoIosXrString
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.xr.types.rev150629.InterfaceName
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.Interface
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces._interface.Config
@@ -77,6 +80,17 @@ class InterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : Writer
             ifcCfgBuilder.isShutdown = null
 
         if (isVirtualInterface(dataAfter.type)) ifcCfgBuilder.isInterfaceVirtual = true
+
+        ifcCfgBuilder.apply {
+            mtus = when (dataAfter.mtu) {
+                null -> null
+                else -> MtusBuilder().apply {
+                    mtu = listOf(MtuBuilder().setMtu(dataAfter.mtu.toLong())
+                        .setOwner(CiscoIosXrString("etherbundle"))
+                        .build())
+                }.build()
+            }
+        }
 
         val underlayIfcCfg = ifcCfgBuilder
                 .setInterfaceName(ifcName)
