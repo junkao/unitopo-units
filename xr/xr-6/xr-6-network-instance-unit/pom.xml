@@ -147,6 +147,38 @@
             <groupId>org.opendaylight.mdsal</groupId>
             <artifactId>yang-binding</artifactId>
         </dependency>
+
+        <!-- Testing Dependencies -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-library</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Netconf testing dependencies-->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>utils-unit</artifactId>
+            <type>test-jar</type>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.netconf</groupId>
+            <artifactId>sal-netconf-connector</artifactId>
+            <version>${mdsal-old.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
