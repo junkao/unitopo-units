@@ -74,7 +74,9 @@ class InterfaceDampeningConfigWriter(private val underlayAccess: UnderlayAccess)
         dataBefore: Config,
         writeContext: WriteContext
     ) {
-        underlayAccess.delete(getUnderlayId(id))
+        if (dataBefore.isEnabled) {
+            underlayAccess.delete(getUnderlayId(id))
+        }
     }
 
     private fun getUnderlayId(id: InstanceIdentifier<Config>):

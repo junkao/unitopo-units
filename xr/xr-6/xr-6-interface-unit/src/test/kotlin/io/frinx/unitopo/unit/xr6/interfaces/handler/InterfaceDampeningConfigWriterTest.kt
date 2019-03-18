@@ -143,7 +143,7 @@ class InterfaceDampeningConfigWriterTest : AbstractNetconfHandlerTest() {
     @Test
     fun testDeleteCurrentAttributes() {
         val config = ConfigBuilder(BASE_CONFIG).apply {
-            this.isEnabled = null
+            this.isEnabled = true
         }.build()
 
         val idCap = ArgumentCaptor
