@@ -13,7 +13,7 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
 
   import Cisco-IOS-XR-types { prefix "xr"; revision-date "2015-06-29"; }
 
-  import Cisco-IOS-XR-snmp-agent-cfg { prefix "a1"; }
+  import Cisco-IOS-XR-snmp-agent-cfg { prefix "a1"; revision-date "2015-10-27"; }
 
   /*** META INFORMATION ***/
 
