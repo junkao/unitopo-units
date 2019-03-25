@@ -22,9 +22,8 @@ import io.fd.honeycomb.translate.spi.builder.CustomizerAwareReadRegistryBuilder
 import io.fd.honeycomb.translate.spi.builder.CustomizerAwareWriteRegistryBuilder
 import io.frinx.openconfig.openconfig.platform.IIDs
 import io.frinx.unitopo.registry.api.TranslationUnitCollector
-import io.frinx.unitopo.registry.spi.TranslateUnit
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-
+import io.frinx.unitopo.unit.xr6.init.Unit
 import io.frinx.unitopo.unit.xr6.platform.handler.ComponentConfigReader
 import io.frinx.unitopo.unit.xr6.platform.handler.ComponentReader
 import io.frinx.unitopo.unit.xr6.platform.handler.ComponentStateReader
@@ -32,7 +31,7 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.platform.rev1
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.asr9k.sc.invmgr.admin.oper.rev151109.`$YangModuleInfoImpl` as UnderlayInventoryModule
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.platform.rev161222.`$YangModuleInfoImpl` as OpenconfigPlatformModule
 
-class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
+class Unit(private val registry: TranslationUnitCollector) : Unit() {
     private var reg: TranslationUnitCollector.Registration? = null
 
     // Invoked by blueprint

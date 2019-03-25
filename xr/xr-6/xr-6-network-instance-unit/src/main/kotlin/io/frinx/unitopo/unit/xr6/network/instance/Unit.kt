@@ -156,4 +156,6 @@ class Unit(private val registry: TranslationUnitCollector) : NetworkInstanceUnit
     }
 
     override fun toString(): String = "XR 6 (2015-07-30) network-instance translate unit"
+
+    override fun useAutoCommit() = true
 }

@@ -25,10 +25,10 @@ import io.fd.honeycomb.translate.spi.builder.CustomizerAwareReadRegistryBuilder
 import io.fd.honeycomb.translate.spi.builder.CustomizerAwareWriteRegistryBuilder
 import io.frinx.openconfig.openconfig.network.instance.IIDs
 import io.frinx.unitopo.registry.api.TranslationUnitCollector
-import io.frinx.unitopo.registry.spi.TranslateUnit
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.utils.NoopListWriter
 import io.frinx.unitopo.unit.utils.NoopWriter
+import io.frinx.unitopo.unit.xr6.init.Unit
 import io.frinx.unitopo.unit.xr6.ospf.handler.AreaConfigReader
 import io.frinx.unitopo.unit.xr6.ospf.handler.AreaConfigWriter
 import io.frinx.unitopo.unit.xr6.ospf.handler.AreaInterfaceConfigReader
@@ -49,7 +49,7 @@ import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.osp
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.ospf.cisco.rev171124.`$YangModuleInfoImpl` as OpenconfigCiscoOspfExtensionModule
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.ospf.types.rev170228.`$YangModuleInfoImpl` as OpenconfigOspfYangModule
 
-class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
+class Unit(private val registry: TranslationUnitCollector) : Unit() {
     private var reg: TranslationUnitCollector.Registration? = null
 
     fun init() {

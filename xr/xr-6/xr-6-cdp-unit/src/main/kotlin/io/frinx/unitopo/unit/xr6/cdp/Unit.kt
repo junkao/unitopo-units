@@ -23,8 +23,8 @@ import io.fd.honeycomb.translate.spi.builder.CustomizerAwareReadRegistryBuilder
 import io.fd.honeycomb.translate.spi.builder.CustomizerAwareWriteRegistryBuilder
 import io.frinx.openconfig.openconfig.cdp.IIDs
 import io.frinx.unitopo.registry.api.TranslationUnitCollector
-import io.frinx.unitopo.registry.spi.TranslateUnit
 import io.frinx.unitopo.registry.spi.UnderlayAccess
+import io.frinx.unitopo.unit.xr6.init.Unit
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.cdp.rev171024.cdp.top.CdpBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.lldp.rev160516.lldp._interface.top.InterfacesBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.lldp.rev160516.lldp.neighbor.top.NeighborsBuilder
@@ -32,7 +32,7 @@ import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.cdp.cfg.
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.cdp.oper.rev150730.`$YangModuleInfoImpl` as UnderlayCdpOperYangInfo
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.cdp.rev171024.`$YangModuleInfoImpl` as CdpYangInfo
 
-class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
+class Unit(private val registry: TranslationUnitCollector) : Unit() {
     private var reg: TranslationUnitCollector.Registration? = null
 
     fun init() {

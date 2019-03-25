@@ -45,6 +45,11 @@
             <artifactId>common-handlers</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>io.frinx.unitopo</groupId>
+            <artifactId>xr-6-init-unit</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>io.frinx.translate.unit.commons</groupId>

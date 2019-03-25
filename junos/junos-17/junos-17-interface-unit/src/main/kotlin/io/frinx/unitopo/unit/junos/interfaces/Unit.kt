@@ -208,6 +208,4 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
     companion object {
         private val IFC_AGGREGATE_IID = InstanceIdentifier.create(Config::class.java)
     }
-
-    override fun useAutoCommit() = false
 }

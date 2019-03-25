@@ -38,6 +38,11 @@
             <artifactId>openconfig-platform</artifactId>
             <version>${openconfig.version}</version>
         </dependency>
+        <dependency>
+            <groupId>io.frinx.unitopo</groupId>
+            <artifactId>xr-6-init-unit</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>

@@ -172,6 +172,4 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
     }
 
     override fun toString(): String = "Junos 18.2 interface translate unit"
-
-    override fun useAutoCommit() = false
 }

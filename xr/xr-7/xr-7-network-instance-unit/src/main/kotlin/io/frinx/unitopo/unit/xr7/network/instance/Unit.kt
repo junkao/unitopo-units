@@ -69,8 +69,6 @@ class Unit(private val registry: TranslationUnitCollector) : NetworkInstanceUnit
         reg?.let { reg!!.close() }
     }
 
-    override fun useAutoCommit() = false
-
     override fun getYangSchemas() = setOf(
         PfYangModuleInfoImpl.getInstance(),
         PfNwYangModuleInfoImpl.getInstance(),

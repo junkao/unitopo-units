@@ -24,6 +24,4 @@ import io.frinx.unitopo.registry.spi.TranslateUnit
 abstract class Unit : TranslateUnit {
 
     override fun toString(): String = "XR 7 init unit"
-
-    override fun useAutoCommit() = false
 }

@@ -29,8 +29,8 @@ import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.utils.NoopListWriter
 import io.frinx.unitopo.unit.utils.NoopWriter
 import io.frinx.unitopo.unit.xr6.ospf.handler.AreaConfigReader
-import io.frinx.unitopo.unit.xr623.ospf.handler.AreaInterfaceConfigReader
 import io.frinx.unitopo.unit.xr623.ospf.handler.AreaConfigWriter
+import io.frinx.unitopo.unit.xr623.ospf.handler.AreaInterfaceConfigReader
 import io.frinx.unitopo.unit.xr623.ospf.handler.AreaInterfaceConfigWriter
 import io.frinx.unitopo.unit.xr623.ospf.handler.AreaInterfaceReader
 import io.frinx.unitopo.unit.xr623.ospf.handler.MaxMetricConfigWriter
