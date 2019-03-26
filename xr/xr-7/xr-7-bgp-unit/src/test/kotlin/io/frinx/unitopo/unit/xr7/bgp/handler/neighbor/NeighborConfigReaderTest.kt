@@ -67,7 +67,7 @@ class NeighborConfigReaderTest : AbstractNetconfHandlerTest() {
 
     @Test
     fun readCurrentAttributesForType() {
-        val key = "12485744465E5A"
+        val key = "Encrypted[12485744465E5A]"
         val builder = ConfigBuilder()
         val asnumer = "100"
 
@@ -84,6 +84,6 @@ class NeighborConfigReaderTest : AbstractNetconfHandlerTest() {
         target.readCurrentAttributesForType(id, builder, readContext)
         Assert.assertEquals(IpAddress(Ipv4Address("10.1.22.23")), builder.build().neighborAddress)
         Assert.assertThat(builder.peerAs.value.toString(), CoreMatchers.equalTo(asnumer))
-        Assert.assertThat(builder.authPassword.value.toString(), CoreMatchers.equalTo(key))
+        Assert.assertThat(builder.authPassword.encryptedString.value.toString(), CoreMatchers.equalTo(key))
     }
 }
