@@ -40,7 +40,9 @@ class OspfAreaInterfaceConfigReader(private val underlayAccess: UnderlayAccess) 
     override fun readCurrentAttributesForType(id: IID<Config>, config: ConfigBuilder, readContext: ReadContext) {
         val areaId = String(id.firstKeyOf(Area::class.java).identifier.value)
         val ifaceId = id.firstKeyOf(Interface::class.java).id
-        config.metric = OspfMetric(getMetric(areaId, ifaceId))
+        getMetric(areaId, ifaceId)?.let {
+            config.metric = OspfMetric(it)
+        }
     }
 
     private fun getMetric(area: String, iface: String): Int? {
