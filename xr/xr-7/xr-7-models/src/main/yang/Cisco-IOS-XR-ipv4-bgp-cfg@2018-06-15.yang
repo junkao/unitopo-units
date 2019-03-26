@@ -11,13 +11,13 @@ module Cisco-IOS-XR-ipv4-bgp-cfg {
 
   import ietf-inet-types { prefix "inet"; }
 
-  import Cisco-IOS-XR-types { prefix "xr"; }
+  import Cisco-IOS-XR-types { prefix "xr"; revision-date 2018-06-29; }
 
   import Cisco-IOS-XR-ipv4-bgp-datatypes { prefix "dt1"; revision-date 2017-06-26; }
 
-  import Cisco-IOS-XR-infra-rsi-cfg { prefix "a1"; }
+  import Cisco-IOS-XR-infra-rsi-cfg { prefix "a1"; revision-date 2018-06-15; }
 
-  import Cisco-IOS-XR-snmp-agent-cfg { prefix "a2"; }
+  import Cisco-IOS-XR-snmp-agent-cfg { prefix "a2"; revision-date 2018-06-27; }
 
   /*** META INFORMATION ***/
 

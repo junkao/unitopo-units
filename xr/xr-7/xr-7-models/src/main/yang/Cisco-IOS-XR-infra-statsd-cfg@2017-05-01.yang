@@ -9,7 +9,7 @@ module Cisco-IOS-XR-infra-statsd-cfg {
 
   /*** LINKAGE (IMPORTS / INCLUDES) ***/
 
-  import Cisco-IOS-XR-ifmgr-cfg { prefix "a1"; }
+  import Cisco-IOS-XR-ifmgr-cfg { prefix "a1"; revision-date 2017-09-07; }
 
   /*** META INFORMATION ***/
 

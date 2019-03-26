@@ -4,7 +4,7 @@ module Cisco-IOS-XR-ipv4-bgp-act {
 
   prefix "bgp-act";
 
-  import Cisco-IOS-XR-types { prefix "csc"; }
+  import Cisco-IOS-XR-types { prefix "csc"; revision-date 2018-06-29; }
   import ietf-inet-types { prefix "inet"; }
 
   organization "Cisco Systems, Inc.";

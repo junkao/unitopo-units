@@ -9,11 +9,11 @@ module Cisco-IOS-XR-qos-ma-cfg {
 
   /*** LINKAGE (IMPORTS / INCLUDES) ***/
 
-  import Cisco-IOS-XR-types { prefix "xr"; }
+  import Cisco-IOS-XR-types { prefix "xr"; revision-date 2018-06-29; }
 
-  import Cisco-IOS-XR-ifmgr-cfg { prefix "a1"; }
+  import Cisco-IOS-XR-ifmgr-cfg { prefix "a1"; revision-date 2017-09-07; }
 
-  import Cisco-IOS-XR-l2vpn-cfg { prefix "a2"; }
+  import Cisco-IOS-XR-l2vpn-cfg { prefix "a2"; revision-date 2018-06-15; }
 
   /*** META INFORMATION ***/
 
