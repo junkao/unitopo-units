@@ -16,6 +16,7 @@
 
 package io.frinx.unitopo.unit.xr7.bgp.handler.neighbor
 
+import com.google.common.base.Preconditions
 import io.fd.honeycomb.translate.read.ReadContext
 import io.frinx.openconfig.network.instance.NetworInstance
 import io.frinx.unitopo.handlers.bgp.BgpReader
@@ -40,12 +41,17 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.insta
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstanceKey
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.Protocol
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.ProtocolKey
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.openconfig.types.rev170113.RoutingPassword
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.openconfig.types.rev170113.EncryptedPassword
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.openconfig.types.rev170113.EncryptedString
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.openconfig.types.rev170113.PlainString
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.types.inet.rev170403.IpAddress
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.IpAddressNoZone
 import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
+
+const val PASSWORD_ENCRYPTED_PATTERN = "Encrypted[%s]"
+const val PASSWORD_PLAIN_PREFIX = "!"
 
 open class NeighborConfigReader(private val access: UnderlayAccess) : BgpReader.BgpConfigReader<Config, ConfigBuilder> {
 
@@ -75,6 +81,7 @@ open class NeighborConfigReader(private val access: UnderlayAccess) : BgpReader.
     }
 
     companion object {
+
         fun parseNeighbor(
             underlayInstance: Instance?,
             vrfKey: NetworkInstanceKey,
@@ -120,12 +127,21 @@ private fun <T> ConfigBuilder.fromCommonUnderlay(neighbor: T?)
             peerAs = As.asFromDotNotation(neighbor.remoteAs.asXx.value, neighbor.remoteAs.asYy.value)
         }
         it.password?.let {
-            authPassword = RoutingPassword(neighbor.password.password.value)
+            authPassword = getEncryptedPassword(neighbor.password.password.value)
         }
         it.description?.let {
             description = neighbor.description
         }
     }
+}
+
+private fun getEncryptedPassword(password: String): EncryptedPassword {
+
+    Preconditions.checkNotNull(password)
+    return if (password.startsWith(PASSWORD_PLAIN_PREFIX))
+            EncryptedPassword(PlainString(password.substring(PASSWORD_PLAIN_PREFIX.length)))
+        else
+            EncryptedPassword(EncryptedString(String.format(PASSWORD_ENCRYPTED_PATTERN, password)))
 }
 
 fun IpAddress.toNoZone(): IpAddressNoZone {
