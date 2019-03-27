@@ -103,6 +103,12 @@
             <artifactId>mockito-core</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>io.frinx.openconfig</groupId>
+            <artifactId>openconfig-utils</artifactId>
+            <version>${openconfig.version}</version>
+            <scope>test</scope>
+        </dependency>
 
         <!-- Netconf testing dependencies-->
         <dependency>

@@ -32,6 +32,14 @@
                                     <level>not-set</level>
                                     <interval>100</interval>
                                 </lsp-retransmit-interval>
+                                <lsp-retransmit-interval>
+                                    <level>level1</level>
+                                    <interval>200</interval>
+                                </lsp-retransmit-interval>
+                                <lsp-retransmit-interval>
+                                    <level>level2</level>
+                                    <interval>300</interval>
+                                </lsp-retransmit-interval>
                             </lsp-retransmit-intervals>
                             <hello-passwords>
                                 <hello-password>
@@ -58,6 +66,15 @@
                                 </interface-af>
                             </interface-afs>
                         </interface>
+
+                        <interface>
+                            <interface-name>Bundle-Ether5001</interface-name>
+                        </interface>
+
+                        <interface>
+                            <interface-name>Bundle-Ether5002</interface-name>
+                        </interface>
+
                     </interfaces>
                 </instance>
                 <instance>
