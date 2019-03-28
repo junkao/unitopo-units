@@ -31,7 +31,7 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.ipv4.top.ipv4.addresses.AddressKey as Ipv4AddressKey
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.ipv6.top.ipv6.addresses.AddressKey as Ipv6AddressKey
 import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.ip6.r150730.Ipv6AddressReader as Ipv6AddressRev150730Reader
-import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.ip6.r170303.Ipv6AddressReader as Ipv6AddressRev170303Reader
+import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.ip6.r170303.Ipv6AddressConfigReader as Ipv6AddressRev170303Reader
 
 class SubinterfaceReader(private val underlayAccess: UnderlayAccess) :
     ConfigListReaderCustomizer<Subinterface, SubinterfaceKey, SubinterfaceBuilder> {
