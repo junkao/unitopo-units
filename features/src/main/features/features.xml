@@ -76,6 +76,7 @@
         <bundle>mvn:io.frinx.unitopo/xr-6-platform-unit/{{VERSION}}</bundle>
         <bundle>mvn:io.frinx.unitopo/xr-6-cdp-unit/{{VERSION}}</bundle>
         <bundle>mvn:io.frinx.unitopo/xr-6-lldp-unit/{{VERSION}}</bundle>
+        <bundle>mvn:io.frinx.unitopo/xr-6-logging-unit/{{VERSION}}</bundle>
         <bundle>mvn:io.frinx.unitopo/xr-6-configuration-metadata-unit/{{VERSION}}</bundle>
         <bundle>mvn:io.frinx.unitopo/xr-6-isis-unit/{{VERSION}}</bundle>
     </feature>
