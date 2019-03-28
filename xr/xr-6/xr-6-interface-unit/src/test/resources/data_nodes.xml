@@ -423,6 +423,15 @@
                 <statistics xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-statsd-cfg">
                     <load-interval>60</load-interval>
                 </statistics>
+                <bundle-member xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-bundlemgr-cfg">
+                    <id>
+                        <bundle-id>65535</bundle-id>
+                        <port-activity>passive</port-activity>
+                    </id>
+                </bundle-member>
+                <lacp xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-bundlemgr-cfg">
+                    <period-short>true</period-short>
+                </lacp>
             </interface-configuration>
             <interface-configuration>
                 <active>act</active>

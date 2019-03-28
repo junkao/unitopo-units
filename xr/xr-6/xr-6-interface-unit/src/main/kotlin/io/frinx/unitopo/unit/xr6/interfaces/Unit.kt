@@ -24,6 +24,7 @@ import io.fd.honeycomb.translate.impl.write.GenericListWriter
 import io.fd.honeycomb.translate.impl.write.GenericWriter
 import io.fd.honeycomb.translate.spi.builder.CustomizerAwareReadRegistryBuilder
 import io.fd.honeycomb.translate.spi.builder.CustomizerAwareWriteRegistryBuilder
+import io.fd.honeycomb.translate.util.RWUtils
 import io.frinx.openconfig.openconfig.interfaces.IIDs
 import io.frinx.unitopo.registry.api.TranslationUnitCollector
 import io.frinx.unitopo.registry.spi.UnderlayAccess
@@ -37,6 +38,8 @@ import io.frinx.unitopo.unit.xr6.interfaces.handler.InterfaceStatisticsConfigWri
 import io.frinx.unitopo.unit.xr6.interfaces.handler.InterfaceReader
 import io.frinx.unitopo.unit.xr6.interfaces.handler.InterfaceStateReader
 import io.frinx.unitopo.unit.xr6.interfaces.handler.InterfaceWriter
+import io.frinx.unitopo.unit.xr6.interfaces.handler.ethernet.EthernetConfigReader
+import io.frinx.unitopo.unit.xr6.interfaces.handler.ethernet.EthernetConfigWriter
 import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.Ipv4AddressConfigWriter
 import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.Ipv4AddressReader
 import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.Ipv4AddressWriter
@@ -64,8 +67,10 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.re
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.SubinterfacesBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.vlan.rev170714.vlan.logical.top.VlanBuilder
 import io.frinx.openconfig.openconfig._if.ip.IIDs as IfIpIIDs
+import io.frinx.openconfig.openconfig.lacp.IIDs as LacpIIDs
 import io.frinx.openconfig.openconfig.network.instance.IIDs as NetworkInstanceIIDs
 import io.frinx.openconfig.openconfig.vlan.IIDs as VlanIIDs
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.bundlemgr.cfg.rev161216.`$YangModuleInfoImpl` as UnderlayBundleMgrYangInfo
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev150730.`$YangModuleInfoImpl` as UnderlayInterfacesYangInfo
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.oper.rev150730.`$YangModuleInfoImpl` as UnderlayInterfacesOperYangInfo
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.infra.statsd.cfg.rev151109.`$YangModuleInfoImpl` as UnderlayInfraStatsdInfo
@@ -76,6 +81,8 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ci
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.`$YangModuleInfoImpl` as IpYangInfo
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.`$YangModuleInfoImpl` as InterfacesYangInfo
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.vlan.rev170714.Subinterface1Builder as VlanAugBuilder
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.lacp.lag.member.rev171109.`$YangModuleInfoImpl` as LacpLagMemberYangInfo
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.lacp.rev170505.`$YangModuleInfoImpl` as LacpYangInfo
 
 class Unit(private val registry: TranslationUnitCollector) : Unit() {
     private var reg: TranslationUnitCollector.Registration? = null
@@ -92,7 +99,10 @@ class Unit(private val registry: TranslationUnitCollector) : Unit() {
             InterfacesYangInfo.getInstance(),
             IpYangInfo.getInstance(),
             DampingYangInfo.getInstance(),
-            StatisticsYangInfo.getInstance())
+            StatisticsYangInfo.getInstance(),
+            LacpYangInfo.getInstance(),
+            LacpLagMemberYangInfo.getInstance()
+        )
 
     override fun getUnderlayYangSchemas() = UNDERLAY_SCHEMAS
 
@@ -124,6 +134,15 @@ class Unit(private val registry: TranslationUnitCollector) : Unit() {
             IIDs.IN_IN_CONFIG)
         wRegistry.addAfter(GenericWriter(VlanIIDs.IN_IN_SU_SU_AUG_SUBINTERFACE1_VL_CONFIG,
             SubinterfaceVlanConfigWriter(underlayAccess)), IIDs.IN_IN_SU_SU_CONFIG)
+
+        // if-ethernet
+        wRegistry.addNoop(IIDs.IN_IN_AUG_INTERFACE1_ETHERNET)
+        wRegistry.addNoop(IIDs.IN_IN_ET_CO_AUG_CONFIG1)
+        wRegistry.subtreeAddAfter(setOf(
+            RWUtils.cutIdFromStart(IIDs.INT_INT_ETH_CON_AUG_CONFIG1, IIDs.IN_IN_AUG_INTERFACE1_ET_CONFIG),
+            RWUtils.cutIdFromStart(LacpIIDs.IN_IN_ET_CO_AUG_LACPETHCONFIGAUG, IIDs.IN_IN_AUG_INTERFACE1_ET_CONFIG)),
+            GenericWriter(IIDs.IN_IN_AUG_INTERFACE1_ET_CONFIG, EthernetConfigWriter(underlayAccess)),
+            IIDs.IN_IN_CONFIG)
 
         wRegistry.add(GenericWriter(IfIpIIDs.IN_IN_SU_SU_AUG_SUBINTERFACE1_IP_AD_ADDRESS, Ipv4AddressWriter()))
         wRegistry.addAfter(GenericWriter(IfIpIIDs.IN_IN_SU_SU_AUG_SUBINTERFACE1_IP_AD_AD_CONFIG,
@@ -169,6 +188,12 @@ class Unit(private val registry: TranslationUnitCollector) : Unit() {
         rRegistry.add(GenericConfigReader(IfIpIIDs.IN_IN_SU_SU_AUG_SUBINTERFACE1_IP_AD_AD_CONFIG,
             Ipv4AddressConfigReader(underlayAccess)))
 
+        // if-ethernet
+        rRegistry.subtreeAdd(setOf(
+            RWUtils.cutIdFromStart(IIDs.INT_INT_ETH_CON_AUG_CONFIG1, IIDs.IN_IN_AUG_INTERFACE1_ET_CONFIG),
+            RWUtils.cutIdFromStart(LacpIIDs.IN_IN_ET_CO_AUG_CONFIG1, IIDs.IN_IN_AUG_INTERFACE1_ET_CONFIG)),
+            GenericConfigReader(IIDs.IN_IN_AUG_INTERFACE1_ET_CONFIG, EthernetConfigReader(underlayAccess)))
+
         rRegistry.add(GenericConfigReader(IfIpIIDs.IN_IN_SU_SU_AUG_SUBINTERFACE1_IP_CONFIG,
                 Ipv4MtuConfigReader(underlayAccess)))
         rRegistry.addStructuralReader(IIDs.IN_IN_SU_SU_AUG_IFSUBIFCISCOSTATSAUG,
@@ -187,6 +212,8 @@ class Unit(private val registry: TranslationUnitCollector) : Unit() {
                 UnderlayInterfacesOperYangInfo.getInstance(),
                 UnderlayIpv4YangInfo.getInstance(),
                 UnderlayInfraStatsdInfo.getInstance(),
-                UnderlayTypesYangInfo.getInstance())
+                UnderlayTypesYangInfo.getInstance(),
+                UnderlayBundleMgrYangInfo.getInstance()
+        )
     }
 }
