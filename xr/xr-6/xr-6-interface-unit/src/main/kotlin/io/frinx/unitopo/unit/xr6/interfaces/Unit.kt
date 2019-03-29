@@ -40,6 +40,8 @@ import io.frinx.unitopo.unit.xr6.interfaces.handler.InterfaceStateReader
 import io.frinx.unitopo.unit.xr6.interfaces.handler.InterfaceWriter
 import io.frinx.unitopo.unit.xr6.interfaces.handler.ethernet.EthernetConfigReader
 import io.frinx.unitopo.unit.xr6.interfaces.handler.ethernet.EthernetConfigWriter
+import io.frinx.unitopo.unit.xr6.interfaces.handler.aggregate.AggregateConfigReader
+import io.frinx.unitopo.unit.xr6.interfaces.handler.aggregate.AggregateConfigWriter
 import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.Ipv4AddressConfigWriter
 import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.Ipv4AddressReader
 import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.Ipv4AddressWriter
@@ -58,6 +60,7 @@ import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.vlan.SubinterfaceVlan
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.damping.rev171024.IfDampAugBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.damping.rev171024.damping.top.DampingBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.cisco.rev171024.IfCiscoStatsAugBuilder
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.aggregate.rev161222.aggregation.logical.top.aggregation.Config
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.cisco.rev171024.IfSubifCiscoStatsAugBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.cisco.rev171024.statistics.top.StatisticsBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.Subinterface1Builder
@@ -66,6 +69,7 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.InterfacesBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.SubinterfacesBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.vlan.rev170714.vlan.logical.top.VlanBuilder
+import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 import io.frinx.openconfig.openconfig._if.ip.IIDs as IfIpIIDs
 import io.frinx.openconfig.openconfig.lacp.IIDs as LacpIIDs
 import io.frinx.openconfig.openconfig.network.instance.IIDs as NetworkInstanceIIDs
@@ -75,11 +79,13 @@ import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cf
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.oper.rev150730.`$YangModuleInfoImpl` as UnderlayInterfacesOperYangInfo
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.infra.statsd.cfg.rev151109.`$YangModuleInfoImpl` as UnderlayInfraStatsdInfo
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.io.cfg.rev150730.`$YangModuleInfoImpl` as UnderlayIpv4YangInfo
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.bundlemgr.cfg.rev161216.`$YangModuleInfoImpl` as UnderlayBundleLinksYangInfo
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.xr.types.rev150629.`$YangModuleInfoImpl` as UnderlayTypesYangInfo
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.damping.rev171024.`$YangModuleInfoImpl` as DampingYangInfo
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.cisco.rev171024.`$YangModuleInfoImpl` as StatisticsYangInfo
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.`$YangModuleInfoImpl` as IpYangInfo
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.`$YangModuleInfoImpl` as InterfacesYangInfo
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.aggregate.rev161222.`$YangModuleInfoImpl` as AggregateYangInfo
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.vlan.rev170714.Subinterface1Builder as VlanAugBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.lacp.lag.member.rev171109.`$YangModuleInfoImpl` as LacpLagMemberYangInfo
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.lacp.rev170505.`$YangModuleInfoImpl` as LacpYangInfo
@@ -101,7 +107,8 @@ class Unit(private val registry: TranslationUnitCollector) : Unit() {
             DampingYangInfo.getInstance(),
             StatisticsYangInfo.getInstance(),
             LacpYangInfo.getInstance(),
-            LacpLagMemberYangInfo.getInstance()
+            LacpLagMemberYangInfo.getInstance(),
+            AggregateYangInfo.getInstance()
         )
 
     override fun getUnderlayYangSchemas() = UNDERLAY_SCHEMAS
@@ -153,6 +160,12 @@ class Unit(private val registry: TranslationUnitCollector) : Unit() {
         wRegistry.addAfter(GenericWriter(IIDs.IN_IN_SU_SU_AUG_IFSUBIFCISCOSTATSAUG_ST_CONFIG,
                 SubinterfaceStatisticsConfigWriter(underlayAccess)),
                 IIDs.IN_IN_SU_SU_CONFIG)
+
+        // if-aggregation
+        wRegistry.subtreeAddAfter(setOf(
+                RWUtils.cutIdFromStart(IIDs.IN_IN_AG_CO_AUG_IFLAGAUG, InstanceIdentifier.create(Config::class.java))),
+                GenericWriter(IIDs.IN_IN_AUG_INTERFACE1_AG_CONFIG, AggregateConfigWriter(underlayAccess)),
+                IIDs.IN_IN_CONFIG)
     }
 
     private fun provideReaders(rRegistry: CustomizerAwareReadRegistryBuilder, underlayAccess: UnderlayAccess) {
@@ -202,6 +215,11 @@ class Unit(private val registry: TranslationUnitCollector) : Unit() {
                 StatisticsBuilder::class.java)
         rRegistry.add(GenericConfigReader(IIDs.IN_IN_SU_SU_AUG_IFSUBIFCISCOSTATSAUG_ST_CONFIG,
                 SubinterfaceStatisticsConfigReader(underlayAccess)))
+
+        // if-aggregation
+        rRegistry.subtreeAdd(setOf(
+                RWUtils.cutIdFromStart(IIDs.IN_IN_AG_CO_AUG_IFLAGAUG, InstanceIdentifier.create(Config::class.java))),
+                GenericConfigReader(IIDs.IN_IN_AUG_INTERFACE1_AG_CONFIG, AggregateConfigReader(underlayAccess)))
     }
 
     override fun toString(): String = "XR 6 (2015-07-30) interface translate unit"
@@ -213,7 +231,8 @@ class Unit(private val registry: TranslationUnitCollector) : Unit() {
                 UnderlayIpv4YangInfo.getInstance(),
                 UnderlayInfraStatsdInfo.getInstance(),
                 UnderlayTypesYangInfo.getInstance(),
-                UnderlayBundleMgrYangInfo.getInstance()
+                UnderlayBundleMgrYangInfo.getInstance(),
+                UnderlayBundleLinksYangInfo.getInstance()
         )
     }
 }

@@ -401,6 +401,10 @@
                                 <interface-name>Bundle-Ether100</interface-name>
                                 <interface>Bundle-Ether100</interface>
                             </interface>
+                            <interface>
+                                <interface-name>Bundle-Ether3000</interface-name>
+                                <interface>Bundle-Ether3000</interface>
+                            </interface>
                         </interfaces>
                     </system-view>
                 </data-node>
@@ -482,6 +486,16 @@
                         </primary>
                     </addresses>
                 </ipv4-network>
+            </interface-configuration>
+            <interface-configuration>
+                <active>act</active>
+                <interface-name>Bundle-Ether3000</interface-name>
+                <interface-virtual></interface-virtual>
+                <bundle xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-bundlemgr-cfg">
+                    <minimum-active>
+                        <links>1</links>
+                    </minimum-active>
+                </bundle>
             </interface-configuration>
         </interface-configurations>
     </data>
