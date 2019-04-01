@@ -42,6 +42,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath
 import java.net.URL
 
 open class NetconfAccessHelper() : UnderlayAccess {
+
     private val mib = createMib()
     private val schemaContext = createSchemaContext(mib)
     private val transformer = NetconfMessageTransformer(schemaContext, true)
@@ -133,6 +134,23 @@ open class NetconfAccessHelper() : UnderlayAccess {
     }
 
     override fun <T : DataObject?> merge(path: InstanceIdentifier<T>?, data: T) {
+        throw UnsupportedOperationException("not implemented")
+    }
+
+    override fun <T : DataObject?> safeDelete(path: InstanceIdentifier<T>?, before: T) {
+        throw UnsupportedOperationException("not implemented")
+    }
+
+    override fun <T : DataObject?> safeMerge(
+        pathBefore: InstanceIdentifier<T>?,
+        before: T,
+        pathAfter: InstanceIdentifier<T>?,
+        after: T
+    ) {
+        throw UnsupportedOperationException("not implemented")
+    }
+
+    override fun <T : DataObject?> safePut(path: InstanceIdentifier<T>?, data: T) {
         throw UnsupportedOperationException("not implemented")
     }
 
