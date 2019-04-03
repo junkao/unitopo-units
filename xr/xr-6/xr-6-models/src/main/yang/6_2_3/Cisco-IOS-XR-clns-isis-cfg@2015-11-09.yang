@@ -3006,7 +3006,8 @@ module Cisco-IOS-XR-clns-isis-cfg {
             }
             leaf circuit-type {
               type Isis-configurable-levels;
-              default "level1-and2";
+              // We need to judge whether the value is null or default value.
+              // default "level1-and2";
               description "Configure circuit type for interface";
             }
             leaf point-to-point {
