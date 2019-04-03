@@ -84,8 +84,8 @@ class InterfaceAggregationBfdConfigWriter(private val underlayAccess: UnderlayAc
         val underlayBfdLivenessDetectionId = getUnderlayId(id)
 
         val bfdLivenessDetectionBuilder = JunosBfdLivenessDetectionBuilder()
-        bfdLivenessDetectionBuilder.localAddress = Ipaddr(dataAfter.localAddress?.ipv4Address?.value)
-        bfdLivenessDetectionBuilder.neighbor = Ipaddr(dataAfter.destinationAddress?.ipv4Address?.value)
+        bfdLivenessDetectionBuilder.localAddress = Ipaddr(dataAfter.localAddress?.value)
+        bfdLivenessDetectionBuilder.neighbor = Ipaddr(dataAfter.destinationAddress?.value)
         bfdLivenessDetectionBuilder.multiplier = JunosMultiplier(dataAfter.multiplier)
         bfdLivenessDetectionBuilder.minimumInterval = JunosMinInterval(dataAfter.minInterval)
 

@@ -25,7 +25,6 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.bf
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.bfd.rev171024.bfd.top.bfd.Config
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.bfd.rev171024.bfd.top.bfd.ConfigBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.Interface
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.IpAddress
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.Ipv4Address
 import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
@@ -55,8 +54,8 @@ class InterfaceAggregationBfdConfigReader(private val underlayAccess: UnderlayAc
 }
 
 private fun ConfigBuilder.fromUnderlay(underlay: JunosBfdLivenessDetection?) {
-    localAddress = IpAddress(Ipv4Address(underlay?.localAddress?.value))
-    destinationAddress = IpAddress(Ipv4Address(underlay?.neighbor?.value))
+    localAddress = Ipv4Address(underlay?.localAddress?.value)
+    destinationAddress = Ipv4Address(underlay?.neighbor?.value)
     minInterval = underlay?.minimumInterval?.uint32
     multiplier = underlay?.multiplier?.uint32
 }
