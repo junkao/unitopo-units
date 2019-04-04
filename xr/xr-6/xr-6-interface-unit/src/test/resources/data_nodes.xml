@@ -491,6 +491,21 @@
                 <active>act</active>
                 <interface-name>Bundle-Ether3000</interface-name>
                 <interface-virtual></interface-virtual>
+                <bfd xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-bundlemgr-cfg">
+                    <mode>ietf</mode>
+                    <address-family>
+                        <ipv4>
+                            <destination-address>10.1.12.72</destination-address>
+                            <fast-detect></fast-detect>
+                            <interval>1000</interval>
+                        </ipv4>
+                        <ipv6>
+                            <ipv6-destination-address>2001::</ipv6-destination-address>
+                            <ipv6-fast-detect></ipv6-fast-detect>
+                            <ipv6-interval>500</ipv6-interval>
+                        </ipv6>
+                    </address-family>
+                </bfd>
                 <bundle xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-bundlemgr-cfg">
                     <minimum-active>
                         <links>1</links>
