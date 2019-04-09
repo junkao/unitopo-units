@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.frinx.unitopo.unit.xr6.interfaces.handler.aggregate.bfd
+package io.frinx.unitopo.unit.xr623.interfaces.handler.aggregate.bfd
 
 import io.fd.honeycomb.translate.read.ReadContext
 import io.frinx.openconfig.openconfig.interfaces.IIDs
@@ -28,22 +28,22 @@ import org.mockito.MockitoAnnotations
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.aggregate.rev161222.Interface1
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.aggregate.rev161222.aggregation.logical.top.Aggregation
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.bfd.rev171024.IfLagBfdAug
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.bfd.rev171024.bfd.top.BfdIpv6
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.bfd.rev171024.bfd.top.bfd.ipv6.Config
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.bfd.rev171024.bfd.top.bfd.ipv6.ConfigBuilder
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.bfd.rev171024.bfd.top.Bfd
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.bfd.rev171024.bfd.top.bfd.Config
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.bfd.rev171024.bfd.top.bfd.ConfigBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.Interface
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.InterfaceKey
 
-class BfdIpv6ConfigReaderTest {
+class BfdConfigReaderTest {
     @Mock
     private lateinit var readContext: ReadContext
     private val underlayAccess: UnderlayAccess = NetconfAccessHelper("/data_nodes.xml")
-    private lateinit var target: BfdIpv6ConfigReader
+    private lateinit var target: BfdConfigReader
 
     @Before
     fun setup() {
         MockitoAnnotations.initMocks(this)
-        target = BfdIpv6ConfigReader(underlayAccess)
+        target = BfdConfigReader(underlayAccess)
     }
 
     @Test
@@ -54,11 +54,11 @@ class BfdIpv6ConfigReaderTest {
             .augmentation(Interface1::class.java)
             .child(Aggregation::class.java)
             .augmentation(IfLagBfdAug::class.java)
-            .child(BfdIpv6::class.java)
+            .child(Bfd::class.java)
             .child(Config::class.java)
         val builder = ConfigBuilder()
         target.readCurrentAttributes(id, builder, readContext)
-        Assert.assertEquals("2001::", builder.destinationAddress.value)
-        Assert.assertEquals(500L, builder.minInterval)
+        Assert.assertEquals("10.1.12.72", builder.destinationAddress.value)
+        Assert.assertEquals(1000L, builder.minInterval)
     }
 }
