@@ -15,9 +15,9 @@
  */
 package io.frinx.unitopo.unit.xr623.isis.handler.interfaces
 
+import io.fd.honeycomb.translate.spi.write.WriterCustomizer
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.openconfig.network.instance.NetworInstance
-import io.frinx.unitopo.handlers.isis.IsisWriter
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr623.isis.handler.IsisProtocolConfigWriter
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.clns.isis.cfg.rev151109.IsisConfigurableLevels
@@ -35,8 +35,8 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.openconfig.is
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.openconfig.isis.rev181121.isis.interfaces.Interface
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
-class IsisInterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : IsisWriter<Config> {
-    override fun writeCurrentAttributesForType(id: IID<Config>, dataAfter: Config, wtx: WriteContext) {
+class IsisInterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCustomizer<Config> {
+    override fun writeCurrentAttributes(id: IID<Config>, dataAfter: Config, wtx: WriteContext) {
         val vrfName = id.firstKeyOf(NetworkInstance::class.java).name
 
         require(vrfName == NetworInstance.DEFAULT_NETWORK_NAME) {
@@ -47,16 +47,16 @@ class IsisInterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : Is
         underlayAccess.put(underlayId, builder)
     }
 
-    override fun updateCurrentAttributesForType(
+    override fun updateCurrentAttributes(
         iid: IID<Config>,
         dataBefore: Config,
         dataAfter: Config,
         writeContext: WriteContext
     ) {
-        writeCurrentAttributesForType(iid, dataAfter, writeContext)
+        writeCurrentAttributes(iid, dataAfter, writeContext)
     }
 
-    override fun deleteCurrentAttributesForType(id: IID<Config>, dataBefore: Config, wtx: WriteContext) {
+    override fun deleteCurrentAttributes(id: IID<Config>, dataBefore: Config, wtx: WriteContext) {
         val instanceName = id.firstKeyOf(Protocol::class.java).name!!
         val interfaceId = id.firstKeyOf(Interface::class.java).interfaceId.value
         val underlayId = getUnderlayId(instanceName, interfaceId)

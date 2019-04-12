@@ -16,11 +16,11 @@
 package io.frinx.unitopo.unit.xr623.isis
 
 import io.fd.honeycomb.rpc.RpcService
-import io.fd.honeycomb.translate.impl.write.GenericWriter
 import io.fd.honeycomb.translate.spi.builder.CustomizerAwareReadRegistryBuilder
 import io.fd.honeycomb.translate.spi.builder.CustomizerAwareWriteRegistryBuilder
 import io.fd.honeycomb.translate.util.RWUtils
 import io.frinx.openconfig.openconfig.network.instance.IIDs
+import io.frinx.translate.unit.commons.handler.spi.ChecksMap
 import io.frinx.unitopo.registry.api.TranslationUnitCollector
 import io.frinx.unitopo.registry.spi.TranslateUnit
 import io.frinx.unitopo.registry.spi.UnderlayAccess
@@ -61,27 +61,29 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
     override fun provideHandlers(
         rRegistry: CustomizerAwareReadRegistryBuilder,
         wRegistry: CustomizerAwareWriteRegistryBuilder,
-        access: UnderlayAccess
+        underlayAccess: UnderlayAccess
     ) {
-        provideReaders(rRegistry, access)
-        provideWriters(wRegistry, access)
+        val checkRegistry = ChecksMap.getOpenconfigCheckRegistry()
+        rRegistry.setCheckRegistry(checkRegistry)
+        provideReaders(rRegistry, underlayAccess)
+        wRegistry.setCheckRegistry(checkRegistry)
+        provideWriters(wRegistry, underlayAccess)
     }
 
     private fun provideWriters(wRegistry: CustomizerAwareWriteRegistryBuilder, access: UnderlayAccess) {
         wRegistry.addNoop(IIDs.NE_NE_PR_PR_ISIS)
         wRegistry.addNoop(IIDs.NE_NE_PR_PR_IS_INTERFACES)
         wRegistry.addNoop(IIDs.NE_NE_PR_PR_IS_IN_INTERFACE)
-        wRegistry.subtreeAdd(setOf(RWUtils.cutIdFromStart(IIDs.NE_NE_PR_PR_IS_IN_IN_CO_AUG_ISISIFCONFAUG,
-                IIDs.NE_NE_PR_PR_IS_IN_IN_CONFIG)),
-                GenericWriter(IIDs.NE_NE_PR_PR_IS_IN_IN_CONFIG, IsisInterfaceConfigWriter(access)))
+        wRegistry.subtreeAdd(IIDs.NE_NE_PR_PR_IS_IN_IN_CONFIG, IsisInterfaceConfigWriter(access),
+            setOf(RWUtils.cutIdFromStart(IIDs.NE_NE_PR_PR_IS_IN_IN_CO_AUG_ISISIFCONFAUG,
+                IIDs.NE_NE_PR_PR_IS_IN_IN_CONFIG)))
 
         wRegistry.addNoop(IIDs.NE_NE_PR_PR_IS_IN_IN_AUTHENTICATION)
         wRegistry.addNoop(IIDs.NE_NE_PR_PR_IS_IN_IN_AU_KEY)
         wRegistry.add(IIDs.NE_NE_PR_PR_IS_IN_IN_AU_KE_CONFIG, IsisInterfaceAuthConfigWriter(access))
 
         wRegistry.addNoop(IIDs.NE_NE_PR_PR_IS_IN_IN_TIMERS)
-        wRegistry.subtreeAdd(IIDs.NE_NE_PR_PR_IS_IN_IN_TI_CONFIG,
-            IsisInterfaceTimersConfigWriter(access),
+        wRegistry.subtreeAdd(IIDs.NE_NE_PR_PR_IS_IN_IN_TI_CONFIG, IsisInterfaceTimersConfigWriter(access),
             setOf(RWUtils.cutIdFromStart(
                 IIDs.NE_NE_PR_PR_IS_IN_IN_TI_CO_AUG_ISISIFTIMERSCONFAUG, IIDs.NE_NE_PR_PR_IS_IN_IN_TI_CONFIG)))
     }

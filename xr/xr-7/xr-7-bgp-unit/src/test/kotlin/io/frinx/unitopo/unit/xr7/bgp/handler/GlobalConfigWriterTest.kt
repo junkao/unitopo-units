@@ -94,7 +94,7 @@ class GlobalConfigWriterTest : AbstractNetconfHandlerTest() {
         val dataCap = ArgumentCaptor
                 .forClass(DataObject::class.java) as ArgumentCaptor<Bgp>
         Mockito.doNothing().`when`(underlayAccess!!).put(Mockito.any(), Mockito.any())
-        target!!.writeCurrentAttributesForType(IID_CONFIG, config, writeContext!!)
+        target!!.writeCurrentAttributes(IID_CONFIG, config, writeContext!!)
         // capture
         Mockito.verify(underlayAccess!!, Mockito.times(1)).put(idCap.capture(), dataCap.capture())
         Assert.assertThat(idCap.allValues.size, CoreMatchers.`is`(1))
@@ -115,7 +115,7 @@ class GlobalConfigWriterTest : AbstractNetconfHandlerTest() {
         val dataCap = ArgumentCaptor
                 .forClass(DataObject::class.java) as ArgumentCaptor<Bgp>
         Mockito.doNothing().`when`(underlayAccess!!).put(Mockito.any(), Mockito.any())
-        target!!.deleteCurrentAttributesForType(IID_CONFIG, config, writeContext!!)
+        target!!.deleteCurrentAttributes(IID_CONFIG, config, writeContext!!)
         // capture
         Mockito.verify(underlayAccess!!, Mockito.times(1)).delete(idCap.capture())
         Assert.assertThat(idCap.allValues.size, CoreMatchers.`is`(1))
@@ -147,7 +147,7 @@ class GlobalConfigWriterTest : AbstractNetconfHandlerTest() {
 
         Mockito.doNothing().`when`(underlayAccess!!).put(Mockito.any(), Mockito.any())
 
-        target!!.updateCurrentAttributesForType(IID_CONFIG, configBefore, configAfter, writeContext!!)
+        target!!.updateCurrentAttributes(IID_CONFIG, configBefore, configAfter, writeContext!!)
         Mockito.verify(underlayAccess!!, Mockito.times(1)).put(idCap.capture(), dataCap.capture())
         Assert.assertThat(
                 idCap.allValues.get(0),

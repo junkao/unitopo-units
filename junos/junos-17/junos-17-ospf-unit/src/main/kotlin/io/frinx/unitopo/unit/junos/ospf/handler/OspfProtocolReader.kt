@@ -17,7 +17,6 @@ package io.frinx.unitopo.unit.junos.ospf.handler
 
 import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.spi.read.ListReaderCustomizer
-import io.frinx.unitopo.handlers.ospf.OspfReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.ProtocolsBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.Protocol
@@ -38,7 +37,6 @@ import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configur
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
 class OspfProtocolReader(private val underlayAccess: UnderlayAccess) :
-        OspfReader.OspfConfigReader<Protocol, ProtocolBuilder>,
         ListReaderCustomizer<Protocol, ProtocolKey, ProtocolBuilder> {
 
     override fun getBuilder(id: IID<Protocol>): ProtocolBuilder = ProtocolBuilder()
@@ -47,7 +45,7 @@ class OspfProtocolReader(private val underlayAccess: UnderlayAccess) :
         (builder as ProtocolsBuilder).protocol = protocols
     }
 
-    override fun readCurrentAttributesForType(id: IID<Protocol>, proto: ProtocolBuilder, readContext: ReadContext) {
+    override fun readCurrentAttributes(id: IID<Protocol>, proto: ProtocolBuilder, readContext: ReadContext) {
         proto.key = ProtocolKey(OSPF::class.java, Companion.OSPF_INSTANCE_DEFAULT)
     }
 

@@ -17,9 +17,9 @@
 package io.frinx.unitopo.unit.xr6.bgp.handler.aggregates
 
 import io.fd.honeycomb.translate.read.ReadContext
+import io.fd.honeycomb.translate.spi.read.ConfigListReaderCustomizer
 import io.frinx.openconfig.network.instance.NetworInstance
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.handlers.bgp.BgpListReader
 import io.frinx.unitopo.unit.xr6.bgp.IID
 import io.frinx.unitopo.unit.xr6.bgp.handler.BgpProtocolReader
 import io.frinx.unitopo.unit.xr6.bgp.handler.GlobalAfiSafiReader
@@ -40,11 +40,11 @@ import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 
 class BgpLocalAggregateReader(private val access: UnderlayAccess) :
-    BgpListReader.BgpConfigListReader<Aggregate, AggregateKey, AggregateBuilder> {
+    ConfigListReaderCustomizer<Aggregate, AggregateKey, AggregateBuilder> {
 
     override fun getBuilder(id: IID<Aggregate>) = AggregateBuilder()
 
-    override fun getAllIdsForType(
+    override fun getAllIds(
         id: IID<Aggregate>,
         readContext: ReadContext
     ): List<AggregateKey> {
@@ -63,7 +63,7 @@ class BgpLocalAggregateReader(private val access: UnderlayAccess) :
         (builder as LocalAggregatesBuilder).aggregate = list
     }
 
-    override fun readCurrentAttributesForType(
+    override fun readCurrentAttributes(
         IID: IID<Aggregate>,
         aggregateBuilder: AggregateBuilder,
         readContext: ReadContext

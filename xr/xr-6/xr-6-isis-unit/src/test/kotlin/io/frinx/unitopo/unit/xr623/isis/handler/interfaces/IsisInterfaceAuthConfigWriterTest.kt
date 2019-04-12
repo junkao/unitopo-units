@@ -111,7 +111,7 @@ class IsisInterfaceAuthConfigWriterTest {
         Mockito.doNothing().`when`(underlayAccess).put(Mockito.any(), Mockito.any())
 
         // test
-        target.writeCurrentAttributesForType(IID_CONFIG, config, writeContext)
+        target.writeCurrentAttributes(IID_CONFIG, config, writeContext)
 
         // capture
         Mockito.verify(underlayAccess, Mockito.times(1)).put(idCap.capture(), dataCap.capture())
@@ -139,7 +139,7 @@ class IsisInterfaceAuthConfigWriterTest {
         Mockito.doNothing().`when`(underlayAccess).delete(Mockito.any())
 
         // test
-        target.deleteCurrentAttributesForType(IID_CONFIG, config, writeContext)
+        target.deleteCurrentAttributes(IID_CONFIG, config, writeContext)
 
         // capture
         Mockito.verify(underlayAccess, Mockito.times(1)).delete(idCap.capture())

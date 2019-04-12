@@ -17,8 +17,8 @@
 package io.frinx.unitopo.unit.xr7.network.instance.vrf.ifc
 
 import io.fd.honeycomb.translate.read.ReadContext
+import io.fd.honeycomb.translate.spi.read.ConfigListReaderCustomizer
 import io.frinx.openconfig.network.instance.NetworInstance
-import io.frinx.unitopo.handlers.l3vrf.L3VrfListReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr7.interfaces.handler.InterfaceReader
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907._interface.configurations.InterfaceConfiguration
@@ -34,9 +34,9 @@ import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
 open class VrfInterfaceReader(private val underlayAccess: UnderlayAccess) :
-    L3VrfListReader.L3VrfConfigListReader<Interface, InterfaceKey, InterfaceBuilder> {
+    ConfigListReaderCustomizer<Interface, InterfaceKey, InterfaceBuilder> {
 
-    override fun readCurrentAttributesForType(
+    override fun readCurrentAttributes(
         id: InstanceIdentifier<Interface>,
         builder: InterfaceBuilder,
         ctx: ReadContext
@@ -52,7 +52,7 @@ open class VrfInterfaceReader(private val underlayAccess: UnderlayAccess) :
 
     override fun getBuilder(id: InstanceIdentifier<Interface>): InterfaceBuilder = InterfaceBuilder()
 
-    override fun getAllIdsForType(id: InstanceIdentifier<Interface>, context: ReadContext): List<InterfaceKey> {
+    override fun getAllIds(id: InstanceIdentifier<Interface>, context: ReadContext): List<InterfaceKey> {
         val vrf = id.firstKeyOf(NetworkInstance::class.java)
         if (vrf == NetworInstance.DEFAULT_NETWORK) {
             return emptyList()

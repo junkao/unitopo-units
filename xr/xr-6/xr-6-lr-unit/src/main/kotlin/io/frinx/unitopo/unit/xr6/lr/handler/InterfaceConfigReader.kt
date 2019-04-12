@@ -17,8 +17,8 @@ package io.frinx.unitopo.unit.xr6.lr.handler
 
 import com.google.common.annotations.VisibleForTesting
 import io.fd.honeycomb.translate.read.ReadContext
+import io.fd.honeycomb.translate.spi.read.OperReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.xr6.lr.common.LrReader
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ip._static.cfg.rev150910.vrf.route.vrf.route.VrfNextHopTable
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222._interface.ref.InterfaceRefBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222._interface.ref._interface.ref.Config
@@ -31,9 +31,9 @@ import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class InterfaceConfigReader(private val access: UnderlayAccess) : LrReader.LrOperReader<Config, ConfigBuilder> {
+class InterfaceConfigReader(private val access: UnderlayAccess) : OperReaderCustomizer<Config, ConfigBuilder> {
 
-    override fun readCurrentAttributesForType(
+    override fun readCurrentAttributes(
         id: InstanceIdentifier<Config>,
         builder: ConfigBuilder,
         ctx: ReadContext

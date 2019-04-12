@@ -17,7 +17,7 @@
 package io.frinx.unitopo.unit.xr6.ospf.handler
 
 import io.fd.honeycomb.translate.read.ReadContext
-import io.frinx.unitopo.handlers.ospf.OspfReader
+import io.fd.honeycomb.translate.spi.read.OperReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev151109.ospf.processes.Process
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
@@ -29,11 +29,11 @@ import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class GlobalStateReader(private val access: UnderlayAccess) : OspfReader.OspfOperReader<State, StateBuilder> {
+class GlobalStateReader(private val access: UnderlayAccess) : OperReaderCustomizer<State, StateBuilder> {
 
     override fun getBuilder(id: InstanceIdentifier<State>) = StateBuilder()
 
-    override fun readCurrentAttributesForType(id: InstanceIdentifier<State>, builder: StateBuilder, ctx: ReadContext) {
+    override fun readCurrentAttributes(id: InstanceIdentifier<State>, builder: StateBuilder, ctx: ReadContext) {
         val vrfName = id.firstKeyOf(NetworkInstance::class.java)
         val protKey = id.firstKeyOf(Protocol::class.java)
 

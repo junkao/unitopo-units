@@ -76,7 +76,7 @@ class InterfaceConfigWriterTest {
         Mockito.doNothing().`when`(underlayAccess).put(Mockito.any(), Mockito.any())
 
         // test
-        target.writeCurrentAttributesForType(id, config, writeContext)
+        target.writeCurrentAttributes(id, config, writeContext)
 
         // capture
         Mockito.verify(underlayAccess, Mockito.times(1)).put(idCap.capture(), dataCap.capture())
@@ -108,7 +108,7 @@ class InterfaceConfigWriterTest {
         Mockito.doNothing().`when`(underlayAccess).delete(Mockito.any())
 
         // test
-        target.deleteCurrentAttributesForType(id, config, writeContext)
+        target.deleteCurrentAttributes(id, config, writeContext)
 
         // capture
         Mockito.verify(underlayAccess, Mockito.times(1)).delete(idCap.capture())

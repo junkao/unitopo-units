@@ -16,9 +16,9 @@
 
 package io.frinx.unitopo.unit.xr6.bgp.handler
 
+import io.fd.honeycomb.translate.spi.write.WriterCustomizer
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.handlers.bgp.BgpWriter
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.instance.instance.`as`.four._byte.`as`._default.vrf.bgp.entity.neighbors.neighbor.NeighborAfs
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.instance.instance.`as`.four._byte.`as`._default.vrf.bgp.entity.neighbors.neighbor.neighbor.afs.NeighborAf
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.instance.instance.`as`.four._byte.`as`._default.vrf.bgp.entity.neighbors.neighbor.neighbor.afs.NeighborAfBuilder
@@ -36,19 +36,19 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
-class NeighborApplyPolicyConfigWriter(private val underlayAccess: UnderlayAccess) : BgpWriter<Config> {
+class NeighborApplyPolicyConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCustomizer<Config> {
 
-    override fun updateCurrentAttributesForType(
+    override fun updateCurrentAttributes(
         iid: IID<Config>,
         dataBefore: Config,
         dataAfter: Config,
         writeContext: WriteContext
     ) {
-        deleteCurrentAttributesForType(iid, dataBefore, writeContext)
-        writeCurrentAttributesForType(iid, dataAfter, writeContext)
+        deleteCurrentAttributes(iid, dataBefore, writeContext)
+        writeCurrentAttributes(iid, dataAfter, writeContext)
     }
 
-    override fun deleteCurrentAttributesForType(iid: IID<Config>, dataBefore: Config, wc: WriteContext) {
+    override fun deleteCurrentAttributes(iid: IID<Config>, dataBefore: Config, wc: WriteContext) {
         val vrfName = iid.firstKeyOf(NetworkInstance::class.java).name
         val bgpProcess = iid.firstKeyOf(Protocol::class.java).name.toLong()
         val neighborAddress = iid.firstKeyOf(Neighbor::class.java).neighborAddress.value
@@ -66,7 +66,7 @@ class NeighborApplyPolicyConfigWriter(private val underlayAccess: UnderlayAccess
         }
     }
 
-    override fun writeCurrentAttributesForType(iid: IID<Config>, dataAfter: Config, wc: WriteContext) {
+    override fun writeCurrentAttributes(iid: IID<Config>, dataAfter: Config, wc: WriteContext) {
         val vrfName = iid.firstKeyOf(NetworkInstance::class.java).name
         val bgpProcess = iid.firstKeyOf(Protocol::class.java).name.toLong()
         val neighborAddress = iid.firstKeyOf(Neighbor::class.java).neighborAddress.value

@@ -15,8 +15,8 @@
  */
 package io.frinx.unitopo.unit.xr623.ospf.handler
 
+import io.fd.honeycomb.translate.spi.write.WriterCustomizer
 import io.fd.honeycomb.translate.write.WriteContext
-import io.frinx.unitopo.handlers.ospf.OspfWriter
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr623.ospf.handler.AreaConfigWriter.Companion.getAreaAddressIdentifier
 import io.frinx.unitopo.unit.xr623.ospf.handler.AreaConfigWriter.Companion.getAreaIdIdentifier
@@ -31,9 +31,9 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.ospfv2.rev170
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.ospfv2.rev170228.ospfv2.top.ospfv2.areas.Area
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
-open class AreaInterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : OspfWriter<Config> {
+open class AreaInterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCustomizer<Config> {
 
-    override fun updateCurrentAttributesForType(
+    override fun updateCurrentAttributes(
         iid: IID<Config>,
         dataBefore: Config,
         dataAfter: Config,
@@ -43,13 +43,13 @@ open class AreaInterfaceConfigWriter(private val underlayAccess: UnderlayAccess)
         underlayAccess.put(underlayId, underlayData)
     }
 
-    override fun writeCurrentAttributesForType(id: IID<Config>, dataAfter: Config, wtx: WriteContext) {
+    override fun writeCurrentAttributes(id: IID<Config>, dataAfter: Config, wtx: WriteContext) {
         val (underlayId, underlayData) = getData(id, dataAfter)
 
         underlayAccess.merge(underlayId, underlayData)
     }
 
-    override fun deleteCurrentAttributesForType(id: IID<Config>, dataBefore: Config, wtx: WriteContext) {
+    override fun deleteCurrentAttributes(id: IID<Config>, dataBefore: Config, wtx: WriteContext) {
         val (processIid, vrfName) = AreaConfigWriter.getIdentifiers(id)
         val ifaceIid = getNameScopeIdentifier(processIid, vrfName, id)
         underlayAccess.delete(ifaceIid)

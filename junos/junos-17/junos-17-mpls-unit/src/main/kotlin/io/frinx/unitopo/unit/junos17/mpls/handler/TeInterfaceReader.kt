@@ -18,8 +18,8 @@ package io.frinx.unitopo.unit.junos17.mpls.handler
 import com.google.common.annotations.VisibleForTesting
 import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.read.ReadFailedException
+import io.fd.honeycomb.translate.spi.read.ConfigListReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.junos17.mpls.common.MplsListReader
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.InterfaceId
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.mpls.rev170824.mpls.top.mpls.TeInterfaceAttributesBuilder
@@ -33,9 +33,9 @@ import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
 class TeInterfaceReader(private val underlayAccess: UnderlayAccess) :
-    MplsListReader.MplsConfigListReader<Interface, InterfaceKey, InterfaceBuilder> {
+    ConfigListReaderCustomizer<Interface, InterfaceKey, InterfaceBuilder> {
 
-    override fun getAllIdsForType(instanceIdentifier: InstanceIdentifier<Interface>, readContext: ReadContext):
+    override fun getAllIds(instanceIdentifier: InstanceIdentifier<Interface>, readContext: ReadContext):
         List<InterfaceKey> {
         try {
             return getInterfaceIds(underlayAccess)
@@ -48,7 +48,7 @@ class TeInterfaceReader(private val underlayAccess: UnderlayAccess) :
         (builder as TeInterfaceAttributesBuilder).`interface` = readData
     }
 
-    override fun readCurrentAttributesForType(
+    override fun readCurrentAttributes(
         instanceIdentifier: InstanceIdentifier<Interface>,
         interfaceBuilder: InterfaceBuilder,
         readContext: ReadContext

@@ -19,8 +19,8 @@ package io.frinx.unitopo.unit.xr6.bgp.handler.aggregates
 import io.fd.honeycomb.translate.util.RWUtils
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.openconfig.network.instance.NetworInstance
+import io.frinx.translate.unit.commons.handler.spi.TypedWriter
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.handlers.bgp.BgpWriter
 import io.frinx.unitopo.unit.xr6.bgp.handler.GlobalAfiSafiConfigWriter
 import io.frinx.unitopo.unit.xr6.bgp.handler.getAfiSafis
 import io.frinx.unitopo.unit.xr6.bgp.handler.toUnderlay
@@ -41,7 +41,7 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.types.inet.re
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.IpAddress
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class BgpLocalAggregateConfigWriter(private val access: UnderlayAccess) : BgpWriter<Config> {
+class BgpLocalAggregateConfigWriter(private val access: UnderlayAccess) : TypedWriter<Config> {
 
     override fun writeCurrentAttributesForType(
         instanceIdentifier: InstanceIdentifier<Config>,
@@ -147,8 +147,8 @@ class BgpLocalAggregateConfigWriter(private val access: UnderlayAccess) : BgpWri
         dataAfter: Config,
         writeContext: WriteContext
     ) {
-        deleteCurrentAttributes(id, dataBefore, writeContext)
-        writeCurrentAttributes(id, dataAfter, writeContext)
+        deleteCurrentAttributesForType(id, dataBefore, writeContext)
+        writeCurrentAttributesForType(id, dataAfter, writeContext)
     }
 
     override fun deleteCurrentAttributesForType(

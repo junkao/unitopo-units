@@ -16,7 +16,7 @@
 package io.frinx.unitopo.unit.junos17.mpls.handler
 
 import io.fd.honeycomb.translate.read.ReadContext
-import io.frinx.unitopo.unit.junos17.mpls.common.MplsReader
+import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.mpls.rev170824.te._interface.attributes.top.Interface
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.mpls.rev170824.te._interface.attributes.top.InterfaceBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.mpls.rev170824.te._interface.attributes.top.InterfaceKey
@@ -26,11 +26,11 @@ import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class TeInterfaceConfigReader : MplsReader.MplsConfigReader<Config, ConfigBuilder> {
+class TeInterfaceConfigReader : ConfigReaderCustomizer<Config, ConfigBuilder> {
 
     override fun getBuilder(p0: InstanceIdentifier<Config>): ConfigBuilder = ConfigBuilder()
 
-    override fun readCurrentAttributesForType(
+    override fun readCurrentAttributes(
         instanceIdentifier: InstanceIdentifier<Config>,
         configBuilder: ConfigBuilder,
         readContext: ReadContext

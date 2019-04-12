@@ -16,9 +16,9 @@
 package io.frinx.unitopo.unit.xr623.isis.handler.interfaces
 
 import com.google.common.base.Preconditions
+import io.fd.honeycomb.translate.spi.write.WriterCustomizer
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.openconfig.network.instance.NetworInstance
-import io.frinx.unitopo.handlers.isis.IsisWriter
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.clns.isis.cfg.rev151109.IsisAuthenticationAlgorithm
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.clns.isis.cfg.rev151109.IsisAuthenticationFailureMode
@@ -37,11 +37,11 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.openconfig.ty
 import java.util.regex.Pattern
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
-class IsisInterfaceAuthConfigWriter(private val underlayAccess: UnderlayAccess) : IsisWriter<Config> {
+class IsisInterfaceAuthConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCustomizer<Config> {
 
     private val PASSWORD_ENCRYPTED_PATTERN = Pattern.compile(EncryptedString.PATTERN_CONSTANTS[0])
 
-    override fun writeCurrentAttributesForType(id: IID<Config>, dataAfter: Config, wtx: WriteContext) {
+    override fun writeCurrentAttributes(id: IID<Config>, dataAfter: Config, wtx: WriteContext) {
         val vrfName = id.firstKeyOf(NetworkInstance::class.java).name
 
         require(vrfName == NetworInstance.DEFAULT_NETWORK_NAME) {
@@ -52,16 +52,16 @@ class IsisInterfaceAuthConfigWriter(private val underlayAccess: UnderlayAccess) 
         underlayAccess.put(underlayId, builder)
     }
 
-    override fun updateCurrentAttributesForType(
+    override fun updateCurrentAttributes(
         iid: IID<Config>,
         dataBefore: Config,
         dataAfter: Config,
         writeContext: WriteContext
     ) {
-        writeCurrentAttributesForType(iid, dataAfter, writeContext)
+        writeCurrentAttributes(iid, dataAfter, writeContext)
     }
 
-    override fun deleteCurrentAttributesForType(id: IID<Config>, dataBefore: Config, wtx: WriteContext) {
+    override fun deleteCurrentAttributes(id: IID<Config>, dataBefore: Config, wtx: WriteContext) {
         val instanceName = id.firstKeyOf(Protocol::class.java).name
         val interfaceId = id.firstKeyOf(Interface::class.java).interfaceId.value
         val underlayId = getUnderlayId(instanceName, interfaceId)

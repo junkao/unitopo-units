@@ -17,8 +17,8 @@
 package io.frinx.unitopo.unit.xr6.ospf.handler
 
 import io.fd.honeycomb.translate.read.ReadContext
+import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
 import io.frinx.openconfig.network.instance.NetworInstance
-import io.frinx.unitopo.handlers.ospf.OspfReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev151109.Ospf
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev151109.ospf.Processes
@@ -34,11 +34,11 @@ import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
-class GlobalConfigReader(private val access: UnderlayAccess) : OspfReader.OspfConfigReader<Config, ConfigBuilder> {
+class GlobalConfigReader(private val access: UnderlayAccess) : ConfigReaderCustomizer<Config, ConfigBuilder> {
 
     override fun getBuilder(id: IID<Config>) = ConfigBuilder()
 
-    override fun readCurrentAttributesForType(id: IID<Config>, builder: ConfigBuilder, ctx: ReadContext) {
+    override fun readCurrentAttributes(id: IID<Config>, builder: ConfigBuilder, ctx: ReadContext) {
         val vrfName = id.firstKeyOf(NetworkInstance::class.java)
         val protKey = id.firstKeyOf(Protocol::class.java)
 

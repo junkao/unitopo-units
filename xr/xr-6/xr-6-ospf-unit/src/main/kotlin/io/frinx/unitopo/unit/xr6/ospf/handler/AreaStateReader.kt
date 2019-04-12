@@ -18,7 +18,7 @@ package io.frinx.unitopo.unit.xr6.ospf.handler
 
 import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.read.ReadFailedException
-import io.frinx.unitopo.handlers.ospf.OspfReader
+import io.fd.honeycomb.translate.spi.read.OperReaderCustomizer
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.ospfv2.rev170228.ospfv2.area.structure.State
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.ospfv2.rev170228.ospfv2.area.structure.StateBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.ospfv2.rev170228.ospfv2.top.ospfv2.areas.Area
@@ -28,14 +28,14 @@ import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class AreaStateReader : OspfReader.OspfOperReader<State, StateBuilder> {
+class AreaStateReader : OperReaderCustomizer<State, StateBuilder> {
 
     // FIXME Duplicate code with config
 
     override fun getBuilder(instanceIdentifier: InstanceIdentifier<State>) = StateBuilder()
 
     @Throws(ReadFailedException::class)
-    override fun readCurrentAttributesForType(
+    override fun readCurrentAttributes(
         instanceIdentifier: InstanceIdentifier<State>,
         configBuilder: StateBuilder,
         readContext: ReadContext

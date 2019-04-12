@@ -16,20 +16,19 @@
 
 package io.frinx.unitopo.unit.junos18.network.instance
 
-import io.fd.honeycomb.translate.spi.read.ListReaderCustomizer
+import io.fd.honeycomb.translate.spi.read.ConfigListReaderCustomizer
+import io.frinx.translate.unit.commons.handler.spi.CompositeListReader
+import io.frinx.unitopo.handlers.network.instance.def.DefaultReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.junos18.network.instance.vrf.VrfReader
-import io.frinx.unitopo.handlers.network.instance.def.DefaultReader
-import io.frinx.unitopo.handlers.network.instance.NetworkInstanceReader
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstanceBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstanceKey
 
 class NetworkInstanceReader(access: UnderlayAccess) :
-    NetworkInstanceReader(object :
-        ArrayList<ListReaderCustomizer<NetworkInstance, NetworkInstanceKey, NetworkInstanceBuilder>>() {
-        init {
-            add(DefaultReader())
-            add(VrfReader(access))
-        }
-    })
+    CompositeListReader<NetworkInstance, NetworkInstanceKey, NetworkInstanceBuilder>(
+        listOf(
+            DefaultReader(),
+            VrfReader(access)
+        )
+    ), ConfigListReaderCustomizer<NetworkInstance, NetworkInstanceKey, NetworkInstanceBuilder>

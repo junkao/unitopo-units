@@ -17,9 +17,9 @@
 package io.frinx.unitopo.unit.xr6.bgp.handler.neighbor
 
 import io.fd.honeycomb.translate.read.ReadContext
+import io.fd.honeycomb.translate.spi.read.OperReaderCustomizer
 import io.frinx.openconfig.network.instance.NetworInstance
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.handlers.bgp.BgpReader
 import io.frinx.unitopo.unit.xr6.bgp.UnderlayOperBgpInstance
 import io.frinx.unitopo.unit.xr6.bgp.UnderlayOperBgpInstanceKey
 import io.frinx.unitopo.unit.xr6.bgp.UnderlayOperNeighbor
@@ -51,7 +51,7 @@ import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class NeighborStateReader(private val access: UnderlayAccess) : BgpReader.BgpOperReader<State, StateBuilder> {
+class NeighborStateReader(private val access: UnderlayAccess) : OperReaderCustomizer<State, StateBuilder> {
 
     override fun merge(parentBuilder: Builder<out DataObject>, state: State) {
         (parentBuilder as NeighborBuilder).state = state
@@ -59,7 +59,7 @@ class NeighborStateReader(private val access: UnderlayAccess) : BgpReader.BgpOpe
 
     override fun getBuilder(p0: InstanceIdentifier<State>) = StateBuilder()
 
-    override fun readCurrentAttributesForType(
+    override fun readCurrentAttributes(
         id: InstanceIdentifier<State>,
         builder: StateBuilder,
         readContext: ReadContext

@@ -18,7 +18,7 @@ package io.frinx.unitopo.unit.xr7.network.instance.vrf.protocol.aggregate
 
 import io.frinx.translate.unit.commons.handler.spi.CompositeWriter
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.xr7.bgp.handler.aggregate.BgpAggregateConfigWriter
+import io.frinx.unitopo.unit.xr7.bgp.handler.aggregates.BgpAggregateConfigWriter
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.local.routing.rev170515.local.aggregate.top.local.aggregates.aggregate.Config
 
 class AggregateConfigWriter(access: UnderlayAccess) : CompositeWriter<Config>(listOf(

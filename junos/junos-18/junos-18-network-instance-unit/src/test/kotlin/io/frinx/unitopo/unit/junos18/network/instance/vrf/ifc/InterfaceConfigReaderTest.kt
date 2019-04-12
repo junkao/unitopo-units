@@ -59,7 +59,7 @@ class InterfaceConfigReaderTest {
                 .child(Config::class.java)
         val builder = ConfigBuilder()
 
-        target.readCurrentAttributesForType(id, builder, readContext)
+        target.readCurrentAttributes(id, builder, readContext)
 
         Assert.assertThat(builder.id, CoreMatchers.equalTo(ifName))
     }

@@ -19,7 +19,6 @@ package io.frinx.unitopo.unit.junos18.bgp.handler.aggregate
 import io.fd.honeycomb.translate.read.ReadContext
 import io.frinx.openconfig.openconfig.network.instance.IIDs
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.handlers.bgp.BgpReader
 import io.frinx.unitopo.unit.utils.NetconfAccessHelper
 import org.hamcrest.CoreMatchers
 import org.hamcrest.Matchers
@@ -39,6 +38,7 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.insta
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.Protocols
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.Protocol
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.ProtocolKey
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.policy.types.rev160512.BGP
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.types.inet.rev170403.IpPrefixBuilder
 
 class BgpAggregateReaderTest {
@@ -59,11 +59,11 @@ class BgpAggregateReaderTest {
         val id = IIDs.NETWORKINSTANCES
                 .child(NetworkInstance::class.java, NetworkInstanceKey(vrfName))
                 .child(Protocols::class.java)
-                .child(Protocol::class.java, ProtocolKey(BgpReader.TYPE, BgpReader.NAME))
+                .child(Protocol::class.java, ProtocolKey(BGP::class.java, "default"))
                 .child(LocalAggregates::class.java)
                 .child(Aggregate::class.java)
 
-        val result = target.getAllIdsForType(id, readContext)
+        val result = target.getAllIds(id, readContext)
         Assert.assertThat(
                 result.map { String(it.prefix.value) },
                 Matchers.containsInAnyOrder("10.10.10.10/32", "10.10.10.20/32")
@@ -77,13 +77,13 @@ class BgpAggregateReaderTest {
         val id = IIDs.NETWORKINSTANCES
                 .child(NetworkInstance::class.java, NetworkInstanceKey(vrfName))
                 .child(Protocols::class.java)
-                .child(Protocol::class.java, ProtocolKey(BgpReader.TYPE, BgpReader.NAME))
+                .child(Protocol::class.java, ProtocolKey(BGP::class.java, "default"))
                 .child(LocalAggregates::class.java)
                 .child(Aggregate::class.java, AggregateKey(prefix))
 
         val builder = AggregateBuilder()
 
-        target.readCurrentAttributesForType(id, builder, readContext)
+        target.readCurrentAttributes(id, builder, readContext)
 
         Assert.assertThat(builder.prefix, CoreMatchers.sameInstance(prefix))
     }

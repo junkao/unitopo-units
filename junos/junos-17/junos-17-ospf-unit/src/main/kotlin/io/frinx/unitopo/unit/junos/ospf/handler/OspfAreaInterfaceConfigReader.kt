@@ -16,7 +16,7 @@
 package io.frinx.unitopo.unit.junos.ospf.handler
 
 import io.fd.honeycomb.translate.read.ReadContext
-import io.frinx.unitopo.handlers.ospf.OspfReader
+import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.ospf.types.rev170228.OspfMetric
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.ospfv2.rev170228.ospfv2.area.interfaces.structure.interfaces.Interface
@@ -29,7 +29,7 @@ import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
 class OspfAreaInterfaceConfigReader(private val underlayAccess: UnderlayAccess) :
-        OspfReader.OspfConfigReader<Config, ConfigBuilder> {
+        ConfigReaderCustomizer<Config, ConfigBuilder> {
 
     override fun getBuilder(id: IID<Config>): ConfigBuilder = ConfigBuilder()
 
@@ -37,7 +37,7 @@ class OspfAreaInterfaceConfigReader(private val underlayAccess: UnderlayAccess) 
         (builder as InterfaceBuilder).`config` = config
     }
 
-    override fun readCurrentAttributesForType(id: IID<Config>, config: ConfigBuilder, readContext: ReadContext) {
+    override fun readCurrentAttributes(id: IID<Config>, config: ConfigBuilder, readContext: ReadContext) {
         val areaId = String(id.firstKeyOf(Area::class.java).identifier.value)
         val ifaceId = id.firstKeyOf(Interface::class.java).id
         getMetric(areaId, ifaceId)?.let {

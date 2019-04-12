@@ -16,10 +16,10 @@
 
 package io.frinx.unitopo.unit.xr7.bgp.handler.neighbor
 
+import io.fd.honeycomb.translate.spi.write.ListWriterCustomizer
 import io.fd.honeycomb.translate.util.RWUtils
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.openconfig.network.instance.NetworInstance
-import io.frinx.unitopo.handlers.bgp.BgpListWriter
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.utils.As
 import io.frinx.unitopo.unit.xr7.bgp.UnderlayNeighbor
@@ -65,9 +65,9 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev180615.bgp.instance.instance.`as`.four._byte.`as`._default.vrf.bgp.entity.neighbors.NeighborKey as NativeNeighborKey
 
-class NeighborWriter(private val access: UnderlayAccess) : BgpListWriter<Neighbor, NeighborKey> {
+class NeighborWriter(private val access: UnderlayAccess) : ListWriterCustomizer<Neighbor, NeighborKey> {
 
-    override fun writeCurrentAttributesForType(
+    override fun writeCurrentAttributes(
         instanceIdentifier: InstanceIdentifier<Neighbor>,
         neighbor: Neighbor,
         writeContext: WriteContext
@@ -91,7 +91,7 @@ class NeighborWriter(private val access: UnderlayAccess) : BgpListWriter<Neighbo
         }
     }
 
-    override fun updateCurrentAttributesForType(
+    override fun updateCurrentAttributes(
         instanceIdentifier: InstanceIdentifier<Neighbor>,
         dataBefore: Neighbor,
         dataAfter: Neighbor,
@@ -125,7 +125,7 @@ class NeighborWriter(private val access: UnderlayAccess) : BgpListWriter<Neighbo
         }
     }
 
-    override fun deleteCurrentAttributesForType(
+    override fun deleteCurrentAttributes(
         instanceIdentifier: InstanceIdentifier<Neighbor>,
         neighbor: Neighbor,
         writeContext: WriteContext

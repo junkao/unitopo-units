@@ -16,9 +16,9 @@
 
 package io.frinx.unitopo.unit.xr6.ospf.handler
 
+import io.fd.honeycomb.translate.spi.write.WriterCustomizer
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.openconfig.network.instance.NetworInstance
-import io.frinx.unitopo.handlers.ospf.OspfWriter
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev151109.max.metric.MaxMetric
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev151109.max.metric.max.metric.MaxMetricOnStartup
@@ -35,25 +35,25 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.ospf.types.re
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.ospfv2.rev170228.ospfv2.global.structural.global.timers.max.metric.Config
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
-class MaxMetricConfigWriter(private val underlayAccess: UnderlayAccess) : OspfWriter<Config> {
+class MaxMetricConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCustomizer<Config> {
 
-    override fun updateCurrentAttributesForType(
+    override fun updateCurrentAttributes(
         iid: IID<Config>,
         dataBefore: Config,
         dataAfter: Config,
         writeContext: WriteContext
     ) {
-        deleteCurrentAttributesForType(iid, dataBefore, writeContext)
-        writeCurrentAttributesForType(iid, dataAfter, writeContext)
+        deleteCurrentAttributes(iid, dataBefore, writeContext)
+        writeCurrentAttributes(iid, dataAfter, writeContext)
     }
 
-    override fun writeCurrentAttributesForType(id: IID<Config>, dataAfter: Config, wtx: WriteContext) {
+    override fun writeCurrentAttributes(id: IID<Config>, dataAfter: Config, wtx: WriteContext) {
         val (underlayId, underlayData) = getData(id, dataAfter)
 
         underlayAccess.merge(underlayId, underlayData)
     }
 
-    override fun deleteCurrentAttributesForType(id: IID<Config>, dataBefore: Config, wtx: WriteContext) {
+    override fun deleteCurrentAttributes(id: IID<Config>, dataBefore: Config, wtx: WriteContext) {
         val (processIid, vrfName) = GlobalConfigWriter.getIdentifiers(id)
         val metricIid = getInterfaceIdentifier(processIid, vrfName)
 

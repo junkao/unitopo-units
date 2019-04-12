@@ -16,18 +16,17 @@
 
 package io.frinx.unitopo.unit.junos18.network.instance
 
-import io.fd.honeycomb.translate.spi.read.ReaderCustomizer
+import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
+import io.frinx.translate.unit.commons.handler.spi.CompositeReader
+import io.frinx.unitopo.handlers.network.instance.def.DefaultConfigReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.junos18.network.instance.vrf.VrfConfigReader
-import io.frinx.unitopo.handlers.network.instance.def.DefaultConfigReader
-import io.frinx.unitopo.handlers.network.instance.NetworkInstanceConfigReader
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.Config
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.ConfigBuilder
 
-class NetworkInstanceConfigReader(access: UnderlayAccess) :
-    NetworkInstanceConfigReader(object : ArrayList<ReaderCustomizer<Config, ConfigBuilder>>() {
-        init {
-            add(DefaultConfigReader())
-            add(VrfConfigReader(access))
-        }
-    })
+class NetworkInstanceConfigReader(access: UnderlayAccess) : CompositeReader<Config, ConfigBuilder>(
+    listOf(
+            DefaultConfigReader(),
+            VrfConfigReader(access)
+    )
+), ConfigReaderCustomizer<Config, ConfigBuilder>

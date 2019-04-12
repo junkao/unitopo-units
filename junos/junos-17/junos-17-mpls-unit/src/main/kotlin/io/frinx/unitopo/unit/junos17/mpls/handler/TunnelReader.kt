@@ -18,8 +18,8 @@ package io.frinx.unitopo.unit.junos17.mpls.handler
 import com.google.common.annotations.VisibleForTesting
 import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.read.ReadFailedException
+import io.fd.honeycomb.translate.spi.read.ConfigListReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.junos17.mpls.common.MplsListReader
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.mpls.rev170824.te.tunnels_top.TunnelsBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.mpls.rev170824.te.tunnels_top.tunnels.Tunnel
@@ -33,11 +33,11 @@ import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
 class TunnelReader(private val underlayAccess: UnderlayAccess)
-    : MplsListReader.MplsConfigListReader<Tunnel, TunnelKey, TunnelBuilder> {
+    : ConfigListReaderCustomizer<Tunnel, TunnelKey, TunnelBuilder> {
 
     override fun getBuilder(p0: InstanceIdentifier<Tunnel>): TunnelBuilder = TunnelBuilder()
 
-    override fun getAllIdsForType(instanceIdentifier: InstanceIdentifier<Tunnel>, readContext: ReadContext):
+    override fun getAllIds(instanceIdentifier: InstanceIdentifier<Tunnel>, readContext: ReadContext):
         List<TunnelKey> {
         try {
             return getTunnelKeys(underlayAccess)
@@ -50,7 +50,7 @@ class TunnelReader(private val underlayAccess: UnderlayAccess)
         (builder as TunnelsBuilder).tunnel = readData
     }
 
-    override fun readCurrentAttributesForType(
+    override fun readCurrentAttributes(
         instanceIdentifier: InstanceIdentifier<Tunnel>,
         tunnelBuilder: TunnelBuilder,
         readContext: ReadContext

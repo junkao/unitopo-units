@@ -80,7 +80,7 @@ class IsisInterfaceAuthConfigReaderTest {
     fun readCurrentAttributesForType() {
         val builder = ConfigBuilder()
 
-        target.readCurrentAttributesForType(CONFIG_IID, builder, readContext)
+        target.readCurrentAttributes(CONFIG_IID, builder, readContext)
 
         Assert.assertThat(builder.authPassword.encryptedString.value, CoreMatchers.equalTo("Encrypted[040A59555B74]"))
     }

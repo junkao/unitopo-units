@@ -18,7 +18,7 @@ package io.frinx.unitopo.handlers.network.instance.protocol
 
 import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.read.ReadFailedException
-import io.frinx.unitopo.handlers.l3vrf.L3VrfReader
+import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.Protocol
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.ProtocolBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.protocol.Config
@@ -27,14 +27,14 @@ import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class ProtocolConfigReader : L3VrfReader.L3VrfConfigReader<Config, ConfigBuilder> {
+class ProtocolConfigReader : ConfigReaderCustomizer<Config, ConfigBuilder> {
 
     override fun getBuilder(instanceIdentifier: InstanceIdentifier<Config>): ConfigBuilder {
         return ConfigBuilder()
     }
 
     @Throws(ReadFailedException::class)
-    override fun readCurrentAttributesForType(
+    override fun readCurrentAttributes(
         instanceIdentifier: InstanceIdentifier<Config>,
         configBuilder: ConfigBuilder,
         readContext: ReadContext

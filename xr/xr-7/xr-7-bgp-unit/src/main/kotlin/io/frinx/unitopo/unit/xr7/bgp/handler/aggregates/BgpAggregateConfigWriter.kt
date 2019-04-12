@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package io.frinx.unitopo.unit.xr7.bgp.handler.aggregate
+package io.frinx.unitopo.unit.xr7.bgp.handler.aggregates
 
 import io.fd.honeycomb.translate.util.RWUtils
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.openconfig.network.instance.NetworInstance
-import io.frinx.unitopo.handlers.bgp.BgpWriter
+import io.frinx.translate.unit.commons.handler.spi.TypedWriter
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.utils.As
 import io.frinx.unitopo.unit.xr7.bgp.handler.BgpProtocolReader
@@ -62,7 +62,7 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.types.inet.re
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.IpAddress
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
-open class BgpAggregateConfigWriter(private val access: UnderlayAccess) : BgpWriter<Config> {
+open class BgpAggregateConfigWriter(private val access: UnderlayAccess) : TypedWriter<Config> {
 
     override fun writeCurrentAttributesForType(
         id: IID<Config>,

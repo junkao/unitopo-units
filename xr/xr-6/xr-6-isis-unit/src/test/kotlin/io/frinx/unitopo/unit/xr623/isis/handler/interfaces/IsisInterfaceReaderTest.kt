@@ -86,7 +86,7 @@ class IsisInterfaceReaderTest {
     fun readCurrentAttributesForType() {
         val builder = InterfaceBuilder()
 
-        target.readCurrentAttributesForType(INTERFACE_IID, builder, readContext)
+        target.readCurrentAttributes(INTERFACE_IID, builder, readContext)
 
         Assert.assertThat(builder.interfaceId.value, CoreMatchers.sameInstance(INTERFACE_ID))
     }

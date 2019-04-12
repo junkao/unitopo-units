@@ -17,7 +17,7 @@ package io.frinx.unitopo.unit.xr6.lr.handler
 
 import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.read.ReadFailedException
-import io.frinx.unitopo.unit.xr6.lr.common.LrReader
+import io.fd.honeycomb.translate.spi.read.OperReaderCustomizer
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.local.routing.rev170515.local._static.top._static.routes.Static
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.local.routing.rev170515.local._static.top._static.routes.StaticBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.local.routing.rev170515.local._static.top._static.routes.StaticKey
@@ -27,12 +27,12 @@ import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class StaticStateReader : LrReader.LrOperReader<State, StateBuilder> {
+class StaticStateReader : OperReaderCustomizer<State, StateBuilder> {
 
     override fun getBuilder(instanceIdentifier: InstanceIdentifier<State>) = StateBuilder()
 
     @Throws(ReadFailedException::class)
-    override fun readCurrentAttributesForType(
+    override fun readCurrentAttributes(
         instanceIdentifier: InstanceIdentifier<State>,
         stateBuilder: StateBuilder,
         readContext: ReadContext

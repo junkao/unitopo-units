@@ -17,9 +17,9 @@
 package io.frinx.unitopo.unit.xr6.bgp.handler.neighbor
 
 import io.fd.honeycomb.translate.read.ReadContext
+import io.fd.honeycomb.translate.spi.read.ConfigListReaderCustomizer
 import io.frinx.openconfig.network.instance.NetworInstance
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.handlers.bgp.BgpListReader
 import io.frinx.unitopo.unit.xr6.bgp.UnderlayNeighbor
 import io.frinx.unitopo.unit.xr6.bgp.handler.BgpProtocolReader
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.Instance
@@ -42,9 +42,9 @@ import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
 class NeighborReader(private val access: UnderlayAccess) :
-    BgpListReader.BgpConfigListReader<Neighbor, NeighborKey, NeighborBuilder> {
+    ConfigListReaderCustomizer<Neighbor, NeighborKey, NeighborBuilder> {
 
-    override fun getAllIdsForType(id: InstanceIdentifier<Neighbor>, readContext: ReadContext): List<NeighborKey> {
+    override fun getAllIds(id: InstanceIdentifier<Neighbor>, readContext: ReadContext): List<NeighborKey> {
         val protKey = id.firstKeyOf<Protocol, ProtocolKey>(Protocol::class.java)
         val vrfKey = id.firstKeyOf(NetworkInstance::class.java)
 
@@ -60,7 +60,7 @@ class NeighborReader(private val access: UnderlayAccess) :
         (builder as NeighborsBuilder).neighbor = list
     }
 
-    override fun readCurrentAttributesForType(
+    override fun readCurrentAttributes(
         id: InstanceIdentifier<Neighbor>,
         neighborBuilder: NeighborBuilder,
         readContext: ReadContext

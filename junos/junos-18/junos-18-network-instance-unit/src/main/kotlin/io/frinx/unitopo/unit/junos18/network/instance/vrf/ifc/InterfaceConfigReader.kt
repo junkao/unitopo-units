@@ -17,7 +17,7 @@
 package io.frinx.unitopo.unit.junos18.network.instance.vrf.ifc
 
 import io.fd.honeycomb.translate.read.ReadContext
-import io.frinx.unitopo.handlers.l3vrf.L3VrfReader
+import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.junos18.network.instance.vrf.VrfReader
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
@@ -34,9 +34,9 @@ import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.routing.ins
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.routing.instances.rev180101.juniper.routing.instance.InterfaceKey as JunosInstInterfaceKey
 
 class InterfaceConfigReader(private val underlayAccess: UnderlayAccess) :
-        L3VrfReader.L3VrfConfigReader<Config, ConfigBuilder> {
+    ConfigReaderCustomizer<Config, ConfigBuilder> {
 
-    override fun readCurrentAttributesForType(
+    override fun readCurrentAttributes(
         id: InstanceIdentifier<Config>,
         builder: ConfigBuilder,
         ctx: ReadContext

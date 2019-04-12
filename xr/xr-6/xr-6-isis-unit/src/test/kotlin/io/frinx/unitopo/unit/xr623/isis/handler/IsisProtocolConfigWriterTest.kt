@@ -94,7 +94,7 @@ class IsisProtocolConfigWriterTest : AbstractNetconfHandlerTest() {
         Mockito.doNothing().`when`(underlayAccess).merge(Mockito.any(), Mockito.any())
 
         // test
-        target.writeCurrentAttributesForType(IID_CONFIG, config, writeContext)
+        target.writeCurrentAttributes(IID_CONFIG, config, writeContext)
 
         // capture
         Mockito.verify(underlayAccess, Mockito.times(1)).merge(idCap.capture(), dataCap.capture())
@@ -118,7 +118,7 @@ class IsisProtocolConfigWriterTest : AbstractNetconfHandlerTest() {
         Mockito.doNothing().`when`(underlayAccess).delete(Mockito.any())
 
         // test
-        target.deleteCurrentAttributesForType(IID_CONFIG, config, writeContext)
+        target.deleteCurrentAttributes(IID_CONFIG, config, writeContext)
 
         // capture
         Mockito.verify(underlayAccess, Mockito.times(1)).delete(idCap.capture())

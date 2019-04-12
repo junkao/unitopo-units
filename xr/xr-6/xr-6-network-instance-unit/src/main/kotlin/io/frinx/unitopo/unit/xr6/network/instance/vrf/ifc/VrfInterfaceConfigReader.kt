@@ -17,7 +17,7 @@
 package io.frinx.unitopo.unit.xr6.network.instance.vrf.ifc
 
 import io.fd.honeycomb.translate.read.ReadContext
-import io.frinx.unitopo.handlers.l3vrf.L3VrfReader
+import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.interfaces.Interface
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.interfaces.InterfaceBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.interfaces._interface.Config
@@ -26,9 +26,9 @@ import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class VrfInterfaceConfigReader : L3VrfReader.L3VrfConfigReader<Config, ConfigBuilder> {
+class VrfInterfaceConfigReader : ConfigReaderCustomizer<Config, ConfigBuilder> {
 
-    override fun readCurrentAttributesForType(
+    override fun readCurrentAttributes(
         instanceIdentifier: InstanceIdentifier<Config>,
         builder: ConfigBuilder,
         readContext: ReadContext

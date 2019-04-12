@@ -23,4 +23,8 @@ import io.frinx.unitopo.unit.xr6.ospf.handler.table.OspfTableConnectionWriter
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.table.connections.table.connection.Config
 
 class TableConnectionConfigWriter(access: UnderlayAccess) : CompositeWriter<Config>(
-        listOf(BgpTableConnectionWriter(access), OspfTableConnectionWriter(access)))
+        listOf(
+            BgpTableConnectionWriter(access),
+            OspfTableConnectionWriter(access)
+        )
+)

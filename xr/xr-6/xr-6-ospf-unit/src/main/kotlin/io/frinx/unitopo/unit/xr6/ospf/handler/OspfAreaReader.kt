@@ -18,8 +18,8 @@ package io.frinx.unitopo.unit.xr6.ospf.handler
 
 import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.read.ReadFailedException
+import io.fd.honeycomb.translate.spi.read.ConfigListReaderCustomizer
 import io.frinx.openconfig.network.instance.NetworInstance
-import io.frinx.unitopo.handlers.ospf.OspfListReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev151109.area.table.AreaAddresses
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
@@ -36,11 +36,10 @@ import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.controller.md.sal.common.api.data.ReadFailedException as MdSalReadFailedException
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
-class OspfAreaReader(private val access: UnderlayAccess)
-    : OspfListReader.OspfConfigListReader<Area, AreaKey, AreaBuilder> {
+class OspfAreaReader(private val access: UnderlayAccess) : ConfigListReaderCustomizer<Area, AreaKey, AreaBuilder> {
 
     @Throws(ReadFailedException::class)
-    override fun getAllIdsForType(id: IID<Area>, context: ReadContext): List<AreaKey> {
+    override fun getAllIds(id: IID<Area>, context: ReadContext): List<AreaKey> {
         val vrfName = id.firstKeyOf(NetworkInstance::class.java)
         val protKey = id.firstKeyOf(Protocol::class.java)
 
@@ -68,7 +67,7 @@ class OspfAreaReader(private val access: UnderlayAccess)
     override fun getBuilder(id: IID<Area>) = AreaBuilder()
 
     @Throws(ReadFailedException::class)
-    override fun readCurrentAttributesForType(id: IID<Area>, builder: AreaBuilder, ctx: ReadContext) {
+    override fun readCurrentAttributes(id: IID<Area>, builder: AreaBuilder, ctx: ReadContext) {
         val key = id.firstKeyOf(Area::class.java)
 
         builder.identifier = key.identifier

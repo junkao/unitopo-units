@@ -16,6 +16,7 @@
 
 package io.frinx.unitopo.unit.xr6.bgp.handler
 
+import io.fd.honeycomb.translate.spi.write.WriterCustomizer
 import io.fd.honeycomb.translate.util.RWUtils
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.openconfig.network.instance.NetworInstance
@@ -24,7 +25,6 @@ import io.frinx.unitopo.unit.utils.As.Companion.asToDotNotation
 import io.frinx.unitopo.unit.xr6.bgp.IID
 import io.frinx.unitopo.unit.xr6.bgp.UnderlayDefaultVrfGlobal
 import io.frinx.unitopo.unit.xr6.bgp.UnderlayVrfGlobal
-import io.frinx.unitopo.handlers.bgp.BgpWriter
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.Instance
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.InstanceKey
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.instance.InstanceAs
@@ -58,9 +58,9 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.insta
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.types.inet.rev170403.AsNumber
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class GlobalAfiSafiConfigWriter(private val underlayAccess: UnderlayAccess) : BgpWriter<Config> {
+class GlobalAfiSafiConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCustomizer<Config> {
 
-    override fun writeCurrentAttributesForType(
+    override fun writeCurrentAttributes(
         id: IID<Config>,
         config: Config,
         writeContext: WriteContext
@@ -85,7 +85,7 @@ class GlobalAfiSafiConfigWriter(private val underlayAccess: UnderlayAccess) : Bg
         }
     }
 
-    override fun updateCurrentAttributesForType(
+    override fun updateCurrentAttributes(
         id: IID<Config>,
         dataBefore: Config,
         dataAfter: Config,
@@ -95,7 +95,7 @@ class GlobalAfiSafiConfigWriter(private val underlayAccess: UnderlayAccess) : Bg
         // no actual configuration is touched here
     }
 
-    override fun deleteCurrentAttributesForType(
+    override fun deleteCurrentAttributes(
         id: IID<Config>,
         config: Config,
         writeContext: WriteContext

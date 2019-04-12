@@ -17,7 +17,7 @@
 package io.frinx.unitopo.unit.xr623.isis.handler.interfaces
 
 import io.fd.honeycomb.translate.read.ReadContext
-import io.frinx.unitopo.handlers.isis.IsisListReader
+import io.fd.honeycomb.translate.spi.read.ConfigListReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr623.isis.handler.IsisProtocolReader
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.clns.isis.cfg.rev151109.isis.instances.Instance
@@ -30,10 +30,10 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.openconfig.is
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.openconfig.isis.rev181121.isis.interfaces.InterfaceKey
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-open class IsisInterfaceReader(private val access: UnderlayAccess)
-    : IsisListReader.IsisConfigListReader<Interface, InterfaceKey, InterfaceBuilder> {
+open class IsisInterfaceReader(private val access: UnderlayAccess) :
+    ConfigListReaderCustomizer<Interface, InterfaceKey, InterfaceBuilder> {
 
-    override fun getAllIdsForType(id: InstanceIdentifier<Interface>, context: ReadContext): List<InterfaceKey> {
+    override fun getAllIds(id: InstanceIdentifier<Interface>, context: ReadContext): List<InterfaceKey> {
         val protKey = id.firstKeyOf(Protocol::class.java)
 
         return getInterfaces(access, protKey)
@@ -42,7 +42,7 @@ open class IsisInterfaceReader(private val access: UnderlayAccess)
                 .toList()
     }
 
-    override fun readCurrentAttributesForType(
+    override fun readCurrentAttributes(
         id: InstanceIdentifier<Interface>,
         builder: InterfaceBuilder,
         ctx: ReadContext

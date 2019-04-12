@@ -17,8 +17,8 @@
 package io.frinx.unitopo.unit.junos18.bgp.handler.aggregate
 
 import io.fd.honeycomb.translate.write.WriteContext
+import io.frinx.translate.unit.commons.handler.spi.TypedWriter
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.handlers.bgp.BgpWriter
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.extension.rev180323.NiProtAggAug
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.local.routing.rev170515.local.aggregate.top.local.aggregates.aggregate.Config
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.common.types.rev180101.PolicyAlgebra
@@ -26,7 +26,7 @@ import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.routing.ins
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.common.types.rev180101.Ipprefix as JunodIpPrefix
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
-open class BgpAggregateConfigWriter(private val access: UnderlayAccess) : BgpWriter<Config> {
+open class BgpAggregateConfigWriter(private val access: UnderlayAccess) : TypedWriter<Config> {
 
     override fun writeCurrentAttributesForType(
         instanceIdentifier: IID<Config>,

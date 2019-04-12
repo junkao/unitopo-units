@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package io.frinx.unitopo.unit.xr7.bgp.handler.aggregate
+package io.frinx.unitopo.unit.xr7.bgp.handler.aggregates
 
 import io.fd.honeycomb.translate.read.ReadContext
+import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
 import io.frinx.translate.unit.commons.handler.spi.CompositeReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr7.bgp.handler.BgpProtocolReader
-import io.frinx.unitopo.handlers.bgp.BgpReader
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev180615.bgp.Instance
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev180615.bgp.InstanceKey
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev180615.bgp.instance.instance.`as`.four._byte.`as`.vrfs.vrf.VrfGlobal
@@ -36,12 +36,12 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.insta
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
 class BgpAggregateConfigReader(private val underlayAccess: UnderlayAccess) :
-        BgpReader.BgpConfigReader<Config, ConfigBuilder>,
-        CompositeReader.Child<Config, ConfigBuilder> {
+    ConfigReaderCustomizer<Config, ConfigBuilder>,
+    CompositeReader.Child<Config, ConfigBuilder> {
 
     override fun getBuilder(id: InstanceIdentifier<Config>) = ConfigBuilder()
 
-    override fun readCurrentAttributesForType(
+    override fun readCurrentAttributes(
         id: InstanceIdentifier<Config>,
         configBuilder: ConfigBuilder,
         readContext: ReadContext

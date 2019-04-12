@@ -16,8 +16,8 @@
 package io.frinx.unitopo.unit.junos17.mpls.handler
 
 import io.fd.honeycomb.translate.read.ReadContext
+import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.junos17.mpls.common.MplsReader
 import org.opendaylight.controller.md.sal.common.api.data.ReadFailedException
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.mpls.rev170824.te.tunnel.p2p_top.P2pTunnelAttributesBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.mpls.rev170824.te.tunnel.p2p_top.p2p.tunnel.attributes.Config
@@ -32,11 +32,11 @@ import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
 class P2pAttributesConfigReader(private val access: UnderlayAccess) :
-    MplsReader.MplsConfigReader<Config, ConfigBuilder> {
+    ConfigReaderCustomizer<Config, ConfigBuilder> {
 
     override fun getBuilder(p0: InstanceIdentifier<Config>): ConfigBuilder = ConfigBuilder()
 
-    override fun readCurrentAttributesForType(
+    override fun readCurrentAttributes(
         instanceIdentifier: InstanceIdentifier<Config>,
         configBuilder: ConfigBuilder,
         readContext: ReadContext

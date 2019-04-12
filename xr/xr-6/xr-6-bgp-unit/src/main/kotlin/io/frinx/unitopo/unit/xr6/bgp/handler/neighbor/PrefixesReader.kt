@@ -17,8 +17,8 @@
 package io.frinx.unitopo.unit.xr6.bgp.handler.neighbor
 
 import io.fd.honeycomb.translate.read.ReadContext
+import io.fd.honeycomb.translate.spi.read.OperReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.handlers.bgp.BgpReader
 import io.frinx.unitopo.unit.xr6.bgp.UnderlayOperNeighbor
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.oper.rev150827.BgpAfi
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.neighbor.afi.safi.list.AfiSafi
@@ -39,7 +39,7 @@ import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class PrefixesReader(private val access: UnderlayAccess) : BgpReader.BgpOperReader<Prefixes, PrefixesBuilder> {
+class PrefixesReader(private val access: UnderlayAccess) : OperReaderCustomizer<Prefixes, PrefixesBuilder> {
 
     override fun merge(parentBuilder: Builder<out DataObject>, state: Prefixes) {
         (parentBuilder as StateBuilder).prefixes = state
@@ -47,7 +47,7 @@ class PrefixesReader(private val access: UnderlayAccess) : BgpReader.BgpOperRead
 
     override fun getBuilder(p0: InstanceIdentifier<Prefixes>) = PrefixesBuilder()
 
-    override fun readCurrentAttributesForType(
+    override fun readCurrentAttributes(
         id: InstanceIdentifier<Prefixes>,
         builder: PrefixesBuilder,
         readContext: ReadContext

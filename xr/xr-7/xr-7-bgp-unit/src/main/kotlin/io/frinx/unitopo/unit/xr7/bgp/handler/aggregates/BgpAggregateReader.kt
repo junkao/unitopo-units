@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package io.frinx.unitopo.unit.xr7.bgp.handler.aggregate
+package io.frinx.unitopo.unit.xr7.bgp.handler.aggregates
 
 import io.fd.honeycomb.translate.read.ReadContext
+import io.fd.honeycomb.translate.spi.read.ConfigListReaderCustomizer
 import io.frinx.openconfig.network.instance.NetworInstance
 import io.frinx.translate.unit.commons.handler.spi.CompositeListReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr7.bgp.handler.BgpProtocolReader
-import io.frinx.unitopo.handlers.bgp.BgpListReader
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev180615.bgp.Instance
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev180615.bgp.InstanceKey
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev180615.bgp.instance.instance.`as`.four._byte.`as`.vrfs.vrf.VrfGlobal
@@ -35,12 +35,12 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.types.inet.re
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
 class BgpAggregateReader(private val access: UnderlayAccess) :
-        BgpListReader.BgpConfigListReader<Aggregate, AggregateKey, AggregateBuilder>,
+        ConfigListReaderCustomizer<Aggregate, AggregateKey, AggregateBuilder>,
         CompositeListReader.Child<Aggregate, AggregateKey, AggregateBuilder> {
 
     override fun getBuilder(id: IID<Aggregate>) = AggregateBuilder()
 
-    override fun getAllIdsForType(
+    override fun getAllIds(
         id: IID<Aggregate>,
         readContext: ReadContext
     ): List<AggregateKey> {
@@ -60,7 +60,7 @@ class BgpAggregateReader(private val access: UnderlayAccess) :
         return parseAggregates(bgpInstance, vrfKey.name)
     }
 
-    override fun readCurrentAttributesForType(
+    override fun readCurrentAttributes(
         IID: IID<Aggregate>,
         aggregateBuilder: AggregateBuilder,
         readContext: ReadContext

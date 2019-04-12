@@ -15,9 +15,9 @@
  */
 package io.frinx.unitopo.unit.xr6.ospf.handler
 
+import io.fd.honeycomb.translate.spi.write.WriterCustomizer
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.openconfig.network.instance.NetworInstance.DEFAULT_NETWORK_NAME
-import io.frinx.unitopo.handlers.ospf.OspfWriter
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev151109.area.table.AreaAddresses
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev151109.area.table.area.addresses.AreaAddress
@@ -38,19 +38,19 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.yang.types.rev130715.DottedQuad
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
-class AreaConfigWriter(private val underlayAccess: UnderlayAccess) : OspfWriter<Config> {
+class AreaConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCustomizer<Config> {
 
-    override fun updateCurrentAttributesForType(
+    override fun updateCurrentAttributes(
         iid: IID<Config>,
         dataBefore: Config,
         dataAfter: Config,
         writeContext: WriteContext
     ) {
-        deleteCurrentAttributesForType(iid, dataBefore, writeContext)
-        writeCurrentAttributesForType(iid, dataAfter, writeContext)
+        deleteCurrentAttributes(iid, dataBefore, writeContext)
+        writeCurrentAttributes(iid, dataAfter, writeContext)
     }
 
-    override fun writeCurrentAttributesForType(id: IID<Config>, dataAfter: Config, wtx: WriteContext) {
+    override fun writeCurrentAttributes(id: IID<Config>, dataAfter: Config, wtx: WriteContext) {
         val areaId = id.firstKeyOf(Area::class.java).identifier
 
         if (areaId.uint32 != null) {
@@ -62,7 +62,7 @@ class AreaConfigWriter(private val underlayAccess: UnderlayAccess) : OspfWriter<
         }
     }
 
-    override fun deleteCurrentAttributesForType(id: IID<Config>, dataBefore: Config, wtx: WriteContext) {
+    override fun deleteCurrentAttributes(id: IID<Config>, dataBefore: Config, wtx: WriteContext) {
         val (processIid, vrfName) = GlobalConfigWriter.getIdentifiers(id)
         val areaId = id.firstKeyOf(Area::class.java).identifier
 

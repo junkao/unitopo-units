@@ -79,7 +79,7 @@ class IsisInterfaceTimersConfigReaderTest {
     fun readCurrentAttributesForType() {
         val builder = ConfigBuilder()
 
-        target.readCurrentAttributesForType(CONFIG_IID, builder, readContext)
+        target.readCurrentAttributes(CONFIG_IID, builder, readContext)
 
         Assert.assertThat(builder.getAugmentation(IsisIfTimersConfAug::class.java).retransmissionInterval,
                 CoreMatchers.`is`(100L))

@@ -16,10 +16,10 @@
 
 package io.frinx.unitopo.unit.xr7.bgp.handler
 
+import io.fd.honeycomb.translate.spi.write.WriterCustomizer
 import io.fd.honeycomb.translate.util.RWUtils
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.openconfig.network.instance.NetworInstance
-import io.frinx.unitopo.handlers.bgp.BgpWriter
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.utils.As
 import io.frinx.unitopo.unit.xr7.bgp.IID
@@ -56,9 +56,9 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.insta
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.types.inet.rev170403.AsNumber
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-open class GlobalAfiSafiConfigWriter(private val underlayAccess: UnderlayAccess) : BgpWriter<Config> {
+open class GlobalAfiSafiConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCustomizer<Config> {
 
-    override fun writeCurrentAttributesForType(
+    override fun writeCurrentAttributes(
         id: IID<Config>,
         config: Config,
         writeContext: WriteContext
@@ -83,7 +83,7 @@ open class GlobalAfiSafiConfigWriter(private val underlayAccess: UnderlayAccess)
         }
     }
 
-    override fun updateCurrentAttributesForType(
+    override fun updateCurrentAttributes(
         id: IID<Config>,
         dataBefore: Config,
         dataAfter: Config,
@@ -93,7 +93,7 @@ open class GlobalAfiSafiConfigWriter(private val underlayAccess: UnderlayAccess)
         // no actual configuration is touched here
     }
 
-    override fun deleteCurrentAttributesForType(
+    override fun deleteCurrentAttributes(
         id: IID<Config>,
         config: Config,
         writeContext: WriteContext

@@ -16,18 +16,13 @@
 package io.frinx.unitopo.unit.xr623.ospf
 
 import io.fd.honeycomb.rpc.RpcService
-import io.fd.honeycomb.translate.impl.read.GenericConfigListReader
-import io.fd.honeycomb.translate.impl.read.GenericConfigReader
-import io.fd.honeycomb.translate.impl.write.GenericListWriter
-import io.fd.honeycomb.translate.impl.write.GenericWriter
 import io.fd.honeycomb.translate.spi.builder.CustomizerAwareReadRegistryBuilder
 import io.fd.honeycomb.translate.spi.builder.CustomizerAwareWriteRegistryBuilder
 import io.frinx.openconfig.openconfig.network.instance.IIDs
+import io.frinx.translate.unit.commons.handler.spi.ChecksMap
 import io.frinx.unitopo.registry.api.TranslationUnitCollector
 import io.frinx.unitopo.registry.spi.TranslateUnit
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.utils.NoopListWriter
-import io.frinx.unitopo.unit.utils.NoopWriter
 import io.frinx.unitopo.unit.xr6.ospf.handler.AreaConfigReader
 import io.frinx.unitopo.unit.xr623.ospf.handler.AreaConfigWriter
 import io.frinx.unitopo.unit.xr623.ospf.handler.AreaInterfaceConfigReader
@@ -35,10 +30,6 @@ import io.frinx.unitopo.unit.xr623.ospf.handler.AreaInterfaceConfigWriter
 import io.frinx.unitopo.unit.xr623.ospf.handler.AreaInterfaceReader
 import io.frinx.unitopo.unit.xr623.ospf.handler.MaxMetricConfigWriter
 import io.frinx.unitopo.unit.xr623.ospf.handler.OspfAreaReader
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.ospfv2.rev170228.ospfv2.area.interfaces.structure.InterfacesBuilder
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.ospfv2.rev170228.ospfv2.global.structural.GlobalBuilder
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.ospfv2.rev170228.ospfv2.top.Ospfv2Builder
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.ospfv2.rev170228.ospfv2.top.ospfv2.AreasBuilder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev170102.`$YangModuleInfoImpl` as UnderlayOspfConfigYangModule
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.ospf.cisco.rev171124.`$YangModuleInfoImpl` as OpenconfigCiscoOspfExtensionModule
@@ -67,42 +58,41 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
     override fun provideHandlers(
         rRegistry: CustomizerAwareReadRegistryBuilder,
         wRegistry: CustomizerAwareWriteRegistryBuilder,
-        access: UnderlayAccess
+        underlayAccess: UnderlayAccess
     ) {
-        provideReaders(rRegistry, access)
-        provideWriters(wRegistry, access)
+        val checkRegistry = ChecksMap.getOpenconfigCheckRegistry()
+        rRegistry.setCheckRegistry(checkRegistry)
+        provideReaders(rRegistry, underlayAccess)
+        wRegistry.setCheckRegistry(checkRegistry)
+        provideWriters(wRegistry, underlayAccess)
     }
 
     private fun provideWriters(wRegistry: CustomizerAwareWriteRegistryBuilder, access: UnderlayAccess) {
-        wRegistry.add(GenericWriter(IIDs.NE_NE_PR_PR_OSPFV2, NoopWriter()))
-        wRegistry.add(GenericWriter(IIDs.NE_NE_PR_PR_OS_GLOBAL, NoopWriter()))
+        wRegistry.addNoop(IIDs.NE_NE_PR_PR_OSPFV2)
+        wRegistry.addNoop(IIDs.NE_NE_PR_PR_OS_GLOBAL)
 
-        wRegistry.add(GenericWriter(IIDs.NE_NE_PR_PR_OS_GL_TIMERS, NoopWriter()))
-        wRegistry.add(GenericWriter(IIDs.NE_NE_PR_PR_OS_GL_TI_MAXMETRIC, NoopWriter()))
-        wRegistry.add(GenericWriter(IIDs.NE_NE_PR_PR_OS_GL_TI_MA_CONFIG, MaxMetricConfigWriter(access)))
+        wRegistry.addNoop(IIDs.NE_NE_PR_PR_OS_GL_TIMERS)
+        wRegistry.addNoop(IIDs.NE_NE_PR_PR_OS_GL_TI_MAXMETRIC)
+        wRegistry.add(IIDs.NE_NE_PR_PR_OS_GL_TI_MA_CONFIG, MaxMetricConfigWriter(access))
 
-        wRegistry.add(GenericWriter(IIDs.NE_NE_PR_PR_OS_AREAS, NoopWriter()))
-        wRegistry.add(GenericListWriter(IIDs.NE_NE_PR_PR_OS_AR_AREA, NoopListWriter()))
-        wRegistry.addAfter(GenericWriter(IIDs.NE_NE_PR_PR_OS_AR_AR_CONFIG, AreaConfigWriter(access)),
+        wRegistry.addNoop(IIDs.NE_NE_PR_PR_OS_AREAS)
+        wRegistry.addNoop(IIDs.NE_NE_PR_PR_OS_AR_AREA)
+        wRegistry.addAfter(IIDs.NE_NE_PR_PR_OS_AR_AR_CONFIG, AreaConfigWriter(access),
                 IIDs.NE_NE_PR_PR_OS_GL_CONFIG)
-        wRegistry.add(GenericWriter(IIDs.NE_NE_PR_PR_OS_AR_AR_INTERFACES, NoopWriter()))
-        wRegistry.add(GenericListWriter(IIDs.NE_NE_PR_PR_OS_AR_AR_IN_INTERFACE, NoopListWriter()))
-        wRegistry.addAfter(GenericWriter(IIDs.NE_NE_PR_PR_OS_AR_AR_IN_IN_CONFIG, AreaInterfaceConfigWriter(access)),
-                setOf(IIDs.NE_NE_PR_PR_OS_AR_AR_CONFIG, IIDs.NE_NE_IN_IN_CONFIG, IIDs.NE_NE_PR_PR_OS_GL_CONFIG))
+        wRegistry.addNoop(IIDs.NE_NE_PR_PR_OS_AR_AR_INTERFACES)
+        wRegistry.addNoop(IIDs.NE_NE_PR_PR_OS_AR_AR_IN_INTERFACE)
+        wRegistry.addAfter(IIDs.NE_NE_PR_PR_OS_AR_AR_IN_IN_CONFIG, AreaInterfaceConfigWriter(access),
+            IIDs.NE_NE_PR_PR_OS_AR_AR_CONFIG, IIDs.NE_NE_IN_IN_CONFIG, IIDs.NE_NE_PR_PR_OS_GL_CONFIG)
 
-        wRegistry.add(GenericWriter(IIDs.NE_NE_PR_PR_OS_AR_AR_IN_IN_INTERFACEREF, NoopWriter()))
-        wRegistry.add(GenericWriter(IIDs.NE_NE_PR_PR_OS_AR_AR_IN_IN_IN_CONFIG, NoopWriter()))
+        wRegistry.addNoop(IIDs.NE_NE_PR_PR_OS_AR_AR_IN_IN_INTERFACEREF)
+        wRegistry.addNoop(IIDs.NE_NE_PR_PR_OS_AR_AR_IN_IN_IN_CONFIG)
     }
 
     private fun provideReaders(rRegistry: CustomizerAwareReadRegistryBuilder, access: UnderlayAccess) {
-        rRegistry.addStructuralReader(IIDs.NE_NE_PR_PR_OSPFV2, Ospfv2Builder::class.java)
-        rRegistry.addStructuralReader(IIDs.NE_NE_PR_PR_OS_GLOBAL, GlobalBuilder::class.java)
-        rRegistry.addStructuralReader(IIDs.NE_NE_PR_PR_OS_AREAS, AreasBuilder::class.java)
-        rRegistry.add(GenericConfigListReader(IIDs.NE_NE_PR_PR_OS_AR_AREA, OspfAreaReader(access)))
-        rRegistry.add(GenericConfigReader(IIDs.NE_NE_PR_PR_OS_AR_AR_CONFIG, AreaConfigReader()))
-        rRegistry.addStructuralReader(IIDs.NE_NE_PR_PR_OS_AR_AR_INTERFACES, InterfacesBuilder::class.java)
-        rRegistry.add(GenericConfigListReader(IIDs.NE_NE_PR_PR_OS_AR_AR_IN_INTERFACE, AreaInterfaceReader(access)))
-        rRegistry.add(GenericConfigReader(IIDs.NE_NE_PR_PR_OS_AR_AR_IN_IN_CONFIG, AreaInterfaceConfigReader(access)))
+        rRegistry.add(IIDs.NE_NE_PR_PR_OS_AR_AREA, OspfAreaReader(access))
+        rRegistry.add(IIDs.NE_NE_PR_PR_OS_AR_AR_CONFIG, AreaConfigReader())
+        rRegistry.add(IIDs.NE_NE_PR_PR_OS_AR_AR_IN_INTERFACE, AreaInterfaceReader(access))
+        rRegistry.add(IIDs.NE_NE_PR_PR_OS_AR_AR_IN_IN_CONFIG, AreaInterfaceConfigReader(access))
     }
 
     override fun toString(): String = "XR 6 (2017-01-02) OSPF translate unit"

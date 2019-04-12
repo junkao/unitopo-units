@@ -18,8 +18,8 @@ package io.frinx.unitopo.unit.xr6.lr.handler
 
 import com.google.common.annotations.VisibleForTesting
 import io.fd.honeycomb.translate.read.ReadContext
+import io.fd.honeycomb.translate.spi.read.ConfigListReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.xr6.lr.common.LrListReader
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ip._static.cfg.rev150910.address.family.AddressFamily
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ip._static.cfg.rev150910.vrf.next.hop.VRFNEXTHOPCONTENT
@@ -44,11 +44,12 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 import java.util.ArrayList
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.local.routing.rev170515.LocalStaticNexthopConfig.NextHop as BASE_NEXTHOP_CONFIG
 
-class NextHopReader(private val access: UnderlayAccess) : LrListReader<NextHop, NextHopKey, NextHopBuilder> {
+class NextHopReader(private val access: UnderlayAccess) :
+    ConfigListReaderCustomizer<NextHop, NextHopKey, NextHopBuilder> {
 
     override fun getBuilder(id: InstanceIdentifier<NextHop>) = NextHopBuilder()
 
-    override fun readCurrentAttributesForType(
+    override fun readCurrentAttributes(
         id: InstanceIdentifier<NextHop>,
         builder: NextHopBuilder,
         ctx: ReadContext
@@ -65,7 +66,7 @@ class NextHopReader(private val access: UnderlayAccess) : LrListReader<NextHop, 
         }
     }
 
-    override fun getAllIdsForType(id: InstanceIdentifier<NextHop>, context: ReadContext): List<NextHopKey> {
+    override fun getAllIds(id: InstanceIdentifier<NextHop>, context: ReadContext): List<NextHopKey> {
         if (access.currentOperationType == LogicalDatastoreType.CONFIGURATION) {
             // FIXME Since this mixes config and oper data, it can only work in oper reads
             return emptyList()

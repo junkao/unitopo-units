@@ -81,7 +81,7 @@ class BgpProtocolReaderTest {
 
         val builder = ProtocolBuilder()
 
-        target.readCurrentAttributesForType(id, builder, readContext)
+        target.readCurrentAttributes(id, builder, readContext)
 
         Assert.assertThat(
                 builder.identifier,

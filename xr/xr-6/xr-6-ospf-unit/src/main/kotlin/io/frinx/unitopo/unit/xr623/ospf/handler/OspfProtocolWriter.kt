@@ -17,7 +17,7 @@ package io.frinx.unitopo.unit.xr623.ospf.handler
 
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.openconfig.network.instance.NetworInstance
-import io.frinx.unitopo.handlers.ospf.OspfWriter
+import io.frinx.translate.unit.commons.handler.spi.TypedWriter
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev170102.ospf.processes.process.vrfs.VrfKey
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev170102.Ospf
@@ -35,7 +35,7 @@ import org.opendaylight.yangtools.yang.binding.DataObject
 import java.util.Collections
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
-open class OspfProtocolWriter(private val underlayAccess: UnderlayAccess) : OspfWriter<Config> {
+open class OspfProtocolWriter(private val underlayAccess: UnderlayAccess) : TypedWriter<Config> {
 
     override fun updateCurrentAttributesForType(
         iid: IID<Config>,

@@ -18,9 +18,9 @@ package io.frinx.unitopo.unit.xr6.network.instance.l2vsi.cp
 
 import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.read.Reader
+import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
 import io.frinx.translate.unit.commons.handler.spi.CompositeReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.xr6.network.instance.common.L2vsiReader
 import io.frinx.unitopo.unit.xr6.network.instance.l2vsi.L2VSIReader
 import io.frinx.unitopo.unit.xr6.network.instance.l2vsi.cp.L2VSIConnectionPointsReader.Companion.ENDPOINT_ID
 import io.frinx.unitopo.unit.xr6.network.instance.l2vsi.cp.L2VSIConnectionPointsReader.Companion.REMOTE_ID
@@ -46,7 +46,7 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.insta
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.connection.points.connection.point.endpoints.endpoint.remote.ConfigBuilder as RemoteConfigBuilder
 
 class L2VSIConnectionPointsReader(private val underlayAccess: UnderlayAccess) :
-    L2vsiReader.L2vsiConfigReader<ConnectionPoints, ConnectionPointsBuilder>,
+    ConfigReaderCustomizer<ConnectionPoints, ConnectionPointsBuilder>,
     CompositeReader.Child<ConnectionPoints, ConnectionPointsBuilder> {
 
     override fun getBuilder(p0: InstanceIdentifier<ConnectionPoints>): ConnectionPointsBuilder {
@@ -54,7 +54,7 @@ class L2VSIConnectionPointsReader(private val underlayAccess: UnderlayAccess) :
         throw UnsupportedOperationException("Should not be invoked")
     }
 
-    override fun readCurrentAttributesForType(
+    override fun readCurrentAttributes(
         id: InstanceIdentifier<ConnectionPoints>,
         builder: ConnectionPointsBuilder,
         ctx: ReadContext

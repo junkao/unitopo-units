@@ -15,8 +15,8 @@
  */
 package io.frinx.unitopo.unit.xr6.ospf.handler
 
+import io.fd.honeycomb.translate.spi.write.WriterCustomizer
 import io.fd.honeycomb.translate.write.WriteContext
-import io.frinx.unitopo.handlers.ospf.OspfWriter
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev151109.Ospf
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev151109.ospf.Processes
@@ -29,25 +29,25 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.insta
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
-class OspfProtocolWriter(private val underlayAccess: UnderlayAccess) : OspfWriter<Config> {
+class OspfProtocolWriter(private val underlayAccess: UnderlayAccess) : WriterCustomizer<Config> {
 
-    override fun updateCurrentAttributesForType(
+    override fun updateCurrentAttributes(
         iid: IID<Config>,
         dataBefore: Config,
         dataAfter: Config,
         writeContext: WriteContext
     ) {
-        deleteCurrentAttributesForType(iid, dataBefore, writeContext)
-        writeCurrentAttributesForType(iid, dataAfter, writeContext)
+        deleteCurrentAttributes(iid, dataBefore, writeContext)
+        writeCurrentAttributes(iid, dataAfter, writeContext)
     }
 
-    override fun writeCurrentAttributesForType(id: IID<Config>, dataAfter: Config, wtx: WriteContext) {
+    override fun writeCurrentAttributes(id: IID<Config>, dataAfter: Config, wtx: WriteContext) {
         val (underlayId, underlayCfg) = getData(id)
 
         underlayAccess.merge(underlayId, underlayCfg)
     }
 
-    override fun deleteCurrentAttributesForType(id: IID<Config>, dataBefore: Config, wtx: WriteContext) {
+    override fun deleteCurrentAttributes(id: IID<Config>, dataBefore: Config, wtx: WriteContext) {
         val processName = id.firstKeyOf(Protocol::class.java).name
         val processId = IID.create(Ospf::class.java).child(Processes::class.java).child(Process::class.java,
                 ProcessKey(CiscoIosXrString(processName)))

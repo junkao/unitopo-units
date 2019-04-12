@@ -17,7 +17,7 @@ package io.frinx.unitopo.unit.xr623.isis.handler
 
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.openconfig.network.instance.NetworInstance
-import io.frinx.unitopo.handlers.isis.IsisWriter
+import io.frinx.translate.unit.commons.handler.spi.TypedWriter
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.clns.isis.cfg.rev151109.isis.instances.Instance
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.clns.isis.cfg.rev151109.isis.instances.InstanceBuilder
@@ -28,7 +28,7 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.insta
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.protocol.Config
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
-class IsisProtocolConfigWriter(private val underlayAccess: UnderlayAccess) : IsisWriter<Config> {
+class IsisProtocolConfigWriter(private val underlayAccess: UnderlayAccess) : TypedWriter<Config> {
     override fun writeCurrentAttributesForType(id: IID<Config>, dataAfter: Config, wtx: WriteContext) {
         val vrfName = id.firstKeyOf(NetworkInstance::class.java).name
         val instanceName = id.firstKeyOf(Protocol::class.java).name

@@ -16,7 +16,7 @@
 package io.frinx.unitopo.unit.junos.ospf.handler
 
 import io.fd.honeycomb.translate.read.ReadContext
-import io.frinx.unitopo.handlers.ospf.OspfReader
+import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.ospfv2.rev170228.ospfv2.global.structural.global.timers.MaxMetricBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.ospfv2.rev170228.ospfv2.global.structural.global.timers.max.metric.Config
@@ -27,7 +27,7 @@ import java.math.BigInteger
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
 class OspfMaxMetricConfigReader(private val underlayAccess: UnderlayAccess) :
-        OspfReader.OspfConfigReader<Config, ConfigBuilder> {
+    ConfigReaderCustomizer<Config, ConfigBuilder> {
 
     override fun getBuilder(id: IID<Config>): ConfigBuilder {
         return ConfigBuilder()
@@ -37,7 +37,7 @@ class OspfMaxMetricConfigReader(private val underlayAccess: UnderlayAccess) :
         (builder as MaxMetricBuilder).config = config
     }
 
-    override fun readCurrentAttributesForType(id: IID<Config>, config: ConfigBuilder, readContext: ReadContext) {
+    override fun readCurrentAttributes(id: IID<Config>, config: ConfigBuilder, readContext: ReadContext) {
         val timeout = getTimeout()
 
         if (timeout != null) {

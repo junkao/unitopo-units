@@ -17,9 +17,8 @@ package io.frinx.unitopo.unit.xr7.ospf.handler
 
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.openconfig.network.instance.NetworInstance
-import io.frinx.unitopo.handlers.ospf.OspfWriter
+import io.frinx.translate.unit.commons.handler.spi.TypedWriter
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import java.util.Collections
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev180514.Ospf
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev180514.ospf.Processes
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev180514.ospf.processes.Process
@@ -33,9 +32,10 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.insta
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.Protocol
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.protocol.Config
 import org.opendaylight.yangtools.yang.binding.DataObject
+import java.util.Collections
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
-open class OspfProtocolWriter(private val underlayAccess: UnderlayAccess) : OspfWriter<Config> {
+open class OspfProtocolWriter(private val underlayAccess: UnderlayAccess) : TypedWriter<Config> {
 
     override fun updateCurrentAttributesForType(
         iid: IID<Config>,

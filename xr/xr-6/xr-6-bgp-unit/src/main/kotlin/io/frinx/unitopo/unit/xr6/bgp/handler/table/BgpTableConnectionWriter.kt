@@ -21,7 +21,7 @@ import io.fd.honeycomb.translate.util.RWUtils
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.openconfig.network.instance.NetworInstance
 import io.frinx.openconfig.openconfig.network.instance.IIDs
-import io.frinx.unitopo.handlers.l3vrf.L3VrfWriter
+import io.frinx.translate.unit.commons.handler.spi.TypedWriter
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr6.bgp.IID
 import io.frinx.unitopo.unit.xr6.bgp.handler.GlobalAfiSafiConfigWriter
@@ -44,7 +44,7 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.policy.types.
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.policy.types.rev160512.OSPF
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class BgpTableConnectionWriter(private val access: UnderlayAccess) : L3VrfWriter<Config> {
+class BgpTableConnectionWriter(private val access: UnderlayAccess) : TypedWriter<Config> {
 
     override fun writeCurrentAttributesForType(
         instanceIdentifier: IID<Config>,

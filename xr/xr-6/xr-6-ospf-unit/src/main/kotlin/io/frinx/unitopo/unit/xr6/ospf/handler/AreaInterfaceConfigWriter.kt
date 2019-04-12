@@ -15,9 +15,9 @@
  */
 package io.frinx.unitopo.unit.xr6.ospf.handler
 
+import io.fd.honeycomb.translate.spi.write.WriterCustomizer
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.openconfig.openconfig.network.instance.IIDs
-import io.frinx.unitopo.handlers.ospf.OspfWriter
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr6.ospf.handler.AreaConfigWriter.Companion.getAreaAddressIdentifier
 import io.frinx.unitopo.unit.xr6.ospf.handler.AreaConfigWriter.Companion.getAreaIdIdentifier
@@ -35,19 +35,19 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.ospfv2.rev170
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.policy.types.rev160512.OSPF
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
-class AreaInterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : OspfWriter<Config> {
+class AreaInterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCustomizer<Config> {
 
-    override fun updateCurrentAttributesForType(
+    override fun updateCurrentAttributes(
         iid: IID<Config>,
         dataBefore: Config,
         dataAfter: Config,
         writeContext: WriteContext
     ) {
-        deleteCurrentAttributesForType(iid, dataBefore, writeContext)
-        writeCurrentAttributesForType(iid, dataAfter, writeContext)
+        deleteCurrentAttributes(iid, dataBefore, writeContext)
+        writeCurrentAttributes(iid, dataAfter, writeContext)
     }
 
-    override fun writeCurrentAttributesForType(id: IID<Config>, dataAfter: Config, wtx: WriteContext) {
+    override fun writeCurrentAttributes(id: IID<Config>, dataAfter: Config, wtx: WriteContext) {
         wtx.readAfter(IIDs.NETWORKINSTANCES).orNull()
                 ?.networkInstance.orEmpty()
                 .filter { it.config?.type == L3VRF::class.java || it.config?.type == DEFAULTINSTANCE::class.java }
@@ -60,7 +60,7 @@ class AreaInterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : Os
         underlayAccess.merge(underlayId, underlayData)
     }
 
-    override fun deleteCurrentAttributesForType(id: IID<Config>, dataBefore: Config, wtx: WriteContext) {
+    override fun deleteCurrentAttributes(id: IID<Config>, dataBefore: Config, wtx: WriteContext) {
         val (processIid, vrfName) = GlobalConfigWriter.getIdentifiers(id)
         val ifaceIid = getNameScopeIdentifier(processIid, vrfName, id)
 

@@ -144,7 +144,7 @@ class GlobalAfiSafiConfigWriterTest : AbstractNetconfHandlerTest() {
                         .net.yang.bgp.rev170202.bgp.top.bgp.Global::class.java)))
                 .thenReturn(Optional.of(globalBuilder.build()))
 
-        target!!.writeCurrentAttributesForType(IID_CONFIG, config, writeContext!!)
+        target!!.writeCurrentAttributes(IID_CONFIG, config, writeContext!!)
 
         Mockito.verify(underlayAccess, Mockito.times(1)).merge(idCap.capture(), dataCap.capture())
         // verify capture-length

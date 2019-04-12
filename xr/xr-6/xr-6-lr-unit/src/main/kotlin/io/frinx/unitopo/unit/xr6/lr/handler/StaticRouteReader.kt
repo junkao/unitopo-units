@@ -18,9 +18,9 @@ package io.frinx.unitopo.unit.xr6.lr.handler
 
 import com.google.common.annotations.VisibleForTesting
 import io.fd.honeycomb.translate.read.ReadContext
+import io.fd.honeycomb.translate.spi.read.ConfigListReaderCustomizer
 import io.frinx.openconfig.network.instance.NetworInstance
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.xr6.lr.common.LrListReader
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ip._static.cfg.rev150910.RouterStatic
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ip._static.cfg.rev150910.address.family.AddressFamily
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ip._static.cfg.rev150910.vrf.prefix.table.VrfPrefixes
@@ -38,10 +38,10 @@ import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class StaticRouteReader(private val access: UnderlayAccess) : LrListReader.LrConfigListReader<Static, StaticKey,
-    StaticBuilder> {
+class StaticRouteReader(private val access: UnderlayAccess) :
+    ConfigListReaderCustomizer<Static, StaticKey, StaticBuilder> {
 
-    override fun getAllIdsForType(id: InstanceIdentifier<Static>, context: ReadContext): List<StaticKey> {
+    override fun getAllIds(id: InstanceIdentifier<Static>, context: ReadContext): List<StaticKey> {
         val vrfName = id.firstKeyOf<NetworkInstance, NetworkInstanceKey>(NetworkInstance::class.java).`name`
         return getStaticKeys(getAddressFamily(access, vrfName))
     }
@@ -52,7 +52,7 @@ class StaticRouteReader(private val access: UnderlayAccess) : LrListReader.LrCon
 
     override fun getBuilder(id: InstanceIdentifier<Static>): StaticBuilder = StaticBuilder()
 
-    override fun readCurrentAttributesForType(
+    override fun readCurrentAttributes(
         id: InstanceIdentifier<Static>,
         builder: StaticBuilder,
         ctx: ReadContext

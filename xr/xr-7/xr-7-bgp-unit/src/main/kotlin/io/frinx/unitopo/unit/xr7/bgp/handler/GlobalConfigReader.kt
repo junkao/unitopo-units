@@ -18,8 +18,8 @@ package io.frinx.unitopo.unit.xr7.bgp.handler
 
 import com.google.common.annotations.VisibleForTesting
 import io.fd.honeycomb.translate.read.ReadContext
+import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
 import io.frinx.openconfig.network.instance.NetworInstance
-import io.frinx.unitopo.handlers.bgp.BgpReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.utils.As
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType
@@ -35,11 +35,11 @@ import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-open class GlobalConfigReader(private val access: UnderlayAccess) : BgpReader.BgpConfigReader<Config, ConfigBuilder> {
+open class GlobalConfigReader(private val access: UnderlayAccess) : ConfigReaderCustomizer<Config, ConfigBuilder> {
 
     override fun getBuilder(id: InstanceIdentifier<Config>) = ConfigBuilder()
 
-    override fun readCurrentAttributesForType(
+    override fun readCurrentAttributes(
         id: InstanceIdentifier<Config>,
         builder: ConfigBuilder,
         ctx: ReadContext

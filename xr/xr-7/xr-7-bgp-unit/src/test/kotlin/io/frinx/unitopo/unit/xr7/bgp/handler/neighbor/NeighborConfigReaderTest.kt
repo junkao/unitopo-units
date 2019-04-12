@@ -81,7 +81,7 @@ class NeighborConfigReaderTest : AbstractNetconfHandlerTest() {
                 .child(Neighbor::class.java, NeighborKey(IpAddress(Ipv4Address("10.1.22.23"))))
                 .child(Config::class.java)
 
-        target.readCurrentAttributesForType(id, builder, readContext)
+        target.readCurrentAttributes(id, builder, readContext)
         Assert.assertEquals(IpAddress(Ipv4Address("10.1.22.23")), builder.build().neighborAddress)
         Assert.assertThat(builder.peerAs.value.toString(), CoreMatchers.equalTo(asnumer))
         Assert.assertThat(builder.authPassword.encryptedString.value.toString(), CoreMatchers.equalTo(key))

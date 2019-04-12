@@ -16,8 +16,8 @@
 
 package io.frinx.unitopo.unit.junos18.network.instance.vrf.ifc
 
+import io.fd.honeycomb.translate.spi.write.WriterCustomizer
 import io.fd.honeycomb.translate.write.WriteContext
-import io.frinx.unitopo.handlers.l3vrf.L3VrfWriter
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.junos18.network.instance.vrf.VrfReader
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
@@ -30,16 +30,16 @@ import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.routing.ins
 import io.frinx.openconfig.network.instance.NetworInstance as DefaultNetworkInstance
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
-class InterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : L3VrfWriter<Config> {
+class InterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCustomizer<Config> {
 
-    override fun deleteCurrentAttributesForType(iid: IID<Config>, dataBefore: Config, wtc: WriteContext) {
+    override fun deleteCurrentAttributes(iid: IID<Config>, dataBefore: Config, wtc: WriteContext) {
         val vrfName = iid.firstKeyOf(NetworkInstance::class.java).name!!
         val ifcId = getInterfaceIdentifier(vrfName, dataBefore.id)
 
         underlayAccess.delete(ifcId)
     }
 
-    override fun updateCurrentAttributesForType(
+    override fun updateCurrentAttributes(
         id: IID<Config>,
         dataBefore: Config,
         dataAfter: Config,
@@ -48,7 +48,7 @@ class InterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : L3VrfW
         // There are no modifiable attributes.
     }
 
-    override fun writeCurrentAttributesForType(iid: IID<Config>, dataAfter: Config, wtc: WriteContext) {
+    override fun writeCurrentAttributes(iid: IID<Config>, dataAfter: Config, wtc: WriteContext) {
         val vrfKey = iid.firstKeyOf(NetworkInstance::class.java)
         require(vrfKey != DefaultNetworkInstance.DEFAULT_NETWORK) {
             "Cannot configure interface in default network instance. Vrf: ${vrfKey.name}, Interface: ${dataAfter.id}"

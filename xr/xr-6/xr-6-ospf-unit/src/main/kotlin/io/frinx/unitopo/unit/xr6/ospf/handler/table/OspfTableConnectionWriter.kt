@@ -20,7 +20,7 @@ import io.fd.honeycomb.translate.util.RWUtils
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.openconfig.network.instance.NetworInstance
 import io.frinx.openconfig.openconfig.network.instance.IIDs
-import io.frinx.unitopo.handlers.l3vrf.L3VrfWriter
+import io.frinx.translate.unit.commons.handler.spi.TypedWriter
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.utils.As
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev151109.Ospf
@@ -55,7 +55,7 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.policy.types.
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.policy.types.rev160512.OSPF
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class OspfTableConnectionWriter(private val access: UnderlayAccess) : L3VrfWriter<Config> {
+class OspfTableConnectionWriter(private val access: UnderlayAccess) : TypedWriter<Config> {
 
     override fun updateCurrentAttributesForType(
         id: InstanceIdentifier<Config>,

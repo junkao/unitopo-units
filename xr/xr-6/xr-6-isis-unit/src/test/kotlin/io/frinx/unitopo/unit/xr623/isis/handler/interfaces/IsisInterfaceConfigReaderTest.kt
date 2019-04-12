@@ -79,7 +79,7 @@ class IsisInterfaceConfigReaderTest {
     fun readCurrentAttributesForType() {
         val builder = ConfigBuilder()
 
-        target.readCurrentAttributesForType(CONFIG_IID, builder, readContext)
+        target.readCurrentAttributes(CONFIG_IID, builder, readContext)
 
         Assert.assertThat(builder.interfaceId.value, CoreMatchers.sameInstance(INTERFACE_ID))
         Assert.assertThat(builder.circuitType, CoreMatchers.`is`(CircuitType.POINTTOPOINT))

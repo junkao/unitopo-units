@@ -17,9 +17,9 @@
 package io.frinx.unitopo.unit.xr6.bgp.handler.neighbor
 
 import io.fd.honeycomb.translate.read.ReadContext
+import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
 import io.frinx.openconfig.network.instance.NetworInstance
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.handlers.bgp.BgpReader
 import io.frinx.unitopo.unit.xr6.bgp.handler.BgpProtocolReader
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.Instance
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.InstanceKey
@@ -38,7 +38,7 @@ import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
 class NeighborPolicyConfigReader(private val access: UnderlayAccess) :
-    BgpReader.BgpConfigReader<Config, ConfigBuilder> {
+    ConfigReaderCustomizer<Config, ConfigBuilder> {
 
     override fun merge(parentBuilder: Builder<out DataObject>, config: Config) {
         (parentBuilder as ApplyPolicyBuilder).config = config
@@ -46,7 +46,7 @@ class NeighborPolicyConfigReader(private val access: UnderlayAccess) :
 
     override fun getBuilder(p0: InstanceIdentifier<Config>) = ConfigBuilder()
 
-    override fun readCurrentAttributesForType(
+    override fun readCurrentAttributes(
         id: InstanceIdentifier<Config>,
         builder: ConfigBuilder,
         readContext: ReadContext

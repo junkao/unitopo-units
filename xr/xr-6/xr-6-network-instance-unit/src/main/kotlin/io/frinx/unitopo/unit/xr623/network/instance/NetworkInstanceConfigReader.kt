@@ -16,17 +16,17 @@
 
 package io.frinx.unitopo.unit.xr623.network.instance
 
-import io.fd.honeycomb.translate.spi.read.ReaderCustomizer
+import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
+import io.frinx.translate.unit.commons.handler.spi.CompositeReader
 import io.frinx.unitopo.handlers.network.instance.def.DefaultConfigReader
 import io.frinx.unitopo.unit.xr623.network.instance.vrf.VrfConfigReader
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.Config
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.ConfigBuilder
-import io.frinx.unitopo.handlers.network.instance.NetworkInstanceConfigReader
 
-class NetworkInstanceConfigReader()
-    : NetworkInstanceConfigReader(object : ArrayList<ReaderCustomizer<Config, ConfigBuilder>>() {
-            init {
-                add(VrfConfigReader())
-                add(DefaultConfigReader())
-            }
-        })
+class NetworkInstanceConfigReader :
+    ConfigReaderCustomizer<Config, ConfigBuilder>, CompositeReader<Config, ConfigBuilder>(
+        listOf(
+            VrfConfigReader(),
+            DefaultConfigReader()
+        )
+    )

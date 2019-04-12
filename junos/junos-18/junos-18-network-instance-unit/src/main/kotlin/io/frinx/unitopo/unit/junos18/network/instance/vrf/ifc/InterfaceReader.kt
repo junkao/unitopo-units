@@ -17,7 +17,7 @@
 package io.frinx.unitopo.unit.junos18.network.instance.vrf.ifc
 
 import io.fd.honeycomb.translate.read.ReadContext
-import io.frinx.unitopo.handlers.l3vrf.L3VrfListReader
+import io.fd.honeycomb.translate.spi.read.ConfigListReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.junos18.network.instance.vrf.VrfReader
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
@@ -33,9 +33,9 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 import io.frinx.openconfig.network.instance.NetworInstance as DefaultNetworkInstance
 
 class InterfaceReader(private val underlayAccess: UnderlayAccess) :
-    L3VrfListReader.L3VrfConfigListReader<Interface, InterfaceKey, InterfaceBuilder> {
+    ConfigListReaderCustomizer<Interface, InterfaceKey, InterfaceBuilder> {
 
-    override fun readCurrentAttributesForType(
+    override fun readCurrentAttributes(
         id: InstanceIdentifier<Interface>,
         builder: InterfaceBuilder,
         ctx: ReadContext
@@ -50,7 +50,7 @@ class InterfaceReader(private val underlayAccess: UnderlayAccess) :
         (builder as InterfacesBuilder).`interface` = list
     }
 
-    override fun getAllIdsForType(id: InstanceIdentifier<Interface>, context: ReadContext): List<InterfaceKey> {
+    override fun getAllIds(id: InstanceIdentifier<Interface>, context: ReadContext): List<InterfaceKey> {
         val vrfKey = id.firstKeyOf(NetworkInstance::class.java)
         if (vrfKey == DefaultNetworkInstance.DEFAULT_NETWORK) {
             return emptyList()

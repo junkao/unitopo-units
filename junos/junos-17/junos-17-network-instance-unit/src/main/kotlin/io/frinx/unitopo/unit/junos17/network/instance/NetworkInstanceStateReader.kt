@@ -15,16 +15,15 @@
  */
 package io.frinx.unitopo.unit.junos17.network.instance
 
-import io.fd.honeycomb.translate.spi.read.ReaderCustomizer
-import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.handlers.network.instance.NetworkInstanceStateReader
+import io.fd.honeycomb.translate.spi.read.OperReaderCustomizer
+import io.frinx.translate.unit.commons.handler.spi.CompositeReader
 import io.frinx.unitopo.handlers.network.instance.def.DefaultStateReader
+import io.frinx.unitopo.registry.spi.UnderlayAccess
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.State
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.StateBuilder
 
-class NetworkInstanceStateReader(access: UnderlayAccess) :
-        NetworkInstanceStateReader(object : ArrayList<ReaderCustomizer<State, StateBuilder>>() {
-    init {
-        add(DefaultStateReader())
-    }
-})
+class NetworkInstanceStateReader(access: UnderlayAccess) : CompositeReader<State, StateBuilder>(
+    listOf(
+        DefaultStateReader()
+    )
+), OperReaderCustomizer<State, StateBuilder>

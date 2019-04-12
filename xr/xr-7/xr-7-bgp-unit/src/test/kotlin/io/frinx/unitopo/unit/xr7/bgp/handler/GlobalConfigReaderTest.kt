@@ -72,7 +72,7 @@ class GlobalConfigReaderTest : AbstractNetconfHandlerTest() {
     fun testreadCurrentAttributesForType() {
         val globall_as = "19999"
         val builder = ConfigBuilder()
-        target!!.readCurrentAttributesForType(IID_CONFIG, builder, readContext!!)
+        target!!.readCurrentAttributes(IID_CONFIG, builder, readContext!!)
         Assert.assertThat(builder.`as`.value.toString(), CoreMatchers.equalTo(globall_as))
     }
 }

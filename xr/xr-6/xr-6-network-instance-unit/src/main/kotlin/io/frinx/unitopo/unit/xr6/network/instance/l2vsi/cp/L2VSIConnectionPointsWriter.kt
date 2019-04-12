@@ -18,8 +18,8 @@ package io.frinx.unitopo.unit.xr6.network.instance.l2vsi.cp
 
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.openconfig.openconfig.network.instance.IIDs
+import io.frinx.translate.unit.commons.handler.spi.TypedWriter
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.xr6.network.instance.common.L2vsiWriter
 import io.frinx.unitopo.unit.xr6.network.instance.l2vsi.L2VSIReader
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.l2vpn.cfg.rev151109.BgpRouteDistinguisher
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.l2vpn.cfg.rev151109.BgpRouteTargetFormat
@@ -54,7 +54,7 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.policy.types.
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.types.inet.rev170403.AsNumber
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class L2VSIConnectionPointsWriter(private val underlayAccess: UnderlayAccess) : L2vsiWriter<ConnectionPoints> {
+class L2VSIConnectionPointsWriter(private val underlayAccess: UnderlayAccess) : TypedWriter<ConnectionPoints> {
 
     override fun writeCurrentAttributesForType(
         id: InstanceIdentifier<ConnectionPoints>,

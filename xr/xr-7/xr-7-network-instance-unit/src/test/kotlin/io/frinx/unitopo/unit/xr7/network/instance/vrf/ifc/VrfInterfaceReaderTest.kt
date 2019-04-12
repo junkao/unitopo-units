@@ -64,13 +64,13 @@ class VrfInterfaceReaderTest : AbstractNetconfHandlerTest() {
     @Test
     fun testReadCurrentAttributesForType() {
         val builder = InterfaceBuilder()
-        target.readCurrentAttributesForType(IID_INTERFACE, builder, readContext)
+        target.readCurrentAttributes(IID_INTERFACE, builder, readContext)
         Assert.assertEquals(BaseTest.BUN_ETH_301_1, builder.build().id)
     }
 
     @Test
     fun testGetAllIdsForType() {
-        val list = target.getAllIdsForType(IID_INTERFACE, readContext)
+        val list = target.getAllIds(IID_INTERFACE, readContext)
         Assert.assertThat(
             list.map { it.id },
             Matchers.containsInAnyOrder(BaseTest.BUN_ETH_301_1)

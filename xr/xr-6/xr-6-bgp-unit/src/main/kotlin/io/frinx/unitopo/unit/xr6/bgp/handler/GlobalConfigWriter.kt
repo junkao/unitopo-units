@@ -16,17 +16,16 @@
 
 package io.frinx.unitopo.unit.xr6.bgp.handler
 
+import io.fd.honeycomb.translate.spi.write.WriterCustomizer
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.openconfig.network.instance.NetworInstance
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.utils.As.Companion.asToDotNotation
-import io.frinx.unitopo.handlers.bgp.BgpReader
 import io.frinx.unitopo.unit.xr6.bgp.IID
 import io.frinx.unitopo.unit.xr6.bgp.UnderlayBgp
 import io.frinx.unitopo.unit.xr6.bgp.UnderlayBgpBuilder
 import io.frinx.unitopo.unit.xr6.bgp.UnderlayRouteDistinguisher
 import io.frinx.unitopo.unit.xr6.bgp.UnderlayRouteDistinguisherBuilder
-import io.frinx.unitopo.handlers.bgp.BgpWriter
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.BgpRouteDistinguisher
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.Instance
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.InstanceBuilder
@@ -65,9 +64,9 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 import java.util.regex.Pattern
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.Config as NetworkInstanceConfig
 
-class GlobalConfigWriter(private val underlayAccess: UnderlayAccess) : BgpWriter<Config> {
+class GlobalConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCustomizer<Config> {
 
-    override fun updateCurrentAttributesForType(
+    override fun updateCurrentAttributes(
         id: IID<Config>,
         dataBefore: Config,
         dataAfter: Config,
@@ -100,7 +99,7 @@ class GlobalConfigWriter(private val underlayAccess: UnderlayAccess) : BgpWriter
         }
     }
 
-    override fun writeCurrentAttributesForType(id: IID<Config>, dataAfter: Config, wc: WriteContext) {
+    override fun writeCurrentAttributes(id: IID<Config>, dataAfter: Config, wc: WriteContext) {
         val vrfKey = checkArguments(id)
 
         if (vrfKey == NetworInstance.DEFAULT_NETWORK) {
@@ -121,12 +120,12 @@ class GlobalConfigWriter(private val underlayAccess: UnderlayAccess) : BgpWriter
     private fun checkArguments(id: IID<Config>): NetworkInstanceKey {
         val vrfKey = id.firstKeyOf(NetworkInstance::class.java)
         val protoKey = id.firstKeyOf(Protocol::class.java)
-        require(protoKey.name == BgpReader.NAME,
-                { "BGP protocol instance has to be named: ${BgpReader.NAME}. Not: $protoKey" })
+        require(protoKey.name == NAME
+        ) { "BGP protocol instance has to be named: $NAME. Not: $protoKey" }
         return vrfKey
     }
 
-    override fun deleteCurrentAttributesForType(iid: IID<Config>, dataBefore: Config, wc: WriteContext) {
+    override fun deleteCurrentAttributes(iid: IID<Config>, dataBefore: Config, wc: WriteContext) {
         val vrfKey = iid.firstKeyOf(NetworkInstance::class.java)
         if (vrfKey == NetworInstance.DEFAULT_NETWORK) {
             underlayAccess.delete(XR_BGP_ID)
@@ -136,7 +135,7 @@ class GlobalConfigWriter(private val underlayAccess: UnderlayAccess) : BgpWriter
     }
 
     companion object {
-        val XR_BGP_INSTANCE_NAME = CiscoIosXrString(BgpReader.NAME)
+        val XR_BGP_INSTANCE_NAME = CiscoIosXrString(NAME)
         val XR_BGP_ID = IID.create(UnderlayBgp::class.java)
         private val XR_EMPTY_BGP = UnderlayBgpBuilder().build()
         private val XR_EMPTY_VRF_BGP = VrfBuilder().build()
@@ -209,6 +208,7 @@ class GlobalConfigWriter(private val underlayAccess: UnderlayAccess) : BgpWriter
     }
 }
 
+val NAME = "default"
 private val RD_COLON_PATTERN = Pattern.compile("(?<prefix>\\d+):(?<suffix>\\d+)")!!
 private val RD_IP_PATTERN = Pattern.compile("(?<prefix>\\d+\\.\\d+\\.\\d+\\.\\d+):(?<suffix>\\d+)")!!
 

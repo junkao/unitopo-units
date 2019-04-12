@@ -18,8 +18,8 @@ package io.frinx.unitopo.unit.junos17.mpls.handler
 
 import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.read.ReadFailedException
+import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.junos17.mpls.common.MplsReader
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.mpls.extension.rev171024.MplsRsvpSubscriptionConfig
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.mpls.extension.rev171024.NiMplsRsvpIfSubscripAug
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.mpls.extension.rev171024.NiMplsRsvpIfSubscripAugBuilder
@@ -32,7 +32,7 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 import org.opendaylight.controller.md.sal.common.api.data.ReadFailedException as MdSalReadFailedException
 
 class NiMplsRsvpIfSubscripAugReader(private val underlayAccess: UnderlayAccess) :
-    MplsReader.MplsConfigReader<NiMplsRsvpIfSubscripAug, NiMplsRsvpIfSubscripAugBuilder> {
+    ConfigReaderCustomizer<NiMplsRsvpIfSubscripAug, NiMplsRsvpIfSubscripAugBuilder> {
 
     override fun merge(p0: Builder<out DataObject>, p1: NiMplsRsvpIfSubscripAug) {
         (p0 as ConfigBuilder).addAugmentation(NiMplsRsvpIfSubscripAug::class.java, p1)
@@ -41,7 +41,7 @@ class NiMplsRsvpIfSubscripAugReader(private val underlayAccess: UnderlayAccess) 
     override fun getBuilder(p0: InstanceIdentifier<NiMplsRsvpIfSubscripAug>): NiMplsRsvpIfSubscripAugBuilder =
         NiMplsRsvpIfSubscripAugBuilder()
 
-    override fun readCurrentAttributesForType(
+    override fun readCurrentAttributes(
         instanceIdentifier: InstanceIdentifier<NiMplsRsvpIfSubscripAug>,
         configBuilder: NiMplsRsvpIfSubscripAugBuilder,
         readContext: ReadContext

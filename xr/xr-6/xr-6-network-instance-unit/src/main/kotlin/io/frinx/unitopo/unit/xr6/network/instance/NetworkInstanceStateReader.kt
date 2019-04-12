@@ -16,22 +16,21 @@
 
 package io.frinx.unitopo.unit.xr6.network.instance
 
-import io.fd.honeycomb.translate.spi.read.ReaderCustomizer
-import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.handlers.network.instance.NetworkInstanceStateReader
+import io.fd.honeycomb.translate.spi.read.OperReaderCustomizer
+import io.frinx.translate.unit.commons.handler.spi.CompositeReader
 import io.frinx.unitopo.handlers.network.instance.def.DefaultStateReader
+import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr6.network.instance.l2p2p.L2P2PStateReader
 import io.frinx.unitopo.unit.xr6.network.instance.l2vsi.L2VSIStateReader
 import io.frinx.unitopo.unit.xr6.network.instance.vrf.VrfStateReader
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.State
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.StateBuilder
 
-class NetworkInstanceStateReader(access: UnderlayAccess)
-    : NetworkInstanceStateReader(object : ArrayList<ReaderCustomizer<State, StateBuilder>>() {
-    init {
-        add(VrfStateReader(access))
-        add(DefaultStateReader())
-        add(L2P2PStateReader(access))
-        add(L2VSIStateReader(access))
-    }
-})
+class NetworkInstanceStateReader(access: UnderlayAccess) : CompositeReader<State, StateBuilder>(
+    listOf(
+        VrfStateReader(access),
+        DefaultStateReader(),
+        L2P2PStateReader(access),
+        L2VSIStateReader(access)
+    )
+), OperReaderCustomizer<State, StateBuilder>

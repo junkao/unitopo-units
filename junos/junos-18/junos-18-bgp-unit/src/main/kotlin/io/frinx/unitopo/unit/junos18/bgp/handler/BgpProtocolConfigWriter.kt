@@ -18,19 +18,13 @@ package io.frinx.unitopo.unit.junos18.bgp.handler
 
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.openconfig.network.instance.NetworInstance
+import io.frinx.translate.unit.commons.handler.spi.TypedWriter
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.handlers.bgp.BgpReader
-import io.frinx.unitopo.handlers.bgp.BgpWriter
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.ProtocolKey
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.protocol.Config
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
-class BgpProtocolConfigWriter(private val underlayAccess: UnderlayAccess) : BgpWriter<Config> {
-
-    override fun getKey(): ProtocolKey {
-        return ProtocolKey(BgpReader.TYPE, BgpReader.NAME)
-    }
+class BgpProtocolConfigWriter(private val underlayAccess: UnderlayAccess) : TypedWriter<Config> {
 
     override fun updateCurrentAttributesForType(
         iid: IID<Config>,

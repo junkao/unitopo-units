@@ -75,7 +75,7 @@ class GlobalAfiSafiConfigReaderTest : AbstractNetconfHandlerTest() {
     @Test
     fun testReadCurrentAttributesForType() {
         val builder = ConfigBuilder()
-        target!!.readCurrentAttributesForType(IID_CONFIG, builder, readContext!!)
+        target!!.readCurrentAttributes(IID_CONFIG, builder, readContext!!)
         Assert.assertEquals(L2VPNEVPN::class.java, builder.build().afiSafiName)
     }
 }

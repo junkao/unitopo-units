@@ -21,6 +21,8 @@ import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.junos18.bgp.handler.aggregate.BgpAggregateConfigWriter
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.local.routing.rev170515.local.aggregate.top.local.aggregates.aggregate.Config
 
-class AggregateConfigWriter(access: UnderlayAccess) : CompositeWriter<Config>(listOf(
+class AggregateConfigWriter(access: UnderlayAccess) : CompositeWriter<Config>(
+    listOf(
         BgpAggregateConfigWriter(access)
-))
+    )
+)

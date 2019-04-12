@@ -16,10 +16,9 @@
 
 package io.frinx.unitopo.unit.xr7.bgp.handler
 
+import io.fd.honeycomb.translate.spi.write.WriterCustomizer
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.handlers.bgp.BgpReader
-import io.frinx.unitopo.handlers.bgp.BgpWriter
 import io.frinx.unitopo.unit.utils.As
 import io.frinx.unitopo.unit.xr7.bgp.IID
 import io.frinx.unitopo.unit.xr7.bgp.UnderlayBgp
@@ -37,9 +36,9 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.global.base.Config
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.top.Bgp
 
-open class GlobalConfigWriter(private val underlayAccess: UnderlayAccess) : BgpWriter<Config> {
+open class GlobalConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCustomizer<Config> {
 
-    override fun updateCurrentAttributesForType(
+    override fun updateCurrentAttributes(
         id: IID<Config>,
         dataBefore: Config,
         dataAfter: Config,
@@ -54,18 +53,19 @@ open class GlobalConfigWriter(private val underlayAccess: UnderlayAccess) : BgpW
             underlayAccess.put(XR_BGP_ID, bgpBuilder.build())
     }
 
-    override fun writeCurrentAttributesForType(id: IID<Config>, dataAfter: Config, wc: WriteContext) {
+    override fun writeCurrentAttributes(id: IID<Config>, dataAfter: Config, wc: WriteContext) {
             val bgpBuilder = UnderlayBgpBuilder()
             renderGlobalData(bgpBuilder, dataAfter)
             underlayAccess.put(XR_BGP_ID, bgpBuilder.build())
     }
 
-    override fun deleteCurrentAttributesForType(iid: IID<Config>, dataBefore: Config, wc: WriteContext) {
+    override fun deleteCurrentAttributes(iid: IID<Config>, dataBefore: Config, wc: WriteContext) {
             underlayAccess.delete(XR_BGP_ID)
     }
 
     companion object {
-        val XR_BGP_INSTANCE_NAME = CiscoIosXrString(BgpReader.NAME)
+        val NAME = "default"
+        val XR_BGP_INSTANCE_NAME = CiscoIosXrString(NAME)
         val XR_BGP_ID = IID.create(UnderlayBgp::class.java)
         private val XR_EMPTY_BGP = UnderlayBgpBuilder().build()
 

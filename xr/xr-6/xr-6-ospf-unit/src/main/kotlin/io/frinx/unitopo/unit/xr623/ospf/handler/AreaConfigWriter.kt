@@ -15,9 +15,9 @@
  */
 package io.frinx.unitopo.unit.xr623.ospf.handler
 
+import io.fd.honeycomb.translate.spi.write.WriterCustomizer
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.openconfig.network.instance.NetworInstance.DEFAULT_NETWORK_NAME
-import io.frinx.unitopo.handlers.ospf.OspfWriter
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev170102.Ospf
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev170102.area.table.AreaAddresses
@@ -44,9 +44,9 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.yang.types.
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
-open class AreaConfigWriter(private val underlayAccess: UnderlayAccess) : OspfWriter<Config> {
+open class AreaConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCustomizer<Config> {
 
-    override fun updateCurrentAttributesForType(
+    override fun updateCurrentAttributes(
         iid: IID<Config>,
         dataBefore: Config,
         dataAfter: Config,
@@ -63,7 +63,7 @@ open class AreaConfigWriter(private val underlayAccess: UnderlayAccess) : OspfWr
         }
     }
 
-    override fun writeCurrentAttributesForType(id: IID<Config>, dataAfter: Config, wtx: WriteContext) {
+    override fun writeCurrentAttributes(id: IID<Config>, dataAfter: Config, wtx: WriteContext) {
         val areaId = id.firstKeyOf(Area::class.java).identifier
 
         if (areaId.uint32 != null) {
@@ -75,7 +75,7 @@ open class AreaConfigWriter(private val underlayAccess: UnderlayAccess) : OspfWr
         }
     }
 
-    override fun deleteCurrentAttributesForType(id: IID<Config>, dataBefore: Config, wtx: WriteContext) {
+    override fun deleteCurrentAttributes(id: IID<Config>, dataBefore: Config, wtx: WriteContext) {
         val (processIid, vrfName) = getIdentifiers(id)
         val areaId = id.firstKeyOf(Area::class.java).identifier
 

@@ -127,7 +127,7 @@ class AreaInterfaceReaderTest : AbstractNetconfHandlerTest() {
                 .read(IID_AREA_INSTANCE)
         Mockito.doReturn(Optional.of(data)).`when`(checkedFuture).checkedGet()
 
-        val list = target.getAllIdsForType(IID_INTERFACE, readContext)
+        val list = target.getAllIds(IID_INTERFACE, readContext)
         Assert.assertTrue(
                 list.map { it.id }.toString().contains(interfaceId))
     }

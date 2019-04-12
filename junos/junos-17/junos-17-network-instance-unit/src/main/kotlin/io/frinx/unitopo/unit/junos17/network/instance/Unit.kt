@@ -15,22 +15,19 @@
  */
 package io.frinx.unitopo.unit.junos17.network.instance
 
-import io.fd.honeycomb.translate.impl.read.GenericConfigListReader
-import io.fd.honeycomb.translate.impl.read.GenericConfigReader
-import io.fd.honeycomb.translate.impl.write.GenericWriter
+import io.fd.honeycomb.rpc.RpcService
 import io.fd.honeycomb.translate.spi.builder.CustomizerAwareReadRegistryBuilder
 import io.fd.honeycomb.translate.spi.builder.CustomizerAwareWriteRegistryBuilder
 import io.frinx.openconfig.openconfig.network.instance.IIDs
+import io.frinx.translate.unit.commons.handler.spi.ChecksMap
 import io.frinx.unitopo.registry.api.TranslationUnitCollector
+import io.frinx.unitopo.registry.spi.TranslateUnit
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.handlers.network.instance.NetworkInstanceUnit
-import io.frinx.unitopo.unit.utils.NoopWriter
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.Config
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.ConfigBuilder
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.`$YangModuleInfoImpl`
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.`$YangModuleInfoImpl` as JunosYangInfo
 
-class Unit(private val registry: TranslationUnitCollector) : NetworkInstanceUnit() {
+class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
 
     private var reg: TranslationUnitCollector.Registration? = null
 
@@ -42,23 +39,43 @@ class Unit(private val registry: TranslationUnitCollector) : NetworkInstanceUnit
         reg?.let { reg!!.close() }
     }
 
+    override fun getYangSchemas(): Set<YangModuleInfo> = setOf(
+        `$YangModuleInfoImpl`.getInstance()
+    )
+
+    override fun getRpcs(underlayAccess: UnderlayAccess): Set<RpcService<*, *>> = emptySet()
+
+    override fun provideHandlers(
+        rRegistry: CustomizerAwareReadRegistryBuilder,
+        wRegistry: CustomizerAwareWriteRegistryBuilder,
+        underlayAccess: UnderlayAccess
+    ) {
+        val checkRegistry = ChecksMap.getOpenconfigCheckRegistry()
+        rRegistry.setCheckRegistry(checkRegistry)
+        provideReaders(rRegistry, underlayAccess)
+        wRegistry.setCheckRegistry(checkRegistry)
+        provideWriters(wRegistry, underlayAccess)
+    }
+
     override fun getUnderlayYangSchemas(): Set<YangModuleInfo> = setOf(
         JunosYangInfo.getInstance()
     )
 
-    override fun provideSpecificWriters(wRegistry: CustomizerAwareWriteRegistryBuilder, underlay: UnderlayAccess) {
-        wRegistry.add(GenericWriter(IIDs.NE_NE_PR_PR_CONFIG, NoopWriter()))
+    private fun provideWriters(wRegistry: CustomizerAwareWriteRegistryBuilder, underlayAccess: UnderlayAccess) {
+        wRegistry.addNoop(IIDs.NE_NETWORKINSTANCE)
+        wRegistry.addNoop(IIDs.NE_NE_PR_PROTOCOL)
+        wRegistry.addNoop(IIDs.NE_NE_PR_PR_CONFIG)
 
-        wRegistry.addAfter(GenericWriter(IIDs.NE_NE_CONFIG, NetworkInstanceConfigWriter(underlay)),
+        wRegistry.addAfter(IIDs.NE_NE_CONFIG, NetworkInstanceConfigWriter(underlayAccess),
                 /*handle after ifc configuration*/ io.frinx.openconfig.openconfig.interfaces.IIDs.IN_IN_CONFIG)
     }
 
-    override fun provideSpecificReaders(rRegistry: CustomizerAwareReadRegistryBuilder, underlay: UnderlayAccess) {
-        rRegistry.add(GenericConfigListReader(IIDs.NE_NETWORKINSTANCE, NetworkInstanceReader(underlay)))
-        rRegistry.add(GenericConfigReader<Config, ConfigBuilder>(
-            IIDs.NE_NE_CONFIG, NetworkInstanceConfigReader(underlay)))
+    private fun provideReaders(rRegistry: CustomizerAwareReadRegistryBuilder, underlayAccess: UnderlayAccess) {
+        rRegistry.add(IIDs.NE_NETWORKINSTANCE, NetworkInstanceReader(underlayAccess))
+        rRegistry.add(IIDs.NE_NE_CONFIG, NetworkInstanceConfigReader(underlayAccess))
+        rRegistry.add(IIDs.NE_NE_STATE, NetworkInstanceStateReader(underlayAccess))
 
-        rRegistry.add(GenericConfigListReader(IIDs.NE_NE_PR_PROTOCOL, ProtocolReader(underlay)))
+        rRegistry.add(IIDs.NE_NE_PR_PROTOCOL, ProtocolReader(underlayAccess))
     }
 
     override fun toString(): String = "Junos 17.3 network-instance translate unit"

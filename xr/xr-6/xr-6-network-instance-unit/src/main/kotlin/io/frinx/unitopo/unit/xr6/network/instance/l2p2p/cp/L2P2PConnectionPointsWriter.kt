@@ -19,10 +19,10 @@ package io.frinx.unitopo.unit.xr6.network.instance.l2p2p.cp
 import com.google.common.collect.Lists
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.openconfig.openconfig.interfaces.IIDs
+import io.frinx.translate.unit.commons.handler.spi.TypedWriter
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr6.interfaces.handler.InterfaceReader
 import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.SubinterfaceConfigWriter
-import io.frinx.unitopo.unit.xr6.network.instance.common.L2p2pWriter
 import io.frinx.unitopo.unit.xr6.network.instance.l2p2p.L2P2PReader
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev150730.InterfaceActive
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev150730.InterfaceModeEnum
@@ -82,7 +82,7 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.subinterfaces.subinterface.Config as SubinterfaceConfig
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.vlan.rev170714.vlan.logical.top.Vlan as OpenConfigVlan
 
-class L2P2PConnectionPointsWriter(private val underlayAccess: UnderlayAccess) : L2p2pWriter<ConnectionPoints> {
+class L2P2PConnectionPointsWriter(private val underlayAccess: UnderlayAccess) : TypedWriter<ConnectionPoints> {
 
     override fun writeCurrentAttributesForType(
         id: InstanceIdentifier<ConnectionPoints>,
@@ -328,8 +328,8 @@ class L2P2PConnectionPointsWriter(private val underlayAccess: UnderlayAccess) : 
         dataAfter: ConnectionPoints,
         writeContext: WriteContext
     ) {
-        deleteCurrentAttributes(id, dataBefore, writeContext)
-        writeCurrentAttributes(id, dataAfter, writeContext)
+        deleteCurrentAttributesForType(id, dataBefore, writeContext)
+        writeCurrentAttributesForType(id, dataAfter, writeContext)
     }
 
     private fun deleteL2InterfaceConfiguration(underlayIfcName: String) {

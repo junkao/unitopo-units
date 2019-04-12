@@ -17,7 +17,7 @@
 package io.frinx.unitopo.unit.xr6.bgp.handler.aggregates
 
 import io.fd.honeycomb.translate.read.ReadContext
-import io.frinx.unitopo.handlers.bgp.BgpReader
+import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.local.routing.rev170515.local.aggregate.top.local.aggregates.Aggregate
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.local.routing.rev170515.local.aggregate.top.local.aggregates.AggregateBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.local.routing.rev170515.local.aggregate.top.local.aggregates.aggregate.Config
@@ -26,11 +26,11 @@ import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class BgpLocalAggregateConfigReader : BgpReader.BgpConfigReader<Config, ConfigBuilder> {
+class BgpLocalAggregateConfigReader : ConfigReaderCustomizer<Config, ConfigBuilder> {
 
     override fun getBuilder(p0: InstanceIdentifier<Config>) = ConfigBuilder()
 
-    override fun readCurrentAttributesForType(
+    override fun readCurrentAttributes(
         instanceIdentifier: InstanceIdentifier<Config>,
         configBuilder: ConfigBuilder,
         readContext: ReadContext

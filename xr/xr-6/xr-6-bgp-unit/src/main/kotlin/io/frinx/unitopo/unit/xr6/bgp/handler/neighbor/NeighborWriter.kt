@@ -16,6 +16,7 @@
 
 package io.frinx.unitopo.unit.xr6.bgp.handler.neighbor
 
+import io.fd.honeycomb.translate.spi.write.ListWriterCustomizer
 import io.fd.honeycomb.translate.util.RWUtils
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.openconfig.network.instance.NetworInstance
@@ -26,7 +27,6 @@ import io.frinx.unitopo.unit.xr6.bgp.UnderlayNeighborBuilder
 import io.frinx.unitopo.unit.xr6.bgp.UnderlayNeighborKey
 import io.frinx.unitopo.unit.xr6.bgp.UnderlayVrfNeighborBuilder
 import io.frinx.unitopo.unit.xr6.bgp.UnderlayVrfNeighborKey
-import io.frinx.unitopo.handlers.bgp.BgpListWriter
 import io.frinx.unitopo.unit.xr6.bgp.handler.GlobalConfigWriter
 import io.frinx.unitopo.unit.xr6.bgp.handler.GlobalConfigWriter.Companion.XR_BGP_INSTANCE_NAME
 import io.frinx.unitopo.unit.xr6.bgp.handler.toUnderlay
@@ -64,9 +64,9 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.types.inet.re
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.IpAddressNoZone
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class NeighborWriter(private val access: UnderlayAccess) : BgpListWriter<Neighbor, NeighborKey> {
+class NeighborWriter(private val access: UnderlayAccess) : ListWriterCustomizer<Neighbor, NeighborKey> {
 
-    override fun writeCurrentAttributesForType(
+    override fun writeCurrentAttributes(
         instanceIdentifier: InstanceIdentifier<Neighbor>,
         neighbor: Neighbor,
         writeContext: WriteContext
@@ -92,7 +92,7 @@ class NeighborWriter(private val access: UnderlayAccess) : BgpListWriter<Neighbo
         }
     }
 
-    override fun updateCurrentAttributesForType(
+    override fun updateCurrentAttributes(
         instanceIdentifier: InstanceIdentifier<Neighbor>,
         dataBefore: Neighbor,
         dataAfter: Neighbor,
@@ -128,7 +128,7 @@ class NeighborWriter(private val access: UnderlayAccess) : BgpListWriter<Neighbo
         }
     }
 
-    override fun deleteCurrentAttributesForType(
+    override fun deleteCurrentAttributes(
         instanceIdentifier: InstanceIdentifier<Neighbor>,
         neighbor: Neighbor,
         writeContext: WriteContext

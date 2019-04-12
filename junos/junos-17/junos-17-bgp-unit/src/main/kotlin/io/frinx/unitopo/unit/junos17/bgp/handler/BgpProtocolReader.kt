@@ -18,12 +18,13 @@ package io.frinx.unitopo.unit.junos17.bgp.handler
 
 import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.read.ReadFailedException
+import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
 import io.frinx.translate.unit.commons.handler.spi.CompositeListReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.handlers.bgp.BgpReader
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.Protocol
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.ProtocolBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.ProtocolKey
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.policy.types.rev160512.BGP
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.Configuration
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.config.Protocols
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.config.RoutingOptions
@@ -34,7 +35,7 @@ import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configur
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
 class BgpProtocolReader(private val access: UnderlayAccess) :
-        BgpReader.BgpConfigReader<Protocol, ProtocolBuilder>,
+        ConfigReaderCustomizer<Protocol, ProtocolBuilder>,
         CompositeListReader.Child<Protocol, ProtocolKey, ProtocolBuilder> {
 
     override fun getBuilder(p0: IID<Protocol>): ProtocolBuilder {
@@ -45,7 +46,7 @@ class BgpProtocolReader(private val access: UnderlayAccess) :
     override fun getAllIds(id: IID<Protocol>, context: ReadContext): List<ProtocolKey> {
         return try {
             when (access.read(UNDERLAY_PROTOCOL_BGP).checkedGet().isPresent) {
-                true -> Collections.singletonList(ProtocolKey(BgpReader.TYPE, BgpReader.NAME))
+                true -> Collections.singletonList(ProtocolKey(BGP::class.java, "default"))
                 else -> emptyList()
             }
         } catch (e: MdSalReadFailedEx) {
@@ -53,7 +54,7 @@ class BgpProtocolReader(private val access: UnderlayAccess) :
         }
     }
 
-    override fun readCurrentAttributesForType(id: IID<Protocol>, builder: ProtocolBuilder, ctx: ReadContext) {
+    override fun readCurrentAttributes(id: IID<Protocol>, builder: ProtocolBuilder, ctx: ReadContext) {
         val key = id.firstKeyOf(Protocol::class.java)
         builder.name = key.name
         builder.identifier = key.identifier

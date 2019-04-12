@@ -17,16 +17,16 @@ package io.frinx.unitopo.unit.xr6.lr.handler
 
 import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.read.ReadFailedException
+import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
 import io.frinx.openconfig.network.instance.NetworInstance
 import io.frinx.translate.unit.commons.handler.spi.CompositeListReader
-import io.frinx.unitopo.unit.xr6.lr.common.LrReader
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.Protocol
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.ProtocolBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.ProtocolKey
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.policy.types.rev160512.STATIC
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
-class StaticProtocolReader :
-        LrReader.LrConfigReader<Protocol, ProtocolBuilder>,
+class StaticProtocolReader : ConfigReaderCustomizer<Protocol, ProtocolBuilder>,
         CompositeListReader.Child<Protocol, ProtocolKey, ProtocolBuilder> {
 
     override fun getBuilder(p0: org.opendaylight.yangtools.yang.binding.InstanceIdentifier<Protocol>): ProtocolBuilder {
@@ -36,10 +36,10 @@ class StaticProtocolReader :
 
     @Throws(ReadFailedException::class)
     override fun getAllIds(id: IID<Protocol>, context: ReadContext): List<ProtocolKey> = listOf(ProtocolKey(
-        LrReader.TYPE, NetworInstance.DEFAULT_NETWORK_NAME))
+        STATIC::class.java, NetworInstance.DEFAULT_NETWORK_NAME))
 
     @Throws(ReadFailedException::class)
-    override fun readCurrentAttributesForType(id: IID<Protocol>, builder: ProtocolBuilder, ctx: ReadContext) {
+    override fun readCurrentAttributes(id: IID<Protocol>, builder: ProtocolBuilder, ctx: ReadContext) {
         val key = id.firstKeyOf(Protocol::class.java)
         builder.name = key.name
         builder.identifier = key.identifier

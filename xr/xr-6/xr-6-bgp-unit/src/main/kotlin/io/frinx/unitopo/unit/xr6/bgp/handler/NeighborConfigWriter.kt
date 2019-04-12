@@ -16,10 +16,10 @@
 
 package io.frinx.unitopo.unit.xr6.bgp.handler
 
+import io.fd.honeycomb.translate.spi.write.WriterCustomizer
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.utils.As.Companion.asToDotNotation
-import io.frinx.unitopo.handlers.bgp.BgpWriter
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.Bgp
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.Instance
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.InstanceKey
@@ -50,19 +50,19 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
-class NeighborConfigWriter(private val underlayAccess: UnderlayAccess) : BgpWriter<Config> {
+class NeighborConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCustomizer<Config> {
 
-    override fun updateCurrentAttributesForType(
+    override fun updateCurrentAttributes(
         iid: IID<Config>,
         dataBefore: Config,
         dataAfter: Config,
         writeContext: WriteContext
     ) {
-        deleteCurrentAttributesForType(iid, dataBefore, writeContext)
-        writeCurrentAttributesForType(iid, dataAfter, writeContext)
+        deleteCurrentAttributes(iid, dataBefore, writeContext)
+        writeCurrentAttributes(iid, dataAfter, writeContext)
     }
 
-    override fun deleteCurrentAttributesForType(iid: IID<Config>, dataBefore: Config, wtc: WriteContext) {
+    override fun deleteCurrentAttributes(iid: IID<Config>, dataBefore: Config, wtc: WriteContext) {
         val vrfName = iid.firstKeyOf(NetworkInstance::class.java).name
         val bgpProcess = iid.firstKeyOf(Protocol::class.java).name.toLong()
         val iid: IID<out DataObject>
@@ -78,7 +78,7 @@ class NeighborConfigWriter(private val underlayAccess: UnderlayAccess) : BgpWrit
         }
     }
 
-    override fun writeCurrentAttributesForType(configIid: IID<Config>, dataAfter: Config, wtc: WriteContext) {
+    override fun writeCurrentAttributes(configIid: IID<Config>, dataAfter: Config, wtc: WriteContext) {
         val vrfName = configIid.firstKeyOf(NetworkInstance::class.java).name
         val bgpProcess = configIid.firstKeyOf(Protocol::class.java).name.toLong()
         if (vrfName == "default") {

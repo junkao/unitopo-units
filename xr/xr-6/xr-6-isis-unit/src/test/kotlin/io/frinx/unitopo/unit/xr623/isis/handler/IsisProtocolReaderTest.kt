@@ -81,7 +81,7 @@ class IsisProtocolReaderTest : AbstractNetconfHandlerTest() {
                 .child(Protocols::class.java)
                 .child(Protocol::class.java, ProtocolKey(ISIS::class.java, instanceId))
 
-        target.readCurrentAttributesForType(id, protocolReader, readContext)
+        target.readCurrentAttributes(id, protocolReader, readContext)
 
         Assert.assertEquals(protocolReader.name, instanceId)
     }

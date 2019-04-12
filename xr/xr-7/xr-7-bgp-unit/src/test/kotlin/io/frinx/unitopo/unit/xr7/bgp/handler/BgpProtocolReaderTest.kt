@@ -65,7 +65,7 @@ class BgpProtocolReaderTest : AbstractNetconfHandlerTest() {
     @Test
     fun testReadCurrentAttributesForType() {
         val builder = ProtocolBuilder()
-        target!!.readCurrentAttributesForType(IID_BGP_PROT, builder, readContext!!)
+        target!!.readCurrentAttributes(IID_BGP_PROT, builder, readContext!!)
         Assert.assertEquals("default", builder.build().name)
     }
 

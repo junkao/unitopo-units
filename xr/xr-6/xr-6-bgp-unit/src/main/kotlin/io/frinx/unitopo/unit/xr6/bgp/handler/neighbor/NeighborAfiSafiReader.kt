@@ -17,9 +17,9 @@
 package io.frinx.unitopo.unit.xr6.bgp.handler.neighbor
 
 import io.fd.honeycomb.translate.read.ReadContext
+import io.fd.honeycomb.translate.spi.read.ConfigListReaderCustomizer
 import io.frinx.openconfig.network.instance.NetworInstance
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.handlers.bgp.BgpListReader
 import io.frinx.unitopo.unit.xr6.bgp.handler.BgpProtocolReader
 import io.frinx.unitopo.unit.xr6.bgp.handler.toOpenconfig
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.Instance
@@ -41,9 +41,9 @@ import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
 class NeighborAfiSafiReader(private val access: UnderlayAccess) :
-    BgpListReader.BgpConfigListReader<AfiSafi, AfiSafiKey, AfiSafiBuilder> {
+    ConfigListReaderCustomizer<AfiSafi, AfiSafiKey, AfiSafiBuilder> {
 
-    override fun getAllIdsForType(id: InstanceIdentifier<AfiSafi>, readContext: ReadContext): List<AfiSafiKey> {
+    override fun getAllIds(id: InstanceIdentifier<AfiSafi>, readContext: ReadContext): List<AfiSafiKey> {
         val protKey = id.firstKeyOf<Protocol, ProtocolKey>(Protocol::class.java)
         val vrfKey = id.firstKeyOf(NetworkInstance::class.java)
         val neighborKey = id.firstKeyOf(Neighbor::class.java)
@@ -60,7 +60,7 @@ class NeighborAfiSafiReader(private val access: UnderlayAccess) :
         (builder as AfiSafisBuilder).afiSafi = list
     }
 
-    override fun readCurrentAttributesForType(
+    override fun readCurrentAttributes(
         id: InstanceIdentifier<AfiSafi>,
         afiSafiBuilder: AfiSafiBuilder,
         readContext: ReadContext

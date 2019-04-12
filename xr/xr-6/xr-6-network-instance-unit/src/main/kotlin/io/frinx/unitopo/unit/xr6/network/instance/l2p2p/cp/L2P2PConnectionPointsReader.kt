@@ -19,10 +19,10 @@ package io.frinx.unitopo.unit.xr6.network.instance.l2p2p.cp
 import com.google.common.collect.Lists
 import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.read.Reader
+import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
 import io.frinx.translate.unit.commons.handler.spi.CompositeReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr6.interfaces.handler.InterfaceReader
-import io.frinx.unitopo.unit.xr6.network.instance.common.L2p2pReader
 import io.frinx.unitopo.unit.xr6.network.instance.l2p2p.L2P2PReader
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.l2vpn.cfg.rev151109.l2vpn.database.xconnect.groups.xconnect.group.p2p.xconnects.P2pXconnect
@@ -53,15 +53,15 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.insta
 
 // TODO read also operational data
 class L2P2PConnectionPointsReader(private val underlayAccess: UnderlayAccess) :
-    L2p2pReader.L2p2pConfigReader<ConnectionPoints, ConnectionPointsBuilder>,
-        CompositeReader.Child<ConnectionPoints, ConnectionPointsBuilder> {
+    ConfigReaderCustomizer<ConnectionPoints, ConnectionPointsBuilder>,
+    CompositeReader.Child<ConnectionPoints, ConnectionPointsBuilder> {
 
     override fun getBuilder(p0: InstanceIdentifier<ConnectionPoints>): ConnectionPointsBuilder {
         // NOOP
         throw UnsupportedOperationException("Should not be invoked")
     }
 
-    override fun readCurrentAttributesForType(
+    override fun readCurrentAttributes(
         id: InstanceIdentifier<ConnectionPoints>,
         builder: ConnectionPointsBuilder,
         ctx: ReadContext

@@ -17,43 +17,33 @@
 package io.frinx.unitopo.unit.xr7.bgp
 
 import io.fd.honeycomb.rpc.RpcService
-import io.fd.honeycomb.translate.impl.read.GenericConfigListReader
-import io.fd.honeycomb.translate.impl.read.GenericConfigReader
-import io.fd.honeycomb.translate.impl.write.GenericListWriter
-import io.fd.honeycomb.translate.impl.write.GenericWriter
 import io.fd.honeycomb.translate.spi.builder.CustomizerAwareReadRegistryBuilder
-import io.fd.honeycomb.translate.util.RWUtils
 import io.fd.honeycomb.translate.spi.builder.CustomizerAwareWriteRegistryBuilder
+import io.fd.honeycomb.translate.util.RWUtils
 import io.frinx.openconfig.openconfig.network.instance.IIDs
+import io.frinx.translate.unit.commons.handler.spi.ChecksMap
 import io.frinx.unitopo.registry.api.TranslationUnitCollector
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.utils.NoopListWriter
 import io.frinx.unitopo.unit.xr7.bgp.handler.GlobalAfiSafiConfigReader
 import io.frinx.unitopo.unit.xr7.bgp.handler.GlobalAfiSafiConfigWriter
+import io.frinx.unitopo.unit.xr7.bgp.handler.GlobalAfiSafiReader
 import io.frinx.unitopo.unit.xr7.bgp.handler.GlobalConfigReader
 import io.frinx.unitopo.unit.xr7.bgp.handler.GlobalConfigWriter
-import io.frinx.unitopo.unit.xr7.bgp.handler.GlobalAfiSafiReader
 import io.frinx.unitopo.unit.xr7.bgp.handler.neighbor.NeighborAfiSafiConfigReader
 import io.frinx.unitopo.unit.xr7.bgp.handler.neighbor.NeighborAfiSafiReader
-import io.frinx.unitopo.unit.xr7.bgp.handler.neighbor.NeighborReader
-import io.frinx.unitopo.unit.xr7.bgp.handler.neighbor.NeighborWriter
 import io.frinx.unitopo.unit.xr7.bgp.handler.neighbor.NeighborConfigReader
+import io.frinx.unitopo.unit.xr7.bgp.handler.neighbor.NeighborReader
 import io.frinx.unitopo.unit.xr7.bgp.handler.neighbor.NeighborTransportConfigReader
+import io.frinx.unitopo.unit.xr7.bgp.handler.neighbor.NeighborWriter
 import io.frinx.unitopo.unit.xr7.init.Unit
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.global.base.AfiSafisBuilder
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.neighbor.afi.safi.list.afi.safi.Config
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.neighbor.afi.safi.list.AfiSafi
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.neighbor.base.TransportBuilder
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.neighbor.afi.safi.list.afi.safi.Config
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.neighbor.list.Neighbor
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.top.BgpBuilder
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.top.bgp.GlobalBuilder
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.top.bgp.NeighborsBuilder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev180615.`$YangModuleInfoImpl` as UnderlayIpv4BgpConfigYangModule
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.`$YangModuleInfoImpl` as BgpYangModule
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.neighbor.base.AfiSafisBuilder as NeighborAfiSafisBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.local.routing.rev170515.`$YangModuleInfoImpl` as LocalAggregatesYangModule
 
 class Unit(private val registry: TranslationUnitCollector) : Unit() {
@@ -83,22 +73,24 @@ class Unit(private val registry: TranslationUnitCollector) : Unit() {
     override fun provideHandlers(
         rRegistry: CustomizerAwareReadRegistryBuilder,
         wRegistry: CustomizerAwareWriteRegistryBuilder,
-        access: UnderlayAccess
+        underlayAccess: UnderlayAccess
     ) {
-        provideReaders(rRegistry, access)
-        provideWriters(wRegistry, access)
+        val checkRegistry = ChecksMap.getOpenconfigCheckRegistry()
+        rRegistry.setCheckRegistry(checkRegistry)
+        provideReaders(rRegistry, underlayAccess)
+        wRegistry.setCheckRegistry(checkRegistry)
+        provideWriters(wRegistry, underlayAccess)
     }
 
     private fun provideWriters(wRegistry: CustomizerAwareWriteRegistryBuilder, access: UnderlayAccess) {
-        wRegistry.addAfter(GenericWriter(IIDs.NE_NE_PR_PR_BG_GL_CONFIG, GlobalConfigWriter(access)),
-            IIDs.NE_NE_CONFIG)
+        wRegistry.addAfter(IIDs.NE_NE_PR_PR_BG_GL_CONFIG, GlobalConfigWriter(access), IIDs.NE_NE_CONFIG)
 
-        wRegistry.add(GenericListWriter(IIDs.NE_NE_PR_PR_BG_GL_AF_AFISAFI, NoopListWriter()))
+        wRegistry.addNoop(IIDs.NE_NE_PR_PR_BG_GL_AF_AFISAFI)
 
-        wRegistry.addAfter(GenericWriter(IIDs.NE_NE_PR_PR_BG_GL_AF_AF_CONFIG, GlobalAfiSafiConfigWriter(access)),
+        wRegistry.addAfter(IIDs.NE_NE_PR_PR_BG_GL_AF_AF_CONFIG, GlobalAfiSafiConfigWriter(access),
             IIDs.NE_NE_PR_PR_BG_GL_CONFIG)
 
-        wRegistry.subtreeAddAfter(
+        wRegistry.subtreeAddAfter(IIDs.NE_NE_PR_PR_BG_NE_NEIGHBOR, NeighborWriter(access),
             setOf(
                 RWUtils.cutIdFromStart(IIDs.NE_NE_PR_PR_BG_NE_NE_CONFIG, IID_NEIGHBOR),
                 RWUtils.cutIdFromStart(IIDs.NE_NE_PR_PR_BG_NE_NE_AF_AF_CONFIG, IID_NEIGHBOR),
@@ -109,26 +101,19 @@ class Unit(private val registry: TranslationUnitCollector) : Unit() {
                 RWUtils.cutIdFromStart(IIDs.NE_NE_PR_PR_BG_NE_NE_AFISAFIS, IID_NEIGHBOR),
                 RWUtils.cutIdFromStart(IIDs.NE_NE_PR_PR_BG_NE_NE_AF_AFISAFI, IID_NEIGHBOR),
                 RWUtils.cutIdFromStart(IIDs.NE_NE_PR_PR_BG_NE_NE_AF_AF_CONFIG, IID_NEIGHBOR)),
-            GenericListWriter(IIDs.NE_NE_PR_PR_BG_NE_NEIGHBOR, NeighborWriter(access)),
-            setOf(IIDs.NE_NE_CONFIG, IIDs.NE_NE_PR_PR_BG_GL_AF_AF_CONFIG))
+            IIDs.NE_NE_CONFIG, IIDs.NE_NE_PR_PR_BG_GL_AF_AF_CONFIG)
     }
 
     private fun provideReaders(rRegistry: CustomizerAwareReadRegistryBuilder, access: UnderlayAccess) {
-        rRegistry.addStructuralReader(IIDs.NE_NE_PR_PR_BGP, BgpBuilder::class.java)
-        rRegistry.addStructuralReader(IIDs.NE_NE_PR_PR_BG_GLOBAL, GlobalBuilder::class.java)
-        rRegistry.add(GenericConfigReader(IIDs.NE_NE_PR_PR_BG_GL_CONFIG, GlobalConfigReader(access)))
-        rRegistry.addStructuralReader(IIDs.NE_NE_PR_PR_BG_GL_AFISAFIS, AfiSafisBuilder::class.java)
-        rRegistry.add(GenericConfigListReader(IIDs.NE_NE_PR_PR_BG_GL_AF_AFISAFI, GlobalAfiSafiReader(access)))
-        rRegistry.add(GenericConfigReader(IIDs.NE_NE_PR_PR_BG_GL_AF_AF_CONFIG, GlobalAfiSafiConfigReader(access)))
-        rRegistry.addStructuralReader(IIDs.NE_NE_PR_PR_BG_NEIGHBORS, NeighborsBuilder::class.java)
-        rRegistry.add(GenericConfigListReader(IIDs.NE_NE_PR_PR_BG_NE_NEIGHBOR, NeighborReader(access)))
-        rRegistry.add(GenericConfigReader(IIDs.NE_NE_PR_PR_BG_NE_NE_CONFIG, NeighborConfigReader(access)))
-        rRegistry.add(GenericConfigReader(IIDs.NE_NE_PR_PR_BG_NE_NE_AF_AF_CONFIG, NeighborAfiSafiConfigReader(access)))
-        rRegistry.addStructuralReader(IIDs.NE_NE_PR_PR_BG_NE_NE_AFISAFIS, NeighborAfiSafisBuilder::class.java)
-        rRegistry.subtreeAdd(setOf(IID_AFISAFI_CONFIG),
-            GenericConfigListReader(IIDs.NE_NE_PR_PR_BG_NE_NE_AF_AFISAFI, NeighborAfiSafiReader(access)))
-        rRegistry.addStructuralReader(IIDs.NE_NE_PR_PR_BG_NE_NE_TRANSPORT, TransportBuilder::class.java)
-        rRegistry.add(GenericConfigReader(IIDs.NE_NE_PR_PR_BG_NE_NE_TR_CONFIG, NeighborTransportConfigReader(access)))
+        rRegistry.add(IIDs.NE_NE_PR_PR_BG_GL_CONFIG, GlobalConfigReader(access))
+        rRegistry.add(IIDs.NE_NE_PR_PR_BG_GL_AF_AFISAFI, GlobalAfiSafiReader(access))
+        rRegistry.add(IIDs.NE_NE_PR_PR_BG_GL_AF_AF_CONFIG, GlobalAfiSafiConfigReader(access))
+        rRegistry.add(IIDs.NE_NE_PR_PR_BG_NE_NEIGHBOR, NeighborReader(access))
+        rRegistry.add(IIDs.NE_NE_PR_PR_BG_NE_NE_CONFIG, NeighborConfigReader(access))
+        rRegistry.add(IIDs.NE_NE_PR_PR_BG_NE_NE_AF_AF_CONFIG, NeighborAfiSafiConfigReader(access))
+        rRegistry.subtreeAdd(IIDs.NE_NE_PR_PR_BG_NE_NE_AF_AFISAFI, NeighborAfiSafiReader(access),
+            setOf(IID_AFISAFI_CONFIG))
+        rRegistry.add(IIDs.NE_NE_PR_PR_BG_NE_NE_TR_CONFIG, NeighborTransportConfigReader(access))
     }
 
     companion object {
@@ -136,6 +121,7 @@ class Unit(private val registry: TranslationUnitCollector) : Unit() {
         val IID_AFISAFI_CONFIG = InstanceIdentifier.create(AfiSafi::class.java)
             .child(Config::class.java)
     }
+
     override fun toString() = "Translate unit for Cisco-IOS-XR-ipv4-bgp-cfg@2019-06-15"
 }
 

@@ -17,10 +17,10 @@
 package io.frinx.unitopo.unit.junos18.bgp.handler.aggregate
 
 import io.fd.honeycomb.translate.read.ReadContext
+import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
 import io.frinx.translate.unit.commons.handler.spi.CompositeReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.junos18.bgp.handler.BgpProtocolReader
-import io.frinx.unitopo.handlers.bgp.BgpReader
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.extension.rev180323.NiProtAggAug
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.extension.rev180323.NiProtAggAugBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.local.routing.rev170515.local.aggregate.top.local.aggregates.Aggregate
@@ -39,7 +39,7 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.routing.instances.rev180101.juniper.routing.options.Aggregate as JunosAggregate
 
 class BgpAggregateConfigReader(private val underlayAccess: UnderlayAccess) :
-        BgpReader.BgpConfigReader<Config, ConfigBuilder>,
+        ConfigReaderCustomizer<Config, ConfigBuilder>,
         CompositeReader.Child<Config, ConfigBuilder> {
 
     override fun getBuilder(id: InstanceIdentifier<Config>): ConfigBuilder {
@@ -47,7 +47,7 @@ class BgpAggregateConfigReader(private val underlayAccess: UnderlayAccess) :
         throw UnsupportedOperationException("Should not be invoked")
     }
 
-    override fun readCurrentAttributesForType(
+    override fun readCurrentAttributes(
         instanceIdentifier: InstanceIdentifier<Config>,
         configBuilder: ConfigBuilder,
         readContext: ReadContext

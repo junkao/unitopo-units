@@ -75,7 +75,7 @@ class NeighborReaderTest : AbstractNetconfHandlerTest() {
     fun readCurrentAttributesForType() {
         val ipAddr = IpAddress(Ipv4Address("10.1.22.23"))
         val neighborBuilder = NeighborBuilder()
-        target.readCurrentAttributesForType(id, neighborBuilder, readContext)
+        target.readCurrentAttributes(id, neighborBuilder, readContext)
         Assert.assertThat(neighborBuilder.neighborAddress, CoreMatchers.equalTo(ipAddr))
     }
 }

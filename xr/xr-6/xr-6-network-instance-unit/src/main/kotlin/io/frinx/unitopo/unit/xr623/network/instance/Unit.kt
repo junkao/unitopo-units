@@ -16,18 +16,17 @@
 
 package io.frinx.unitopo.unit.xr623.network.instance
 
-import io.fd.honeycomb.translate.impl.read.GenericConfigListReader
-import io.fd.honeycomb.translate.impl.read.GenericConfigReader
-import io.fd.honeycomb.translate.impl.write.GenericWriter
+import io.fd.honeycomb.rpc.RpcService
 import io.fd.honeycomb.translate.spi.builder.CustomizerAwareReadRegistryBuilder
 import io.fd.honeycomb.translate.spi.builder.CustomizerAwareWriteRegistryBuilder
 import io.fd.honeycomb.translate.util.RWUtils
-import io.frinx.openconfig.openconfig.interfaces.IIDs as InterfacesIIDs
 import io.frinx.openconfig.openconfig.network.instance.IIDs
-import io.frinx.unitopo.handlers.network.instance.NetworkInstanceUnit
+import io.frinx.translate.unit.commons.handler.spi.ChecksMap
+import io.frinx.unitopo.handlers.network.instance.protocol.ProtocolConfigReader
+import io.frinx.unitopo.handlers.network.instance.protocol.ProtocolStateReader
 import io.frinx.unitopo.registry.api.TranslationUnitCollector
+import io.frinx.unitopo.registry.spi.TranslateUnit
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.utils.NoopWriter
 import io.frinx.unitopo.unit.xr623.network.instance.policy.forwarding.PolicyForwardingInterfaceConfigReader
 import io.frinx.unitopo.unit.xr623.network.instance.policy.forwarding.PolicyForwardingInterfaceConfigWriter
 import io.frinx.unitopo.unit.xr623.network.instance.policy.forwarding.PolicyForwardingInterfaceReader
@@ -37,17 +36,18 @@ import io.frinx.unitopo.unit.xr623.network.instance.vrf.ifc.VrfInterfaceReader
 import io.frinx.unitopo.unit.xr623.network.instance.vrf.protocol.ProtocolConfigWriter
 import io.frinx.unitopo.unit.xr623.network.instance.vrf.protocol.ProtocolReader
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo
+import io.frinx.openconfig.openconfig.interfaces.IIDs as InterfacesIIDs
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.clns.isis.cfg.rev151109.`$YangModuleInfoImpl` as UnderlayIsisYangInfo
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.clns.isis.datatypes.rev151109.`$YangModuleInfoImpl` as UnderlayIsisTypesYangInfo
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev150730.`$YangModuleInfoImpl` as UnderlayInterfacesYangInfo
-import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.xr.types.rev150629.`$YangModuleInfoImpl` as UnderlayTypesYangInfo
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.infra.rsi.cfg.rev161219.`$YangModuleInfoImpl` as UnderlayVRFYangInto
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.qos.ma.cfg.rev161223.`$YangModuleInfoImpl` as UnderlayQosMaCfgYangInfo
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.policy.forwarding.rev170621.`$YangModuleInfoImpl` as PfYangModuleInfoImpl
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.xr.types.rev150629.`$YangModuleInfoImpl` as UnderlayTypesYangInfo
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.pf.interfaces.extension.cisco.rev171109.`$YangModuleInfoImpl` as PfNwYangModuleInfoImpl
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.`$YangModuleInfoImpl` as NetworkInstanceYangInfo
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.policy.forwarding.rev170621.`$YangModuleInfoImpl` as PfYangModuleInfoImpl
 
-open class Unit(private val registry: TranslationUnitCollector) : NetworkInstanceUnit() {
+open class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
 
     private var reg: TranslationUnitCollector.Registration? = null
 
@@ -74,30 +74,46 @@ open class Unit(private val registry: TranslationUnitCollector) : NetworkInstanc
             NetworkInstanceYangInfo.getInstance()
     )
 
-    override fun provideSpecificWriters(wRegistry: CustomizerAwareWriteRegistryBuilder, underlay: UnderlayAccess) {
-        wRegistry.add(GenericWriter(IIDs.NE_NE_CONFIG, NoopWriter()))
-        wRegistry.add(GenericWriter(IIDs.NE_NE_IN_INTERFACE, NoopWriter()))
-        wRegistry.addAfter(GenericWriter(IIDs.NE_NE_IN_IN_CONFIG, VrfInterfaceConfigWriter(underlay)),
+    override fun getRpcs(underlayAccess: UnderlayAccess): Set<RpcService<*, *>> = emptySet()
+
+    override fun provideHandlers(
+        rRegistry: CustomizerAwareReadRegistryBuilder,
+        wRegistry: CustomizerAwareWriteRegistryBuilder,
+        underlayAccess: UnderlayAccess
+    ) {
+        val checkRegistry = ChecksMap.getOpenconfigCheckRegistry()
+        rRegistry.setCheckRegistry(checkRegistry)
+        provideReaders(rRegistry, underlayAccess)
+        wRegistry.setCheckRegistry(checkRegistry)
+        provideWriters(wRegistry, underlayAccess)
+    }
+
+    private fun provideWriters(wRegistry: CustomizerAwareWriteRegistryBuilder, underlay: UnderlayAccess) {
+        wRegistry.addNoop(IIDs.NE_NETWORKINSTANCE)
+        wRegistry.addNoop(IIDs.NE_NE_CONFIG)
+        wRegistry.addNoop(IIDs.NE_NE_IN_INTERFACE)
+        wRegistry.addAfter(IIDs.NE_NE_IN_IN_CONFIG, VrfInterfaceConfigWriter(underlay),
             IIDs.NE_NE_CONFIG)
-        wRegistry.addAfter(GenericWriter(IIDs.NE_NE_PR_PR_CONFIG, ProtocolConfigWriter(underlay)),
+        wRegistry.addNoop(IIDs.NE_NE_PR_PROTOCOL)
+        wRegistry.addAfter(IIDs.NE_NE_PR_PR_CONFIG, ProtocolConfigWriter(underlay),
             IIDs.NE_NE_CONFIG)
         // PF
         wRegistry.addNoop(IIDs.NE_NE_PO_IN_INTERFACE)
-        wRegistry.subtreeAddAfter(
+        wRegistry.subtreeAddAfter(IIDs.NE_NE_PO_IN_IN_CONFIG, PolicyForwardingInterfaceConfigWriter(underlay),
             setOf(
                 RWUtils.cutIdFromStart(IIDs.NE_NE_PO_IN_IN_CO_AUG_NIPFIFCISCOAUG,
                         IIDs.NE_TO_NO_CO_AUG_CONFIGURATION1_NE_NE_PO_IN_IN_CONFIG)),
-                GenericWriter(IIDs.NE_NE_PO_IN_IN_CONFIG, PolicyForwardingInterfaceConfigWriter(underlay)),
-            InterfacesIIDs.IN_IN_CONFIG
-        )
+            InterfacesIIDs.IN_IN_CONFIG)
     }
 
-    override fun provideSpecificReaders(rRegistry: CustomizerAwareReadRegistryBuilder, underlay: UnderlayAccess) {
-        rRegistry.add(GenericConfigListReader(IIDs.NE_NETWORKINSTANCE, NetworkInstanceReader(underlay)))
-        rRegistry.add(GenericConfigReader(IIDs.NE_NE_CONFIG, NetworkInstanceConfigReader()))
-        rRegistry.add(GenericConfigListReader(IIDs.NE_NE_PR_PROTOCOL, ProtocolReader(underlay)))
-        rRegistry.add(GenericConfigListReader(IIDs.NE_NE_IN_INTERFACE, VrfInterfaceReader(underlay)))
-        rRegistry.add(GenericConfigReader(IIDs.NE_NE_IN_IN_CONFIG, VrfInterfaceConfigReader()))
+    private fun provideReaders(rRegistry: CustomizerAwareReadRegistryBuilder, underlay: UnderlayAccess) {
+        rRegistry.add(IIDs.NE_NETWORKINSTANCE, NetworkInstanceReader(underlay))
+        rRegistry.add(IIDs.NE_NE_CONFIG, NetworkInstanceConfigReader())
+        rRegistry.add(IIDs.NE_NE_PR_PROTOCOL, ProtocolReader(underlay))
+        rRegistry.add(IIDs.NE_NE_PR_PR_CONFIG, ProtocolConfigReader())
+        rRegistry.add(IIDs.NE_NE_PR_PR_STATE, ProtocolStateReader())
+        rRegistry.add(IIDs.NE_NE_IN_INTERFACE, VrfInterfaceReader(underlay))
+        rRegistry.add(IIDs.NE_NE_IN_IN_CONFIG, VrfInterfaceConfigReader())
 
         // PF
         rRegistry.add(IIDs.NE_NE_PO_IN_INTERFACE, PolicyForwardingInterfaceReader(underlay))

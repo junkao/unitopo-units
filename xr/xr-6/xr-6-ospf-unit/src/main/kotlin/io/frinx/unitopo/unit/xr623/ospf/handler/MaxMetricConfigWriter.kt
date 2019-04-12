@@ -16,9 +16,9 @@
 
 package io.frinx.unitopo.unit.xr623.ospf.handler
 
+import io.fd.honeycomb.translate.spi.write.WriterCustomizer
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.openconfig.network.instance.NetworInstance
-import io.frinx.unitopo.handlers.ospf.OspfWriter
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev170102.max.metric.MaxMetric
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev170102.max.metric.max.metric.MaxMetricOnStartup
@@ -35,9 +35,9 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.ospf.types.re
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.ospfv2.rev170228.ospfv2.global.structural.global.timers.max.metric.Config
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
-class MaxMetricConfigWriter(private val underlayAccess: UnderlayAccess) : OspfWriter<Config> {
+class MaxMetricConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCustomizer<Config> {
 
-    override fun updateCurrentAttributesForType(
+    override fun updateCurrentAttributes(
         id: IID<Config>,
         dataBefore: Config,
         dataAfter: Config,
@@ -47,12 +47,12 @@ class MaxMetricConfigWriter(private val underlayAccess: UnderlayAccess) : OspfWr
         underlayAccess.put(underlayId, underlayData)
     }
 
-    override fun writeCurrentAttributesForType(id: IID<Config>, dataAfter: Config, wtx: WriteContext) {
+    override fun writeCurrentAttributes(id: IID<Config>, dataAfter: Config, wtx: WriteContext) {
         val (underlayId, underlayData) = getData(id, dataAfter)
         underlayAccess.merge(underlayId, underlayData)
     }
 
-    override fun deleteCurrentAttributesForType(id: IID<Config>, dataBefore: Config, wtx: WriteContext) {
+    override fun deleteCurrentAttributes(id: IID<Config>, dataBefore: Config, wtx: WriteContext) {
         val (processIid, vrfName) = AreaConfigWriter.getIdentifiers(id)
         val metricIid = getInterfaceIdentifier(processIid, vrfName)
 

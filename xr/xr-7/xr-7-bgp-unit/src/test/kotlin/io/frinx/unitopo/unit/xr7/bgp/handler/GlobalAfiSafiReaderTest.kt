@@ -82,7 +82,7 @@ class GlobalAfiSafiReaderTest : AbstractNetconfHandlerTest() {
     @Test
     fun testReadCurrentAttributesForType() {
         val builder = AfiSafiBuilder()
-        target!!.readCurrentAttributesForType(IID_AFISAFI, builder, readContext!!)
+        target!!.readCurrentAttributes(IID_AFISAFI, builder, readContext!!)
         Assert.assertEquals(L2VPNEVPN::class.java, builder.build().afiSafiName)
     }
 
@@ -103,7 +103,7 @@ class GlobalAfiSafiReaderTest : AbstractNetconfHandlerTest() {
                 .read(IID_BGP_INSTANCE)
         Mockito.doReturn(Optional.of(data)).`when`(checkedFuture).checkedGet()
 
-        val list = target!!.getAllIdsForType(IID_AFISAFI, readContext!!)
+        val list = target!!.getAllIds(IID_AFISAFI, readContext!!)
         Assert.assertTrue(
                 list.map { it.afiSafiName }.contains(L2VPNEVPN::class.java))
     }

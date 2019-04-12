@@ -56,7 +56,7 @@ class InterfaceReaderTest {
                 .child(Interfaces::class.java)
                 .child(Interface::class.java)
 
-        val result = target.getAllIdsForType(id, readContext)
+        val result = target.getAllIds(id, readContext)
         Assert.assertThat(
                 result.map { it.id },
                 Matchers.containsInAnyOrder("ms-0/2/0.46", "ms-0/2/0.56")
@@ -73,7 +73,7 @@ class InterfaceReaderTest {
                 .child(Interface::class.java, InterfaceKey(ifName))
         val builder = InterfaceBuilder()
 
-        target.readCurrentAttributesForType(id, builder, readContext)
+        target.readCurrentAttributes(id, builder, readContext)
 
         Assert.assertThat(builder.id, CoreMatchers.sameInstance(ifName))
     }

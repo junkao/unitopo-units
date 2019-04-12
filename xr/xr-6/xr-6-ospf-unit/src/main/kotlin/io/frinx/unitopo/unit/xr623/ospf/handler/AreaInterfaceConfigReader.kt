@@ -17,7 +17,7 @@
 package io.frinx.unitopo.unit.xr623.ospf.handler
 
 import io.fd.honeycomb.translate.read.ReadContext
-import io.frinx.unitopo.handlers.ospf.OspfReader
+import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.Protocol
@@ -31,8 +31,8 @@ import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
-open class AreaInterfaceConfigReader(private val access: UnderlayAccess)
-    : OspfReader.OspfConfigReader<Config, ConfigBuilder> {
+open class AreaInterfaceConfigReader(private val access: UnderlayAccess) :
+    ConfigReaderCustomizer<Config, ConfigBuilder> {
 
     override fun getBuilder(id: IID<Config>): ConfigBuilder = ConfigBuilder()
 
@@ -40,7 +40,7 @@ open class AreaInterfaceConfigReader(private val access: UnderlayAccess)
         (builder as InterfaceBuilder).`config` = config
     }
 
-    override fun readCurrentAttributesForType(id: IID<Config>, config: ConfigBuilder, readContext: ReadContext) {
+    override fun readCurrentAttributes(id: IID<Config>, config: ConfigBuilder, readContext: ReadContext) {
         val vrfKey = id.firstKeyOf(NetworkInstance::class.java)
         val protKey = id.firstKeyOf(Protocol::class.java)
         val areaKey = id.firstKeyOf(Area::class.java)

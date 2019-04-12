@@ -17,12 +17,10 @@
 package io.frinx.unitopo.unit.junos17.mpls
 
 import io.fd.honeycomb.rpc.RpcService
-import io.fd.honeycomb.translate.impl.read.GenericConfigListReader
-import io.fd.honeycomb.translate.impl.read.GenericConfigReader
-import io.fd.honeycomb.translate.impl.write.GenericWriter
 import io.fd.honeycomb.translate.spi.builder.CustomizerAwareReadRegistryBuilder
 import io.fd.honeycomb.translate.spi.builder.CustomizerAwareWriteRegistryBuilder
 import io.frinx.openconfig.openconfig.network.instance.IIDs
+import io.frinx.translate.unit.commons.handler.spi.ChecksMap
 import io.frinx.unitopo.registry.api.TranslationUnitCollector
 import io.frinx.unitopo.registry.spi.TranslateUnit
 import io.frinx.unitopo.registry.spi.UnderlayAccess
@@ -38,19 +36,6 @@ import io.frinx.unitopo.unit.junos17.mpls.handler.TeInterfaceReader
 import io.frinx.unitopo.unit.junos17.mpls.handler.TunnelConfigReader
 import io.frinx.unitopo.unit.junos17.mpls.handler.TunnelConfigWriter
 import io.frinx.unitopo.unit.junos17.mpls.handler.TunnelReader
-import io.frinx.unitopo.unit.utils.NoopListWriter
-import io.frinx.unitopo.unit.utils.NoopWriter
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.mpls.rev170824.mpls.top.MplsBuilder
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.mpls.rev170824.mpls.top.mpls.LspsBuilder
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.mpls.rev170824.mpls.top.mpls.SignalingProtocolsBuilder
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.mpls.rev170824.mpls.top.mpls.TeInterfaceAttributesBuilder
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.mpls.rev170824.mpls.top.mpls.lsps.ConstrainedPathBuilder
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.mpls.rev170824.te.tunnel.p2p_top.P2pTunnelAttributesBuilder
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.mpls.rev170824.te.tunnels_top.TunnelsBuilder
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.rsvp.rev170824.mpls.rsvp.subscription.SubscriptionBuilder
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.rsvp.rev170824.mpls.rsvp.subscription.subscription.ConfigBuilder
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.rsvp.rev170824.rsvp.global.RsvpTeBuilder
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.rsvp.rev170824.rsvp.global.rsvp.te.InterfaceAttributesBuilder
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.mpls.extension.rev171024.`$YangModuleInfoImpl` as RsvpExtension
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.mpls.rev170824.`$YangModuleInfoImpl` as MplsYangInfo
@@ -86,63 +71,53 @@ class MplsUnit(private val registry: TranslationUnitCollector) : TranslateUnit {
         wRegistry: CustomizerAwareWriteRegistryBuilder,
         underlayAccess: UnderlayAccess
     ) {
+        val checkRegistry = ChecksMap.getOpenconfigCheckRegistry()
+        rRegistry.setCheckRegistry(checkRegistry)
         provideReaders(rRegistry, underlayAccess)
+        wRegistry.setCheckRegistry(checkRegistry)
         provideWriters(wRegistry, underlayAccess)
     }
 
     private fun provideWriters(wRegistry: CustomizerAwareWriteRegistryBuilder, underlayAccess: UnderlayAccess) {
-        wRegistry.add(GenericWriter(IIDs.NE_NE_MPLS, NoopWriter()))
+        wRegistry.addNoop(IIDs.NE_NE_MPLS)
 
         // RSVP
-        wRegistry.add(GenericWriter(IIDs.NE_NE_MP_SI_RSVPTE, NoopWriter()))
-        wRegistry.add(GenericWriter(IIDs.NE_NE_MP_SI_RS_IN_INTERFACE, NoopListWriter()))
-        wRegistry.add(GenericWriter(IIDs.NE_NE_MP_SI_RS_IN_IN_CONFIG, RsvpInterfaceConfigWriter(underlayAccess)))
-        wRegistry.add(GenericWriter(IIDs.NE_NE_MP_SI_RS_IN_IN_SU_CONFIG, NoopWriter()))
-        wRegistry.addAfter(GenericWriter(IIDs.NE_NE_MP_SI_RS_IN_IN_SU_CO_AUG_NIMPLSRSVPIFSUBSCRIPAUG,
-            NiMplsRsvpIfSubscripAugWriter(underlayAccess)), IIDs.NE_NE_MP_SI_RS_IN_IN_CONFIG)
+        wRegistry.addNoop(IIDs.NE_NE_MP_SI_RSVPTE)
+        wRegistry.addNoop(IIDs.NE_NE_MP_SI_RS_IN_INTERFACE)
+        wRegistry.add(IIDs.NE_NE_MP_SI_RS_IN_IN_CONFIG, RsvpInterfaceConfigWriter(underlayAccess))
+        wRegistry.addNoop(IIDs.NE_NE_MP_SI_RS_IN_IN_SU_CONFIG)
+        wRegistry.addAfter(IIDs.NE_NE_MP_SI_RS_IN_IN_SU_CO_AUG_NIMPLSRSVPIFSUBSCRIPAUG,
+            NiMplsRsvpIfSubscripAugWriter(underlayAccess), IIDs.NE_NE_MP_SI_RS_IN_IN_CONFIG)
 
         // TE
-        wRegistry.add(GenericWriter(IIDs.NE_NE_MP_TE_INTERFACE, NoopListWriter()))
-        wRegistry.add(GenericWriter(IIDs.NE_NE_MP_TE_IN_CONFIG, TeInterfaceConfigWriter(underlayAccess)))
+        wRegistry.addNoop(IIDs.NE_NE_MP_TE_INTERFACE)
+        wRegistry.add(IIDs.NE_NE_MP_TE_IN_CONFIG, TeInterfaceConfigWriter(underlayAccess))
 
         // Tunnel
-        wRegistry.add(GenericWriter(IIDs.NE_NE_MP_LSPS, NoopWriter()))
-        wRegistry.add(GenericWriter(IIDs.NE_NE_MP_LS_CONSTRAINEDPATH, NoopWriter()))
-        wRegistry.add(GenericWriter(IIDs.NE_NE_MP_LS_CO_TU_TUNNEL, NoopListWriter()))
-        wRegistry.add(GenericWriter(IIDs.NE_NE_MP_LS_CO_TU_TU_CONFIG, TunnelConfigWriter(underlayAccess)))
-        wRegistry.add(GenericWriter(IIDs.NE_NE_MP_LS_CO_TU_TU_P2PTUNNELATTRIBUTES, NoopWriter()))
-        wRegistry.add(GenericWriter(IIDs.NE_NE_MP_LS_CO_TU_TU_P2_CONFIG, NoopWriter()))
+        wRegistry.addNoop(IIDs.NE_NE_MP_LSPS)
+        wRegistry.addNoop(IIDs.NE_NE_MP_LS_CONSTRAINEDPATH)
+        wRegistry.addNoop(IIDs.NE_NE_MP_LS_CO_TU_TUNNEL)
+        wRegistry.add(IIDs.NE_NE_MP_LS_CO_TU_TU_CONFIG, TunnelConfigWriter(underlayAccess))
+        wRegistry.addNoop(IIDs.NE_NE_MP_LS_CO_TU_TU_P2PTUNNELATTRIBUTES)
+        wRegistry.addNoop(IIDs.NE_NE_MP_LS_CO_TU_TU_P2_CONFIG)
     }
 
     private fun provideReaders(rRegistry: CustomizerAwareReadRegistryBuilder, underlayAccess: UnderlayAccess) {
-        rRegistry.addStructuralReader(IIDs.NE_NE_MPLS, MplsBuilder::class.java)
-
         // RSVP
-        rRegistry.addStructuralReader(IIDs.NE_NE_MP_SIGNALINGPROTOCOLS, SignalingProtocolsBuilder::class.java)
-        rRegistry.addStructuralReader(IIDs.NE_NE_MP_SI_RSVPTE, RsvpTeBuilder::class.java)
-        rRegistry.addStructuralReader(IIDs.NE_NE_MP_SI_RS_INTERFACEATTRIBUTES, InterfaceAttributesBuilder::class.java)
-        rRegistry.add(GenericConfigListReader(IIDs.NE_NE_MP_SI_RS_IN_INTERFACE, RsvpInterfaceReader(underlayAccess)))
-        rRegistry.add(GenericConfigReader(IIDs.NE_NE_MP_SI_RS_IN_IN_CONFIG, RsvpInterfaceConfigReader(underlayAccess)))
-        rRegistry.addStructuralReader(IIDs.NE_NE_MP_SI_RS_IN_IN_SUBSCRIPTION, SubscriptionBuilder::class.java)
-        rRegistry.addStructuralReader(IIDs.NE_NE_MP_SI_RS_IN_IN_SU_CONFIG, ConfigBuilder::class.java)
-        rRegistry.add(GenericConfigReader(IIDs.NE_NE_MP_SI_RS_IN_IN_SU_CO_AUG_NIMPLSRSVPIFSUBSCRIPAUG,
-            NiMplsRsvpIfSubscripAugReader(underlayAccess)))
+        rRegistry.add(IIDs.NE_NE_MP_SI_RS_IN_INTERFACE, RsvpInterfaceReader(underlayAccess))
+        rRegistry.add(IIDs.NE_NE_MP_SI_RS_IN_IN_CONFIG, RsvpInterfaceConfigReader(underlayAccess))
+        rRegistry.add(IIDs.NE_NE_MP_SI_RS_IN_IN_SU_CO_AUG_NIMPLSRSVPIFSUBSCRIPAUG,
+            NiMplsRsvpIfSubscripAugReader(underlayAccess))
 
         // TE
-        rRegistry.addStructuralReader(IIDs.NE_NE_MP_TEINTERFACEATTRIBUTES, TeInterfaceAttributesBuilder::class.java)
-        rRegistry.add(GenericConfigListReader(IIDs.NE_NE_MP_TE_INTERFACE, TeInterfaceReader(underlayAccess)))
-        rRegistry.add(GenericConfigReader(IIDs.NE_NE_MP_TE_IN_CONFIG, TeInterfaceConfigReader()))
+        rRegistry.add(IIDs.NE_NE_MP_TE_INTERFACE, TeInterfaceReader(underlayAccess))
+        rRegistry.add(IIDs.NE_NE_MP_TE_IN_CONFIG, TeInterfaceConfigReader())
 
         // Tunnel
-        rRegistry.addStructuralReader(IIDs.NE_NE_MP_LSPS, LspsBuilder::class.java)
-        rRegistry.addStructuralReader(IIDs.NE_NE_MP_LS_CONSTRAINEDPATH, ConstrainedPathBuilder::class.java)
-        rRegistry.addStructuralReader(IIDs.NE_NE_MP_LS_CO_TUNNELS, TunnelsBuilder::class.java)
-        rRegistry.add(GenericConfigListReader(IIDs.NE_NE_MP_LS_CO_TU_TUNNEL, TunnelReader(underlayAccess)))
-        rRegistry.add(GenericConfigReader(IIDs.NE_NE_MP_LS_CO_TU_TU_CONFIG, TunnelConfigReader(underlayAccess)))
-        rRegistry.addStructuralReader(IIDs.NE_NE_MP_LS_CO_TU_TU_P2PTUNNELATTRIBUTES,
-            P2pTunnelAttributesBuilder::class.java)
-        rRegistry.add(GenericConfigReader(IIDs.NE_NE_MP_LS_CO_TU_TU_P2_CONFIG,
-            P2pAttributesConfigReader(underlayAccess)))
+        rRegistry.add(IIDs.NE_NE_MP_LS_CO_TU_TUNNEL, TunnelReader(underlayAccess))
+        rRegistry.add(IIDs.NE_NE_MP_LS_CO_TU_TU_CONFIG, TunnelConfigReader(underlayAccess))
+        rRegistry.add(IIDs.NE_NE_MP_LS_CO_TU_TU_P2_CONFIG,
+            P2pAttributesConfigReader(underlayAccess))
     }
 
     override fun toString(): String {
