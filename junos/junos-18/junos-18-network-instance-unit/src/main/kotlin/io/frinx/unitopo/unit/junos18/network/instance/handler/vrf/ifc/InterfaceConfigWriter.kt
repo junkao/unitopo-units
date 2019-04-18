@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package io.frinx.unitopo.unit.junos18.network.instance.vrf.ifc
+package io.frinx.unitopo.unit.junos18.network.instance.handler.vrf.ifc
 
 import io.fd.honeycomb.translate.spi.write.WriterCustomizer
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.junos18.network.instance.vrf.VrfReader
+import io.frinx.unitopo.unit.junos18.network.instance.handler.vrf.L3VrfReader
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.interfaces._interface.Config
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.routing.instances.rev180101.juniper.routing.instance.Interface
@@ -60,7 +60,7 @@ class InterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : Writer
 
     companion object {
         private fun getInterfaceIdentifier(vrfName: String, ifcName: String): IID<Interface> {
-            return VrfReader.JUNOS_VRFS_ID.child(Instance::class.java, InstanceKey(vrfName))
+            return L3VrfReader.JUNOS_VRFS_ID.child(Instance::class.java, InstanceKey(vrfName))
                 .child(Interface::class.java, InterfaceKey(ifcName))
         }
 

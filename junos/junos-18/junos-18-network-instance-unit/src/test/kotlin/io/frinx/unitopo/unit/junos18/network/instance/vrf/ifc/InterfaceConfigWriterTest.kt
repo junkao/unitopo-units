@@ -19,7 +19,8 @@ package io.frinx.unitopo.unit.junos18.network.instance.vrf.ifc
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.openconfig.openconfig.network.instance.IIDs
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.junos18.network.instance.vrf.VrfReader
+import io.frinx.unitopo.unit.junos18.network.instance.handler.vrf.L3VrfReader
+import io.frinx.unitopo.unit.junos18.network.instance.handler.vrf.ifc.InterfaceConfigWriter
 import io.frinx.unitopo.unit.utils.NetconfAccessHelper
 import org.hamcrest.CoreMatchers
 import org.hamcrest.Matcher
@@ -138,7 +139,7 @@ class InterfaceConfigWriterTest {
                 .setId(IF_NAME)
                 .build()
 
-        private val NATIVE_IID = VrfReader.JUNOS_VRFS_ID
+        private val NATIVE_IID = L3VrfReader.JUNOS_VRFS_ID
                 .child(Instance::class.java, InstanceKey(VRF_NAME))
                 .child(RoutingInstanceInterface::class.java, RoutingInstanceInterfaceKey(IF_NAME))
 

@@ -19,6 +19,7 @@ package io.frinx.unitopo.unit.junos18.network.instance.vrf
 import io.fd.honeycomb.translate.read.ReadContext
 import io.frinx.openconfig.openconfig.network.instance.IIDs
 import io.frinx.unitopo.registry.spi.UnderlayAccess
+import io.frinx.unitopo.unit.junos18.network.instance.handler.vrf.L3VrfConfigReader
 import io.frinx.unitopo.unit.utils.NetconfAccessHelper
 import org.hamcrest.CoreMatchers
 import org.hamcrest.Matcher
@@ -26,10 +27,8 @@ import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
-import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstanceBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstanceKey
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.Config
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.ConfigBuilder
@@ -41,7 +40,7 @@ class VrfConfigReaderTest {
     private lateinit var readContext: ReadContext
 
     private val underlayAccess: UnderlayAccess = NetconfAccessHelper("/data_nodes.xml")
-    private val target = VrfConfigReader(underlayAccess)
+    private val target = L3VrfConfigReader(underlayAccess)
 
     @Before
     fun setUp() {
@@ -64,18 +63,5 @@ class VrfConfigReaderTest {
                 builder.type,
                 CoreMatchers.equalTo(L3VRF::class.java) as Matcher<Class<out NETWORKINSTANCETYPE>>
         )
-    }
-
-    @Test(expected = UnsupportedOperationException::class)
-    fun testMerge() {
-        val parentBuilder = NetworkInstanceBuilder()
-        val data: Config = Mockito.mock(Config::class.java)
-
-        target.merge(parentBuilder, data)
-    }
-
-    @Test(expected = UnsupportedOperationException::class)
-    fun testGetBuilder() {
-        target.getBuilder(IIDs.NE_NE_CONFIG)
     }
 }

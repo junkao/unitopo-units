@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package io.frinx.unitopo.unit.junos18.network.instance
+package io.frinx.unitopo.unit.junos18.network.instance.handler
 
 import io.frinx.translate.unit.commons.handler.spi.CompositeWriter
-import io.frinx.unitopo.handlers.network.instance.def.DefaultConfigWriter
+import io.frinx.unitopo.ni.base.handler.vrf.def.DefaultConfigWriter
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.junos18.network.instance.vrf.VrfConfigWriter
+import io.frinx.unitopo.unit.junos18.network.instance.handler.vrf.L3VrfConfigWriter
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.Config
 
 class NetworkInstanceConfigWriter(access: UnderlayAccess) : CompositeWriter<Config>(
     listOf(
         DefaultConfigWriter(),
-        VrfConfigWriter(access)
+        L3VrfConfigWriter(access)
     )
 )

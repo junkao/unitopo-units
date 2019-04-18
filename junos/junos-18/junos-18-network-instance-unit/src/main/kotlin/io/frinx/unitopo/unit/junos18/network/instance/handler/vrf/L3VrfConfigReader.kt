@@ -14,50 +14,28 @@
  * limitations under the License.
  */
 
-package io.frinx.unitopo.unit.junos18.network.instance.vrf
+package io.frinx.unitopo.unit.junos18.network.instance.handler.vrf
 
 import io.fd.honeycomb.translate.read.ReadContext
-import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
-import io.frinx.translate.unit.commons.handler.spi.CompositeReader
+import io.frinx.unitopo.ni.base.handler.vrf.L3VrfConfigReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.Config
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.ConfigBuilder
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.types.rev170228.L3VRF
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.routing.instances.rev180101.routing.instances.group.routing.instances.Instance
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.routing.instances.rev180101.routing.instances.group.routing.instances.InstanceKey
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class VrfConfigReader(private val underlayAccess: UnderlayAccess) : ConfigReaderCustomizer<Config, ConfigBuilder>,
-        CompositeReader.Child<Config, ConfigBuilder> {
+class L3VrfConfigReader(private val underlayAccess: UnderlayAccess) : L3VrfConfigReader() {
+
+    private val parentReader = L3VrfReader(underlayAccess)
 
     override fun readCurrentAttributes(id: InstanceIdentifier<Config>, builder: ConfigBuilder, ctx: ReadContext) {
-        val name = id.firstKeyOf(NetworkInstance::class.java).name!!
+        val name = id.firstKeyOf(NetworkInstance::class.java).name
 
-        if (!isVrf(name)) {
-            return
+        if (parentReader.vrfExists(name)) {
+            underlayAccess.read(L3VrfReader.JUNOS_VRFS_ID.child(Instance::class.java, InstanceKey(name)))
+                .checkedGet().orNull().let { builder.fromUnderlay(name) }
         }
-
-        underlayAccess.read(VrfReader.JUNOS_VRFS_ID.child(Instance::class.java, InstanceKey(name)))
-                .checkedGet()
-                .orNull()
-                ?.let { builder.fromUnderlay(it, name) }
     }
-
-    private fun isVrf(name: String): Boolean {
-        return VrfReader.getAllIds(underlayAccess)
-            .map { it.name }
-            .toList()
-            .contains(name)
-    }
-
-    override fun getBuilder(p0: InstanceIdentifier<Config>): ConfigBuilder {
-        // NOOP
-        throw UnsupportedOperationException("Should not be invoked")
-    }
-}
-
-private fun ConfigBuilder.fromUnderlay(underlay: Instance, vrfName: String) {
-    name = vrfName
-    type = L3VRF::class.java
 }

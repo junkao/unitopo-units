@@ -16,26 +16,29 @@
 
 package io.frinx.unitopo.unit.junos18.network.instance
 
-import io.fd.honeycomb.rpc.RpcService
 import io.fd.honeycomb.translate.spi.builder.CustomizerAwareReadRegistryBuilder
 import io.fd.honeycomb.translate.spi.builder.CustomizerAwareWriteRegistryBuilder
+import io.frinx.openconfig.openconfig.interfaces.IIDs as InterfaceIIDs
 import io.frinx.openconfig.openconfig.network.instance.IIDs
 import io.frinx.translate.unit.commons.handler.spi.ChecksMap
-import io.frinx.unitopo.handlers.network.instance.protocol.ProtocolConfigReader
-import io.frinx.unitopo.handlers.network.instance.protocol.ProtocolStateReader
+import io.frinx.unitopo.ni.base.handler.vrf.protocol.ProtocolConfigReader
+import io.frinx.unitopo.ni.base.handler.vrf.protocol.ProtocolStateReader
 import io.frinx.unitopo.registry.api.TranslationUnitCollector
 import io.frinx.unitopo.registry.spi.TranslateUnit
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.junos18.network.instance.vrf.ifc.InterfaceConfigReader
-import io.frinx.unitopo.unit.junos18.network.instance.vrf.ifc.InterfaceConfigWriter
-import io.frinx.unitopo.unit.junos18.network.instance.vrf.ifc.InterfaceReader
-import io.frinx.unitopo.unit.junos18.network.instance.vrf.protocol.ProtocolConfigWriter
-import io.frinx.unitopo.unit.junos18.network.instance.vrf.protocol.ProtocolReader
-import io.frinx.unitopo.unit.junos18.network.instance.vrf.protocol.aggregate.AggregateConfigReader
-import io.frinx.unitopo.unit.junos18.network.instance.vrf.protocol.aggregate.AggregateConfigWriter
-import io.frinx.unitopo.unit.junos18.network.instance.vrf.protocol.aggregate.AggregateReader
-import io.frinx.unitopo.unit.utils.NoopListWriter
+import io.frinx.unitopo.unit.junos18.network.instance.handler.NetworkInstanceConfigReader
+import io.frinx.unitopo.unit.junos18.network.instance.handler.NetworkInstanceConfigWriter
+import io.frinx.unitopo.unit.junos18.network.instance.handler.NetworkInstanceReader
+import io.frinx.unitopo.unit.junos18.network.instance.handler.vrf.ifc.VrfInterfaceConfigReader
+import io.frinx.unitopo.unit.junos18.network.instance.handler.vrf.ifc.InterfaceConfigWriter
+import io.frinx.unitopo.unit.junos18.network.instance.handler.vrf.ifc.VrfInterfaceReader
+import io.frinx.unitopo.unit.junos18.network.instance.handler.vrf.protocol.ProtocolConfigWriter
+import io.frinx.unitopo.unit.junos18.network.instance.handler.vrf.protocol.ProtocolReader
+import io.frinx.unitopo.unit.junos18.network.instance.handler.vrf.protocol.aggregate.AggregateConfigReader
+import io.frinx.unitopo.unit.junos18.network.instance.handler.vrf.protocol.aggregate.AggregateConfigWriter
+import io.frinx.unitopo.unit.junos18.network.instance.handler.vrf.protocol.aggregate.AggregateReader
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.extension.rev180323.NiProtAggAug
+import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.extension.rev180323.`$YangModuleInfoImpl` as OpenconfigBgpExtensionYangModuleInfo
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.local.routing.rev170515.`$YangModuleInfoImpl` as OpenconfigLocalRoutingYangModuleInfo
@@ -45,7 +48,6 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.policy.types.
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.types.inet.rev170403.`$YangModuleInfoImpl` as OpenconfigInetTypesYangModuleInfo
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.root.rev180101.`$YangModuleInfoImpl` as UnderlayConfRootYangModuleInfo
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.routing.instances.rev180101.`$YangModuleInfoImpl` as UnderlayRoutingInstanceYangModuleInfo
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
 class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
 
@@ -73,8 +75,6 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
         UnderlayRoutingInstanceYangModuleInfo.getInstance()
     )
 
-    override fun getRpcs(underlayAccess: UnderlayAccess): Set<RpcService<*, *>> = emptySet()
-
     override fun provideHandlers(
         rRegistry: CustomizerAwareReadRegistryBuilder,
         wRegistry: CustomizerAwareWriteRegistryBuilder,
@@ -90,7 +90,7 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
     private fun provideWriters(wRegistry: CustomizerAwareWriteRegistryBuilder, underlay: UnderlayAccess) {
         wRegistry.addNoop(IIDs.NE_NETWORKINSTANCE)
         wRegistry.addAfter(IIDs.NE_NE_CONFIG, NetworkInstanceConfigWriter(underlay),
-            /*handle after ifc configuration*/ io.frinx.openconfig.openconfig.interfaces.IIDs.IN_IN_CONFIG)
+            /*handle after ifc configuration*/ InterfaceIIDs.IN_IN_CONFIG)
 
         wRegistry.addNoop(IIDs.NE_NE_IN_INTERFACE)
         wRegistry.add(IIDs.NE_NE_IN_IN_CONFIG, InterfaceConfigWriter(underlay))
@@ -98,7 +98,7 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
         wRegistry.addNoop(IIDs.NE_NE_PR_PROTOCOL)
         wRegistry.add(IIDs.NE_NE_PR_PR_CONFIG, ProtocolConfigWriter(underlay))
 
-        wRegistry.add(IIDs.NE_NE_PR_PR_LO_AGGREGATE, NoopListWriter())
+        wRegistry.addNoop(IIDs.NE_NE_PR_PR_LO_AGGREGATE)
         wRegistry.subtreeAdd(IIDs.NE_NE_PR_PR_LO_AG_CONFIG, AggregateConfigWriter(underlay),
             NE_NE_PR_PR_LO_AG_CONFIG_SUBTREE)
     }
@@ -107,8 +107,8 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
         rRegistry.add(IIDs.NE_NETWORKINSTANCE, NetworkInstanceReader(underlay))
         rRegistry.add(IIDs.NE_NE_CONFIG, NetworkInstanceConfigReader(underlay))
 
-        rRegistry.add(IIDs.NE_NE_IN_INTERFACE, InterfaceReader(underlay))
-        rRegistry.add(IIDs.NE_NE_IN_IN_CONFIG, InterfaceConfigReader(underlay))
+        rRegistry.add(IIDs.NE_NE_IN_INTERFACE, VrfInterfaceReader(underlay))
+        rRegistry.add(IIDs.NE_NE_IN_IN_CONFIG, VrfInterfaceConfigReader(underlay))
 
         rRegistry.add(IIDs.NE_NE_PR_PROTOCOL, ProtocolReader(underlay))
         rRegistry.add(IIDs.NE_NE_PR_PR_CONFIG, ProtocolConfigReader())
@@ -121,9 +121,8 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
     override fun toString(): String = "Junos 18.2 network-instance translate unit"
 
     companion object {
-        private val NE_NE_PR_PR_LO_AG_CONFIG_ROOT = IID.create(AggregateConfig::class.java)
         private val NE_NE_PR_PR_LO_AG_CONFIG_SUBTREE = setOf(
-            NE_NE_PR_PR_LO_AG_CONFIG_ROOT.augmentation(NiProtAggAug::class.java)
+            InstanceIdentifier.create(AggregateConfig::class.java).augmentation(NiProtAggAug::class.java)
         )
     }
 }

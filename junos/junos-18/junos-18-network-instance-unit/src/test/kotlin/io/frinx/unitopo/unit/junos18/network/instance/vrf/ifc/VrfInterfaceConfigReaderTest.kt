@@ -19,48 +19,32 @@ package io.frinx.unitopo.unit.junos18.network.instance.vrf.ifc
 import io.fd.honeycomb.translate.read.ReadContext
 import io.frinx.openconfig.openconfig.network.instance.IIDs
 import io.frinx.unitopo.registry.spi.UnderlayAccess
+import io.frinx.unitopo.unit.junos18.network.instance.handler.vrf.ifc.VrfInterfaceConfigReader
 import io.frinx.unitopo.unit.utils.NetconfAccessHelper
 import org.hamcrest.CoreMatchers
-import org.hamcrest.Matchers
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
-import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstanceKey
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.Interfaces
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.InterfacesBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.interfaces.Interface
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.interfaces.InterfaceBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.interfaces.InterfaceKey
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.interfaces._interface.Config
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.interfaces._interface.ConfigBuilder
 
-class InterfaceReaderTest {
+class VrfInterfaceConfigReaderTest {
     @Mock
     private lateinit var readContext: ReadContext
 
     private val underlayAccess: UnderlayAccess = NetconfAccessHelper("/data_nodes.xml")
-    private val target = InterfaceReader(underlayAccess)
+    private val target = VrfInterfaceConfigReader(underlayAccess)
 
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
-    }
-
-    @Test
-    fun testGetAllIdsForType() {
-        val vrfName = "MS-THU"
-        val id = IIDs.NETWORKINSTANCES
-                .child(NetworkInstance::class.java, NetworkInstanceKey(vrfName))
-                .child(Interfaces::class.java)
-                .child(Interface::class.java)
-
-        val result = target.getAllIds(id, readContext)
-        Assert.assertThat(
-                result.map { it.id },
-                Matchers.containsInAnyOrder("ms-0/2/0.46", "ms-0/2/0.56")
-        )
     }
 
     @Test
@@ -71,27 +55,11 @@ class InterfaceReaderTest {
                 .child(NetworkInstance::class.java, NetworkInstanceKey(vrfName))
                 .child(Interfaces::class.java)
                 .child(Interface::class.java, InterfaceKey(ifName))
-        val builder = InterfaceBuilder()
+                .child(Config::class.java)
+        val builder = ConfigBuilder()
 
         target.readCurrentAttributes(id, builder, readContext)
 
-        Assert.assertThat(builder.id, CoreMatchers.sameInstance(ifName))
-    }
-
-    @Test
-    fun testMerge() {
-        val config = Mockito.mock(List::class.java) as List<Interface>
-        val parentBuilder = InterfacesBuilder()
-
-        target.merge(parentBuilder, config)
-
-        Assert.assertThat(parentBuilder.`interface`, CoreMatchers.sameInstance(config))
-    }
-
-    @Test
-    fun testGetBuilder() {
-        val result = target.getBuilder(IIDs.NE_NE_IN_INTERFACE)
-
-        Assert.assertThat(result, CoreMatchers.instanceOf(InterfaceBuilder::class.java))
+        Assert.assertThat(builder.id, CoreMatchers.equalTo(ifName))
     }
 }

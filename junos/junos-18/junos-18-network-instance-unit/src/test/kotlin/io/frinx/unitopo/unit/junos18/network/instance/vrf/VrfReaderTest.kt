@@ -19,6 +19,7 @@ package io.frinx.unitopo.unit.junos18.network.instance.vrf
 import io.fd.honeycomb.translate.read.ReadContext
 import io.frinx.openconfig.openconfig.network.instance.IIDs
 import io.frinx.unitopo.registry.spi.UnderlayAccess
+import io.frinx.unitopo.unit.junos18.network.instance.handler.vrf.L3VrfReader
 import io.frinx.unitopo.unit.utils.NetconfAccessHelper
 import org.hamcrest.CoreMatchers
 import org.hamcrest.Matchers
@@ -27,7 +28,6 @@ import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.NetworkInstancesBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstanceBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstanceKey
@@ -37,24 +37,11 @@ class VrfReaderTest {
     private lateinit var readContext: ReadContext
 
     private val underlayAccess: UnderlayAccess = NetconfAccessHelper("/data_nodes.xml")
-    private val target = VrfReader(underlayAccess)
+    private val target = L3VrfReader(underlayAccess)
 
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
-    }
-
-    @Test(expected = UnsupportedOperationException::class)
-    fun testMerge() {
-        val parentBuilder = NetworkInstancesBuilder()
-        val data: List<NetworkInstance> = emptyList()
-
-        target.merge(parentBuilder, data)
-    }
-
-    @Test(expected = UnsupportedOperationException::class)
-    fun testGetBuilder() {
-        target.getBuilder(IIDs.NE_NETWORKINSTANCE)
     }
 
     @Test

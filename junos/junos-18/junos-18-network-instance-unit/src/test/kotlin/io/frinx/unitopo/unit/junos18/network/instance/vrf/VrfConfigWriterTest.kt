@@ -19,6 +19,8 @@ package io.frinx.unitopo.unit.junos18.network.instance.vrf
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.openconfig.openconfig.network.instance.IIDs
 import io.frinx.unitopo.registry.spi.UnderlayAccess
+import io.frinx.unitopo.unit.junos18.network.instance.handler.vrf.L3VrfConfigWriter
+import io.frinx.unitopo.unit.junos18.network.instance.handler.vrf.L3VrfReader
 import io.frinx.unitopo.unit.utils.NetconfAccessHelper
 import org.hamcrest.CoreMatchers
 import org.hamcrest.Matcher
@@ -46,13 +48,13 @@ class VrfConfigWriterTest {
 
     private lateinit var underlayAccess: UnderlayAccess
 
-    private lateinit var target: VrfConfigWriter
+    private lateinit var target: L3VrfConfigWriter
 
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
         underlayAccess = Mockito.spy(NetconfAccessHelper(NC_HELPER))
-        target = VrfConfigWriter(underlayAccess)
+        target = L3VrfConfigWriter(underlayAccess)
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -144,7 +146,7 @@ class VrfConfigWriterTest {
                 .setType(INST_TYPE)
                 .build()
 
-        private val NATIVE_IID = VrfReader.JUNOS_VRFS_ID
+        private val NATIVE_IID = L3VrfReader.JUNOS_VRFS_ID
                 .child(Instance::class.java, InstanceKey(VRF_NAME))
 
         private val NATIVE_CONFIG = InstanceBuilder()

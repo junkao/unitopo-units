@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.frinx.unitopo.unit.junos18.network.instance.vrf.protocol
+package io.frinx.unitopo.unit.junos18.network.instance.handler.vrf.protocol
 
 import io.fd.honeycomb.translate.spi.read.ConfigListReaderCustomizer
 import io.frinx.translate.unit.commons.handler.spi.CompositeListReader

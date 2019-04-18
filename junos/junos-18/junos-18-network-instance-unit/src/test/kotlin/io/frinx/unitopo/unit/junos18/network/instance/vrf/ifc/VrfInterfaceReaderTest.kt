@@ -19,13 +19,14 @@ package io.frinx.unitopo.unit.junos18.network.instance.vrf.ifc
 import io.fd.honeycomb.translate.read.ReadContext
 import io.frinx.openconfig.openconfig.network.instance.IIDs
 import io.frinx.unitopo.registry.spi.UnderlayAccess
+import io.frinx.unitopo.unit.junos18.network.instance.handler.vrf.ifc.VrfInterfaceReader
 import io.frinx.unitopo.unit.utils.NetconfAccessHelper
 import org.hamcrest.CoreMatchers
+import org.hamcrest.Matchers
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
-import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstanceKey
@@ -33,19 +34,32 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.insta
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.interfaces.Interface
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.interfaces.InterfaceBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.interfaces.InterfaceKey
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.interfaces._interface.Config
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.interfaces._interface.ConfigBuilder
 
-class InterfaceConfigReaderTest {
+class VrfInterfaceReaderTest {
     @Mock
     private lateinit var readContext: ReadContext
 
     private val underlayAccess: UnderlayAccess = NetconfAccessHelper("/data_nodes.xml")
-    private val target = InterfaceConfigReader(underlayAccess)
+    private val target = VrfInterfaceReader(underlayAccess)
 
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
+    }
+
+    @Test
+    fun testGetAllIdsForType() {
+        val vrfName = "MS-THU"
+        val id = IIDs.NETWORKINSTANCES
+                .child(NetworkInstance::class.java, NetworkInstanceKey(vrfName))
+                .child(Interfaces::class.java)
+                .child(Interface::class.java)
+
+        val result = target.getAllIds(id, readContext)
+        Assert.assertThat(
+                result.map { it.id },
+                Matchers.containsInAnyOrder("ms-0/2/0.46", "ms-0/2/0.56")
+        )
     }
 
     @Test
@@ -56,28 +70,10 @@ class InterfaceConfigReaderTest {
                 .child(NetworkInstance::class.java, NetworkInstanceKey(vrfName))
                 .child(Interfaces::class.java)
                 .child(Interface::class.java, InterfaceKey(ifName))
-                .child(Config::class.java)
-        val builder = ConfigBuilder()
+        val builder = InterfaceBuilder()
 
         target.readCurrentAttributes(id, builder, readContext)
 
-        Assert.assertThat(builder.id, CoreMatchers.equalTo(ifName))
-    }
-
-    @Test
-    fun testMerge() {
-        val config = Mockito.mock(Config::class.java)
-        val parentBuilder = InterfaceBuilder()
-
-        target.merge(parentBuilder, config)
-
-        Assert.assertThat(parentBuilder.config, CoreMatchers.sameInstance(config))
-    }
-
-    @Test
-    fun testGetBuilder() {
-        val result = target.getBuilder(IIDs.NE_NE_IN_IN_CONFIG)
-
-        Assert.assertThat(result, CoreMatchers.instanceOf(ConfigBuilder::class.java))
+        Assert.assertThat(builder.id, CoreMatchers.sameInstance(ifName))
     }
 }

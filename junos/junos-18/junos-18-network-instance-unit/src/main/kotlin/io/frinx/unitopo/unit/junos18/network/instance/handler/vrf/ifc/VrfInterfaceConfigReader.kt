@@ -14,27 +14,23 @@
  * limitations under the License.
  */
 
-package io.frinx.unitopo.unit.junos18.network.instance.vrf.ifc
+package io.frinx.unitopo.unit.junos18.network.instance.handler.vrf.ifc
 
 import io.fd.honeycomb.translate.read.ReadContext
-import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
+import io.frinx.unitopo.ni.base.handler.vrf.ifc.VrfInterfaceConfigReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.junos18.network.instance.vrf.VrfReader
+import io.frinx.unitopo.unit.junos18.network.instance.handler.vrf.L3VrfReader
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.interfaces.Interface
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.interfaces.InterfaceBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.interfaces._interface.Config
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.interfaces._interface.ConfigBuilder
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.routing.instances.rev180101.routing.instances.group.routing.instances.Instance
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.routing.instances.rev180101.routing.instances.group.routing.instances.InstanceKey
-import org.opendaylight.yangtools.concepts.Builder
-import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.routing.instances.rev180101.juniper.routing.instance.Interface as JunosInstInterface
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.routing.instances.rev180101.juniper.routing.instance.InterfaceKey as JunosInstInterfaceKey
 
-class InterfaceConfigReader(private val underlayAccess: UnderlayAccess) :
-    ConfigReaderCustomizer<Config, ConfigBuilder> {
+class VrfInterfaceConfigReader(private val underlayAccess: UnderlayAccess) : VrfInterfaceConfigReader() {
 
     override fun readCurrentAttributes(
         id: InstanceIdentifier<Config>,
@@ -45,24 +41,14 @@ class InterfaceConfigReader(private val underlayAccess: UnderlayAccess) :
         val ifcName = id.firstKeyOf(Interface::class.java).id!!
 
         underlayAccess.read(
-            VrfReader.JUNOS_VRFS_ID
+            L3VrfReader.JUNOS_VRFS_ID
                 .child(Instance::class.java, InstanceKey(vrfName))
                 .child(JunosInstInterface::class.java, JunosInstInterfaceKey(ifcName))
         )
             .checkedGet()
             .orNull()
             ?.let {
-                    builder.fromUnderlay(it)
+                    builder.id = it.name
                 }
     }
-
-    override fun merge(builder: Builder<out DataObject>, config: Config) {
-        (builder as InterfaceBuilder).config = config
-    }
-
-    override fun getBuilder(id: InstanceIdentifier<Config>): ConfigBuilder = ConfigBuilder()
-}
-
-private fun ConfigBuilder.fromUnderlay(underlay: JunosInstInterface) {
-    this.id = underlay.name
 }
