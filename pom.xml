@@ -40,6 +40,8 @@
     <module>junos</module>
     <module>xr</module>
     <module>yang-docs-plugin</module>
+
+    <module>network-instance-base</module>
   </modules>
 
   <build>

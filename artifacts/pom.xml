@@ -247,6 +247,13 @@
                 <artifactId>xr-7-logging-unit</artifactId>
                 <version>${project.version}</version>
             </dependency>
+
+            <!-- bases -->
+            <dependency>
+                <groupId>io.frinx.unitopo</groupId>
+                <artifactId>network-instance-base</artifactId>
+                <version>${project.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 </project>
