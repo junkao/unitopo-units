@@ -46,7 +46,7 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.insta
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 import org.opendaylight.yangtools.yang.binding.KeyedInstanceIdentifier
-import io.frinx.unitopo.unit.xr7.network.instance.vrf.VrfReaderTest as BaseTest
+import io.frinx.unitopo.unit.xr7.network.instance.vrf.L3VrfReaderTest as BaseTest
 
 class VrfInterfaceConfigWriterTest : AbstractNetconfHandlerTest() {
     @Mock

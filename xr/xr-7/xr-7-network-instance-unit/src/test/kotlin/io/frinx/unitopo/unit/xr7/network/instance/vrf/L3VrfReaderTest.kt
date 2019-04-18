@@ -28,25 +28,24 @@ import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.NetworkInstances
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.NetworkInstancesBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstanceBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstanceKey
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class VrfReaderTest : AbstractNetconfHandlerTest() {
+class L3VrfReaderTest : AbstractNetconfHandlerTest() {
     @Mock
     private lateinit var readContext: ReadContext
 
     private lateinit var underlayAccess: UnderlayAccess
 
-    private lateinit var target: VrfReader
+    private lateinit var target: L3VrfReader
 
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
         underlayAccess = Mockito.spy(NetconfAccessHelper(NC_HELPER))
-        target = Mockito.spy(VrfReader(underlayAccess))
+        target = L3VrfReader(underlayAccess)
     }
 
     companion object {
@@ -80,26 +79,5 @@ class VrfReaderTest : AbstractNetconfHandlerTest() {
                 "THU"
             )
         )
-    }
-
-    @Test
-    fun testGetBuilder() {
-        val builder = target.getBuilder(IID_NETWORK_INSTANCE)
-        Assert.assertTrue(builder is NetworkInstanceBuilder)
-    }
-
-    @Test
-    fun testMerge() {
-        val listBuilder = NetworkInstancesBuilder()
-        val list: MutableList<NetworkInstance> = mutableListOf(
-            NetworkInstanceBuilder().apply {
-                this.name = VRF_IM1
-            }.build(),
-            NetworkInstanceBuilder().apply {
-                this.name = VRF_IM2
-            }.build()
-        )
-        target.merge(listBuilder, list)
-        Assert.assertSame(list, listBuilder.networkInstance)
     }
 }

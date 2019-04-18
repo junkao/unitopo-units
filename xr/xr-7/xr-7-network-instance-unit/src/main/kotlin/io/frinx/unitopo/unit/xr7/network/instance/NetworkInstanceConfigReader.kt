@@ -18,16 +18,16 @@ package io.frinx.unitopo.unit.xr7.network.instance
 
 import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
 import io.frinx.translate.unit.commons.handler.spi.CompositeReader
-import io.frinx.unitopo.handlers.network.instance.def.DefaultConfigReader
+import io.frinx.unitopo.ni.base.handler.vrf.L3VrfConfigReader
+import io.frinx.unitopo.ni.base.handler.vrf.def.DefaultConfigReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.xr7.network.instance.vrf.VrfConfigReader
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.Config
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.ConfigBuilder
 
-class NetworkInstanceConfigReader(cli: UnderlayAccess) :
+class NetworkInstanceConfigReader(underlayAccess: UnderlayAccess) :
     ConfigReaderCustomizer<Config, ConfigBuilder>, CompositeReader<Config, ConfigBuilder>(
         listOf(
-            VrfConfigReader(),
+            L3VrfConfigReader(),
             DefaultConfigReader()
         )
     )

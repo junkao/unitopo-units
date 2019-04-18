@@ -25,9 +25,9 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.insta
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.ProtocolBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.ProtocolKey
 
-class ProtocolReader(cli: UnderlayAccess) : CompositeListReader<Protocol, ProtocolKey, ProtocolBuilder>(
+class ProtocolReader(underlayAccess: UnderlayAccess) : CompositeListReader<Protocol, ProtocolKey, ProtocolBuilder>(
     listOf(
-        OspfProtocolReader(cli),
-        BgpProtocolReader(cli)
+        OspfProtocolReader(underlayAccess),
+        BgpProtocolReader(underlayAccess)
     )
 ), ConfigListReaderCustomizer<Protocol, ProtocolKey, ProtocolBuilder>

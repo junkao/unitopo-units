@@ -16,37 +16,36 @@
 
 package io.frinx.unitopo.unit.xr7.network.instance
 
-import io.fd.honeycomb.rpc.RpcService
 import io.fd.honeycomb.translate.spi.builder.CustomizerAwareReadRegistryBuilder
-import io.fd.honeycomb.translate.util.RWUtils
 import io.fd.honeycomb.translate.spi.builder.CustomizerAwareWriteRegistryBuilder
+import io.fd.honeycomb.translate.util.RWUtils
 import io.frinx.openconfig.openconfig.network.instance.IIDs
 import io.frinx.translate.unit.commons.handler.spi.ChecksMap
+import io.frinx.unitopo.ni.base.handler.vrf.ifc.VrfInterfaceConfigReader
 import io.frinx.unitopo.registry.api.TranslationUnitCollector
 import io.frinx.unitopo.registry.spi.TranslateUnit
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.xr7.network.instance.vrf.protocol.ProtocolConfigWriter
 import io.frinx.unitopo.unit.xr7.network.instance.policy.forwarding.PolicyForwardingInterfaceConfigReader
 import io.frinx.unitopo.unit.xr7.network.instance.policy.forwarding.PolicyForwardingInterfaceConfigWriter
 import io.frinx.unitopo.unit.xr7.network.instance.policy.forwarding.PolicyForwardingInterfaceReader
-import io.frinx.unitopo.unit.xr7.network.instance.vrf.protocol.ProtocolReader
-import io.frinx.unitopo.unit.xr7.network.instance.vrf.ifc.VrfInterfaceConfigReader
 import io.frinx.unitopo.unit.xr7.network.instance.vrf.ifc.VrfInterfaceConfigWriter
 import io.frinx.unitopo.unit.xr7.network.instance.vrf.ifc.VrfInterfaceReader
+import io.frinx.unitopo.unit.xr7.network.instance.vrf.protocol.ProtocolConfigWriter
+import io.frinx.unitopo.unit.xr7.network.instance.vrf.protocol.ProtocolReader
 import io.frinx.unitopo.unit.xr7.network.instance.vrf.protocol.aggregate.AggregateConfigReader
 import io.frinx.unitopo.unit.xr7.network.instance.vrf.protocol.aggregate.AggregateConfigWriter
 import io.frinx.unitopo.unit.xr7.network.instance.vrf.protocol.aggregate.AggregateReader
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo
 import io.frinx.openconfig.openconfig.interfaces.IIDs as interfaces_IIDs
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907.`$YangModuleInfoImpl` as UnderlayInterfacesYangInfo
-import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.qos.ma.cfg.rev180227.`$YangModuleInfoImpl` as UnderlayQosMaCfgYangInfo
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.pf.interfaces.extension.cisco.rev171109.`$YangModuleInfoImpl` as PfNwYangModuleInfoImpl
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.policy.forwarding.rev170621.`$YangModuleInfoImpl` as PfYangModuleInfoImpl
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.infra.rsi.cfg.rev180615.`$YangModuleInfoImpl` as UnderlayVRFYangInto
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.qos.ma.cfg.rev180227.`$YangModuleInfoImpl` as UnderlayQosMaCfgYangInfo
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.extension.rev180323.`$YangModuleInfoImpl` as BgpExtensionYangModuleInfo
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.`$YangModuleInfoImpl` as BgpYangModule
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.`$YangModuleInfoImpl` as NetworkInstanceYangModule
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.local.routing.rev170515.`$YangModuleInfoImpl` as LocalRoutingYangModuleInfo
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.pf.interfaces.extension.cisco.rev171109.`$YangModuleInfoImpl` as PfNwYangModuleInfoImpl
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.`$YangModuleInfoImpl` as NetworkInstanceYangModule
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.policy.forwarding.rev170621.`$YangModuleInfoImpl` as PfYangModuleInfoImpl
 
 class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
 
@@ -68,8 +67,6 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
         BgpExtensionYangModuleInfo.getInstance(),
         LocalRoutingYangModuleInfo.getInstance()
     )
-
-    override fun getRpcs(underlayAccess: UnderlayAccess): Set<RpcService<*, *>> = emptySet()
 
     override fun getUnderlayYangSchemas(): Set<YangModuleInfo> = setOf(
         UnderlayInterfacesYangInfo.getInstance(),

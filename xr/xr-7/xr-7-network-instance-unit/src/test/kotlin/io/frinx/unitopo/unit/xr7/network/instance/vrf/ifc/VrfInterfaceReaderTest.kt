@@ -31,12 +31,11 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.insta
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstanceKey
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.Interfaces
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.InterfacesBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.interfaces.Interface
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.interfaces.InterfaceBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.interfaces.InterfaceKey
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
-import io.frinx.unitopo.unit.xr7.network.instance.vrf.VrfReaderTest as BaseTest
+import io.frinx.unitopo.unit.xr7.network.instance.vrf.L3VrfReaderTest as BaseTest
 
 class VrfInterfaceReaderTest : AbstractNetconfHandlerTest() {
     @Mock
@@ -50,7 +49,7 @@ class VrfInterfaceReaderTest : AbstractNetconfHandlerTest() {
     fun setUp() {
         MockitoAnnotations.initMocks(this)
         underlayAccess = Mockito.spy(NetconfAccessHelper(BaseTest.NC_HELPER))
-        target = Mockito.spy(VrfInterfaceReader(underlayAccess))
+        target = VrfInterfaceReader(underlayAccess)
     }
 
     companion object {
@@ -75,26 +74,5 @@ class VrfInterfaceReaderTest : AbstractNetconfHandlerTest() {
             list.map { it.id },
             Matchers.containsInAnyOrder(BaseTest.BUN_ETH_301_1)
         )
-    }
-
-    @Test
-    fun testGetBuilder() {
-        val builder = target.getBuilder(IID_INTERFACE)
-        Assert.assertTrue(builder is InterfaceBuilder)
-    }
-
-    @Test
-    fun testMerge() {
-        val listBuilder = InterfacesBuilder()
-        val list: MutableList<Interface> = mutableListOf(
-            InterfaceBuilder().apply {
-                this.id = BaseTest.BUN_ETH_301_1
-            }.build(),
-            InterfaceBuilder().apply {
-                this.id = BaseTest.BUN_ETH_301_2
-            }.build()
-        )
-        target.merge(listBuilder, list)
-        Assert.assertSame(listBuilder.`interface`, list)
     }
 }
