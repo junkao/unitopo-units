@@ -20,6 +20,7 @@ import io.fd.honeycomb.translate.read.ReadContext
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.utils.AbstractNetconfHandlerTest
 import io.frinx.unitopo.unit.utils.NetconfAccessHelper
+import io.frinx.unitopo.unit.xr623.network.instance.handler.forwarding.PolicyForwardingInterfaceConfigReader
 import org.hamcrest.CoreMatchers
 import org.junit.Assert
 import org.junit.Before

@@ -76,7 +76,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>utils-unit</artifactId>
+            <artifactId>network-instance-base</artifactId>
             <version>${project.version}</version>
         </dependency>
 

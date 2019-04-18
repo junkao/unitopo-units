@@ -16,25 +16,26 @@
 
 package io.frinx.unitopo.unit.xr623.network.instance
 
-import io.fd.honeycomb.rpc.RpcService
 import io.fd.honeycomb.translate.spi.builder.CustomizerAwareReadRegistryBuilder
 import io.fd.honeycomb.translate.spi.builder.CustomizerAwareWriteRegistryBuilder
 import io.fd.honeycomb.translate.util.RWUtils
 import io.frinx.openconfig.openconfig.network.instance.IIDs
 import io.frinx.translate.unit.commons.handler.spi.ChecksMap
-import io.frinx.unitopo.handlers.network.instance.protocol.ProtocolConfigReader
-import io.frinx.unitopo.handlers.network.instance.protocol.ProtocolStateReader
+import io.frinx.unitopo.ni.base.handler.vrf.ifc.VrfInterfaceConfigReader
+import io.frinx.unitopo.ni.base.handler.vrf.protocol.ProtocolConfigReader
+import io.frinx.unitopo.ni.base.handler.vrf.protocol.ProtocolStateReader
 import io.frinx.unitopo.registry.api.TranslationUnitCollector
 import io.frinx.unitopo.registry.spi.TranslateUnit
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.xr623.network.instance.policy.forwarding.PolicyForwardingInterfaceConfigReader
-import io.frinx.unitopo.unit.xr623.network.instance.policy.forwarding.PolicyForwardingInterfaceConfigWriter
-import io.frinx.unitopo.unit.xr623.network.instance.policy.forwarding.PolicyForwardingInterfaceReader
-import io.frinx.unitopo.unit.xr623.network.instance.vrf.ifc.VrfInterfaceConfigReader
-import io.frinx.unitopo.unit.xr623.network.instance.vrf.ifc.VrfInterfaceConfigWriter
-import io.frinx.unitopo.unit.xr623.network.instance.vrf.ifc.VrfInterfaceReader
-import io.frinx.unitopo.unit.xr623.network.instance.vrf.protocol.ProtocolConfigWriter
-import io.frinx.unitopo.unit.xr623.network.instance.vrf.protocol.ProtocolReader
+import io.frinx.unitopo.unit.xr623.network.instance.handler.NetworkInstanceConfigReader
+import io.frinx.unitopo.unit.xr623.network.instance.handler.NetworkInstanceReader
+import io.frinx.unitopo.unit.xr623.network.instance.handler.forwarding.PolicyForwardingInterfaceConfigReader
+import io.frinx.unitopo.unit.xr623.network.instance.handler.forwarding.PolicyForwardingInterfaceConfigWriter
+import io.frinx.unitopo.unit.xr623.network.instance.handler.forwarding.PolicyForwardingInterfaceReader
+import io.frinx.unitopo.unit.xr623.network.instance.handler.vrf.ifc.VrfInterfaceConfigWriter
+import io.frinx.unitopo.unit.xr623.network.instance.handler.vrf.ifc.VrfInterfaceReader
+import io.frinx.unitopo.unit.xr623.network.instance.handler.vrf.protocol.ProtocolConfigWriter
+import io.frinx.unitopo.unit.xr623.network.instance.handler.vrf.protocol.ProtocolReader
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo
 import io.frinx.openconfig.openconfig.interfaces.IIDs as InterfacesIIDs
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.clns.isis.cfg.rev151109.`$YangModuleInfoImpl` as UnderlayIsisYangInfo
@@ -73,8 +74,6 @@ open class Unit(private val registry: TranslationUnitCollector) : TranslateUnit 
             PfNwYangModuleInfoImpl.getInstance(),
             NetworkInstanceYangInfo.getInstance()
     )
-
-    override fun getRpcs(underlayAccess: UnderlayAccess): Set<RpcService<*, *>> = emptySet()
 
     override fun provideHandlers(
         rRegistry: CustomizerAwareReadRegistryBuilder,

@@ -16,27 +16,32 @@
 
 package io.frinx.unitopo.unit.xr6.network.instance
 
-import io.fd.honeycomb.rpc.RpcService
 import io.fd.honeycomb.translate.spi.builder.CustomizerAwareReadRegistryBuilder
 import io.fd.honeycomb.translate.spi.builder.CustomizerAwareWriteRegistryBuilder
 import io.fd.honeycomb.translate.util.RWUtils
 import io.frinx.openconfig.openconfig.network.instance.IIDs
 import io.frinx.translate.unit.commons.handler.spi.ChecksMap
-import io.frinx.unitopo.handlers.network.instance.protocol.ProtocolConfigReader
-import io.frinx.unitopo.handlers.network.instance.protocol.ProtocolStateReader
+import io.frinx.unitopo.ni.base.handler.vrf.ifc.VrfInterfaceConfigReader
+import io.frinx.unitopo.ni.base.handler.vrf.protocol.ProtocolConfigReader
+import io.frinx.unitopo.ni.base.handler.vrf.protocol.ProtocolStateReader
 import io.frinx.unitopo.registry.api.TranslationUnitCollector
 import io.frinx.unitopo.registry.spi.TranslateUnit
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.xr6.network.instance.vrf.ifc.VrfInterfaceConfigReader
-import io.frinx.unitopo.unit.xr6.network.instance.vrf.ifc.VrfInterfaceConfigWriter
-import io.frinx.unitopo.unit.xr6.network.instance.vrf.ifc.VrfInterfaceReader
-import io.frinx.unitopo.unit.xr6.network.instance.vrf.protocol.LocalAggregateConfigReader
-import io.frinx.unitopo.unit.xr6.network.instance.vrf.protocol.LocalAggregateConfigWriter
-import io.frinx.unitopo.unit.xr6.network.instance.vrf.protocol.LocalAggregateReader
-import io.frinx.unitopo.unit.xr6.network.instance.vrf.protocol.ProtocolConfigWriter
-import io.frinx.unitopo.unit.xr6.network.instance.vrf.protocol.ProtocolReader
-import io.frinx.unitopo.unit.xr6.network.instance.vrf.table.TableConnectionConfigWriter
-import io.frinx.unitopo.unit.xr6.network.instance.vrf.table.TableConnectionReader
+import io.frinx.unitopo.unit.xr6.network.instance.handler.ConnectionPointsReader
+import io.frinx.unitopo.unit.xr6.network.instance.handler.ConnectionPointsWriter
+import io.frinx.unitopo.unit.xr6.network.instance.handler.NetworkInstanceConfigReader
+import io.frinx.unitopo.unit.xr6.network.instance.handler.NetworkInstanceConfigWriter
+import io.frinx.unitopo.unit.xr6.network.instance.handler.NetworkInstanceReader
+import io.frinx.unitopo.unit.xr6.network.instance.handler.NetworkInstanceStateReader
+import io.frinx.unitopo.unit.xr6.network.instance.handler.vrf.ifc.VrfInterfaceConfigWriter
+import io.frinx.unitopo.unit.xr6.network.instance.handler.vrf.ifc.VrfInterfaceReader
+import io.frinx.unitopo.unit.xr6.network.instance.handler.vrf.protocol.LocalAggregateConfigReader
+import io.frinx.unitopo.unit.xr6.network.instance.handler.vrf.protocol.LocalAggregateConfigWriter
+import io.frinx.unitopo.unit.xr6.network.instance.handler.vrf.protocol.LocalAggregateReader
+import io.frinx.unitopo.unit.xr6.network.instance.handler.vrf.protocol.ProtocolConfigWriter
+import io.frinx.unitopo.unit.xr6.network.instance.handler.vrf.protocol.ProtocolReader
+import io.frinx.unitopo.unit.xr6.network.instance.handler.vrf.table.TableConnectionConfigWriter
+import io.frinx.unitopo.unit.xr6.network.instance.handler.vrf.table.TableConnectionReader
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.`$YangModuleInfoImpl`
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.ConnectionPoints
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.table.connections.TableConnection
@@ -67,8 +72,6 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
     override fun getYangSchemas(): Set<YangModuleInfo> = setOf(
         `$YangModuleInfoImpl`.getInstance()
     )
-
-    override fun getRpcs(underlayAccess: UnderlayAccess): Set<RpcService<*, *>> = emptySet()
 
     override fun provideHandlers(
         rRegistry: CustomizerAwareReadRegistryBuilder,

@@ -21,6 +21,7 @@ import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.utils.AbstractNetconfHandlerTest
 import io.frinx.unitopo.unit.utils.NetconfAccessHelper
+import io.frinx.unitopo.unit.xr623.network.instance.handler.forwarding.PolicyForwardingInterfaceConfigWriter
 import org.hamcrest.CoreMatchers
 import org.hamcrest.Matcher
 import org.junit.Assert
