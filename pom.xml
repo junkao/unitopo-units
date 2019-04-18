@@ -35,7 +35,6 @@
     <module>kotlin-unit-parent</module>
     <module>artifacts</module>
     <module>utils-unit</module>
-    <module>common</module>
     <module>features</module>
     <module>junos</module>
     <module>xr</module>
