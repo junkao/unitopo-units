@@ -15,7 +15,6 @@
  */
 package io.frinx.unitopo.unit.junos17.network.instance
 
-import io.fd.honeycomb.rpc.RpcService
 import io.fd.honeycomb.translate.spi.builder.CustomizerAwareReadRegistryBuilder
 import io.fd.honeycomb.translate.spi.builder.CustomizerAwareWriteRegistryBuilder
 import io.frinx.openconfig.openconfig.network.instance.IIDs
@@ -23,6 +22,11 @@ import io.frinx.translate.unit.commons.handler.spi.ChecksMap
 import io.frinx.unitopo.registry.api.TranslationUnitCollector
 import io.frinx.unitopo.registry.spi.TranslateUnit
 import io.frinx.unitopo.registry.spi.UnderlayAccess
+import io.frinx.unitopo.unit.junos17.network.instance.handler.NetworkInstanceConfigReader
+import io.frinx.unitopo.unit.junos17.network.instance.handler.NetworkInstanceConfigWriter
+import io.frinx.unitopo.unit.junos17.network.instance.handler.NetworkInstanceReader
+import io.frinx.unitopo.unit.junos17.network.instance.handler.NetworkInstanceStateReader
+import io.frinx.unitopo.unit.junos17.network.instance.handler.vrf.protocol.ProtocolReader
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.`$YangModuleInfoImpl`
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.`$YangModuleInfoImpl` as JunosYangInfo
@@ -42,8 +46,6 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
     override fun getYangSchemas(): Set<YangModuleInfo> = setOf(
         `$YangModuleInfoImpl`.getInstance()
     )
-
-    override fun getRpcs(underlayAccess: UnderlayAccess): Set<RpcService<*, *>> = emptySet()
 
     override fun provideHandlers(
         rRegistry: CustomizerAwareReadRegistryBuilder,

@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.frinx.unitopo.unit.junos17.network.instance
+package io.frinx.unitopo.unit.junos17.network.instance.handler
 
 import io.frinx.translate.unit.commons.handler.spi.CompositeWriter
-import io.frinx.unitopo.handlers.network.instance.def.DefaultConfigWriter
+import io.frinx.unitopo.ni.base.handler.vrf.def.DefaultConfigWriter
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.Config
 

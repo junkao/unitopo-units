@@ -16,9 +16,8 @@
 package io.frinx.unitopo.unit.junos.ospf.handler
 
 import io.fd.honeycomb.translate.read.ReadContext
-import io.fd.honeycomb.translate.spi.read.ListReaderCustomizer
+import io.frinx.translate.unit.commons.handler.spi.CompositeListReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.ProtocolsBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.Protocol
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.ProtocolBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.ProtocolKey
@@ -28,8 +27,6 @@ import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configur
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.config.Protocols
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.protocols.Ospf
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.protocols.ospf.AreaKey
-import org.opendaylight.yangtools.concepts.Builder
-import org.opendaylight.yangtools.yang.binding.DataObject
 import java.util.Collections
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.protocols.ospf.Area as JunosArea
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.protocols.ospf.area.Interface as JunosInterface
@@ -37,22 +34,16 @@ import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configur
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
 class OspfProtocolReader(private val underlayAccess: UnderlayAccess) :
-        ListReaderCustomizer<Protocol, ProtocolKey, ProtocolBuilder> {
-
-    override fun getBuilder(id: IID<Protocol>): ProtocolBuilder = ProtocolBuilder()
-
-    override fun merge(builder: Builder<out DataObject>, protocols: List<Protocol>) {
-        (builder as ProtocolsBuilder).protocol = protocols
-    }
+    CompositeListReader.Child<Protocol, ProtocolKey, ProtocolBuilder> {
 
     override fun readCurrentAttributes(id: IID<Protocol>, proto: ProtocolBuilder, readContext: ReadContext) {
-        proto.key = ProtocolKey(OSPF::class.java, Companion.OSPF_INSTANCE_DEFAULT)
+        proto.key = ProtocolKey(OSPF::class.java, OSPF_INSTANCE_DEFAULT)
     }
 
     override fun getAllIds(id: IID<Protocol>, readContext: ReadContext): List<ProtocolKey> {
         val ospf = underlayAccess.read(getOspfId()).checkedGet()
         if (ospf.isPresent) {
-            return Collections.singletonList(ProtocolKey(OSPF::class.java, Companion.OSPF_INSTANCE_DEFAULT))
+            return Collections.singletonList(ProtocolKey(OSPF::class.java, OSPF_INSTANCE_DEFAULT))
         }
         return emptyList()
     }

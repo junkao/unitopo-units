@@ -38,28 +38,23 @@
 
     <dependencies>
         <dependency>
-            <groupId>io.frinx.unitopo</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>junos-17-models</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>io.frinx.unitopo</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>junos-17-bgp-unit</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>io.frinx.unitopo</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>junos-17-ospf-unit</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>io.frinx.unitopo</groupId>
-            <artifactId>common-handlers</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.frinx.unitopo</groupId>
-            <artifactId>utils-unit</artifactId>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>network-instance-base</artifactId>
             <version>${project.version}</version>
         </dependency>
 

@@ -13,17 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.frinx.unitopo.unit.junos17.network.instance
 
-import io.fd.honeycomb.translate.spi.read.OperReaderCustomizer
+package io.frinx.unitopo.unit.junos17.network.instance.handler
+
+import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
 import io.frinx.translate.unit.commons.handler.spi.CompositeReader
-import io.frinx.unitopo.handlers.network.instance.def.DefaultStateReader
+import io.frinx.unitopo.ni.base.handler.vrf.def.DefaultConfigReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.State
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.StateBuilder
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.Config
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.ConfigBuilder
 
-class NetworkInstanceStateReader(access: UnderlayAccess) : CompositeReader<State, StateBuilder>(
+class NetworkInstanceConfigReader(access: UnderlayAccess) :
+    ConfigReaderCustomizer<Config, ConfigBuilder>, CompositeReader<Config, ConfigBuilder>
+(
     listOf(
-        DefaultStateReader()
+            DefaultConfigReader()
     )
-), OperReaderCustomizer<State, StateBuilder>
+)
