@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.frinx.unitopo.unit.xr6.interfaces.handler.aggregate
+package io.frinx.unitopo.unit.xr623.interfaces.handler.aggregate
 
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.openconfig.openconfig.interfaces.IIDs

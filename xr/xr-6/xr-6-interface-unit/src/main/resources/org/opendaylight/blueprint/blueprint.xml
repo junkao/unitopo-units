@@ -24,9 +24,16 @@
   <reference id="unifiedTranslationRegistry"
     interface="io.frinx.unitopo.registry.api.TranslationUnitCollector"/>
 
-  <bean id="xrIfcUnit"
-    class="io.frinx.unitopo.unit.xr6.interfaces.Unit"
+  <bean id="xr612IfcUnit"
+    class="io.frinx.unitopo.unit.xr612.interfaces.Xr612Unit"
     init-method="init" destroy-method="close">
     <argument ref="unifiedTranslationRegistry" />
   </bean>
+
+  <bean id="xr623IfcUnit"
+        class="io.frinx.unitopo.unit.xr623.interfaces.Xr623Unit"
+        init-method="init" destroy-method="close">
+    <argument ref="unifiedTranslationRegistry" />
+  </bean>
+
 </blueprint>

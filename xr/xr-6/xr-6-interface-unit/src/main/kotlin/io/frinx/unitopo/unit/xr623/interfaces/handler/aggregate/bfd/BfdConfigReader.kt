@@ -14,35 +14,30 @@
  * limitations under the License.
  */
 
-package io.frinx.unitopo.unit.xr6.interfaces.handler.aggregate
+package io.frinx.unitopo.unit.xr623.interfaces.handler.aggregate.bfd
 
 import io.fd.honeycomb.translate.read.ReadContext
-import io.fd.honeycomb.translate.read.ReadFailedException
 import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr6.interfaces.handler.InterfaceReader
-import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.bundlemgr.cfg.rev161216.InterfaceConfiguration2
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.bundlemgr.cfg.rev161216.InterfaceConfiguration1
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev150730._interface.configurations.InterfaceConfiguration
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.aggregate.rev161222.aggregation.logical.top.aggregation.Config
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.aggregate.rev161222.aggregation.logical.top.aggregation.ConfigBuilder
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.bfd.rev171024.bfd.top.bfd.Config
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.bfd.rev171024.bfd.top.bfd.ConfigBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.Interface
-import org.opendaylight.controller.md.sal.common.api.data.ReadFailedException as MDSalReadFailed
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
-class AggregateConfigReader(private val underlayAccess: UnderlayAccess) :
+class BfdConfigReader(private val underlayAccess: UnderlayAccess) :
     ConfigReaderCustomizer<Config, ConfigBuilder> {
 
-    @Throws(ReadFailedException::class)
     override fun readCurrentAttributes(iid: IID<Config>, builder: ConfigBuilder, context: ReadContext) {
-        try {
             val name = iid.firstKeyOf(Interface::class.java).name
             InterfaceReader.readInterfaceCfg(underlayAccess, name, { builder.fromUnderlay(it) })
-        } catch (e: MDSalReadFailed) {
-            throw ReadFailedException(iid, e)
-        }
     }
 }
 
 private fun ConfigBuilder.fromUnderlay(underlay: InterfaceConfiguration) {
-    this.minLinks = underlay.getAugmentation(InterfaceConfiguration2::class.java)?.bundle?.minimumActive?.links?.toInt()
+    val ipv4 = underlay.getAugmentation(InterfaceConfiguration1::class.java)?.bfd?.addressFamily?.ipv4
+    destinationAddress = ipv4?.destinationAddress
+    minInterval = ipv4?.interval
 }
