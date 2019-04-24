@@ -16,8 +16,8 @@
 
 package io.frinx.unitopo.unit.junos18.network.instance.handler.vrf.ifc
 
-import io.fd.honeycomb.translate.spi.write.WriterCustomizer
 import io.fd.honeycomb.translate.write.WriteContext
+import io.frinx.unitopo.ni.base.handler.vrf.ifc.AbstractVrfInterfaceConfigWriter
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.junos18.network.instance.handler.vrf.L3VrfReader
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
@@ -27,20 +27,18 @@ import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.routing.ins
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.routing.instances.rev180101.juniper.routing.instance.InterfaceKey
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.routing.instances.rev180101.routing.instances.group.routing.instances.Instance
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.routing.instances.rev180101.routing.instances.group.routing.instances.InstanceKey
-import io.frinx.openconfig.network.instance.NetworInstance as DefaultNetworkInstance
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
+import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class InterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCustomizer<Config> {
+class VrfInterfaceConfigWriter(underlayAccess: UnderlayAccess) :
+    AbstractVrfInterfaceConfigWriter<Interface>(underlayAccess) {
 
-    override fun deleteCurrentAttributes(iid: IID<Config>, dataBefore: Config, wtc: WriteContext) {
-        val vrfName = iid.firstKeyOf(NetworkInstance::class.java).name!!
-        val ifcId = getInterfaceIdentifier(vrfName, dataBefore.id)
-
-        underlayAccess.delete(ifcId)
+    override fun deleteCurrentAttributes(iid: InstanceIdentifier<Config>, dataBefore: Config, wtc: WriteContext) {
+        val vrfName = iid.firstKeyOf(NetworkInstance::class.java).name
+        underlayAccess.delete(getUnderlayIid(vrfName, dataBefore.id))
     }
 
     override fun updateCurrentAttributes(
-        id: IID<Config>,
+        id: InstanceIdentifier<Config>,
         dataBefore: Config,
         dataAfter: Config,
         writeContext: WriteContext
@@ -48,34 +46,17 @@ class InterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : Writer
         // There are no modifiable attributes.
     }
 
-    override fun writeCurrentAttributes(iid: IID<Config>, dataAfter: Config, wtc: WriteContext) {
-        val vrfKey = iid.firstKeyOf(NetworkInstance::class.java)
-        require(vrfKey != DefaultNetworkInstance.DEFAULT_NETWORK) {
-            "Cannot configure interface in default network instance. Vrf: ${vrfKey.name}, Interface: ${dataAfter.id}"
-        }
-
-        val (iid, underlayData) = getInterfaceData(vrfKey.name, dataAfter, InterfaceBuilder())
-        underlayAccess.put(iid, underlayData)
+    override fun writeCurrentAttributes(iid: InstanceIdentifier<Config>, dataAfter: Config, wtc: WriteContext) {
+        val vrfName = iid.firstKeyOf(NetworkInstance::class.java).name
+        underlayAccess.put(getUnderlayIid(vrfName, dataAfter.id), getData(vrfName, dataAfter))
     }
 
-    companion object {
-        private fun getInterfaceIdentifier(vrfName: String, ifcName: String): IID<Interface> {
-            return L3VrfReader.JUNOS_VRFS_ID.child(Instance::class.java, InstanceKey(vrfName))
-                .child(Interface::class.java, InterfaceKey(ifcName))
-        }
+    override fun getUnderlayIid(vrfName: String, ifcName: String): InstanceIdentifier<Interface> {
+        return L3VrfReader.JUNOS_VRFS_ID.child(Instance::class.java, InstanceKey(vrfName))
+            .child(Interface::class.java, InterfaceKey(ifcName))
+    }
 
-        private fun getInterfaceData(vrfName: String, config: Config, builder: InterfaceBuilder):
-                Pair<IID<Interface>, Interface> {
-
-            val id = getInterfaceIdentifier(vrfName, config.id)
-
-            builder.fromOpenConfig(config)
-            return Pair(id, builder.build())
-        }
-
-        fun InterfaceBuilder.fromOpenConfig(config: Config): InterfaceBuilder {
-            this.name = config.id
-            return this
-        }
+    override fun getData(vrfName: String, config: Config): Interface {
+        return InterfaceBuilder().setName(config.id).build()
     }
 }

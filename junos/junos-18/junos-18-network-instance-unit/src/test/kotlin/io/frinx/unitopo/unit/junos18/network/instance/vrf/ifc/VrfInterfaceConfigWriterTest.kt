@@ -20,7 +20,7 @@ import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.openconfig.openconfig.network.instance.IIDs
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.junos18.network.instance.handler.vrf.L3VrfReader
-import io.frinx.unitopo.unit.junos18.network.instance.handler.vrf.ifc.InterfaceConfigWriter
+import io.frinx.unitopo.unit.junos18.network.instance.handler.vrf.ifc.VrfInterfaceConfigWriter
 import io.frinx.unitopo.unit.utils.NetconfAccessHelper
 import org.hamcrest.CoreMatchers
 import org.hamcrest.Matcher
@@ -46,18 +46,18 @@ import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.routing.ins
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.routing.instances.rev180101.juniper.routing.instance.InterfaceBuilder as RoutingInstanceInterfaceBuilder
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.routing.instances.rev180101.juniper.routing.instance.InterfaceKey as RoutingInstanceInterfaceKey
 
-class InterfaceConfigWriterTest {
+class VrfInterfaceConfigWriterTest {
     @Mock
     private lateinit var writeContext: WriteContext
 
     private lateinit var underlayAccess: UnderlayAccess
-    private lateinit var target: InterfaceConfigWriter
+    private lateinit var target: VrfInterfaceConfigWriter
 
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
         underlayAccess = Mockito.spy(NetconfAccessHelper(NC_HELPER))
-        target = InterfaceConfigWriter(underlayAccess)
+        target = VrfInterfaceConfigWriter(underlayAccess)
     }
 
     @Test

@@ -16,9 +16,9 @@
 
 package io.frinx.unitopo.unit.xr7.network.instance.vrf.ifc
 
-import io.fd.honeycomb.translate.spi.write.WriterCustomizer
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.openconfig.network.instance.NetworInstance
+import io.frinx.unitopo.ni.base.handler.vrf.ifc.AbstractVrfInterfaceConfigWriter
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr7.interfaces.handler.InterfaceReader
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType
@@ -34,12 +34,27 @@ import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.xr.types.rev180
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.interfaces.Interface
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.interfaces._interface.Config
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
+import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-open class VrfInterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCustomizer<Config> {
-    override fun deleteCurrentAttributes(iid: IID<Config>, dataBefore: Config, wc: WriteContext) {
+class VrfInterfaceConfigWriter(underlayAccess: UnderlayAccess) :
+    AbstractVrfInterfaceConfigWriter<InterfaceConfiguration>(underlayAccess) {
+
+    override fun getData(vrfName: String, config: Config): InterfaceConfiguration =
+        InterfaceConfigurationBuilder()
+            .setKey(InterfaceConfigurationKey(InterfaceActive("act"), InterfaceName(config.id)))
+            .addAugmentation(InterfaceConfiguration1::class.java, InterfaceConfiguration1Builder()
+                .setVrf(CiscoIosXrString(vrfName))
+                .build())
+            .build()
+
+    override fun getUnderlayIid(vrfName: String, ifcName: String): InstanceIdentifier<InterfaceConfiguration> {
+        return InstanceIdentifier.create(InterfaceConfigurations::class.java)
+            .child(InterfaceConfiguration::class.java, InterfaceConfigurationKey(InterfaceActive("act"),
+                InterfaceName(ifcName)))
+    }
+
+    override fun deleteCurrentAttributes(iid: InstanceIdentifier<Config>, dataBefore: Config, wc: WriteContext) {
         val vrfName = iid.firstKeyOf(NetworkInstance::class.java).name
-
         if (vrfName == NetworInstance.DEFAULT_NETWORK_NAME || dataBefore.id == null) {
             return
         }
@@ -47,36 +62,17 @@ open class VrfInterfaceConfigWriter(private val underlayAccess: UnderlayAccess) 
         require(InterfaceReader.isSubinterface(interfaceName)) {
             "Only vrf of sub-interface is supported to write."
         }
-
-        val builder = underlayAccess.read(getInterfaceConfigurationIdentifier(dataBefore.id))
-            .checkedGet()
-            .or(InterfaceConfigurationBuilder().build())
-            .let {
-                InterfaceConfigurationBuilder(it)
-            }
-
-        val ifc1Builder = InterfaceConfiguration1Builder()
-        ifc1Builder.setVrf(null)
-        builder.removeAugmentation(InterfaceConfiguration1::class.java)
-        builder.addAugmentation(InterfaceConfiguration1::class.java, ifc1Builder.build())
-
-        underlayAccess.put(getInterfaceConfigurationIdentifier(dataBefore.id), builder.build())
+        underlayAccess.safeDelete(getUnderlayIid(vrfName, dataBefore.id), getData(vrfName, dataBefore))
     }
 
-    override fun writeCurrentAttributes(iid: IID<Config>, data: Config, wc: WriteContext) {
+    override fun writeCurrentAttributes(iid: InstanceIdentifier<Config>, dataAfter: Config, wc: WriteContext) {
         val vrfName = iid.firstKeyOf(NetworkInstance::class.java).name
-        if (vrfName == NetworInstance.DEFAULT_NETWORK_NAME) {
-            return
-        }
-
         val interfaceName = iid.firstKeyOf(Interface::class.java).id
         require(InterfaceReader.isSubinterface(interfaceName)) {
             "Only vrf of sub-interface is supported to write."
         }
-        val matcher = InterfaceReader.SUBINTERFACE_NAME.matcher(data.id)
-        matcher.find()
-        val ifcName = matcher.group("ifcId")
-        var subifcIndex = matcher.group("subifcIndex").toLong()
+        val ifcName = findInterfaceName(dataAfter.id)
+        val subifcIndex = findSubinterfaceName(dataAfter.id)
 
         val configurations = underlayAccess.read(InterfaceReader.IFC_CFGS, LogicalDatastoreType.CONFIGURATION)
             .checkedGet()
@@ -89,26 +85,24 @@ open class VrfInterfaceConfigWriter(private val underlayAccess: UnderlayAccess) 
             .map { it.index }
 
         require(subIfcKeys.contains(subifcIndex)) {
-            val subIfcName = ifcName + "." + data.id
+            val subIfcName = ifcName + "." + dataAfter.id
             "Interface: $subIfcName does not exist, cannot add it to VRF".trimIndent()
         }
 
-        val writeIid = getInterfaceConfigurationIdentifier(data.id)
-        val ifConfig = InterfaceConfigurationBuilder()
-            .setKey(InterfaceConfigurationKey(InterfaceActive("act"), InterfaceName(data.id)))
-            .addAugmentation(InterfaceConfiguration1::class.java, InterfaceConfiguration1Builder()
-                .setVrf(CiscoIosXrString(vrfName))
-                .build())
-            .build()
-
-        underlayAccess.merge(writeIid, ifConfig)
+        underlayAccess.safePut(getUnderlayIid(vrfName, dataAfter.id), getData(vrfName, dataAfter))
     }
 
     companion object {
-        fun getInterfaceConfigurationIdentifier(ifaceName: String): IID<InterfaceConfiguration> {
-            return IID.create(InterfaceConfigurations::class.java)
-                .child(InterfaceConfiguration::class.java, InterfaceConfigurationKey(InterfaceActive("act"),
-                    InterfaceName(ifaceName)))
+        private fun findInterfaceName(id: String): String {
+            val matcher = InterfaceReader.SUBINTERFACE_NAME.matcher(id)
+            matcher.find()
+            return matcher.group("ifcId")
+        }
+
+        private fun findSubinterfaceName(id: String): Long {
+            val matcher = InterfaceReader.SUBINTERFACE_NAME.matcher(id)
+            matcher.find()
+            return matcher.group("subifcIndex").toLong()
         }
     }
 }
