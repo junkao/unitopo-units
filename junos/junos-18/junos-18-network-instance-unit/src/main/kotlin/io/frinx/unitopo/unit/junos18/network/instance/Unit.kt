@@ -34,9 +34,9 @@ import io.frinx.unitopo.unit.junos18.network.instance.handler.vrf.ifc.VrfInterfa
 import io.frinx.unitopo.unit.junos18.network.instance.handler.vrf.ifc.VrfInterfaceReader
 import io.frinx.unitopo.unit.junos18.network.instance.handler.vrf.protocol.ProtocolConfigWriter
 import io.frinx.unitopo.unit.junos18.network.instance.handler.vrf.protocol.ProtocolReader
-import io.frinx.unitopo.unit.junos18.network.instance.handler.vrf.protocol.aggregate.AggregateConfigReader
-import io.frinx.unitopo.unit.junos18.network.instance.handler.vrf.protocol.aggregate.AggregateConfigWriter
-import io.frinx.unitopo.unit.junos18.network.instance.handler.vrf.protocol.aggregate.AggregateReader
+import io.frinx.unitopo.unit.junos18.network.instance.handler.vrf.protocol.aggregate.LocalAggregateConfigReader
+import io.frinx.unitopo.unit.junos18.network.instance.handler.vrf.protocol.aggregate.LocalAggregateConfigWriter
+import io.frinx.unitopo.unit.junos18.network.instance.handler.vrf.protocol.aggregate.LocalAggregateReader
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.extension.rev180323.NiProtAggAug
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo
@@ -99,7 +99,7 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
         wRegistry.add(IIDs.NE_NE_PR_PR_CONFIG, ProtocolConfigWriter(underlay))
 
         wRegistry.addNoop(IIDs.NE_NE_PR_PR_LO_AGGREGATE)
-        wRegistry.subtreeAdd(IIDs.NE_NE_PR_PR_LO_AG_CONFIG, AggregateConfigWriter(underlay),
+        wRegistry.subtreeAdd(IIDs.NE_NE_PR_PR_LO_AG_CONFIG, LocalAggregateConfigWriter(underlay),
             NE_NE_PR_PR_LO_AG_CONFIG_SUBTREE)
     }
 
@@ -113,8 +113,8 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
         rRegistry.add(IIDs.NE_NE_PR_PROTOCOL, ProtocolReader(underlay))
         rRegistry.add(IIDs.NE_NE_PR_PR_CONFIG, ProtocolConfigReader())
         rRegistry.add(IIDs.NE_NE_PR_PR_STATE, ProtocolStateReader())
-        rRegistry.add(IIDs.NE_NE_PR_PR_LO_AGGREGATE, AggregateReader(underlay))
-        rRegistry.subtreeAdd(IIDs.NE_NE_PR_PR_LO_AG_CONFIG, AggregateConfigReader(underlay),
+        rRegistry.add(IIDs.NE_NE_PR_PR_LO_AGGREGATE, LocalAggregateReader(underlay))
+        rRegistry.subtreeAdd(IIDs.NE_NE_PR_PR_LO_AG_CONFIG, LocalAggregateConfigReader(underlay),
             NE_NE_PR_PR_LO_AG_CONFIG_SUBTREE)
     }
 

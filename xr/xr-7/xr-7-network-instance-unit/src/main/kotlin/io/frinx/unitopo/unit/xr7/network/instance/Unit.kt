@@ -32,9 +32,9 @@ import io.frinx.unitopo.unit.xr7.network.instance.vrf.ifc.VrfInterfaceConfigWrit
 import io.frinx.unitopo.unit.xr7.network.instance.vrf.ifc.VrfInterfaceReader
 import io.frinx.unitopo.unit.xr7.network.instance.vrf.protocol.ProtocolConfigWriter
 import io.frinx.unitopo.unit.xr7.network.instance.vrf.protocol.ProtocolReader
-import io.frinx.unitopo.unit.xr7.network.instance.vrf.protocol.aggregate.AggregateConfigReader
-import io.frinx.unitopo.unit.xr7.network.instance.vrf.protocol.aggregate.AggregateConfigWriter
-import io.frinx.unitopo.unit.xr7.network.instance.vrf.protocol.aggregate.AggregateReader
+import io.frinx.unitopo.unit.xr7.network.instance.vrf.protocol.aggregate.LocalAggregateConfigReader
+import io.frinx.unitopo.unit.xr7.network.instance.vrf.protocol.aggregate.LocalAggregateConfigWriter
+import io.frinx.unitopo.unit.xr7.network.instance.vrf.protocol.aggregate.LocalAggregateReader
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo
 import io.frinx.openconfig.openconfig.interfaces.IIDs as interfaces_IIDs
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907.`$YangModuleInfoImpl` as UnderlayInterfacesYangInfo
@@ -104,7 +104,7 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
                 IIDs.NE_TO_NO_CO_AUG_CONFIGURATION1_NE_NE_PO_IN_IN_CONFIG)
             ), interfaces_IIDs.IN_IN_CONFIG)
         wRegistry.addNoop(IIDs.NE_NE_PR_PR_LO_AGGREGATE)
-        wRegistry.subtreeAdd(IIDs.NE_NE_PR_PR_LO_AG_CONFIG, AggregateConfigWriter(underlay),
+        wRegistry.subtreeAdd(IIDs.NE_NE_PR_PR_LO_AG_CONFIG, LocalAggregateConfigWriter(underlay),
             setOf(RWUtils.cutIdFromStart(
                 IIDs.NE_NE_PR_PR_LO_AG_CO_AUG_NIPROTAGGAUG, IIDs.NE_NE_PR_PR_LO_AG_CONFIG))
         )
@@ -119,8 +119,8 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
         rRegistry.add(IIDs.NE_NE_PO_IN_INTERFACE, PolicyForwardingInterfaceReader(underlay))
         rRegistry.add(IIDs.NE_NE_PO_IN_IN_CONFIG, PolicyForwardingInterfaceConfigReader(underlay))
         rRegistry.add(IIDs.NE_NE_PR_PROTOCOL, ProtocolReader(underlay))
-        rRegistry.add(IIDs.NE_NE_PR_PR_LO_AGGREGATE, AggregateReader(underlay))
-        rRegistry.subtreeAdd(IIDs.NE_NE_PR_PR_LO_AG_CONFIG, AggregateConfigReader(underlay),
+        rRegistry.add(IIDs.NE_NE_PR_PR_LO_AGGREGATE, LocalAggregateReader(underlay))
+        rRegistry.subtreeAdd(IIDs.NE_NE_PR_PR_LO_AG_CONFIG, LocalAggregateConfigReader(underlay),
             setOf(RWUtils.cutIdFromStart(
                 IIDs.NE_NE_PR_PR_LO_AG_CO_AUG_NIPROTAGGAUG, IIDs.NE_NE_PR_PR_LO_AG_CONFIG))
             )

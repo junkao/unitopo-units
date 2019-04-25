@@ -16,13 +16,15 @@
 
 package io.frinx.unitopo.unit.junos18.network.instance.handler.vrf.protocol.aggregate
 
-import io.frinx.translate.unit.commons.handler.spi.CompositeWriter
+import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
+import io.frinx.translate.unit.commons.handler.spi.CompositeReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.junos18.bgp.handler.aggregate.BgpAggregateConfigWriter
+import io.frinx.unitopo.unit.junos18.bgp.handler.aggregate.BgpAggregateConfigReader
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.local.routing.rev170515.local.aggregate.top.local.aggregates.aggregate.Config
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.local.routing.rev170515.local.aggregate.top.local.aggregates.aggregate.ConfigBuilder
 
-class AggregateConfigWriter(access: UnderlayAccess) : CompositeWriter<Config>(
+class LocalAggregateConfigReader(access: UnderlayAccess) : CompositeReader<Config, ConfigBuilder>(
     listOf(
-        BgpAggregateConfigWriter(access)
+        BgpAggregateConfigReader(access)
     )
-)
+), ConfigReaderCustomizer<Config, ConfigBuilder>

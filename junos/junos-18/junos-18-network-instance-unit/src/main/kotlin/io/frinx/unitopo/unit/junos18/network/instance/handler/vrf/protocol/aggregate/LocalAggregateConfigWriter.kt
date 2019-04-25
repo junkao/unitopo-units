@@ -1,5 +1,5 @@
 /*
- * Copyright © 2019 Frinx and others.
+ * Copyright © 2018 Frinx and others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-package io.frinx.unitopo.unit.xr7.network.instance.vrf.protocol.aggregate
+package io.frinx.unitopo.unit.junos18.network.instance.handler.vrf.protocol.aggregate
 
 import io.frinx.translate.unit.commons.handler.spi.CompositeWriter
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.xr7.bgp.handler.aggregates.BgpAggregateConfigWriter
+import io.frinx.unitopo.unit.junos18.bgp.handler.aggregate.BgpAggregateConfigWriter
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.local.routing.rev170515.local.aggregate.top.local.aggregates.aggregate.Config
 
-class AggregateConfigWriter(access: UnderlayAccess) : CompositeWriter<Config>(listOf(
+class LocalAggregateConfigWriter(access: UnderlayAccess) : CompositeWriter<Config>(
+    listOf(
         BgpAggregateConfigWriter(access)
-))
+    )
+)
