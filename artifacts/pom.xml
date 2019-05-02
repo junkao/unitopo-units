@@ -249,6 +249,11 @@
                 <artifactId>network-instance-base</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>io.frinx.unitopo</groupId>
+                <artifactId>interface-base</artifactId>
+                <version>${project.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 </project>

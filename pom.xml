@@ -41,6 +41,7 @@
     <module>yang-docs-plugin</module>
 
     <module>network-instance-base</module>
+    <module>interface-base</module>
   </modules>
 
   <build>
