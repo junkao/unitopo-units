@@ -19,6 +19,7 @@ package io.frinx.unitopo.unit.xr6.interfaces.handler.subifc
 import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.spi.read.ConfigListReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess
+import io.frinx.unitopo.unit.xr6.interfaces.Util
 import io.frinx.unitopo.unit.xr6.interfaces.handler.InterfaceReader
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.Interface
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.SubinterfacesBuilder
@@ -36,19 +37,21 @@ import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.ip6.r170303.Ipv6Addre
 class SubinterfaceReader(private val underlayAccess: UnderlayAccess) :
     ConfigListReaderCustomizer<Subinterface, SubinterfaceKey, SubinterfaceBuilder> {
 
+    private val ifaceReader = InterfaceReader(underlayAccess)
+
     override fun getAllIds(id: InstanceIdentifier<Subinterface>, context: ReadContext): MutableList<SubinterfaceKey> {
         val ifcName = id.firstKeyOf(Interface::class.java).name
 
-        return if (InterfaceReader.interfaceExists(underlayAccess, id)) {
+        return if (interfaceExists(id)) {
 
             // TODO We are misusing the InterfaceReader.getInterfaceIds
             // function. We should create own getSubinterfaceIds function
             // so we can write UT and filter subinterfaces already out of
             // underlay ifc list.
-            val subIfcKeys = InterfaceReader.getInterfaceIds(underlayAccess)
-                    .filter { InterfaceReader.isSubinterface(it.name) }
+            val subIfcKeys = ifaceReader.getInterfaceIds()
+                    .filter { Util.isSubinterface(it.name) }
                     .filter { it.name.startsWith(ifcName) }
-                    .map { InterfaceReader.getSubinterfaceKey(it.name) }
+                    .map { Util.getSubinterfaceKey(it.name) }
 
             val ipv4Keys = mutableListOf<Ipv4AddressKey>()
             InterfaceReader.readInterfaceCfg(underlayAccess, ifcName,
@@ -67,6 +70,9 @@ class SubinterfaceReader(private val underlayAccess: UnderlayAccess) :
             emptyList<SubinterfaceKey>().toMutableList()
         }
     }
+
+    fun interfaceExists(name: InstanceIdentifier<out DataObject>) =
+        ifaceReader.getInterfaceIds().contains(name.firstKeyOf(Interface::class.java)!!)
 
     override fun readCurrentAttributes(
         id: InstanceIdentifier<Subinterface>,

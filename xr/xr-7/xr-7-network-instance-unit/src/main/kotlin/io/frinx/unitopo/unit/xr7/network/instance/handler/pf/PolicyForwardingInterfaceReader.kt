@@ -18,7 +18,7 @@ package io.frinx.unitopo.unit.xr7.network.instance.handler.pf
 
 import io.frinx.unitopo.ni.base.handler.pf.AbstractPolicyForwardingInterfaceReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.xr7.interfaces.handler.InterfaceReader
+import io.frinx.unitopo.unit.xr7.interfaces.handler.Util
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907.InterfaceConfigurations
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907._interface.configurations.InterfaceConfiguration
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.qos.ma.cfg.rev180227.InterfaceConfiguration1
@@ -46,8 +46,8 @@ class PolicyForwardingInterfaceReader(underlayAccess: UnderlayAccess) :
 
         fun isSupportedInterface(name: String): Boolean {
             return when {
-                InterfaceReader.parseIfcType(name) == Other::class.java -> false
-                InterfaceReader.isSubinterface(name) -> false
+                Util.parseIfcType(name) == Other::class.java -> false
+                Util.isSubinterface(name) -> false
                 else -> true
             }
         }

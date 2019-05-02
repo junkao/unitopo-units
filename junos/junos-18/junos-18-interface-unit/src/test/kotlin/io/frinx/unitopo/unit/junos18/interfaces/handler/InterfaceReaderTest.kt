@@ -20,37 +20,36 @@ import io.fd.honeycomb.translate.read.ReadContext
 import io.frinx.openconfig.openconfig.interfaces.IIDs
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.utils.NetconfAccessHelper
-import org.hamcrest.CoreMatchers
 import org.hamcrest.Matchers
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.InterfacesBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.Interface
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.InterfaceBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.InterfaceKey
 
 class InterfaceReaderTest {
+
     @Mock
     private lateinit var readContext: ReadContext
 
     private val underlayAccess: UnderlayAccess = NetconfAccessHelper("/data_nodes.xml")
-    private lateinit var target: InterfaceReader
+    private lateinit var reader: InterfaceReader
 
     @Before
     fun setup() {
         MockitoAnnotations.initMocks(this)
 
-        target = InterfaceReader(underlayAccess)
+        reader = InterfaceReader(underlayAccess)
     }
 
     @Test
     fun testGetAllIds() {
         val id = IIDs.IN_INTERFACE
 
-        val result = target.getAllIds(id, readContext)
+        val result = reader.getAllIds(id, readContext)
 
         Assert.assertThat(
             result.map { it.name },
@@ -64,25 +63,8 @@ class InterfaceReaderTest {
         val id = IIDs.INTERFACES.child(Interface::class.java, InterfaceKey(ifName))
         val builder = InterfaceBuilder()
 
-        target.readCurrentAttributes(id, builder, readContext)
+        reader.readCurrentAttributes(id, builder, readContext)
 
-        Assert.assertThat(builder.name, CoreMatchers.sameInstance(ifName))
-    }
-
-    @Test
-    fun testMerge() {
-        val parentBuilder = InterfacesBuilder()
-        val data: List<Interface> = emptyList()
-
-        target.merge(parentBuilder, data)
-
-        Assert.assertThat(parentBuilder.`interface`, CoreMatchers.sameInstance(data))
-    }
-
-    @Test
-    fun testGetBuilder() {
-        val result = target.getBuilder(IIDs.IN_INTERFACE)
-
-        Assert.assertThat(result, CoreMatchers.instanceOf(InterfaceBuilder::class.java))
+        Assert.assertEquals(ifName, builder.name)
     }
 }

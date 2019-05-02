@@ -51,9 +51,9 @@ open class InterfaceConfigReader(private val underlayAccess: UnderlayAccess) :
 
 fun ConfigBuilder.fromUnderlay(underlay: InterfaceConfiguration, ifcName: String) {
     name = ifcName
-    type = InterfaceReader.parseIfcType(ifcName)
+    type = Util.parseIfcType(ifcName)
     description = underlay.description
     isEnabled = underlay.isShutdown == null
     mtu = underlay.mtus?.mtu?.get(0)?.mtu?.toInt()
-    type = InterfaceReader.parseIfcType(underlay.interfaceName.value)
+    type = Util.parseIfcType(underlay.interfaceName.value)
 }

@@ -22,7 +22,7 @@ import io.fd.honeycomb.translate.read.Reader
 import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
 import io.frinx.translate.unit.commons.handler.spi.CompositeReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.xr6.interfaces.handler.InterfaceReader
+import io.frinx.unitopo.unit.xr6.interfaces.Util
 import io.frinx.unitopo.unit.xr6.network.instance.handler.l2p2p.L2P2PReader
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.l2vpn.cfg.rev151109.l2vpn.database.xconnect.groups.xconnect.group.p2p.xconnects.P2pXconnect
@@ -123,7 +123,7 @@ class L2P2PConnectionPointsReader(private val underlayAccess: UnderlayAccess) :
         val underlayIfcName = attachementCircuit.name?.value!!
         val local: Local
 
-        if (InterfaceReader.isSubinterface(underlayIfcName)) {
+        if (Util.isSubinterface(underlayIfcName)) {
             local = LocalBuilder()
                     .setConfig(LocalConfigBuilder()
                             .setInterface(underlayIfcName.split(".").first())

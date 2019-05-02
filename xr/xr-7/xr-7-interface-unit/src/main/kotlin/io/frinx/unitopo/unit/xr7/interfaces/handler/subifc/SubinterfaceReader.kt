@@ -20,6 +20,7 @@ import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.spi.read.ConfigListReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr7.interfaces.handler.InterfaceReader
+import io.frinx.unitopo.unit.xr7.interfaces.handler.Util
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907._interface.configurations.InterfaceConfiguration
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907._interface.configurations._interface.configuration.mtus.MtuKey
@@ -38,15 +39,17 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 open class SubinterfaceReader(private val underlayAccess: UnderlayAccess) :
     ConfigListReaderCustomizer<Subinterface, SubinterfaceKey, SubinterfaceBuilder> {
 
+    private val ifcReader = InterfaceReader(underlayAccess)
+
     override fun getAllIds(id: InstanceIdentifier<Subinterface>, context: ReadContext): MutableList<SubinterfaceKey> {
         val ifcName = id.firstKeyOf(Interface::class.java).name
         val configurations = underlayAccess.read(InterfaceReader.IFC_CFGS, LogicalDatastoreType.CONFIGURATION)
             .checkedGet()
             .orNull()
-        val subIfcKeys = InterfaceReader.getInterfaceIds(configurations)
-                .filter { InterfaceReader.isSubinterface(it.name) }
+        val subIfcKeys = ifcReader.getInterfaceIds()
+                .filter { Util.isSubinterface(it.name) }
                 .filter { it.name.startsWith(ifcName) }
-                .map { InterfaceReader.getSubinterfaceKey(it.name) }
+                .map { Util.getSubinterfaceKey(it.name) }
 
         val ipv4Keys = mutableListOf<AddressKey>()
         InterfaceReader.readInterfaceCfg(underlayAccess, ifcName,

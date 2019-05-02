@@ -21,6 +21,7 @@ import io.frinx.openconfig.network.instance.NetworInstance
 import io.frinx.unitopo.ni.base.handler.vrf.ifc.AbstractVrfInterfaceConfigWriter
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr7.interfaces.handler.InterfaceReader
+import io.frinx.unitopo.unit.xr7.interfaces.handler.Util
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907.InterfaceActive
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907.InterfaceConfigurations
@@ -38,6 +39,8 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
 class VrfInterfaceConfigWriter(underlayAccess: UnderlayAccess) :
     AbstractVrfInterfaceConfigWriter<InterfaceConfiguration>(underlayAccess) {
+
+    private val ifcReader = InterfaceReader(underlayAccess)
 
     override fun getData(vrfName: String, config: Config): InterfaceConfiguration =
         InterfaceConfigurationBuilder()
@@ -59,7 +62,7 @@ class VrfInterfaceConfigWriter(underlayAccess: UnderlayAccess) :
             return
         }
         val interfaceName = iid.firstKeyOf(Interface::class.java).id
-        require(InterfaceReader.isSubinterface(interfaceName)) {
+        require(Util.isSubinterface(interfaceName)) {
             "Only vrf of sub-interface is supported to write."
         }
         underlayAccess.safeDelete(getUnderlayIid(vrfName, dataBefore.id), getData(vrfName, dataBefore))
@@ -68,7 +71,7 @@ class VrfInterfaceConfigWriter(underlayAccess: UnderlayAccess) :
     override fun writeCurrentAttributes(iid: InstanceIdentifier<Config>, dataAfter: Config, wc: WriteContext) {
         val vrfName = iid.firstKeyOf(NetworkInstance::class.java).name
         val interfaceName = iid.firstKeyOf(Interface::class.java).id
-        require(InterfaceReader.isSubinterface(interfaceName)) {
+        require(Util.isSubinterface(interfaceName)) {
             "Only vrf of sub-interface is supported to write."
         }
         val ifcName = findInterfaceName(dataAfter.id)
@@ -78,10 +81,10 @@ class VrfInterfaceConfigWriter(underlayAccess: UnderlayAccess) :
             .checkedGet()
             .orNull()
 
-        val subIfcKeys = InterfaceReader.getInterfaceIds(configurations)
-            .filter { InterfaceReader.isSubinterface(it.name) }
+        val subIfcKeys = ifcReader.parseInterfaceIds(configurations!!)
+            .filter { Util.isSubinterface(it.name) }
             .filter { it.name.startsWith(ifcName) }
-            .map { InterfaceReader.getSubinterfaceKey(it.name) }
+            .map { Util.getSubinterfaceKey(it.name) }
             .map { it.index }
 
         require(subIfcKeys.contains(subifcIndex)) {
@@ -94,13 +97,13 @@ class VrfInterfaceConfigWriter(underlayAccess: UnderlayAccess) :
 
     companion object {
         private fun findInterfaceName(id: String): String {
-            val matcher = InterfaceReader.SUBINTERFACE_NAME.matcher(id)
+            val matcher = Util.SUBINTERFACE_NAME.matcher(id)
             matcher.find()
             return matcher.group("ifcId")
         }
 
         private fun findSubinterfaceName(id: String): Long {
-            val matcher = InterfaceReader.SUBINTERFACE_NAME.matcher(id)
+            val matcher = Util.SUBINTERFACE_NAME.matcher(id)
             matcher.find()
             return matcher.group("subifcIndex").toLong()
         }

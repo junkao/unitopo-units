@@ -19,6 +19,7 @@ package io.frinx.unitopo.unit.xr6.interfaces.handler
 import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess
+import io.frinx.unitopo.unit.xr6.interfaces.Util
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev150730._interface.configurations.InterfaceConfiguration
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev150730._interface.configurations._interface.configuration.Dampening
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.damping.rev171024.damping.top.DampingBuilder
@@ -32,6 +33,7 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
 class InterfaceDampeningConfigReader(private val underlayAccess: UnderlayAccess) :
     ConfigReaderCustomizer<Config, ConfigBuilder> {
+
     override fun readCurrentAttributes(
         instanceIdentifier: InstanceIdentifier<Config>,
         builder: ConfigBuilder,
@@ -62,7 +64,7 @@ class InterfaceDampeningConfigReader(private val underlayAccess: UnderlayAccess)
 
     companion object {
         fun isSupportedInterface(name: String): Boolean {
-            return parseIfcType(name) != Other::class.java
+            return Util.parseIfcType(name) != Other::class.java
         }
 
         private fun ConfigBuilder.fromUnderlay(dampening: Dampening) {

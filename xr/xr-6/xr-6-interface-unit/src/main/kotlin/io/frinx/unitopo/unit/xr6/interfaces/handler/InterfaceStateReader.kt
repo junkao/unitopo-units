@@ -20,6 +20,7 @@ import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.read.ReadFailedException
 import io.fd.honeycomb.translate.spi.read.OperReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess
+import io.frinx.unitopo.unit.xr6.interfaces.Util
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev150730._interface.configurations.InterfaceConfiguration
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.oper.rev150730.ImStateEnum
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.InterfaceCommonState
@@ -64,7 +65,7 @@ fun StateBuilder.fromUnderlay(underlay: InterfaceConfiguration) {
 }
 
 fun StateBuilder.fromUnderlayProps(underlay: OperInterface) {
-    type = parseIfcType(underlay.interfaceName.value)
+    type = Util.parseIfcType(underlay.interfaceName.value)
     mtu = underlay.mtu.toInt()
     ifindex = 0
     lastChange = Timeticks(0)

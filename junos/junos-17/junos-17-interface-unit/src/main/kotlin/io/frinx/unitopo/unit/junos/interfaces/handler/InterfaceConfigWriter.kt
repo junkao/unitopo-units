@@ -78,7 +78,7 @@ class InterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : Writer
             Pair<InstanceIdentifier<JunosInterface>, JunosInterface> {
         checkPreconditions(dataAfter, id)
         val (ifcName, underlayId) = getUnderlayId(id)
-        val ifcBuilder = InterfaceReader.createBuilderFromExistingInterface(underlayAccess, ifcName)
+        val ifcBuilder = JunosInterfaceBuilder()
         setJunosInterfaceBuilder(dataAfter, id, ifcBuilder)
         return Pair(underlayId, ifcBuilder.build())
     }

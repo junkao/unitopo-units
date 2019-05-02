@@ -19,6 +19,7 @@ package io.frinx.unitopo.unit.xr7.network.instance.handler.vrf.ifc
 import io.frinx.unitopo.ni.base.handler.vrf.ifc.AbstractVrfInterfaceReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr7.interfaces.handler.InterfaceReader
+import io.frinx.unitopo.unit.xr7.interfaces.handler.Util
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.infra.rsi.cfg.rev180615.InterfaceConfiguration1
 
 class VrfInterfaceReader(underlayAccess: UnderlayAccess) : AbstractVrfInterfaceReader(underlayAccess) {
@@ -30,7 +31,7 @@ class VrfInterfaceReader(underlayAccess: UnderlayAccess) : AbstractVrfInterfaceR
 
         return allIfcs.filter {
                             it.getAugmentation(InterfaceConfiguration1::class.java)?.vrf
-                            ?.value == vrfName && InterfaceReader.isSubinterface(it.interfaceName.value)
+                            ?.value == vrfName && Util.isSubinterface(it.interfaceName.value)
                         }.map { it.interfaceName.value }
     }
 }

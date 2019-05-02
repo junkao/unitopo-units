@@ -34,6 +34,7 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
 open class SubinterfaceAddressConfigReader(private val underlayAccess: UnderlayAccess) :
         ConfigReaderCustomizer<Config, ConfigBuilder> {
+
     override fun getBuilder(instanceIdentifier: IID<Config>): ConfigBuilder {
         return ConfigBuilder()
     }
@@ -47,7 +48,7 @@ open class SubinterfaceAddressConfigReader(private val underlayAccess: UnderlayA
             val unitId = instanceIdentifier.firstKeyOf(Subinterface::class.java).index
             val addressKey = AddressKey(instanceIdentifier.firstKeyOf(Address::class.java).ip)
 
-            InterfaceReader.readUnitAddress(underlayAccess, name, unitId, addressKey,
+        InterfaceReader.readUnitAddress(underlayAccess, name, unitId, addressKey,
                     { configBuilder.fromUnderlay(it) })
     }
 

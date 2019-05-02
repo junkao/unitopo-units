@@ -19,8 +19,8 @@ package io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.ipv4
 import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess
+import io.frinx.unitopo.unit.xr6.interfaces.Util
 import io.frinx.unitopo.unit.xr6.interfaces.handler.InterfaceReader
-import io.frinx.unitopo.unit.xr6.interfaces.handler.parseIfcType
 import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.SubinterfaceReader
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev150730._interface.configurations.InterfaceConfiguration
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.io.cfg.rev150730.InterfaceConfiguration1
@@ -72,7 +72,7 @@ open class Ipv4MtuConfigReader(private val underlayAccess: UnderlayAccess)
 
     companion object {
         fun isSupportedInterface(ifcName: String): Boolean {
-            return parseIfcType(ifcName) == EthernetCsmacd::class.java
+            return Util.parseIfcType(ifcName) == EthernetCsmacd::class.java
         }
     }
 }

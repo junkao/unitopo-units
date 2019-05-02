@@ -20,6 +20,7 @@ import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr7.interfaces.handler.InterfaceReader
+import io.frinx.unitopo.unit.xr7.interfaces.handler.Util
 import io.frinx.unitopo.unit.xr7.interfaces.handler.subifc.SubinterfaceReader
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907._interface.configurations.InterfaceConfiguration
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.l2.eth.infra.cfg.rev180615.InterfaceConfiguration6
@@ -66,7 +67,7 @@ class HoldTimeConfigReader(private val underlayAccess: UnderlayAccess)
 
     companion object {
         fun isSupportedInterface(name: String): Boolean {
-            return InterfaceReader.parseIfcType(name) == Ieee8023adLag::class.java
+            return Util.parseIfcType(name) == Ieee8023adLag::class.java
         }
 
         private fun ConfigBuilder.fromUnderlay(underlay: InterfaceConfiguration6) {

@@ -16,104 +16,45 @@
 
 package io.frinx.unitopo.unit.junos18.interfaces.handler
 
-import io.fd.honeycomb.translate.read.ReadContext
-import io.fd.honeycomb.translate.spi.read.ConfigListReaderCustomizer
+import io.frinx.unitopo.ifc.base.handler.AbstractInterfaceReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.ip.vrrp.top.vrrp.VrrpGroupKey
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.ipv4.top.ipv4.addresses.AddressKey
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.InterfacesBuilder
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.Interface
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.InterfaceBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.InterfaceKey
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.root.rev180101.Configuration
-import org.opendaylight.yangtools.concepts.Builder
-import org.opendaylight.yangtools.yang.binding.DataObject
+import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.interfaces.rev180101.Configuration1 as IfConfigurationAug
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.interfaces.rev180101.interfaces.group.Interfaces as JunosInterfaces
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.interfaces.rev180101.interfaces.group.interfaces.Interface as JunosInterface
-import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.interfaces.rev180101.interfaces.group.interfaces.InterfaceBuilder as JunosInterfaceBuilder
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.interfaces.rev180101.interfaces.group.interfaces.InterfaceKey as JunosInterfaceKey
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.interfaces.rev180101.interfaces_type.Unit as JunosInterfaceUnit
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.interfaces.rev180101.interfaces_type.unit.family.inet.Address as JunosInterfaceUnitAddress
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.ip.vrrp.top.vrrp.VrrpGroupKey
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.interfaces.rev180101.interfaces_type.unit.family.inet.address.VrrpGroup as JunosVrrpGroup
 
-class InterfaceReader(private val underlayAccess: UnderlayAccess) :
-    ConfigListReaderCustomizer<Interface, InterfaceKey, InterfaceBuilder> {
+class InterfaceReader(underlayAccess: UnderlayAccess) : AbstractInterfaceReader<JunosInterfaces>(underlayAccess) {
 
-    override fun getAllIds(instanceIdentifier: IID<Interface>, readContext: ReadContext): List<InterfaceKey> {
-        return getInterfaceIds(underlayAccess)
-    }
+    override fun parseInterfaceIds(data: JunosInterfaces): List<InterfaceKey> =
+        data.`interface`.orEmpty()
+        .map { InterfaceKey(it.name) }
 
-    override fun merge(builder: Builder<out DataObject>, list: List<Interface>) {
-        (builder as InterfacesBuilder).`interface` = list
-    }
-
-    override fun getBuilder(instanceIdentifier: IID<Interface>): InterfaceBuilder = InterfaceBuilder()
-
-    override fun readCurrentAttributes(
-        instanceIdentifier: IID<Interface>,
-        interfaceBuilder: InterfaceBuilder,
-        readContext: ReadContext
-    ) {
-        val ifName = instanceIdentifier.firstKeyOf(Interface::class.java).name
-        require(interfaceExists(underlayAccess, ifName)) {
-            "Unknown interface is specified: $ifName"
-        }
-
-        interfaceBuilder.name = ifName
-    }
+    override val readIid: InstanceIdentifier<JunosInterfaces> = JUNOS_IFCS
 
     companion object {
-        private val JUNOS_CFG = IID.create(Configuration::class.java)!!
+        private val JUNOS_CFG = InstanceIdentifier.create(Configuration::class.java)!!
         private val JUNOS_IFCS_AUG = JUNOS_CFG.augmentation(IfConfigurationAug::class.java)!!
         val JUNOS_IFCS = JUNOS_IFCS_AUG.child(JunosInterfaces::class.java)!!
 
-        fun getInterfaceIds(underlayAccess: UnderlayAccess): List<InterfaceKey> {
-            return underlayAccess.read(JUNOS_IFCS, LogicalDatastoreType.CONFIGURATION)
-                    .checkedGet()
-                    .orNull()
-                    ?.let { parseInterfaceIds(it) }.orEmpty()
-        }
-
-        private fun parseInterfaceIds(junosInterfaces: JunosInterfaces): List<InterfaceKey> {
-            return junosInterfaces.`interface`.orEmpty()
-                    .map { InterfaceKey(it.name) }
-                    .toList()
-        }
-
-        private fun interfaceExists(underlayAccess: UnderlayAccess, name: String) =
-                getInterfaceIds(underlayAccess).contains(InterfaceKey(name))
-
-        fun createBuilderFromExistingInterface(underlayAccess: UnderlayAccess, name: String): JunosInterfaceBuilder {
-            val existingInterface = readInterface(underlayAccess, name)
-            return if (existingInterface == null) {
-                JunosInterfaceBuilder()
-            } else {
-                JunosInterfaceBuilder(existingInterface)
-            }
-        }
-
-        /**
-         * Read interface configuration
-         */
-        fun readInterfaceCfg(underlayAccess: UnderlayAccess, name: String, handler: (JunosInterface) -> kotlin.Unit) {
+        fun readInterfaceCfg(underlayAccess: UnderlayAccess, name: String, handler: (JunosInterface) -> Unit) {
             readInterface(underlayAccess, name)
                 // Invoke handler with read value or use default
                 ?.let { handler(it) }
         }
 
-        private fun readInterface(underlayAccess: UnderlayAccess, name: String): JunosInterface? {
-            return if (!interfaceExists(underlayAccess, name)) {
-                null
-            } else {
-                underlayAccess.read(
-                    JUNOS_IFCS.child(JunosInterface::class.java, JunosInterfaceKey(name)),
-                    LogicalDatastoreType.CONFIGURATION)
-                    .checkedGet().orNull()
-            }
-        }
+        private fun readInterface(underlayAccess: UnderlayAccess, name: String): JunosInterface? =
+            underlayAccess.read(JUNOS_IFCS.child(JunosInterface::class.java, JunosInterfaceKey(name)),
+                LogicalDatastoreType.CONFIGURATION)
+                .checkedGet().orNull()
 
         fun readUnitCfg(
             underlayAccess: UnderlayAccess,
@@ -143,6 +84,7 @@ class InterfaceReader(private val underlayAccess: UnderlayAccess) :
                                 ?.let { it2 -> handler(it2) }
                     }
         }
+
         fun readUnitVrrpGroup(
             underlayAccess: UnderlayAccess,
             ifcName: String,

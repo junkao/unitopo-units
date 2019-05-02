@@ -72,9 +72,7 @@ class InterfaceConfigWriterTest {
         private val NATIVE_IID = InterfaceReader.JUNOS_IFCS
             .child(JunosInterface::class.java, JunosInterfaceKey(IF_NAME))
 
-        private val DATA_JUNOS_IFC = NC_HELPER.read(NATIVE_IID).checkedGet().get()
-
-        private val NATIVE_CONFIG = JunosInterfaceBuilder(DATA_JUNOS_IFC)
+        private val NATIVE_CONFIG = JunosInterfaceBuilder()
             .setName(IF_NAME)
             .setEnableDisable(Case1Builder().setDisable(!IF_ENABLED).build())
             .build()

@@ -18,6 +18,7 @@ package io.frinx.unitopo.unit.xr623.network.instance.handler.vrf
 
 import io.frinx.unitopo.ni.base.handler.vrf.AbstractL3VrfReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
+import io.frinx.unitopo.unit.xr6.interfaces.Util
 import io.frinx.unitopo.unit.xr6.interfaces.handler.InterfaceReader
 import io.frinx.unitopo.unit.xr623.ospf.handler.OspfProtocolReader
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.infra.rsi.cfg.rev161219.InterfaceConfiguration1
@@ -31,7 +32,7 @@ class L3VrfReader(underlayAccess: UnderlayAccess) : AbstractL3VrfReader<Vrf>(und
         val list = underlayAccess.read(InterfaceReader.IFC_CFGS).checkedGet().orNull()
             ?.let {
                 ifaceConfig -> ifaceConfig.interfaceConfiguration?.filter {
-                    InterfaceReader.isSubinterface(it.interfaceName.value)
+                    Util.isSubinterface(it.interfaceName.value)
                 }?.mapNotNull {
                     it.getAugmentation(InterfaceConfiguration1::class.java)?.vrf
                 }?.map {

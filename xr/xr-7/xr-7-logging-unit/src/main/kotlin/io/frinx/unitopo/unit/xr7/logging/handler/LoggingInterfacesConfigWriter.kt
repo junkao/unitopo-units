@@ -19,7 +19,7 @@ package io.frinx.unitopo.unit.xr7.logging.handler
 import io.fd.honeycomb.translate.spi.write.WriterCustomizer
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.xr7.interfaces.handler.InterfaceReader
+import io.frinx.unitopo.unit.xr7.interfaces.handler.Util
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907.InterfaceActive
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907.InterfaceModeEnum
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907._interface.configurations.InterfaceConfiguration
@@ -111,7 +111,7 @@ class LoggingInterfacesConfigWriter(private val underlayAccess: UnderlayAccess) 
                 .setActive(InterfaceActive("act"))
                 .setInterfaceName(InterfaceName(name))
 
-            if (InterfaceReader.isSubinterface(name)) {
+            if (Util.isSubinterface(name)) {
                 ifcCfgBuilder.setInterfaceModeNonPhysical(InterfaceModeEnum.Default)
             } else {
                 ifcCfgBuilder.setInterfaceVirtual(true)

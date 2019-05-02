@@ -32,6 +32,7 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
 class InterfaceDampingConfigReader(private val underlayAccess: UnderlayAccess) :
     ConfigReaderCustomizer<Config, ConfigBuilder> {
+
     override fun readCurrentAttributes(
         instanceIdentifier: InstanceIdentifier<Config>,
         builder: ConfigBuilder,
@@ -62,7 +63,7 @@ class InterfaceDampingConfigReader(private val underlayAccess: UnderlayAccess) :
 
     companion object {
         fun isSupportedInterface(name: String): Boolean {
-            return InterfaceReader.parseIfcType(name) != Other::class.java
+            return Util.parseIfcType(name) != Other::class.java
         }
 
         private fun ConfigBuilder.fromUnderlay(dampening: Dampening) {

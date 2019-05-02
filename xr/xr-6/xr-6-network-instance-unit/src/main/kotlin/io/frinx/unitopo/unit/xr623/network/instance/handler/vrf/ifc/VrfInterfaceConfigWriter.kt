@@ -20,6 +20,7 @@ import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.openconfig.network.instance.NetworInstance
 import io.frinx.unitopo.ni.base.handler.vrf.ifc.AbstractVrfInterfaceConfigWriter
 import io.frinx.unitopo.registry.spi.UnderlayAccess
+import io.frinx.unitopo.unit.xr6.interfaces.Util
 import io.frinx.unitopo.unit.xr6.interfaces.handler.InterfaceReader
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev150730.InterfaceActive
@@ -62,7 +63,7 @@ class VrfInterfaceConfigWriter(underlayAccess: UnderlayAccess) :
             return
         }
         val interfaceName = iid.firstKeyOf(Interface::class.java).id
-        require(InterfaceReader.isSubinterface(interfaceName)) {
+        require(Util.isSubinterface(interfaceName)) {
             "Only vrf of sub-interface is supported to write."
         }
         underlayAccess.safeDelete(getUnderlayIid(vrfName, dataBefore.id), getData(vrfName, dataBefore))
@@ -71,7 +72,7 @@ class VrfInterfaceConfigWriter(underlayAccess: UnderlayAccess) :
     override fun writeCurrentAttributes(iid: InstanceIdentifier<Config>, data: Config, wc: WriteContext) {
         val vrfName = iid.firstKeyOf(NetworkInstance::class.java).name
         val interfaceName = iid.firstKeyOf(Interface::class.java).id
-        require(InterfaceReader.isSubinterface(interfaceName)) {
+        require(Util.isSubinterface(interfaceName)) {
             "Only vrf of sub-interface is supported to write."
         }
         val ifcName = findInterfaceName(data.id)
@@ -82,9 +83,9 @@ class VrfInterfaceConfigWriter(underlayAccess: UnderlayAccess) :
             .orNull()
 
         val subIfcKeys = getInterfaceKeys(configurations)
-            .filter { InterfaceReader.isSubinterface(it.name) }
+            .filter { Util.isSubinterface(it.name) }
             .filter { it.name.startsWith(ifcName) }
-            .map { InterfaceReader.getSubinterfaceKey(it.name) }
+            .map { Util.getSubinterfaceKey(it.name) }
             .map { it.index }
         require(subIfcKeys.contains(subifcIndex)) {
             val subIfcName = ifcName + "." + data.id

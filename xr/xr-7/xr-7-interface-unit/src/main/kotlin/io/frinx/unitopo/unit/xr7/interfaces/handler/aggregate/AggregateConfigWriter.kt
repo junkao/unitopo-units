@@ -20,6 +20,7 @@ import io.fd.honeycomb.translate.spi.write.WriterCustomizer
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr7.interfaces.handler.InterfaceReader
+import io.frinx.unitopo.unit.xr7.interfaces.handler.Util
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.bundlemgr.cfg.rev170501._interface.configurations._interface.configuration.Lacp
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.bundlemgr.cfg.rev170501._interface.configurations._interface.configuration.LacpBuilder
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.bundlemgr.cfg.rev170501.InterfaceConfiguration3 as LacpInterfaceConfig
@@ -153,7 +154,7 @@ class AggregateConfigWriter(private val underlayAccess: UnderlayAccess) : Writer
     }
 
     private fun isSupportedForInterface(deviceId: InstanceIdentifier<Config>) {
-        val ifcType = InterfaceReader.parseIfcType(deviceId.firstKeyOf(Interface::class.java).name)
+        val ifcType = Util.parseIfcType(deviceId.firstKeyOf(Interface::class.java).name)
         require(ifcType === Ieee8023adLag::class.java) {
             "Cannot configure aggregate config on non LAG interface ${deviceId.firstKeyOf(Interface::class.java).name}"
         }

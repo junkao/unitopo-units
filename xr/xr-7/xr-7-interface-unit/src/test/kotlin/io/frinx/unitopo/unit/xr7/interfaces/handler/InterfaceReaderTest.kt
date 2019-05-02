@@ -54,15 +54,15 @@ class InterfaceReaderTest : AbstractNetconfHandlerTest() {
     fun setUp() {
         MockitoAnnotations.initMocks(this)
         underlayAccess = Mockito.spy(NetconfAccessHelper(NC_HELPER))
-        target = Mockito.spy(InterfaceReader(underlayAccess))
+        target = InterfaceReader(underlayAccess)
     }
 
     @Test
     fun testParseIfcType() {
         val expected: Class<out InterfaceType> = Ieee8023adLag::class.java
-        Assert.assertThat(InterfaceReader.parseIfcType("Bundle-Ether100"), CoreMatchers.equalTo(expected))
+        Assert.assertThat(Util.parseIfcType("Bundle-Ether100"), CoreMatchers.equalTo(expected))
         Assert.assertThat(
-                InterfaceReader.parseIfcType("GigabitEthernet0/0/0/5"),
+                Util.parseIfcType("GigabitEthernet0/0/0/5"),
                 CoreMatchers.equalTo(EthernetCsmacd::class.java as? Class<out InterfaceType>)
         )
     }
