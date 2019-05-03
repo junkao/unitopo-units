@@ -128,7 +128,7 @@ class InterfaceDampingConfigWriter(private val underlayAccess: UnderlayAccess)
     }
 
     private fun isSupportedForInterface(deviceId: InstanceIdentifier<JunosDamping>): Boolean {
-        return when (InterfaceConfigReader.parseIfcType(deviceId.firstKeyOf(JunosInterface::class.java).name)) {
+        return when (Util.parseIfcType(deviceId.firstKeyOf(JunosInterface::class.java).name)) {
             Other::class.java -> false
             SoftwareLoopback::class.java -> false
             Ieee8023adLag::class.java -> false

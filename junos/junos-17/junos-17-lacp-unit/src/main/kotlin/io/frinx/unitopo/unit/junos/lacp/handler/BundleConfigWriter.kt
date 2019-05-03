@@ -20,8 +20,8 @@ import com.google.common.base.Preconditions
 import io.fd.honeycomb.translate.spi.write.WriterCustomizer
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.junos.interfaces.handler.InterfaceConfigReader
 import io.frinx.unitopo.unit.junos.interfaces.handler.InterfaceReader
+import io.frinx.unitopo.unit.junos.interfaces.handler.Util
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.aggregated.ether.options.lacp.mode.Case1Builder
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.interfaces_type.aggregated.ether.options.lacp.mode.Case2Builder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.lacp.rev170505.LacpActivityType
@@ -80,8 +80,8 @@ class BundleConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCus
 
         private fun isSupportedBundleId(iid: InstanceIdentifier<Config>) {
             val bundleId = iid.firstKeyOf(Interface::class.java).name
-            val ifcType = InterfaceConfigReader.parseIfcType(bundleId)
-            val isSupportedBundleId = when (InterfaceConfigReader.parseIfcType(bundleId)) {
+            val ifcType = Util.parseIfcType(bundleId)
+            val isSupportedBundleId = when (Util.parseIfcType(bundleId)) {
                 Ieee8023adLag::class.java -> true
                 else -> false
             }

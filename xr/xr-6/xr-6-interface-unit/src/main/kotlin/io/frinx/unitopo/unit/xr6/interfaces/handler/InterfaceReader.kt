@@ -23,10 +23,8 @@ import io.frinx.unitopo.unit.xr6.interfaces.Util
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev150730.InterfaceConfigurations
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev150730._interface.configurations.InterfaceConfiguration
-import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev150730._interface.configurations.InterfaceConfigurationBuilder
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.oper.rev150730.InterfaceProperties
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.oper.rev150730._interface.properties.DataNodes
-import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.xr.types.rev150629.InterfaceName
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.Interface
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.InterfaceKey
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
@@ -66,17 +64,9 @@ class InterfaceReader(underlayAccess: UnderlayAccess) : AbstractInterfaceReader<
                         .firstOrNull { it.interfaceName.value == name }
                         // Invoke handler with read value or use default
                         // XR returns no config data for interface that has no configuration but is up
-                        .let { handler(it ?: getDefaultIfcCfg(name)) }
+                        .let { handler(it ?: Util.getDefaultIfcCfg(name)) }
                 }
         }
-
-        private fun getDefaultIfcCfg(name: String): InterfaceConfiguration {
-            return InterfaceConfigurationBuilder().apply {
-                interfaceName = InterfaceName(name)
-                isShutdown = null
-            }.build()
-        }
-
 
         /**
          * Read interface properties

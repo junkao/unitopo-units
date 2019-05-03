@@ -16,44 +16,30 @@
 
 package io.frinx.unitopo.unit.xr7.interfaces.handler
 
-import io.fd.honeycomb.translate.read.ReadContext
-import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
+import io.frinx.unitopo.ifc.base.handler.AbstractInterfaceConfigReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907.InterfaceConfigurations
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907._interface.configurations.InterfaceConfiguration
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.Interface
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.InterfaceBuilder
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces._interface.Config
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces._interface.ConfigBuilder
-import org.opendaylight.yangtools.concepts.Builder
-import org.opendaylight.yangtools.yang.binding.DataObject
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
+import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-open class InterfaceConfigReader(private val underlayAccess: UnderlayAccess) :
-    ConfigReaderCustomizer<Config, ConfigBuilder> {
+class InterfaceConfigReader(underlayAccess: UnderlayAccess) :
+    AbstractInterfaceConfigReader<InterfaceConfigurations>(underlayAccess) {
 
-    override fun getBuilder(instanceIdentifier: IID<Config>): ConfigBuilder {
-        return ConfigBuilder()
+    override fun readIid(ifcName: String): InstanceIdentifier<InterfaceConfigurations> = InterfaceReader.IFC_CFGS
+
+    override fun readData(data: InterfaceConfigurations?, configBuilder: ConfigBuilder, ifcName: String) {
+        Util.filterInterface(data, ifcName).let {
+            configBuilder.fromUnderlay(it ?: Util.getDefaultIfcCfg(ifcName), ifcName)
+        }
     }
 
-    override fun readCurrentAttributes(
-        instanceIdentifier: IID<Config>,
-        configBuilder: ConfigBuilder,
-        readContext: ReadContext
-    ) {
-        val name = instanceIdentifier.firstKeyOf(Interface::class.java).name
-        InterfaceReader.readInterfaceCfg(underlayAccess, name, { configBuilder.fromUnderlay(it, name) })
+    fun ConfigBuilder.fromUnderlay(underlay: InterfaceConfiguration, ifcName: String) {
+        name = ifcName
+        type = Util.parseIfcType(ifcName)
+        description = underlay.description
+        isEnabled = underlay.isShutdown == null
+        mtu = underlay.mtus?.mtu?.get(0)?.mtu?.toInt()
+        type = Util.parseIfcType(underlay.interfaceName.value)
     }
-
-    override fun merge(builder: Builder<out DataObject>, config: Config) {
-        (builder as InterfaceBuilder).config = config
-    }
-}
-
-fun ConfigBuilder.fromUnderlay(underlay: InterfaceConfiguration, ifcName: String) {
-    name = ifcName
-    type = Util.parseIfcType(ifcName)
-    description = underlay.description
-    isEnabled = underlay.isShutdown == null
-    mtu = underlay.mtus?.mtu?.get(0)?.mtu?.toInt()
-    type = Util.parseIfcType(underlay.interfaceName.value)
 }

@@ -17,6 +17,10 @@
 package io.frinx.unitopo.unit.xr6.interfaces
 
 import com.google.common.base.Preconditions
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev150730.InterfaceConfigurations
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev150730._interface.configurations.InterfaceConfiguration
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev150730._interface.configurations.InterfaceConfigurationBuilder
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.xr.types.rev150629.InterfaceName
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.subinterfaces.SubinterfaceKey
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.iana._if.type.rev140508.EthernetCsmacd
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.iana._if.type.rev140508.Ieee8023adLag
@@ -52,5 +56,18 @@ class Util {
             Preconditions.checkState(matcher.matches())
             return SubinterfaceKey(matcher.group("subifcIndex").toLong())
         }
+
+        fun getDefaultIfcCfg(name: String): InterfaceConfiguration {
+            return InterfaceConfigurationBuilder().apply {
+                interfaceName = InterfaceName(name)
+                isShutdown = null
+            }.build()
+        }
+
+        fun filterInterface(data: InterfaceConfigurations?, ifcName: String): InterfaceConfiguration? =
+            data?.let { interfaceConfigurations ->
+                interfaceConfigurations.interfaceConfiguration.orEmpty()
+                    .firstOrNull { it.interfaceName.value == ifcName }
+            }
     }
 }

@@ -50,7 +50,7 @@ class InterfaceConfigReaderTest : AbstractNetconfHandlerTest() {
     fun setUp() {
         MockitoAnnotations.initMocks(this)
         underlayAccess = Mockito.spy(NetconfAccessHelper(NC_HELPER))
-        target = Mockito.spy(InterfaceConfigReader(underlayAccess))
+        target = InterfaceConfigReader(underlayAccess)
     }
 
     @Test

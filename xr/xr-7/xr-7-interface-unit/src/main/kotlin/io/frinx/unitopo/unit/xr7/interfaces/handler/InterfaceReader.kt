@@ -22,8 +22,6 @@ import io.frinx.unitopo.registry.spi.UnderlayAccess
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907.InterfaceConfigurations
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907._interface.configurations.InterfaceConfiguration
-import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907._interface.configurations.InterfaceConfigurationBuilder
-import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.xr.types.rev180629.InterfaceName
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.Interface
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.InterfaceKey
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
@@ -55,15 +53,8 @@ class InterfaceReader(underlayAccess: UnderlayAccess) :
             configurations?.let {
                 it.interfaceConfiguration.orEmpty()
                     .firstOrNull { it.interfaceName.value == name }
-                    .let { handler(it ?: getDefaultIfcCfg(name)) }
+                    .let { handler(it ?: Util.getDefaultIfcCfg(name)) }
             }
-        }
-
-        private fun getDefaultIfcCfg(name: String): InterfaceConfiguration {
-            return InterfaceConfigurationBuilder().apply {
-                interfaceName = InterfaceName(name)
-                isShutdown = null
-            }.build()
         }
     }
 }

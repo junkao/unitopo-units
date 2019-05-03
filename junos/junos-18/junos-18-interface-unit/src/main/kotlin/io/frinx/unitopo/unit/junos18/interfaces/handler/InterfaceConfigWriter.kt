@@ -72,7 +72,7 @@ class InterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : Writer
     companion object {
         @VisibleForTesting
         fun isIfaceNameAndTypeValid(ifcName: String, type: Class<out InterfaceType>?): Boolean {
-            val ifcType = InterfaceConfigReader.parseIfcType(ifcName)
+            val ifcType = Util.parseIfcType(ifcName)
             return ifcType == type
         }
 

@@ -16,52 +16,37 @@
 
 package io.frinx.unitopo.unit.xr6.interfaces.handler
 
-import io.fd.honeycomb.translate.read.ReadContext
-import io.fd.honeycomb.translate.read.ReadFailedException
-import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
+import io.frinx.unitopo.ifc.base.handler.AbstractInterfaceConfigReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr6.interfaces.Util
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev150730.InterfaceConfigurations
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev150730._interface.configurations.InterfaceConfiguration
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.Interface
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.InterfaceBuilder
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces._interface.Config
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces._interface.ConfigBuilder
-import org.opendaylight.yangtools.concepts.Builder
-import org.opendaylight.yangtools.yang.binding.DataObject
-import org.opendaylight.controller.md.sal.common.api.data.ReadFailedException as MDSalReadFailed
-import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.oper.rev150730._interface.table.interfaces.Interface as OperInterface
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
+import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.oper.rev150730._interface.table.interfaces.Interface
 
-class InterfaceConfigReader(private val underlayAccess: UnderlayAccess) :
-    ConfigReaderCustomizer<Config, ConfigBuilder> {
+class InterfaceConfigReader(underlayAccess: UnderlayAccess) :
+    AbstractInterfaceConfigReader<InterfaceConfigurations>(underlayAccess) {
 
-    @Throws(ReadFailedException::class)
-    override fun readCurrentAttributes(
-        instanceIdentifier: IID<Config>,
-        configBuilder: ConfigBuilder,
-        readContext: ReadContext
-    ) {
-        try {
-            val name = instanceIdentifier.firstKeyOf(Interface::class.java).name
-            InterfaceReader.readInterfaceCfg(underlayAccess, name, { configBuilder.fromUnderlay(it) })
-            InterfaceReader.readInterfaceProps(underlayAccess, name, { configBuilder.fromUnderlay(it) })
-        } catch (e: MDSalReadFailed) {
-            throw ReadFailedException(instanceIdentifier, e)
+    override fun readIid(ifcName: String): InstanceIdentifier<InterfaceConfigurations> = InterfaceReader.IFC_CFGS
+
+    override fun readData(data: InterfaceConfigurations?, configBuilder: ConfigBuilder, ifcName: String) {
+        Util.filterInterface(data, ifcName).let {
+                // Invoke handler with read value or use default
+                // XR returns no config data for interface that has no configuration but is up
+            configBuilder.fromUnderlay(it ?: Util.getDefaultIfcCfg(ifcName))
         }
+        InterfaceReader.readInterfaceProps(underlayAccess, ifcName) { configBuilder.fromUnderlay(it) }
     }
 
-    override fun merge(builder: Builder<out DataObject>, config: Config) {
-        (builder as InterfaceBuilder).config = config
+    fun ConfigBuilder.fromUnderlay(underlay: InterfaceConfiguration) {
+        name = underlay.interfaceName.value
+        description = underlay.description
+        isEnabled = underlay.isShutdown == null
     }
-}
 
-fun ConfigBuilder.fromUnderlay(underlay: InterfaceConfiguration) {
-    name = underlay.interfaceName.value
-    description = underlay.description
-    isEnabled = underlay.isShutdown == null
-}
-
-fun ConfigBuilder.fromUnderlay(underlay: OperInterface) {
-    type = Util.parseIfcType(underlay.interfaceName.value)
-    mtu = underlay.mtu.toInt()
+    fun ConfigBuilder.fromUnderlay(underlay: Interface) {
+        type = Util.parseIfcType(underlay.interfaceName.value)
+        mtu = underlay.mtu.toInt()
+    }
 }

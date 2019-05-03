@@ -19,8 +19,8 @@ package io.frinx.unitopo.unit.junos.lacp.handler
 import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.spi.read.ConfigListReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.junos.interfaces.handler.InterfaceConfigReader
 import io.frinx.unitopo.unit.junos.interfaces.handler.InterfaceReader.Companion.IFCS
+import io.frinx.unitopo.unit.junos.interfaces.handler.Util
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.lacp.rev170505.lacp.interfaces.top.InterfacesBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.lacp.rev170505.lacp.interfaces.top.interfaces.Interface
@@ -60,7 +60,7 @@ class BundleReader(private val underlayAccess: UnderlayAccess) :
     companion object {
         private fun parseInterfaceIds(it: Interfaces): List<InterfaceKey> {
             return it.`interface`.orEmpty()
-                .filter { port -> InterfaceConfigReader.parseIfcType(port.name) == Ieee8023adLag::class.java }
+                .filter { port -> Util.parseIfcType(port.name) == Ieee8023adLag::class.java }
                 .map { it.key }
                 .map { InterfaceKey(it.name) }
         }
