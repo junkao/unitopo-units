@@ -67,7 +67,7 @@ class SubinterfaceAddressReaderTest : AbstractNetconfHandlerTest() {
     fun setUp() {
         MockitoAnnotations.initMocks(this)
         underlayAccess = Mockito.spy(NetconfAccessHelper(NC_HELPER))
-        target = Mockito.spy(SubinterfaceAddressReader(underlayAccess))
+        target = SubinterfaceAddressReader(underlayAccess)
     }
     @Test
     fun testGetAllIds() {

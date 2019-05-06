@@ -50,8 +50,8 @@ class InterfaceReader(underlayAccess: UnderlayAccess) :
             val configurations = underlayAccess.read(IFC_CFGS, LogicalDatastoreType.CONFIGURATION)
                 .checkedGet()
                 .orNull()
-            configurations?.let {
-                it.interfaceConfiguration.orEmpty()
+            configurations?.let { interfaceConfigurations ->
+                interfaceConfigurations.interfaceConfiguration.orEmpty()
                     .firstOrNull { it.interfaceName.value == name }
                     .let { handler(it ?: Util.getDefaultIfcCfg(name)) }
             }

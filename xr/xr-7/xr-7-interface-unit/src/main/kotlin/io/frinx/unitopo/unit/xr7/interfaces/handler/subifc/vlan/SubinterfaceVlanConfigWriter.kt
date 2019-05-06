@@ -20,7 +20,7 @@ import io.fd.honeycomb.translate.spi.write.WriterCustomizer
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr7.interfaces.handler.InterfaceReader
-import io.frinx.unitopo.unit.xr7.interfaces.handler.subifc.SubinterfaceReader
+import io.frinx.unitopo.unit.xr7.interfaces.handler.Util
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907.InterfaceActive
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907._interface.configurations.InterfaceConfiguration
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907._interface.configurations.InterfaceConfigurationKey
@@ -85,8 +85,8 @@ class SubinterfaceVlanConfigWriter(private val underlayAccess: UnderlayAccess) :
         val ifcName = id.firstKeyOf(Interface::class.java).name
         val ifcIndex = id.firstKeyOf(Subinterface::class.java).index
         val subIfcName = InterfaceName(when (ifcIndex) {
-            SubinterfaceReader.ZERO_SUBINTERFACE_ID -> ifcName
-            else -> SubinterfaceReader.getSubIfcName(ifcName, ifcIndex)
+            Util.ZERO_SUBINTERFACE_ID -> ifcName
+            else -> Util.getSubIfcName(ifcName, ifcIndex)
         })
 
         val underlayIfcId = InterfaceReader.IFC_CFGS

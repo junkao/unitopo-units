@@ -158,7 +158,7 @@ class SubinterfaceVlanConfigWriterTest {
         val id = IID_CONFIG
         val config = ConfigBuilder(CONFIG_VLANID)
             .build()
-        val expectedConfig = JunosInterfaceUnitBuilder(NATIVE_CONFIG)
+        val expectedConfig = JunosInterfaceUnitBuilder()
             .setVlanChoice(VLAN_CHOICE_NULL)
             .build()
 

@@ -16,78 +16,43 @@
 
 package io.frinx.unitopo.unit.xr6.interfaces.handler.subifc
 
-import io.fd.honeycomb.translate.read.ReadContext
-import io.fd.honeycomb.translate.spi.read.ConfigListReaderCustomizer
+import io.frinx.unitopo.ifc.base.handler.subinterfaces.AbstractSubinterfaceReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr6.interfaces.Util
 import io.frinx.unitopo.unit.xr6.interfaces.handler.InterfaceReader
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.Interface
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.SubinterfacesBuilder
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.subinterfaces.Subinterface
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.subinterfaces.SubinterfaceBuilder
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.oper.rev150730._interface.properties.DataNodes
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.subinterfaces.SubinterfaceKey
-import org.opendaylight.yangtools.concepts.Builder
-import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.ipv4.top.ipv4.addresses.AddressKey as Ipv4AddressKey
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.ipv6.top.ipv6.addresses.AddressKey as Ipv6AddressKey
 import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.ip6.r150730.Ipv6AddressReader as Ipv6AddressRev150730Reader
 import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.ip6.r170303.Ipv6AddressConfigReader as Ipv6AddressRev170303Reader
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.ipv4.top.ipv4.addresses.AddressKey as Ipv4AddressKey
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.ipv6.top.ipv6.addresses.AddressKey as Ipv6AddressKey
 
-class SubinterfaceReader(private val underlayAccess: UnderlayAccess) :
-    ConfigListReaderCustomizer<Subinterface, SubinterfaceKey, SubinterfaceBuilder> {
+class SubinterfaceReader(underlayAccess: UnderlayAccess) : AbstractSubinterfaceReader<DataNodes>(underlayAccess) {
 
     private val ifaceReader = InterfaceReader(underlayAccess)
 
-    override fun getAllIds(id: InstanceIdentifier<Subinterface>, context: ReadContext): MutableList<SubinterfaceKey> {
-        val ifcName = id.firstKeyOf(Interface::class.java).name
+    override fun readIid(ifcName: String): InstanceIdentifier<DataNodes> = InterfaceReader.DATA_NODES_ID
 
-        return if (interfaceExists(id)) {
+    override fun parseSubInterfaceIds(data: DataNodes, ifcName: String): List<SubinterfaceKey> {
+        val subIfcKeys = ifaceReader.getInterfaceIds()
+            .filter { Util.isSubinterface(it.name) }
+            .filter { it.name.startsWith(ifcName) }
+            .map { Util.getSubinterfaceKey(it.name) }
 
-            // TODO We are misusing the InterfaceReader.getInterfaceIds
-            // function. We should create own getSubinterfaceIds function
-            // so we can write UT and filter subinterfaces already out of
-            // underlay ifc list.
-            val subIfcKeys = ifaceReader.getInterfaceIds()
-                    .filter { Util.isSubinterface(it.name) }
-                    .filter { it.name.startsWith(ifcName) }
-                    .map { Util.getSubinterfaceKey(it.name) }
+        val ipv4Keys = mutableListOf<Ipv4AddressKey>()
+        InterfaceReader.readInterfaceCfg(underlayAccess, ifcName) { Ipv4AddressReader.extractAddresses(it, ipv4Keys) }
 
-            val ipv4Keys = mutableListOf<Ipv4AddressKey>()
-            InterfaceReader.readInterfaceCfg(underlayAccess, ifcName,
-                { Ipv4AddressReader.extractAddresses(it, ipv4Keys) })
-
-            val ipv6Keys = mutableListOf<Ipv6AddressKey>()
-            InterfaceReader.readInterfaceCfg(underlayAccess, ifcName,
-                { Ipv6AddressRev150730Reader.extractAddresses(it, ipv6Keys) })
-            InterfaceReader.readInterfaceCfg(underlayAccess, ifcName,
-                { Ipv6AddressRev170303Reader.extractAddresses(it, ipv6Keys) })
-
-            return if (!ipv4Keys.isEmpty() || !ipv6Keys.isEmpty())
-                subIfcKeys.plus(SubinterfaceKey(ZERO_SUBINTERFACE_ID)).toMutableList() else
-                subIfcKeys.toMutableList()
-        } else {
-            emptyList<SubinterfaceKey>().toMutableList()
+        val ipv6Keys = mutableListOf<Ipv6AddressKey>()
+        InterfaceReader.readInterfaceCfg(underlayAccess, ifcName) {
+            Ipv6AddressRev150730Reader.extractAddresses(it, ipv6Keys)
         }
-    }
+        InterfaceReader.readInterfaceCfg(underlayAccess, ifcName) {
+            Ipv6AddressRev170303Reader.extractAddresses(it, ipv6Keys)
+        }
 
-    fun interfaceExists(name: InstanceIdentifier<out DataObject>) =
-        ifaceReader.getInterfaceIds().contains(name.firstKeyOf(Interface::class.java)!!)
-
-    override fun readCurrentAttributes(
-        id: InstanceIdentifier<Subinterface>,
-        builder: SubinterfaceBuilder,
-        ctx: ReadContext
-    ) {
-        builder.index = id.firstKeyOf(Subinterface::class.java).index
-    }
-
-    override fun merge(builder: Builder<out DataObject>, readData: MutableList<Subinterface>) {
-        (builder as SubinterfacesBuilder).subinterface = readData
-    }
-
-    companion object {
-        const val ZERO_SUBINTERFACE_ID = 0L
-        fun getSubIfcName(ifcName: String, subifcIdx: Long) = ifcName + "." + subifcIdx
+        return if (ipv4Keys.isNotEmpty() || ipv6Keys.isNotEmpty())
+            subIfcKeys.plus(SubinterfaceKey(Util.ZERO_SUBINTERFACE_ID)) else
+            subIfcKeys
     }
 }

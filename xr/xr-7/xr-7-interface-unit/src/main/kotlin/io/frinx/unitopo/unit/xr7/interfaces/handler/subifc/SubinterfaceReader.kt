@@ -16,78 +16,48 @@
 
 package io.frinx.unitopo.unit.xr7.interfaces.handler.subifc
 
-import io.fd.honeycomb.translate.read.ReadContext
-import io.fd.honeycomb.translate.spi.read.ConfigListReaderCustomizer
+import io.frinx.unitopo.ifc.base.handler.subinterfaces.AbstractSubinterfaceReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr7.interfaces.handler.InterfaceReader
 import io.frinx.unitopo.unit.xr7.interfaces.handler.Util
-import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907.InterfaceConfigurations
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907._interface.configurations.InterfaceConfiguration
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907._interface.configurations._interface.configuration.mtus.MtuKey
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.io.cfg.rev180111.InterfaceConfiguration1
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.xr.types.rev180629.CiscoIosXrString
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.ipv4.top.ipv4.addresses.AddressKey
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.Interface
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.SubinterfacesBuilder
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.subinterfaces.Subinterface
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.subinterfaces.SubinterfaceBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.subinterfaces.SubinterfaceKey
-import org.opendaylight.yangtools.concepts.Builder
-import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-open class SubinterfaceReader(private val underlayAccess: UnderlayAccess) :
-    ConfigListReaderCustomizer<Subinterface, SubinterfaceKey, SubinterfaceBuilder> {
+class SubinterfaceReader(underlayAccess: UnderlayAccess) :
+    AbstractSubinterfaceReader<InterfaceConfigurations>(underlayAccess) {
 
     private val ifcReader = InterfaceReader(underlayAccess)
 
-    override fun getAllIds(id: InstanceIdentifier<Subinterface>, context: ReadContext): MutableList<SubinterfaceKey> {
-        val ifcName = id.firstKeyOf(Interface::class.java).name
-        val configurations = underlayAccess.read(InterfaceReader.IFC_CFGS, LogicalDatastoreType.CONFIGURATION)
-            .checkedGet()
-            .orNull()
+    override fun readIid(ifcName: String): InstanceIdentifier<InterfaceConfigurations> = InterfaceReader.IFC_CFGS
+
+    override fun parseSubInterfaceIds(data: InterfaceConfigurations, ifcName: String): List<SubinterfaceKey> {
         val subIfcKeys = ifcReader.getInterfaceIds()
-                .filter { Util.isSubinterface(it.name) }
-                .filter { it.name.startsWith(ifcName) }
-                .map { Util.getSubinterfaceKey(it.name) }
+            .filter { Util.isSubinterface(it.name) }
+            .filter { it.name.startsWith(ifcName) }
+            .map { Util.getSubinterfaceKey(it.name) }
 
         val ipv4Keys = mutableListOf<AddressKey>()
-        InterfaceReader.readInterfaceCfg(underlayAccess, ifcName,
-                { Ipv4AddressReader.extractAddresses(it, ipv4Keys) })
+        InterfaceReader.readInterfaceCfg(underlayAccess, ifcName) { Ipv4AddressReader.extractAddresses(it, ipv4Keys) }
 
         val mtuKeys = mutableListOf<MtuKey>()
-        InterfaceReader.readInterfaceCfg(underlayAccess, ifcName,
-            { extractMtus(it, mtuKeys) })
+        InterfaceReader.readInterfaceCfg(underlayAccess, ifcName) { extractMtus(it, mtuKeys) }
 
-        return if (!ipv4Keys.isEmpty() || !mtuKeys.isEmpty())
-            subIfcKeys.plus(SubinterfaceKey(ZERO_SUBINTERFACE_ID)).toMutableList() else
-            subIfcKeys.toMutableList()
+        return if (ipv4Keys.isNotEmpty() || mtuKeys.isNotEmpty())
+            subIfcKeys.plus(SubinterfaceKey(Util.ZERO_SUBINTERFACE_ID)) else
+            subIfcKeys
     }
 
-    override fun readCurrentAttributes(
-        id: InstanceIdentifier<Subinterface>,
-        builder: SubinterfaceBuilder,
-        ctx: ReadContext
-    ) {
-        builder.index = id.firstKeyOf(Subinterface::class.java).index
-    }
-
-    override fun merge(builder: Builder<out DataObject>, readData: MutableList<Subinterface>) {
-        (builder as SubinterfacesBuilder).subinterface = readData
-    }
-
-    override fun getBuilder(p0: InstanceIdentifier<Subinterface>): SubinterfaceBuilder = SubinterfaceBuilder()
-
-    companion object {
-        const val ZERO_SUBINTERFACE_ID = 0L
-        fun getSubIfcName(ifcName: String, subifcIdx: Long) = ifcName + "." + subifcIdx
-
-        fun extractMtus(ifcCfg: InterfaceConfiguration, keys: MutableList<MtuKey>) {
-            ifcCfg.getAugmentation(InterfaceConfiguration1::class.java)?.let {
-                it.ipv4Network?.let {
-                    it.mtu?.let {
-                        keys.add(MtuKey(CiscoIosXrString(it.toString())))
-                    }
+    private fun extractMtus(ifcCfg: InterfaceConfiguration, keys: MutableList<MtuKey>) {
+        ifcCfg.getAugmentation(InterfaceConfiguration1::class.java)?.let { interfaceConfiguration1 ->
+            interfaceConfiguration1.ipv4Network?.let { ipv4Network ->
+                ipv4Network.mtu?.let {
+                    keys.add(MtuKey(CiscoIosXrString(it.toString())))
                 }
             }
         }

@@ -20,6 +20,7 @@ import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr7.interfaces.handler.InterfaceReader
+import io.frinx.unitopo.unit.xr7.interfaces.handler.Util
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907._interface.configurations.InterfaceConfiguration
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.io.cfg.rev180111.InterfaceConfiguration1
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.ipv4.top.ipv4.addresses.Address
@@ -41,11 +42,11 @@ class Ipv4ConfigReader(private val underlayAccess: UnderlayAccess) : ConfigReade
         val ifcName = id.firstKeyOf(Interface::class.java).name
         val ifcIndex = id.firstKeyOf(Subinterface::class.java).index
         val subIfcName = when (ifcIndex) {
-            SubinterfaceReader.ZERO_SUBINTERFACE_ID -> ifcName
-            else -> SubinterfaceReader.getSubIfcName(ifcName, ifcIndex)
+            Util.ZERO_SUBINTERFACE_ID -> ifcName
+            else -> Util.getSubIfcName(ifcName, ifcIndex)
         }
         builder.ip = id.firstKeyOf(Address::class.java).ip
-        InterfaceReader.readInterfaceCfg(underlayAccess, subIfcName, { extractAddress(it, builder) })
+        InterfaceReader.readInterfaceCfg(underlayAccess, subIfcName) { extractAddress(it, builder) }
     }
 
     override fun merge(builder: Builder<out DataObject>, readValue: Config) {

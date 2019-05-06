@@ -20,7 +20,7 @@ import io.fd.honeycomb.translate.spi.write.WriterCustomizer
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr7.interfaces.handler.InterfaceReader
-import io.frinx.unitopo.unit.xr7.interfaces.handler.subifc.SubinterfaceReader
+import io.frinx.unitopo.unit.xr7.interfaces.handler.Util
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907.InterfaceActive
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907._interface.configurations.InterfaceConfiguration
@@ -83,7 +83,7 @@ class HoldTimeConfigWriter(private val underlayAccess: UnderlayAccess) : WriterC
         val interfaceActive = InterfaceActive("act")
         val ifcName = id.firstKeyOf(Interface::class.java).name
         val subifcIndex = id.firstKeyOf(Subinterface::class.java).index
-        val subifcName = InterfaceName(SubinterfaceReader.getSubIfcName(ifcName, subifcIndex))
+        val subifcName = InterfaceName(Util.getSubIfcName(ifcName, subifcIndex))
 
         return InterfaceReader.IFC_CFGS
             .child(InterfaceConfiguration::class.java, InterfaceConfigurationKey(interfaceActive, subifcName))

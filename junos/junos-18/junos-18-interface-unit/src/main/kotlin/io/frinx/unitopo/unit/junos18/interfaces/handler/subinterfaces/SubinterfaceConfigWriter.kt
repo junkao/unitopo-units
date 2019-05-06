@@ -73,8 +73,8 @@ open class SubinterfaceConfigWriter(private val underlayAccess: UnderlayAccess) 
             Pair<InstanceIdentifier<JunosInterfaceUnit>, JunosInterfaceUnit> {
 
             val (_, _, underlayIfcUnitId) = getUnderlayId(id)
-            val ifcUnitBuilder = SubinterfaceReader
-                .createBuilderFromExistingInterfaceUnit(underlayAccess, underlayIfcUnitId)
+            // safeput
+            val ifcUnitBuilder = JunosInterfaceUnitBuilder()
 
             ifcUnitBuilder.fromOpenConfig(dataAfter)
             return Pair(underlayIfcUnitId, ifcUnitBuilder.build())

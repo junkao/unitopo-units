@@ -21,7 +21,6 @@ import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr7.interfaces.handler.InterfaceReader
 import io.frinx.unitopo.unit.xr7.interfaces.handler.Util
-import io.frinx.unitopo.unit.xr7.interfaces.handler.subifc.SubinterfaceReader
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907._interface.configurations.InterfaceConfiguration
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.io.cfg.rev180111.InterfaceConfiguration1
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.ipv4.top.Ipv4Builder
@@ -51,8 +50,8 @@ open class Ipv4MtuConfigReader(private val underlayAccess: UnderlayAccess)
         val ifcName = instanceIdentifier.firstKeyOf(Interface::class.java).name
         val ifcIndex = instanceIdentifier.firstKeyOf(Subinterface::class.java).index
         val subIfcName = when (ifcIndex) {
-            SubinterfaceReader.ZERO_SUBINTERFACE_ID -> ifcName
-            else -> SubinterfaceReader.getSubIfcName(ifcName, ifcIndex)
+            Util.ZERO_SUBINTERFACE_ID -> ifcName
+            else -> Util.getSubIfcName(ifcName, ifcIndex)
         }
         if (isSupportedInterface(subIfcName)) {
             InterfaceReader.readInterfaceCfg(underlayAccess, subIfcName, { extractIpv4Mtu(it, builder) })

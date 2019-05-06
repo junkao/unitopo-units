@@ -19,6 +19,7 @@ package io.frinx.unitopo.unit.xr6.interfaces.handler.subifc
 import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess
+import io.frinx.unitopo.unit.xr6.interfaces.Util
 import io.frinx.unitopo.unit.xr6.interfaces.handler.InterfaceReader
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev150730._interface.configurations.InterfaceConfiguration
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.io.cfg.rev150730.InterfaceConfiguration1
@@ -43,8 +44,8 @@ class Ipv4AddressConfigReader(private val underlayAccess: UnderlayAccess)
             val ifcName = id.firstKeyOf(Interface::class.java).name
             val ifcIndex = id.firstKeyOf(Subinterface::class.java).index
             val subIfcName = when (ifcIndex) {
-                SubinterfaceReader.ZERO_SUBINTERFACE_ID -> ifcName
-                else -> SubinterfaceReader.getSubIfcName(ifcName, ifcIndex)
+                Util.ZERO_SUBINTERFACE_ID -> ifcName
+                else -> Util.getSubIfcName(ifcName, ifcIndex)
             }
             builder.ip = id.firstKeyOf(Address::class.java).ip
             InterfaceReader.readInterfaceCfg(underlayAccess, subIfcName, { extractAddress(it, builder) })

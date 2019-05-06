@@ -19,6 +19,7 @@ package io.frinx.unitopo.unit.xr7.interfaces.handler.subifc
 import io.fd.honeycomb.translate.spi.write.WriterCustomizer
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.unitopo.registry.spi.UnderlayAccess
+import io.frinx.unitopo.unit.xr7.interfaces.handler.Util
 import org.apache.commons.net.util.SubnetUtils
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907.InterfaceActive
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907.InterfaceConfigurations
@@ -69,8 +70,8 @@ class Ipv4ConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCusto
         val ifcName = id.firstKeyOf(Interface::class.java).name
         val ifcIndex = id.firstKeyOf(Subinterface::class.java).index
         val subIfcName = InterfaceName(when (ifcIndex) {
-            SubinterfaceReader.ZERO_SUBINTERFACE_ID -> ifcName
-            else -> SubinterfaceReader.getSubIfcName(ifcName, ifcIndex)
+            Util.ZERO_SUBINTERFACE_ID -> ifcName
+            else -> Util.getSubIfcName(ifcName, ifcIndex)
         })
 
         return InstanceIdentifier.create(InterfaceConfigurations::class.java)

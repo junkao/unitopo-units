@@ -21,7 +21,6 @@ import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr7.interfaces.handler.InterfaceReader
 import io.frinx.unitopo.unit.xr7.interfaces.handler.Util
-import io.frinx.unitopo.unit.xr7.interfaces.handler.subifc.SubinterfaceReader
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907._interface.configurations.InterfaceConfiguration
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.l2.eth.infra.cfg.rev180615.InterfaceConfiguration6
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222._interface.phys.holdtime.top.HoldTimeBuilder
@@ -52,7 +51,7 @@ class HoldTimeConfigReader(private val underlayAccess: UnderlayAccess)
     ) {
         val ifcName = instanceIdentifier.firstKeyOf(Interface::class.java).name
         val subifcIndex = instanceIdentifier.firstKeyOf(Subinterface::class.java).index
-        val subifcName = SubinterfaceReader.getSubIfcName(ifcName, subifcIndex)
+        val subifcName = Util.getSubIfcName(ifcName, subifcIndex)
 
         if (isSupportedInterface(ifcName)) {
             InterfaceReader.readInterfaceCfg(underlayAccess, subifcName) { extractHoldTime(it, builder) }

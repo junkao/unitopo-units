@@ -58,9 +58,8 @@ class SubinterfaceVlanConfigWriter(private val underlayAccess: UnderlayAccess) :
         writeContext: WriteContext
     ) {
         val (_, _, underlayIfcUnitId) = getUnderlayId(id)
-        val ifcUnitBuilder = SubinterfaceReader
-            .createBuilderFromExistingInterfaceUnit(underlayAccess, underlayIfcUnitId)
-
+        // safe delete
+        val ifcUnitBuilder = JunosInterfaceUnitBuilder()
         when {
             dataBefore.vlanId.vlanId != null -> ifcUnitBuilder.setVlanChoiceCase1(null)
             dataBefore.vlanId.qinqId != null -> ifcUnitBuilder.setVlanChoiceCase6(null)

@@ -19,7 +19,7 @@ import io.fd.honeycomb.translate.spi.write.WriterCustomizer
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr7.interfaces.handler.InterfaceReader
-import io.frinx.unitopo.unit.xr7.interfaces.handler.subifc.SubinterfaceReader.Companion.ZERO_SUBINTERFACE_ID
+import io.frinx.unitopo.unit.xr7.interfaces.handler.Util
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907.InterfaceActive
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907._interface.configurations.InterfaceConfiguration
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907._interface.configurations.InterfaceConfigurationKey
@@ -35,7 +35,7 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 class SubinterfaceStatisticsConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCustomizer<Config> {
 
     override fun writeCurrentAttributes(id: InstanceIdentifier<Config>, dataAfter: Config, wtc: WriteContext) {
-        if (id.firstKeyOf(Subinterface::class.java).index == ZERO_SUBINTERFACE_ID) {
+        if (id.firstKeyOf(Subinterface::class.java).index == Util.ZERO_SUBINTERFACE_ID) {
             return
         }
 
@@ -44,7 +44,7 @@ class SubinterfaceStatisticsConfigWriter(private val underlayAccess: UnderlayAcc
     }
 
     override fun deleteCurrentAttributes(id: InstanceIdentifier<Config>, dataAfter: Config, wtc: WriteContext) {
-        if (id.firstKeyOf(Subinterface::class.java).index == ZERO_SUBINTERFACE_ID) {
+        if (id.firstKeyOf(Subinterface::class.java).index == Util.ZERO_SUBINTERFACE_ID) {
             return
         }
 
@@ -88,7 +88,7 @@ class SubinterfaceStatisticsConfigWriter(private val underlayAccess: UnderlayAcc
 
         val interfaceActive = InterfaceActive("act")
         val underlaySubifcName = InterfaceName(
-                SubinterfaceReader.getSubIfcName(id.firstKeyOf(Interface::class.java).name,
+            Util.getSubIfcName(id.firstKeyOf(Interface::class.java).name,
                         id.firstKeyOf(Subinterface::class.java).index))
 
         val underlayId = InterfaceReader.IFC_CFGS

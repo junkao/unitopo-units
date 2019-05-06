@@ -30,7 +30,6 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.re
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.Interface
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.InterfaceKey
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.Subinterfaces
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.SubinterfacesBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.subinterfaces.Subinterface
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.subinterfaces.SubinterfaceBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.subinterfaces.SubinterfaceKey
@@ -48,7 +47,7 @@ class SubinterfaceReaderTest : AbstractNetconfHandlerTest() {
     fun setUp() {
         MockitoAnnotations.initMocks(this)
         underlayAccess = Mockito.spy(NetconfAccessHelper(NC_HELPER))
-        target = Mockito.spy(SubinterfaceReader(underlayAccess))
+        target = SubinterfaceReader(underlayAccess)
     }
 
     companion object {
@@ -64,27 +63,6 @@ class SubinterfaceReaderTest : AbstractNetconfHandlerTest() {
     fun testReadCurrentAttributes() {
         val builder = SubinterfaceBuilder()
         target.readCurrentAttributes(IID_SUB_INTERFACE, builder, readContext)
-        Assert.assertEquals(1L, builder.build().index)
-    }
-
-    @Test
-    fun testGetBuilder() {
-        val builder = target.getBuilder(IID_SUB_INTERFACE)
-        Assert.assertTrue(builder is SubinterfaceBuilder)
-    }
-
-    @Test
-    fun testMerge() {
-        val listBuilder = SubinterfacesBuilder()
-        val list: MutableList<Subinterface> = mutableListOf(
-                SubinterfaceBuilder().apply {
-                    this.index = 1L
-                }.build(),
-                SubinterfaceBuilder().apply {
-                    this.index = 2L
-                }.build()
-        )
-        target.merge(listBuilder, list)
-        Assert.assertSame(listBuilder.subinterface, list)
+        Assert.assertEquals(1L, builder.index)
     }
 }

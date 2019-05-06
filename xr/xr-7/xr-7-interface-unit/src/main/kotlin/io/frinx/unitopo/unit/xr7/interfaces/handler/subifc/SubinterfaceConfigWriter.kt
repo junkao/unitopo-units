@@ -20,7 +20,7 @@ import io.fd.honeycomb.translate.spi.write.WriterCustomizer
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr7.interfaces.handler.InterfaceReader
-import io.frinx.unitopo.unit.xr7.interfaces.handler.subifc.SubinterfaceReader.Companion.ZERO_SUBINTERFACE_ID
+import io.frinx.unitopo.unit.xr7.interfaces.handler.Util
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907.InterfaceActive
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907.InterfaceModeEnum
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907._interface.configurations.InterfaceConfiguration
@@ -40,7 +40,7 @@ open class SubinterfaceConfigWriter(private val underlayAccess: UnderlayAccess) 
         dataBefore: Config,
         writeContext: WriteContext
     ) {
-        if (id.firstKeyOf(Subinterface::class.java).index == ZERO_SUBINTERFACE_ID) {
+        if (id.firstKeyOf(Subinterface::class.java).index == Util.ZERO_SUBINTERFACE_ID) {
             return
         }
 
@@ -49,7 +49,7 @@ open class SubinterfaceConfigWriter(private val underlayAccess: UnderlayAccess) 
     }
 
     override fun writeCurrentAttributes(id: InstanceIdentifier<Config>, dataAfter: Config, writeContext: WriteContext) {
-        if (id.firstKeyOf(Subinterface::class.java).index == ZERO_SUBINTERFACE_ID) {
+        if (id.firstKeyOf(Subinterface::class.java).index == Util.ZERO_SUBINTERFACE_ID) {
             return
         }
 
@@ -64,7 +64,7 @@ open class SubinterfaceConfigWriter(private val underlayAccess: UnderlayAccess) 
         dataAfter: Config,
         writeContext: WriteContext
     ) {
-        if (id.firstKeyOf(Subinterface::class.java).index == ZERO_SUBINTERFACE_ID) {
+        if (id.firstKeyOf(Subinterface::class.java).index == Util.ZERO_SUBINTERFACE_ID) {
             return
         }
         val (underlayId, underlayIfcCfg) = getData(id, dataAfter)
@@ -78,7 +78,7 @@ open class SubinterfaceConfigWriter(private val underlayAccess: UnderlayAccess) 
             val interfaceActive = InterfaceActive("act")
 
             val underlaySubifcName = InterfaceName(
-                    SubinterfaceReader.getSubIfcName(id.firstKeyOf(Interface::class.java).name,
+                Util.getSubIfcName(id.firstKeyOf(Interface::class.java).name,
                             id.firstKeyOf(Subinterface::class.java).index))
 
             val underlayId = InterfaceReader.IFC_CFGS.child(InterfaceConfiguration::class.java,

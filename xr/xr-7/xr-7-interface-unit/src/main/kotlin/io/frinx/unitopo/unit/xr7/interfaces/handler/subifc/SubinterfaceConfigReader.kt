@@ -20,7 +20,7 @@ import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr7.interfaces.handler.InterfaceReader
-import io.frinx.unitopo.unit.xr7.interfaces.handler.subifc.SubinterfaceReader.Companion.ZERO_SUBINTERFACE_ID
+import io.frinx.unitopo.unit.xr7.interfaces.handler.Util
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907._interface.configurations.InterfaceConfiguration
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.Interface
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.subinterfaces.Subinterface
@@ -47,12 +47,11 @@ open class SubinterfaceConfigReader(private val underlayAccess: UnderlayAccess) 
         val subifcIndex = id.firstKeyOf(Subinterface::class.java).index
 
         // Only parse configuration for non 0 subifc
-        if (subifcIndex == ZERO_SUBINTERFACE_ID) {
-            builder.index = ZERO_SUBINTERFACE_ID
+        if (subifcIndex == Util.ZERO_SUBINTERFACE_ID) {
+            builder.index = Util.ZERO_SUBINTERFACE_ID
             return
         }
-
-        val subifcName = SubinterfaceReader.getSubIfcName(ifcName, subifcIndex)
+        val subifcName = Util.getSubIfcName(ifcName, subifcIndex)
         InterfaceReader.readInterfaceCfg(underlayAccess, subifcName, { builder.fromUnderlay(it, subifcIndex) })
     }
 

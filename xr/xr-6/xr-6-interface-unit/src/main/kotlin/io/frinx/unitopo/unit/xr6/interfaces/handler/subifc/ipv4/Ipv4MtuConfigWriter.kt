@@ -19,8 +19,8 @@ package io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.ipv4
 import io.fd.honeycomb.translate.spi.write.WriterCustomizer
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.unitopo.registry.spi.UnderlayAccess
+import io.frinx.unitopo.unit.xr6.interfaces.Util
 import io.frinx.unitopo.unit.xr6.interfaces.handler.InterfaceReader
-import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.SubinterfaceReader
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev150730.InterfaceActive
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev150730._interface.configurations.InterfaceConfiguration
@@ -95,8 +95,8 @@ open class Ipv4MtuConfigWriter(private val underlayAccess: UnderlayAccess) : Wri
         val ifcName = InterfaceName(id.firstKeyOf(Interface::class.java).name).value
         val ifcIndex = id.firstKeyOf(Subinterface::class.java).index
         val subIfcName = when (ifcIndex) {
-            SubinterfaceReader.ZERO_SUBINTERFACE_ID -> ifcName
-            else -> SubinterfaceReader.getSubIfcName(ifcName, ifcIndex)
+            Util.ZERO_SUBINTERFACE_ID -> ifcName
+            else -> Util.getSubIfcName(ifcName, ifcIndex)
         }
         return InterfaceReader.IFC_CFGS
                 .child(InterfaceConfiguration::class.java,

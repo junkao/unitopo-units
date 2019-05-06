@@ -20,6 +20,7 @@ import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr7.interfaces.handler.InterfaceReader
+import io.frinx.unitopo.unit.xr7.interfaces.handler.Util
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907._interface.configurations.InterfaceConfiguration
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.infra.statsd.cfg.rev170501.InterfaceConfiguration1
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.infra.statsd.cfg.rev170501._interface.configurations._interface.configuration.Statistics
@@ -48,11 +49,11 @@ open class SubinterfaceStatisticsConfigReader(private val underlayAccess: Underl
         val subifcIndex = instanceIdentifier.firstKeyOf(Subinterface::class.java).index
 
         // Only parse configuration for non 0 subifc
-        if (subifcIndex == SubinterfaceReader.ZERO_SUBINTERFACE_ID) {
+        if (subifcIndex == Util.ZERO_SUBINTERFACE_ID) {
             return
         }
 
-        val subifcName = SubinterfaceReader.getSubIfcName(ifcName, subifcIndex)
+        val subifcName = Util.getSubIfcName(ifcName, subifcIndex)
         InterfaceReader.readInterfaceCfg(underlayAccess, subifcName, { extractStatistics(it, configBuilder) })
     }
 

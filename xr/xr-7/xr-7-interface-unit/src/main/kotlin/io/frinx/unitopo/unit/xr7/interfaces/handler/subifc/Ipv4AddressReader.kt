@@ -20,6 +20,7 @@ import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.spi.read.ConfigListReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr7.interfaces.handler.InterfaceReader
+import io.frinx.unitopo.unit.xr7.interfaces.handler.Util
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907._interface.configurations.InterfaceConfiguration
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.ipv4.top.ipv4.AddressesBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.ipv4.top.ipv4.addresses.Address
@@ -49,11 +50,11 @@ class Ipv4AddressReader(private val underlayAccess: UnderlayAccess) :
         val ifcName = id.firstKeyOf(Interface::class.java).name
         val ifcIndex = id.firstKeyOf(Subinterface::class.java).index
         val subIfcName = when (ifcIndex) {
-            SubinterfaceReader.ZERO_SUBINTERFACE_ID -> ifcName
-            else -> SubinterfaceReader.getSubIfcName(ifcName, ifcIndex)
+            Util.ZERO_SUBINTERFACE_ID -> ifcName
+            else -> Util.getSubIfcName(ifcName, ifcIndex)
         }
         val keys = mutableListOf<AddressKey>()
-        InterfaceReader.readInterfaceCfg(underlayAccess, subIfcName, { extractAddresses(it, keys) })
+        InterfaceReader.readInterfaceCfg(underlayAccess, subIfcName) { extractAddresses(it, keys) }
         return keys
     }
 

@@ -32,7 +32,11 @@ class Util {
 
     companion object {
 
+        const val ZERO_SUBINTERFACE_ID = 0L
+
         val SUBINTERFACE_NAME = Pattern.compile("(?<ifcId>.+)[.](?<subifcIndex>[0-9]+)")
+
+        fun getSubIfcName(ifcName: String, subifcIdx: Long) = "$ifcName.$subifcIdx"
 
         fun parseIfcType(name: String): Class<out InterfaceType> {
             return when {
