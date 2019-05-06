@@ -31,7 +31,6 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.re
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.InterfaceKey
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.Subinterfaces
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.subinterfaces.Subinterface
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.subinterfaces.SubinterfaceBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.subinterfaces.SubinterfaceKey
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.subinterfaces.subinterface.Config
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.subinterfaces.subinterface.ConfigBuilder
@@ -49,7 +48,7 @@ class SubinterfaceConfigReaderTest : AbstractNetconfHandlerTest() {
     fun setUp() {
         MockitoAnnotations.initMocks(this)
         underlayAccess = Mockito.spy(NetconfAccessHelper(NC_HELPER))
-        target = Mockito.spy(SubinterfaceConfigReader(underlayAccess))
+        target = SubinterfaceConfigReader(underlayAccess)
     }
 
     companion object {
@@ -67,22 +66,5 @@ class SubinterfaceConfigReaderTest : AbstractNetconfHandlerTest() {
         val builder = ConfigBuilder()
         target.readCurrentAttributes(IID_SUB_INTERFACE_CONFIG, builder, readContext)
         Assert.assertEquals(1L, builder.build().index)
-    }
-
-    @Test
-    fun testGetBuilder() {
-        val builder = target.getBuilder(IID_SUB_INTERFACE_CONFIG)
-        Assert.assertTrue(builder is ConfigBuilder)
-    }
-
-    @Test
-    fun testMerge() {
-        val builder = SubinterfaceBuilder()
-        val config = ConfigBuilder().apply {
-            this.index = 1L
-        }.build()
-
-        target.merge(builder, config)
-        Assert.assertSame(builder.config, config)
     }
 }

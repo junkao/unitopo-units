@@ -25,13 +25,11 @@ import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
-import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.Interface
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.InterfaceKey
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.Subinterfaces
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.subinterfaces.Subinterface
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.subinterfaces.SubinterfaceBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.subinterfaces.SubinterfaceKey
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.subinterfaces.subinterface.Config
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.subinterfaces.subinterface.ConfigBuilder
@@ -82,22 +80,5 @@ class SubinterfaceConfigReaderTest {
         Assert.assertThat(builder.index, CoreMatchers.equalTo(subIfIndex))
         Assert.assertThat(builder.isEnabled, CoreMatchers.equalTo(true))
         Assert.assertThat(builder.description, CoreMatchers.equalTo("SBM-P-00000827-19"))
-    }
-
-    @Test
-    fun testMerge() {
-        val config = Mockito.mock(Config::class.java)
-        val parentBuilder = SubinterfaceBuilder()
-
-        target.merge(parentBuilder, config)
-
-        Assert.assertThat(parentBuilder.config, CoreMatchers.sameInstance(config))
-    }
-
-    @Test
-    fun testGetBuilder() {
-        val result = target.getBuilder(IIDs.IN_IN_SU_SU_CONFIG)
-
-        Assert.assertThat(result, CoreMatchers.instanceOf(ConfigBuilder::class.java))
     }
 }
