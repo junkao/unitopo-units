@@ -16,7 +16,6 @@
 
 package io.frinx.unitopo.unit.xr623.network.instance.policy.forwarding
 
-import com.google.common.util.concurrent.CheckedFuture
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.utils.AbstractNetconfHandlerTest
@@ -134,13 +133,13 @@ class PolicyForwardingInterfaceConfigWriterTest : AbstractNetconfHandlerTest() {
         val dataCap = ArgumentCaptor
             .forClass(DataObject::class.java) as ArgumentCaptor<InterfaceConfiguration>
 
-        Mockito.doNothing().`when`(underlayAccess).put(Mockito.any(), Mockito.any())
+        Mockito.doNothing().`when`(underlayAccess).safePut(Mockito.any(), Mockito.any())
 
         // test
         target.writeCurrentAttributes(IID_CONFIG, config, writeContext)
 
         // capture
-        Mockito.verify(underlayAccess, Mockito.times(1)).put(idCap.capture(),
+        Mockito.verify(underlayAccess, Mockito.times(1)).safePut(idCap.capture(),
             dataCap.capture())
 
         // verify capture-length
@@ -162,41 +161,14 @@ class PolicyForwardingInterfaceConfigWriterTest : AbstractNetconfHandlerTest() {
     fun testUpdateCurrentAttributes() {
         val configBefore = ConfigBuilder(CONFIG).build()
         val configAfter = ConfigBuilder(CONFIG).build()
-        val expectedConfig = QosBuilder(NATIVE_CONFIG)
-            .build()
-
-        val idCap = ArgumentCaptor
-            .forClass(InstanceIdentifier::class.java) as ArgumentCaptor<InstanceIdentifier<InterfaceConfiguration>>
-        val dataCap = ArgumentCaptor
-            .forClass(DataObject::class.java) as ArgumentCaptor<InterfaceConfiguration>
-
-        val checkedFuture = Mockito.mock(CheckedFuture::class.java)
-
-        Mockito.doReturn(checkedFuture)
-            .`when`(underlayAccess)
-            .read(NATIVE_IID)
-        Mockito.doNothing().`when`(underlayAccess).delete(Mockito.any())
-        Mockito.doNothing().`when`(underlayAccess).put(Mockito.any(), Mockito.any())
+        Mockito.doNothing().`when`(underlayAccess).safeMerge(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any())
 
         // test
         target.updateCurrentAttributes(IID_CONFIG, configBefore, configAfter, writeContext)
 
         // capture
-        Mockito.verify(underlayAccess, Mockito.times(1)).put(idCap.capture(), dataCap.capture())
-
-        // verify capture-length
-        Assert.assertThat(idCap.allValues.size, CoreMatchers.`is`(1))
-        Assert.assertThat(dataCap.allValues.size, CoreMatchers.`is`(1))
-
-        // verify captured values
-        Assert.assertThat(
-            idCap.allValues[0],
-            CoreMatchers.equalTo(NATIVE_IID) as Matcher<in InstanceIdentifier<InterfaceConfiguration>>
-        )
-        Assert.assertThat(
-            dataCap.allValues[0],
-            CoreMatchers.equalTo(expectedConfig) as Matcher<in InterfaceConfiguration>
-        )
+        Mockito.verify(underlayAccess, Mockito.times(1)).safeMerge(Mockito.any(),
+            Mockito.any(), Mockito.any(), Mockito.any())
     }
 
     @Test

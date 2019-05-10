@@ -16,76 +16,32 @@
 
 package io.frinx.unitopo.unit.xr623.network.instance.handler.forwarding
 
-import io.fd.honeycomb.translate.read.ReadContext
-import io.fd.honeycomb.translate.spi.read.ConfigListReaderCustomizer
-import io.frinx.openconfig.network.instance.NetworInstance
+import io.frinx.unitopo.ni.base.handler.pf.AbstractPolicyForwardingInterfaceReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr6.interfaces.handler.InterfaceReader
-import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev150730.InterfaceConfigurations
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev150730._interface.configurations.InterfaceConfiguration
-import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev150730._interface.configurations.InterfaceConfigurationBuilder
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.qos.ma.cfg.rev161223.InterfaceConfiguration1
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.qos.ma.cfg.rev161223.qos.Qos
-import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.xr.types.rev150629.InterfaceName
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.InterfaceId
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.policy.forwarding.rev170621.pf.interfaces.structural.interfaces.Interface
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.policy.forwarding.rev170621.pf.interfaces.structural.interfaces.InterfaceBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.policy.forwarding.rev170621.pf.interfaces.structural.interfaces.InterfaceKey
+import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 import java.util.Optional
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
-class PolicyForwardingInterfaceReader(private val underlayAccess: UnderlayAccess) :
-    ConfigListReaderCustomizer<Interface, InterfaceKey, InterfaceBuilder> {
-    override fun getAllIds(instanceIdentifier: IID<Interface>, readContext: ReadContext): List<InterfaceKey> {
-        val vrfName = instanceIdentifier.firstKeyOf(NetworkInstance::class.java).name
-        if (vrfName != NetworInstance.DEFAULT_NETWORK_NAME) {
-            return emptyList()
-        }
-        return underlayAccess.read(IFC_CFGS, LogicalDatastoreType.CONFIGURATION)
-            .checkedGet()
-            .orNull()
-            ?.interfaceConfiguration
+class PolicyForwardingInterfaceReader(underlayAccess: UnderlayAccess) :
+    AbstractPolicyForwardingInterfaceReader<InterfaceConfigurations>(underlayAccess) {
+
+    override val readIid: InstanceIdentifier<InterfaceConfigurations> = IFC_CFGS
+
+    override fun parseKeys(data: InterfaceConfigurations?): List<InterfaceKey> =
+            data?.interfaceConfiguration
             ?.filter { isSupportedInterface(it.interfaceName.value) }
             ?.filter { hasAnyPolicy(it) }
             ?.map { InterfaceKey(InterfaceId(it.interfaceName.value)) }
             .orEmpty()
-    }
-
-    override fun readCurrentAttributes(
-        instanceIdentifier: IID<Interface>,
-        interfaceBuilder: InterfaceBuilder,
-        readContext: ReadContext
-    ) {
-        // Just set the name
-        interfaceBuilder.interfaceId = instanceIdentifier.firstKeyOf(Interface::class.java).interfaceId
-    }
 
     companion object {
-        val IFC_CFGS = IID.create(InterfaceConfigurations::class.java)!!
-        fun readInterfaceCfg(
-            underlayAccess: UnderlayAccess,
-            name: String,
-            handler: (InterfaceConfiguration) -> kotlin.Unit
-        ) {
-            val configurations = underlayAccess.read(IFC_CFGS, LogicalDatastoreType.CONFIGURATION)
-                .checkedGet()
-                .orNull()
-
-            configurations?.let {
-                it.interfaceConfiguration.orEmpty()
-                    .firstOrNull { it.interfaceName.value == name }
-                    .let { handler(it ?: getDefaultIfcCfg(name)) }
-            }
-        }
-
-        private fun getDefaultIfcCfg(name: String): InterfaceConfiguration {
-            return InterfaceConfigurationBuilder().apply {
-                interfaceName = InterfaceName(name)
-                isShutdown = null
-            }.build()
-        }
+        val IFC_CFGS = InstanceIdentifier.create(InterfaceConfigurations::class.java)!!
 
         fun isSupportedInterface(name: String): Boolean {
             return when {

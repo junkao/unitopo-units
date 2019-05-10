@@ -16,40 +16,52 @@
 
 package io.frinx.unitopo.unit.xr623.network.instance.handler.forwarding
 
-import io.fd.honeycomb.translate.read.ReadContext
-import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
+import io.frinx.unitopo.ni.base.handler.pf.AbstractPolicyForwardingInterfaceConfigReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev150730.InterfaceConfigurations
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev150730._interface.configurations.InterfaceConfiguration
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev150730._interface.configurations.InterfaceConfigurationBuilder
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.qos.ma.cfg.rev161223.InterfaceConfiguration1
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.xr.types.rev150629.InterfaceName
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.InterfaceId
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.pf.interfaces.extension.cisco.rev171109.NiPfIfCiscoAug
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.pf.interfaces.extension.cisco.rev171109.NiPfIfCiscoAugBuilder
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.policy.forwarding.rev170621.pf.interfaces.structural.interfaces.Interface
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.policy.forwarding.rev170621.pf.interfaces.structural.interfaces._interface.Config
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.policy.forwarding.rev170621.pf.interfaces.structural.interfaces._interface.ConfigBuilder
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
+import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class PolicyForwardingInterfaceConfigReader(private val underlayAccess: UnderlayAccess) :
-    ConfigReaderCustomizer<Config, ConfigBuilder> {
+class PolicyForwardingInterfaceConfigReader(underlayAccess: UnderlayAccess) :
+    AbstractPolicyForwardingInterfaceConfigReader<InterfaceConfigurations>(underlayAccess) {
 
-    override fun readCurrentAttributes(
-        instanceIdentifier: IID<Config>,
-        configBuilder: ConfigBuilder,
-        readContext: ReadContext
-    ) {
-        val ifcName = instanceIdentifier.firstKeyOf(Interface::class.java).interfaceId.value
+    override val readIid: InstanceIdentifier<InterfaceConfigurations> =
+        PolicyForwardingInterfaceReader.IFC_CFGS
 
-        PolicyForwardingInterfaceReader.readInterfaceCfg(underlayAccess, ifcName) { configBuilder.fromUnderlay(it) }
+    override fun readData(data: InterfaceConfigurations?, ifcName: String, builder: ConfigBuilder) {
+        data?.let { interfaceConfigurations ->
+            interfaceConfigurations.interfaceConfiguration.orEmpty()
+                .firstOrNull { it.interfaceName.value == ifcName }
+                .let { builder.fromUnderlay(it ?: getDefaultIfcCfg(ifcName)) }
+        }
     }
-}
 
-private fun ConfigBuilder.fromUnderlay(underlay: InterfaceConfiguration) {
-    val qos = underlay.getAugmentation(InterfaceConfiguration1::class.java).qos
+    private fun getDefaultIfcCfg(name: String): InterfaceConfiguration {
+        return InterfaceConfigurationBuilder().apply {
+            interfaceName = InterfaceName(name)
+            isShutdown = null
+        }.build()
+    }
 
-    val niPfIfCiscoAugBuilder = NiPfIfCiscoAugBuilder()
-    PolicyForwardingInterfaceReader.getInputPolicy(qos).ifPresent { niPfIfCiscoAugBuilder.inputServicePolicy = it }
-    PolicyForwardingInterfaceReader.getOutputPolicy(qos).ifPresent { niPfIfCiscoAugBuilder.outputServicePolicy = it }
+    private fun ConfigBuilder.fromUnderlay(underlay: InterfaceConfiguration) {
+        val qos = underlay.getAugmentation(InterfaceConfiguration1::class.java).qos
 
-    addAugmentation(NiPfIfCiscoAug::class.java, niPfIfCiscoAugBuilder.build())
-    interfaceId = InterfaceId(underlay.interfaceName.value)
+        val niPfIfCiscoAugBuilder = NiPfIfCiscoAugBuilder()
+        PolicyForwardingInterfaceReader.getInputPolicy(qos).ifPresent {
+            niPfIfCiscoAugBuilder.inputServicePolicy = it
+        }
+        PolicyForwardingInterfaceReader.getOutputPolicy(qos).ifPresent {
+            niPfIfCiscoAugBuilder.outputServicePolicy = it
+        }
+
+        addAugmentation(NiPfIfCiscoAug::class.java, niPfIfCiscoAugBuilder.build())
+        interfaceId = InterfaceId(underlay.interfaceName.value)
+    }
 }
