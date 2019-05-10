@@ -30,7 +30,7 @@ import io.frinx.unitopo.unit.junos18.network.instance.handler.NetworkInstanceCon
 import io.frinx.unitopo.unit.junos18.network.instance.handler.NetworkInstanceConfigWriter
 import io.frinx.unitopo.unit.junos18.network.instance.handler.NetworkInstanceReader
 import io.frinx.unitopo.unit.junos18.network.instance.handler.vrf.ifc.VrfInterfaceConfigReader
-import io.frinx.unitopo.unit.junos18.network.instance.handler.vrf.ifc.InterfaceConfigWriter
+import io.frinx.unitopo.unit.junos18.network.instance.handler.vrf.ifc.VrfInterfaceConfigWriter
 import io.frinx.unitopo.unit.junos18.network.instance.handler.vrf.ifc.VrfInterfaceReader
 import io.frinx.unitopo.unit.junos18.network.instance.handler.vrf.protocol.ProtocolConfigWriter
 import io.frinx.unitopo.unit.junos18.network.instance.handler.vrf.protocol.ProtocolReader
@@ -93,7 +93,7 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
             /*handle after ifc configuration*/ InterfaceIIDs.IN_IN_CONFIG)
 
         wRegistry.addNoop(IIDs.NE_NE_IN_INTERFACE)
-        wRegistry.add(IIDs.NE_NE_IN_IN_CONFIG, InterfaceConfigWriter(underlay))
+        wRegistry.add(IIDs.NE_NE_IN_IN_CONFIG, VrfInterfaceConfigWriter(underlay))
 
         wRegistry.addNoop(IIDs.NE_NE_PR_PROTOCOL)
         wRegistry.add(IIDs.NE_NE_PR_PR_CONFIG, ProtocolConfigWriter(underlay))
