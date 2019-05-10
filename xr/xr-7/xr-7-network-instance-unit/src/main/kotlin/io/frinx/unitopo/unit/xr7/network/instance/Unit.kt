@@ -25,16 +25,16 @@ import io.frinx.unitopo.ni.base.handler.vrf.ifc.VrfInterfaceConfigReader
 import io.frinx.unitopo.registry.api.TranslationUnitCollector
 import io.frinx.unitopo.registry.spi.TranslateUnit
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.xr7.network.instance.policy.forwarding.PolicyForwardingInterfaceConfigReader
-import io.frinx.unitopo.unit.xr7.network.instance.policy.forwarding.PolicyForwardingInterfaceConfigWriter
-import io.frinx.unitopo.unit.xr7.network.instance.policy.forwarding.PolicyForwardingInterfaceReader
-import io.frinx.unitopo.unit.xr7.network.instance.vrf.ifc.VrfInterfaceConfigWriter
-import io.frinx.unitopo.unit.xr7.network.instance.vrf.ifc.VrfInterfaceReader
-import io.frinx.unitopo.unit.xr7.network.instance.vrf.protocol.ProtocolConfigWriter
-import io.frinx.unitopo.unit.xr7.network.instance.vrf.protocol.ProtocolReader
-import io.frinx.unitopo.unit.xr7.network.instance.vrf.protocol.aggregate.LocalAggregateConfigReader
-import io.frinx.unitopo.unit.xr7.network.instance.vrf.protocol.aggregate.LocalAggregateConfigWriter
-import io.frinx.unitopo.unit.xr7.network.instance.vrf.protocol.aggregate.LocalAggregateReader
+import io.frinx.unitopo.unit.xr7.network.instance.handler.pf.PolicyForwardingInterfaceConfigReader
+import io.frinx.unitopo.unit.xr7.network.instance.handler.pf.PolicyForwardingInterfaceConfigWriter
+import io.frinx.unitopo.unit.xr7.network.instance.handler.pf.PolicyForwardingInterfaceReader
+import io.frinx.unitopo.unit.xr7.network.instance.handler.vrf.ifc.VrfInterfaceConfigWriter
+import io.frinx.unitopo.unit.xr7.network.instance.handler.vrf.ifc.VrfInterfaceReader
+import io.frinx.unitopo.unit.xr7.network.instance.handler.vrf.protocol.ProtocolConfigWriter
+import io.frinx.unitopo.unit.xr7.network.instance.handler.vrf.protocol.ProtocolReader
+import io.frinx.unitopo.unit.xr7.network.instance.handler.vrf.protocol.aggregate.LocalAggregateConfigReader
+import io.frinx.unitopo.unit.xr7.network.instance.handler.vrf.protocol.aggregate.LocalAggregateConfigWriter
+import io.frinx.unitopo.unit.xr7.network.instance.handler.vrf.protocol.aggregate.LocalAggregateReader
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo
 import io.frinx.openconfig.openconfig.interfaces.IIDs as interfaces_IIDs
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907.`$YangModuleInfoImpl` as UnderlayInterfacesYangInfo

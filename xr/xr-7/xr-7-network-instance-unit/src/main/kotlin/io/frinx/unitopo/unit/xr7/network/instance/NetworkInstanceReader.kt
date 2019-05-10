@@ -20,7 +20,7 @@ import io.fd.honeycomb.translate.spi.read.ConfigListReaderCustomizer
 import io.frinx.translate.unit.commons.handler.spi.CompositeListReader
 import io.frinx.unitopo.ni.base.handler.vrf.def.DefaultReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.xr7.network.instance.vrf.L3VrfReader
+import io.frinx.unitopo.unit.xr7.network.instance.handler.vrf.L3VrfReader
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstanceBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstanceKey

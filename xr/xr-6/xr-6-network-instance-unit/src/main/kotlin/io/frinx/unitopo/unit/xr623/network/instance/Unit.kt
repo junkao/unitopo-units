@@ -29,9 +29,9 @@ import io.frinx.unitopo.registry.spi.TranslateUnit
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr623.network.instance.handler.NetworkInstanceConfigReader
 import io.frinx.unitopo.unit.xr623.network.instance.handler.NetworkInstanceReader
-import io.frinx.unitopo.unit.xr623.network.instance.handler.forwarding.PolicyForwardingInterfaceConfigReader
-import io.frinx.unitopo.unit.xr623.network.instance.handler.forwarding.PolicyForwardingInterfaceConfigWriter
-import io.frinx.unitopo.unit.xr623.network.instance.handler.forwarding.PolicyForwardingInterfaceReader
+import io.frinx.unitopo.unit.xr623.network.instance.handler.pf.PolicyForwardingInterfaceConfigReader
+import io.frinx.unitopo.unit.xr623.network.instance.handler.pf.PolicyForwardingInterfaceConfigWriter
+import io.frinx.unitopo.unit.xr623.network.instance.handler.pf.PolicyForwardingInterfaceReader
 import io.frinx.unitopo.unit.xr623.network.instance.handler.vrf.ifc.VrfInterfaceConfigWriter
 import io.frinx.unitopo.unit.xr623.network.instance.handler.vrf.ifc.VrfInterfaceReader
 import io.frinx.unitopo.unit.xr623.network.instance.handler.vrf.protocol.ProtocolConfigWriter
