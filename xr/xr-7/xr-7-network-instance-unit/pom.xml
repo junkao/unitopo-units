@@ -64,11 +64,6 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>utils-unit</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
             <groupId>io.frinx.translate.unit.commons</groupId>
             <artifactId>handlers</artifactId>
             <version>${translate.unit.commons.version}</version>
@@ -87,7 +82,7 @@
         </dependency>
         <dependency>
             <groupId>io.frinx.openconfig</groupId>
-            <artifactId>openconfig-types</artifactId>
+            <artifactId>openconfig-policy-forwarding</artifactId>
             <version>${openconfig.version}</version>
         </dependency>
         <dependency>
@@ -102,22 +97,12 @@
         </dependency>
         <dependency>
             <groupId>io.frinx.openconfig</groupId>
-            <artifactId>openconfig-extensions</artifactId>
-            <version>${openconfig.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.frinx.openconfig</groupId>
-            <artifactId>openconfig-vlan</artifactId>
-            <version>${openconfig.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.frinx.openconfig</groupId>
-            <artifactId>openconfig-if-ip</artifactId>
+            <artifactId>openconfig-bgp</artifactId>
             <version>${openconfig.version}</version>
         </dependency>
         <dependency>
             <groupId>org.opendaylight.mdsal.model</groupId>
-            <artifactId>ietf-inet-types-2013-07-15</artifactId>
+            <artifactId>iana-if-type-2014-05-08</artifactId>
         </dependency>
         <dependency>
             <groupId>org.opendaylight.mdsal</groupId>
@@ -125,6 +110,11 @@
         </dependency>
 
         <!-- Netconf testing dependencies-->
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-core</artifactId>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-library</artifactId>

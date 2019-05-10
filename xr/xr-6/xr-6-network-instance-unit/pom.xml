@@ -71,11 +71,6 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>xr-6-ip6-unit</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
             <artifactId>network-instance-base</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -84,6 +79,11 @@
             <groupId>io.frinx.translate.unit.commons</groupId>
             <artifactId>handlers</artifactId>
             <version>${translate.unit.commons.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>utils-unit</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
@@ -138,6 +138,11 @@
             <artifactId>openconfig-if-ip</artifactId>
             <version>${openconfig.version}</version>
         </dependency>
+        <dependency>
+            <groupId>io.frinx.openconfig</groupId>
+            <artifactId>openconfig-policy-forwarding</artifactId>
+            <version>${openconfig.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.opendaylight.mdsal.model</groupId>
@@ -157,6 +162,11 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-core</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
