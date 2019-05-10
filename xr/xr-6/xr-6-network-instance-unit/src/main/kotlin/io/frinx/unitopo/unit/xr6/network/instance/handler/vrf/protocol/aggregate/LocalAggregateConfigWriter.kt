@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-package io.frinx.unitopo.unit.xr6.network.instance.handler.vrf.protocol
+package io.frinx.unitopo.unit.xr6.network.instance.handler.vrf.protocol.aggregate
 
 import io.frinx.translate.unit.commons.handler.spi.CompositeWriter
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr6.bgp.handler.aggregates.BgpLocalAggregateConfigWriter
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.local.routing.rev170515.local.aggregate.top.local.aggregates.aggregate.Config
 
-class LocalAggregateConfigWriter(cli: UnderlayAccess) : CompositeWriter<Config>(listOf(
-        BgpLocalAggregateConfigWriter(cli)
-))
+class LocalAggregateConfigWriter(access: UnderlayAccess) : CompositeWriter<Config>(
+    listOf(
+        BgpLocalAggregateConfigWriter(access)
+    )
+)

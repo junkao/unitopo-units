@@ -35,9 +35,9 @@ import io.frinx.unitopo.unit.xr6.network.instance.handler.NetworkInstanceReader
 import io.frinx.unitopo.unit.xr6.network.instance.handler.NetworkInstanceStateReader
 import io.frinx.unitopo.unit.xr6.network.instance.handler.vrf.ifc.VrfInterfaceConfigWriter
 import io.frinx.unitopo.unit.xr6.network.instance.handler.vrf.ifc.VrfInterfaceReader
-import io.frinx.unitopo.unit.xr6.network.instance.handler.vrf.protocol.LocalAggregateConfigReader
-import io.frinx.unitopo.unit.xr6.network.instance.handler.vrf.protocol.LocalAggregateConfigWriter
-import io.frinx.unitopo.unit.xr6.network.instance.handler.vrf.protocol.LocalAggregateReader
+import io.frinx.unitopo.unit.xr6.network.instance.handler.vrf.protocol.aggregate.LocalAggregateConfigReader
+import io.frinx.unitopo.unit.xr6.network.instance.handler.vrf.protocol.aggregate.LocalAggregateConfigWriter
+import io.frinx.unitopo.unit.xr6.network.instance.handler.vrf.protocol.aggregate.LocalAggregateReader
 import io.frinx.unitopo.unit.xr6.network.instance.handler.vrf.protocol.ProtocolConfigWriter
 import io.frinx.unitopo.unit.xr6.network.instance.handler.vrf.protocol.ProtocolReader
 import io.frinx.unitopo.unit.xr6.network.instance.handler.vrf.table.TableConnectionConfigWriter

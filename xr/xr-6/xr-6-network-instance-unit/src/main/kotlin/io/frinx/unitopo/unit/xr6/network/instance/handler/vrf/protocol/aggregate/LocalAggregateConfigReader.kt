@@ -14,30 +14,17 @@
  * limitations under the License.
  */
 
-package io.frinx.unitopo.unit.junos18.network.instance.handler.vrf.protocol.aggregate
+package io.frinx.unitopo.unit.xr6.network.instance.handler.vrf.protocol.aggregate
 
 import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
 import io.frinx.translate.unit.commons.handler.spi.CompositeReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.junos18.bgp.handler.aggregate.BgpAggregateConfigReader
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.local.routing.rev170515.local.aggregate.top.local.aggregates.AggregateBuilder
+import io.frinx.unitopo.unit.xr6.bgp.handler.aggregates.BgpLocalAggregateConfigReader
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.local.routing.rev170515.local.aggregate.top.local.aggregates.aggregate.Config
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.local.routing.rev170515.local.aggregate.top.local.aggregates.aggregate.ConfigBuilder
-import org.opendaylight.yangtools.concepts.Builder
-import org.opendaylight.yangtools.yang.binding.DataObject
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class AggregateConfigReader(access: UnderlayAccess) :
-    ConfigReaderCustomizer<Config, ConfigBuilder>,
-    CompositeReader<Config, ConfigBuilder>(
-        listOf(
-            BgpAggregateConfigReader(access)
-        )
-    ) {
-
-    override fun getBuilder(id: InstanceIdentifier<Config>) = ConfigBuilder()
-
-    override fun merge(builder: Builder<out DataObject>, config: Config) {
-        (builder as AggregateBuilder).config = config
-    }
-}
+class LocalAggregateConfigReader(access: UnderlayAccess) : CompositeReader<Config, ConfigBuilder>(
+    listOf(
+        BgpLocalAggregateConfigReader()
+    )
+), ConfigReaderCustomizer<Config, ConfigBuilder>
