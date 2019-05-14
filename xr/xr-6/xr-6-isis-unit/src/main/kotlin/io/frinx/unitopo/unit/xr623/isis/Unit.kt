@@ -23,13 +23,15 @@ import io.frinx.openconfig.openconfig.network.instance.IIDs
 import io.frinx.unitopo.registry.api.TranslationUnitCollector
 import io.frinx.unitopo.registry.spi.TranslateUnit
 import io.frinx.unitopo.registry.spi.UnderlayAccess
+import io.frinx.unitopo.unit.xr623.isis.handler.interfaces.IsisInterfaceAfiSafiConfigReader
+import io.frinx.unitopo.unit.xr623.isis.handler.interfaces.IsisInterfaceAfiSafiReader
 import io.frinx.unitopo.unit.xr623.isis.handler.interfaces.IsisInterfaceAuthConfigReader
 import io.frinx.unitopo.unit.xr623.isis.handler.interfaces.IsisInterfaceAuthConfigWriter
 import io.frinx.unitopo.unit.xr623.isis.handler.interfaces.IsisInterfaceConfigReader
-import io.frinx.unitopo.unit.xr623.isis.handler.interfaces.IsisInterfaceConfigWriter
 import io.frinx.unitopo.unit.xr623.isis.handler.interfaces.IsisInterfaceReader
 import io.frinx.unitopo.unit.xr623.isis.handler.interfaces.IsisInterfaceTimersConfigReader
 import io.frinx.unitopo.unit.xr623.isis.handler.interfaces.IsisInterfaceTimersConfigWriter
+import io.frinx.unitopo.unit.xr623.isis.handler.interfaces.IsisInterfaceWriter
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.clns.isis.cfg.rev151109.`$YangModuleInfoImpl` as UnderlayIsisConfigYangModule
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.clns.isis.datatypes.rev151109.`$YangModuleInfoImpl` as UnderlayIsisTypesYangModule
@@ -69,19 +71,30 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
     private fun provideWriters(wRegistry: CustomizerAwareWriteRegistryBuilder, access: UnderlayAccess) {
         wRegistry.addNoop(IIDs.NE_NE_PR_PR_ISIS)
         wRegistry.addNoop(IIDs.NE_NE_PR_PR_IS_INTERFACES)
-        wRegistry.addNoop(IIDs.NE_NE_PR_PR_IS_IN_INTERFACE)
-        wRegistry.subtreeAdd(IIDs.NE_NE_PR_PR_IS_IN_IN_CONFIG, IsisInterfaceConfigWriter(access),
-            setOf(RWUtils.cutIdFromStart(IIDs.NE_NE_PR_PR_IS_IN_IN_CO_AUG_ISISIFCONFAUG,
-                IIDs.NE_NE_PR_PR_IS_IN_IN_CONFIG)))
+        wRegistry.subtreeAddAfter(IIDs.NE_NE_PR_PR_IS_IN_INTERFACE, IsisInterfaceWriter(access),
+            setOf(
+                RWUtils.cutIdFromStart(IIDs.NE_NE_PR_PR_IS_IN_IN_CONFIG, IIDs.NE_NE_PR_PR_IS_IN_INTERFACE),
+                RWUtils.cutIdFromStart(IIDs.NE_NE_PR_PR_IS_IN_IN_CO_AUG_ISISIFCONFAUG,
+                    IIDs.NE_NE_PR_PR_IS_IN_INTERFACE),
+                RWUtils.cutIdFromStart(IIDs.NE_NE_PR_PR_IS_IN_IN_AFISAFI, IIDs.NE_NE_PR_PR_IS_IN_INTERFACE),
+                RWUtils.cutIdFromStart(IIDs.NE_NE_PR_PR_IS_IN_IN_AF_AF, IIDs.NE_NE_PR_PR_IS_IN_INTERFACE),
+                RWUtils.cutIdFromStart(IIDs.NE_NE_PR_PR_IS_IN_IN_AF_AF_CONFIG, IIDs.NE_NE_PR_PR_IS_IN_INTERFACE),
+                RWUtils.cutIdFromStart(IIDs.NE_NE_PR_PR_IS_IN_IN_AF_AF_CO_AUG_ISISIFAFCONFAUG,
+                    IIDs.NE_NE_PR_PR_IS_IN_INTERFACE)
+            ),
+            IIDs.NE_NE_PR_PR_CONFIG
+        )
 
         wRegistry.addNoop(IIDs.NE_NE_PR_PR_IS_IN_IN_AUTHENTICATION)
         wRegistry.addNoop(IIDs.NE_NE_PR_PR_IS_IN_IN_AU_KEY)
-        wRegistry.add(IIDs.NE_NE_PR_PR_IS_IN_IN_AU_KE_CONFIG, IsisInterfaceAuthConfigWriter(access))
+        wRegistry.addAfter(IIDs.NE_NE_PR_PR_IS_IN_IN_AU_KE_CONFIG, IsisInterfaceAuthConfigWriter(access),
+            IIDs.NE_NE_PR_PR_IS_IN_IN_CONFIG)
 
         wRegistry.addNoop(IIDs.NE_NE_PR_PR_IS_IN_IN_TIMERS)
-        wRegistry.subtreeAdd(IIDs.NE_NE_PR_PR_IS_IN_IN_TI_CONFIG, IsisInterfaceTimersConfigWriter(access),
+        wRegistry.subtreeAddAfter(IIDs.NE_NE_PR_PR_IS_IN_IN_TI_CONFIG, IsisInterfaceTimersConfigWriter(access),
             setOf(RWUtils.cutIdFromStart(
-                IIDs.NE_NE_PR_PR_IS_IN_IN_TI_CO_AUG_ISISIFTIMERSCONFAUG, IIDs.NE_NE_PR_PR_IS_IN_IN_TI_CONFIG)))
+                IIDs.NE_NE_PR_PR_IS_IN_IN_TI_CO_AUG_ISISIFTIMERSCONFAUG, IIDs.NE_NE_PR_PR_IS_IN_IN_TI_CONFIG)),
+            IIDs.NE_NE_PR_PR_IS_IN_IN_CONFIG)
     }
 
     private fun provideReaders(rRegistry: CustomizerAwareReadRegistryBuilder, access: UnderlayAccess) {
@@ -95,6 +108,11 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
         rRegistry.subtreeAdd(IIDs.NE_NE_PR_PR_IS_IN_IN_TI_CONFIG, IsisInterfaceTimersConfigReader(access),
             setOf(RWUtils.cutIdFromStart(IIDs.NE_NE_PR_PR_IS_IN_IN_TI_CO_AUG_ISISIFTIMERSCONFAUG,
                 IIDs.NE_NE_PR_PR_IS_IN_IN_TI_CONFIG)))
+
+        rRegistry.add(IIDs.NE_NE_PR_PR_IS_IN_IN_AF_AF, IsisInterfaceAfiSafiReader(access))
+        rRegistry.subtreeAdd(IIDs.NE_NE_PR_PR_IS_IN_IN_AF_AF_CONFIG, IsisInterfaceAfiSafiConfigReader(access),
+            setOf(RWUtils.cutIdFromStart(IIDs.NE_NE_PR_PR_IS_IN_IN_AF_AF_CO_AUG_ISISIFAFCONFAUG,
+                IIDs.NE_NE_PR_PR_IS_IN_IN_AF_AF_CONFIG)))
     }
 
     override fun toString(): String = "XR 6 (2019-03-15) ISIS translate unit"

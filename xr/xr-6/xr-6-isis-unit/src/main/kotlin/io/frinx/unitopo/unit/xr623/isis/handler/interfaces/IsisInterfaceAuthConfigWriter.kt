@@ -100,7 +100,7 @@ class IsisInterfaceAuthConfigWriter(private val underlayAccess: UnderlayAccess) 
 
     companion object {
         fun getUnderlayId(instanceName: String, interfaceId: String): IID<HelloPassword> {
-            return IsisInterfaceConfigWriter.getUnderlayId(instanceName, interfaceId)
+            return IsisInterfaceWriter.getUnderlayId(instanceName, interfaceId)
                 .child(HelloPasswords::class.java)
                 .child(HelloPassword::class.java, HelloPasswordKey(IsisInternalLevel.NotSet))
         }

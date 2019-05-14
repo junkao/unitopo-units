@@ -65,7 +65,6 @@ class IsisInterfaceTimersConfigWriter(private val underlayAccess: UnderlayAccess
         val interfaceId = id.firstKeyOf(Interface::class.java)
         val underlayId = getUnderlayId(instanceName.name, interfaceId.interfaceId.value)
 
-        underlayAccess.read(underlayId)
         val ifc = underlayAccess.read(underlayId).checkedGet()
         val builder = when (ifc.isPresent) {
             false -> LspRetransmitIntervalBuilder()
@@ -81,7 +80,7 @@ class IsisInterfaceTimersConfigWriter(private val underlayAccess: UnderlayAccess
 
     companion object {
         fun getUnderlayId(instanceName: String, interfaceId: String): IID<LspRetransmitInterval> {
-            return IsisInterfaceConfigWriter.getUnderlayId(instanceName, interfaceId)
+            return IsisInterfaceWriter.getUnderlayId(instanceName, interfaceId)
                 .child(LspRetransmitIntervals::class.java)
                 .child(LspRetransmitInterval::class.java, LspRetransmitIntervalKey(IsisInternalLevel.NotSet))
         }
