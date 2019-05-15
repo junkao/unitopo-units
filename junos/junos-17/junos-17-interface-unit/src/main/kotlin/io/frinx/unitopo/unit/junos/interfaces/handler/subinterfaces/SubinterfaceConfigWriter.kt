@@ -16,9 +16,7 @@
 
 package io.frinx.unitopo.unit.junos.interfaces.handler.subinterfaces
 
-import io.fd.honeycomb.translate.spi.write.WriterCustomizer
-import io.fd.honeycomb.translate.write.WriteContext
-import io.fd.honeycomb.translate.write.WriteFailedException
+import io.frinx.unitopo.ifc.base.handler.subinterfaces.AbstractSubinterfaceConfigWriter
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.junos.interfaces.handler.InterfaceReader
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.Interface
@@ -31,67 +29,20 @@ import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configur
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.config.interfaces.Interface as JunosInterface
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.config.interfaces.InterfaceKey as JunosInterfaceKey
 
-class SubinterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCustomizer<Config> {
+class SubinterfaceConfigWriter(underlayAccess: UnderlayAccess) :
+    AbstractSubinterfaceConfigWriter<JunosInterfaceUnit>(underlayAccess) {
 
-    override fun writeCurrentAttributes(
-        id: InstanceIdentifier<Config>,
-        dataAfter: Config,
-        writeContext: WriteContext
-    ) {
-        val (underlayIfcUnitId, underlayIfcUnit) = getData(id, dataAfter)
-
-        try {
-            underlayAccess.put(underlayIfcUnitId, underlayIfcUnit)
-        } catch (e: Exception) {
-            throw WriteFailedException(id, e)
-        }
-    }
-
-    override fun deleteCurrentAttributes(
-        id: InstanceIdentifier<Config>,
-        dataBefore: Config,
-        writeContext: WriteContext
-    ) {
-        val (_, underlayIfcUnitId) = getUnderlayId(id)
-
-        try {
-            underlayAccess.delete(underlayIfcUnitId)
-        } catch (e: Exception) {
-            throw WriteFailedException(id, e)
-        }
-    }
-
-    override fun updateCurrentAttributes(
-        id: InstanceIdentifier<Config>,
-        dataBefore: Config,
-        dataAfter: Config,
-        writeContext: WriteContext
-    ) {
-        val (underlayIfcUnitId, underlayIfcUnit) = getData(id, dataAfter)
-
-        try {
-            underlayAccess.merge(underlayIfcUnitId, underlayIfcUnit)
-        } catch (e: Exception) {
-            throw WriteFailedException(id, e)
-        }
-    }
-
-    private fun getData(id: InstanceIdentifier<Config>, dataAfter: Config):
-            Pair<InstanceIdentifier<JunosInterfaceUnit>, JunosInterfaceUnit> {
-        val (unitName, underlayIfcUnitId) = getUnderlayId(id)
+    override fun getData(data: Config, ifcName: String): JunosInterfaceUnit {
         val ifcUnitBuilder = JunosInterfaceUnitBuilder()
-        ifcUnitBuilder.name = unitName
-
-        return Pair(underlayIfcUnitId, ifcUnitBuilder.build())
+        ifcUnitBuilder.name = data.index.toString()
+        return ifcUnitBuilder.build()
     }
 
-    private fun getUnderlayId(id: InstanceIdentifier<Config>): Pair<String, InstanceIdentifier<JunosInterfaceUnit>> {
+    override fun getIid(id: InstanceIdentifier<Config>): InstanceIdentifier<JunosInterfaceUnit> {
         val ifcName = id.firstKeyOf(Interface::class.java).name
         val underlayIfcUnitName = id.firstKeyOf(Subinterface::class.java).index.toString()
-        val underlayIfcUnitId = InterfaceReader.IFCS
+        return InterfaceReader.IFCS
                 .child(JunosInterface::class.java, JunosInterfaceKey(ifcName))
                 .child(JunosInterfaceUnit::class.java, JunosInterfaceUnitKey(underlayIfcUnitName))
-
-        return Pair(underlayIfcUnitName, underlayIfcUnitId)
     }
 }

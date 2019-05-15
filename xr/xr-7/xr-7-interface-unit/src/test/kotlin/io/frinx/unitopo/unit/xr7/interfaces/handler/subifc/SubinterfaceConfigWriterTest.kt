@@ -98,13 +98,13 @@ class SubinterfaceConfigWriterTest : AbstractNetconfHandlerTest() {
         val dataCap = ArgumentCaptor
                 .forClass(DataObject::class.java) as ArgumentCaptor<InterfaceConfiguration>
 
-        Mockito.doNothing().`when`(underlayAccess).put(Mockito.any(), Mockito.any())
+        Mockito.doNothing().`when`(underlayAccess).safePut(Mockito.any(), Mockito.any())
 
         // test
         target.writeCurrentAttributes(IID_SUB_INTERFACE_CONFIG, config, writeContext)
 
         // capture
-        Mockito.verify(underlayAccess, Mockito.times(1)).put(idCap.capture(), dataCap.capture())
+        Mockito.verify(underlayAccess, Mockito.times(1)).safePut(idCap.capture(), dataCap.capture())
 
         // verify capture-length
         Assert.assertThat(idCap.allValues.size, CoreMatchers.`is`(1))

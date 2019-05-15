@@ -16,8 +16,8 @@
 
 package io.frinx.unitopo.unit.xr6.interfaces.handler.subifc
 
-import io.fd.honeycomb.translate.spi.write.WriterCustomizer
 import io.fd.honeycomb.translate.write.WriteContext
+import io.frinx.unitopo.ifc.base.handler.subinterfaces.AbstractSubinterfaceConfigWriter
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr6.interfaces.Util
 import io.frinx.unitopo.unit.xr6.interfaces.handler.InterfaceReader
@@ -30,10 +30,10 @@ import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.xr.types.rev150
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.Interface
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.subinterfaces.Subinterface
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.subinterfaces.subinterface.Config
-import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class SubinterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCustomizer<Config> {
+class SubinterfaceConfigWriter(underlayAccess: UnderlayAccess) :
+    AbstractSubinterfaceConfigWriter<InterfaceConfiguration>(underlayAccess) {
 
     override fun deleteCurrentAttributes(
         id: InstanceIdentifier<Config>,
@@ -43,75 +43,50 @@ class SubinterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : Wri
         if (id.firstKeyOf(Subinterface::class.java).index == Util.ZERO_SUBINTERFACE_ID) {
             return
         }
-
-        val (_, _, underlayId) = getId(id)
-        underlayAccess.delete(underlayId)
+        super.deleteCurrentAttributes(id, dataBefore, writeContext)
     }
 
     override fun writeCurrentAttributes(id: InstanceIdentifier<Config>, dataAfter: Config, writeContext: WriteContext) {
         if (id.firstKeyOf(Subinterface::class.java).index == Util.ZERO_SUBINTERFACE_ID) {
             return
         }
-
-        val (underlayId, underlayIfcCfg) = getData(id, dataAfter, underlayAccess)
-        underlayAccess.put(underlayId, underlayIfcCfg)
+        super.writeCurrentAttributes(id, dataAfter, writeContext)
     }
 
-    override fun updateCurrentAttributes(
-        id: InstanceIdentifier<Config>,
-        dataBefore: Config,
-        dataAfter: Config,
-        writeContext: WriteContext
-    ) {
-        writeCurrentAttributes(id, dataAfter, writeContext)
+    override fun getIid(id: InstanceIdentifier<Config>): InstanceIdentifier<InterfaceConfiguration> {
+
+        // TODO supporting only "act" interfaces
+        val interfaceActive = InterfaceActive("act")
+
+        val underlaySubifcName = InterfaceName(
+            getSubIfcName(id.firstKeyOf(Interface::class.java).name,
+                id.firstKeyOf(Subinterface::class.java).index))
+
+        return InterfaceReader.IFC_CFGS.child(InterfaceConfiguration::class.java,
+            InterfaceConfigurationKey(interfaceActive, underlaySubifcName))
+    }
+
+    override fun getData(data: Config, ifcName: String): InterfaceConfiguration {
+        val ifcCfgBuilder = InterfaceConfigurationBuilder()
+        ifcCfgBuilder.toUnderlay(data, ifcName)
+        return ifcCfgBuilder.build()
+    }
+
+    private fun InterfaceConfigurationBuilder.toUnderlay(data: Config, ifcName: String) {
+        if (data.shutdown()) {
+            isShutdown = true
+        }
+        interfaceName = InterfaceName(ifcName)
+        active = InterfaceActive("act")
+        interfaceModeNonPhysical = InterfaceModeEnum.Default
+        description = data.description
     }
 
     companion object {
-        fun isInterfaceVirtual(ifcName: InterfaceName) =
-            ifcName.value.startsWith("Loopback") || ifcName.value.startsWith("null")
-
         private fun Config.shutdown() = when (isEnabled) {
             null -> false
             true -> false
             else -> true
-        }
-
-        public fun getId(id: InstanceIdentifier<out DataObject>):
-                Triple<InterfaceActive, InterfaceName, InstanceIdentifier<InterfaceConfiguration>> {
-
-            // TODO supporting only "act" interfaces
-            val interfaceActive = InterfaceActive("act")
-
-            val underlaySubifcName = InterfaceName(
-                    getSubIfcName(id.firstKeyOf(Interface::class.java).name,
-                        id.firstKeyOf(Subinterface::class.java).index))
-
-            val underlayId = InterfaceReader.IFC_CFGS.child(InterfaceConfiguration::class.java,
-                    InterfaceConfigurationKey(interfaceActive, underlaySubifcName))
-
-            return Triple(interfaceActive, underlaySubifcName, underlayId)
-        }
-
-        public fun getData(id: InstanceIdentifier<Config>, dataAfter: Config, access: UnderlayAccess):
-                Pair<InstanceIdentifier<InterfaceConfiguration>, InterfaceConfiguration> {
-            val (interfaceActive, ifcName, underlayId) = getId(id)
-
-            val underlayBefore = access.read(underlayId)
-                .checkedGet()
-                .orNull()
-            val ifcCfgBuilder = when (underlayBefore) {
-                null -> InterfaceConfigurationBuilder()
-                else -> InterfaceConfigurationBuilder(underlayBefore)
-            }
-            if (dataAfter.shutdown()) ifcCfgBuilder.isShutdown = true
-
-            val underlayIfcCfg = ifcCfgBuilder
-                    .setInterfaceName(ifcName)
-                    .setActive(interfaceActive)
-                    .setInterfaceModeNonPhysical(InterfaceModeEnum.Default)
-                    .setDescription(dataAfter.description)
-                    .build()
-            return Pair(underlayId, underlayIfcCfg)
         }
     }
 }

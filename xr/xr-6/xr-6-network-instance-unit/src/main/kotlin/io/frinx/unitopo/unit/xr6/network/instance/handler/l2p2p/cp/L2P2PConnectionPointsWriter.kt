@@ -79,7 +79,6 @@ import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.l2.eth.i
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.l2vpn.cfg.rev151109.InterfaceConfiguration3 as UnderlayIfcL2TransportAug
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.l2vpn.cfg.rev151109.InterfaceConfiguration3Builder as UnderlayIfcL2TransportAugBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.Subinterface1 as IpSubInterfaceAug
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.subinterfaces.subinterface.Config as SubinterfaceConfig
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.vlan.rev170714.vlan.logical.top.Vlan as OpenConfigVlan
 
 class L2P2PConnectionPointsWriter(private val underlayAccess: UnderlayAccess) : TypedWriter<ConnectionPoints> {
@@ -244,8 +243,8 @@ class L2P2PConnectionPointsWriter(private val underlayAccess: UnderlayAccess) : 
         // Underlay interface configuration representing subinterface is needed here, so read it from underlay
         // or if not present (we are configuring it right now) invoke SubinterfaceWriter to render the data
         val subinterfaceFromUnderlay = underlayAccess.read(underlayIfcId).get()
-        val subinterfaceToConfigure = SubinterfaceConfigWriter.getData(subIfcId.child(SubinterfaceConfig::class.java),
-            subinterfaceData.config, underlayAccess).second
+        val subinterfaceToConfigure = SubinterfaceConfigWriter(underlayAccess).getData(subinterfaceData.config,
+            underlayIfcName)
         val underlaySubifcConfiguration = requireNotNull(
                 subinterfaceFromUnderlay.or({ subinterfaceToConfigure }),
                 { "Cannot configure L2P2P on non-existent subinterface $underlayIfcName" })

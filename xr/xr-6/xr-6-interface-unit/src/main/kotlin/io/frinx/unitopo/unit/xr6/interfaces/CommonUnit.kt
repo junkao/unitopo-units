@@ -20,7 +20,6 @@ import io.fd.honeycomb.rpc.RpcService
 import io.fd.honeycomb.translate.impl.read.GenericConfigListReader
 import io.fd.honeycomb.translate.impl.read.GenericConfigReader
 import io.fd.honeycomb.translate.impl.read.GenericOperReader
-import io.fd.honeycomb.translate.impl.write.GenericListWriter
 import io.fd.honeycomb.translate.impl.write.GenericWriter
 import io.fd.honeycomb.translate.spi.builder.CustomizerAwareReadRegistryBuilder
 import io.fd.honeycomb.translate.spi.builder.CustomizerAwareWriteRegistryBuilder
@@ -46,7 +45,6 @@ import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.SubinterfaceReader
 import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.SubinterfaceStateReader
 import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.SubinterfaceStatisticsConfigReader
 import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.SubinterfaceStatisticsConfigWriter
-import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.SubinterfaceWriter
 import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.ipv4.Ipv4MtuConfigReader
 import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.ipv4.Ipv4MtuConfigWriter
 import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.vlan.SubinterfaceVlanConfigReader
@@ -115,8 +113,7 @@ abstract class CommonUnit(private val registry: TranslationUnitCollector) : Unit
         wRegistry.addNoop(IIDs.IN_INTERFACE)
         wRegistry.add(GenericWriter(IIDs.IN_IN_CONFIG, InterfaceConfigWriter(underlayAccess)))
 
-        // TODO extract noop writer and use that, then delete empty SubinterfaceWriter
-        wRegistry.add(GenericListWriter(IIDs.IN_IN_SU_SUBINTERFACE, SubinterfaceWriter()))
+        wRegistry.addNoop(IIDs.IN_IN_SU_SUBINTERFACE)
         wRegistry.addAfter(GenericWriter(IIDs.IN_IN_SU_SU_CONFIG, SubinterfaceConfigWriter(underlayAccess)),
                 IIDs.IN_IN_CONFIG)
         wRegistry.addAfter(GenericWriter(IIDs.IN_IN_AUG_IFDAMPAUG_DA_CONFIG,
