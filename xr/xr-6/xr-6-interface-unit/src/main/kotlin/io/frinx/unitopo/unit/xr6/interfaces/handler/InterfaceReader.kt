@@ -43,6 +43,8 @@ class InterfaceReader(underlayAccess: UnderlayAccess) : AbstractInterfaceReader<
 
     override val readIid: InstanceIdentifier<DataNodes> = DATA_NODES_ID
 
+    override val readDSType: LogicalDatastoreType = LogicalDatastoreType.OPERATIONAL
+
     companion object {
         /**
          * Uses DATA_NODES_ID/interface-properties instead of IFC_CFGS because IFC_CFGS does not return un-configured

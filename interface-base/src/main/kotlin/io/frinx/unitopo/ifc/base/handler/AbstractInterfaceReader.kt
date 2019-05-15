@@ -41,7 +41,7 @@ abstract class AbstractInterfaceReader<T : DataObject>(protected val underlayAcc
         List<InterfaceKey> = getInterfaceIds()
 
     fun getInterfaceIds(): List<InterfaceKey> =
-        underlayAccess.read(readIid, LogicalDatastoreType.CONFIGURATION)
+        underlayAccess.read(readIid, readDSType)
         .checkedGet()
         .orNull()
         ?.let { parseInterfaceIds(it) }.orEmpty()
@@ -49,4 +49,6 @@ abstract class AbstractInterfaceReader<T : DataObject>(protected val underlayAcc
     abstract fun parseInterfaceIds(data: T): List<InterfaceKey>
 
     abstract val readIid: InstanceIdentifier<T>
+
+    open val readDSType: LogicalDatastoreType = LogicalDatastoreType.CONFIGURATION
 }

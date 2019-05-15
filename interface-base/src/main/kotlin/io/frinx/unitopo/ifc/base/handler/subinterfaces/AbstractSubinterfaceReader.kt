@@ -32,13 +32,14 @@ abstract class AbstractSubinterfaceReader<T : DataObject>(protected val underlay
 
     override fun getAllIds(iid: InstanceIdentifier<Subinterface>, context: ReadContext): List<SubinterfaceKey> {
         val ifcName = iid.firstKeyOf(Interface::class.java).name
-        return underlayAccess.read(readIid(ifcName), LogicalDatastoreType.CONFIGURATION)
+        return underlayAccess.read(readIid(ifcName), readDSType)
             .checkedGet().orNull()?.let {
                 parseSubInterfaceIds(it, ifcName)
             }.orEmpty()
     }
 
     abstract fun readIid(ifcName: String): InstanceIdentifier<T>
+    open val readDSType: LogicalDatastoreType = LogicalDatastoreType.CONFIGURATION
 
     abstract fun parseSubInterfaceIds(data: T, ifcName: String): List<SubinterfaceKey>
 

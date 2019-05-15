@@ -20,6 +20,7 @@ import io.frinx.unitopo.ifc.base.handler.subinterfaces.AbstractSubinterfaceReade
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr6.interfaces.Util
 import io.frinx.unitopo.unit.xr6.interfaces.handler.InterfaceReader
+import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.oper.rev150730._interface.properties.DataNodes
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.subinterfaces.SubinterfaceKey
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
@@ -33,6 +34,8 @@ class SubinterfaceReader(underlayAccess: UnderlayAccess) : AbstractSubinterfaceR
     private val ifaceReader = InterfaceReader(underlayAccess)
 
     override fun readIid(ifcName: String): InstanceIdentifier<DataNodes> = InterfaceReader.DATA_NODES_ID
+
+    override val readDSType: LogicalDatastoreType = LogicalDatastoreType.OPERATIONAL
 
     override fun parseSubInterfaceIds(data: DataNodes, ifcName: String): List<SubinterfaceKey> {
         val subIfcKeys = ifaceReader.getInterfaceIds()
