@@ -16,8 +16,7 @@
 
 package io.frinx.unitopo.unit.xr6.interfaces.handler
 
-import io.fd.honeycomb.translate.spi.write.WriterCustomizer
-import io.fd.honeycomb.translate.write.WriteContext
+import io.frinx.unitopo.ifc.base.handler.AbstractInterfaceConfigWriter
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev150730.InterfaceActive
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev150730._interface.configurations.InterfaceConfiguration
@@ -34,86 +33,46 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.iana._if.type.re
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.interfaces.rev140508.InterfaceType
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class InterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCustomizer<Config> {
+class InterfaceConfigWriter(underlayAccess: UnderlayAccess) :
+    AbstractInterfaceConfigWriter<InterfaceConfiguration>(underlayAccess) {
 
-    override fun writeCurrentAttributes(id: InstanceIdentifier<Config>, dataAfter: Config, writeContext: WriteContext) {
-        val (underlayId, underlayIfcCfg) = getData(id, dataAfter, null)
-
-        underlayAccess.put(underlayId, underlayIfcCfg)
+    override fun getData(data: Config): InterfaceConfiguration {
+        val ifcCfgBuilder = InterfaceConfigurationBuilder()
+        ifcCfgBuilder.toUnderlay(data)
+        return ifcCfgBuilder.build()
     }
 
-    override fun deleteCurrentAttributes(
-        id: InstanceIdentifier<Config>,
-        dataBefore: Config,
-        writeContext: WriteContext
-    ) {
-        val (_, _, underlayId) = getId(id)
-
-        underlayAccess.delete(underlayId)
-    }
-
-    override fun updateCurrentAttributes(
-        id: InstanceIdentifier<Config>,
-        dataBefore: Config,
-        dataAfter: Config,
-        writeContext: WriteContext
-    ) {
-        val (_, _, underlayId) = getId(id)
-        val before = underlayAccess.read(underlayId)
-                .checkedGet()
-                .orNull()
-
-        val (_, underlayIfcCfg) = getData(id, dataAfter, before)
-
-        underlayAccess.put(underlayId, underlayIfcCfg)
-    }
-
-    private fun getData(id: InstanceIdentifier<Config>, dataAfter: Config, underlayBefore: InterfaceConfiguration?):
-            Pair<InstanceIdentifier<InterfaceConfiguration>, InterfaceConfiguration> {
-        val (interfaceActive, ifcName, underlayId) = getId(id)
-
-        val ifcCfgBuilder =
-                if (underlayBefore != null) InterfaceConfigurationBuilder(underlayBefore) else
-                    InterfaceConfigurationBuilder()
-
-        if (dataAfter.shutdown()) ifcCfgBuilder.isShutdown = true else
-            ifcCfgBuilder.isShutdown = null
-
-        if (isVirtualInterface(dataAfter.type)) ifcCfgBuilder.isInterfaceVirtual = true
-
-        ifcCfgBuilder.apply {
-            mtus = when (dataAfter.mtu) {
-                null -> null
-                else -> MtusBuilder().apply {
-                    mtu = listOf(MtuBuilder().setMtu(dataAfter.mtu.toLong())
-                        .setOwner(CiscoIosXrString("etherbundle"))
-                        .build())
-                }.build()
-            }
+    private fun InterfaceConfigurationBuilder.toUnderlay(data: Config) {
+        interfaceName = InterfaceName(data.name)
+        active = InterfaceActive("act")
+        description = data.description
+        interfaceModeNonPhysical = null
+        if (data.shutdown()) {
+            isShutdown = true
+        } else {
+            isShutdown = null
         }
-
-        val underlayIfcCfg = ifcCfgBuilder
-                .setInterfaceName(ifcName)
-                .setActive(interfaceActive)
-                .setDescription(dataAfter.description)
-                .setInterfaceModeNonPhysical(null)
+        if (isVirtualInterface(data.type)) {
+            isInterfaceVirtual = true
+        }
+        if (data.mtu != null) {
+            val mtu = MtuBuilder().setMtu(data.mtu.toLong())
+                .setOwner(CiscoIosXrString("etherbundle"))
                 .build()
-
-        return Pair(underlayId, underlayIfcCfg)
+            mtus = MtusBuilder().setMtu(listOf(mtu)).build()
+        }
     }
 
     private fun Config.shutdown() = isEnabled == null || !isEnabled
 
-    private fun getId(id: InstanceIdentifier<Config>):
-            Triple<InterfaceActive, InterfaceName, InstanceIdentifier<InterfaceConfiguration>> {
+    override fun getIid(id: InstanceIdentifier<Config>): InstanceIdentifier<InterfaceConfiguration> {
         // TODO supporting only "act" interfaces
 
         val interfaceActive = InterfaceActive("act")
         val ifcName = InterfaceName(id.firstKeyOf(Interface::class.java).name)
 
-        val underlayId = InterfaceReader.IFC_CFGS
+        return InterfaceReader.IFC_CFGS
                 .child(InterfaceConfiguration::class.java, InterfaceConfigurationKey(interfaceActive, ifcName))
-        return Triple(interfaceActive, ifcName, underlayId)
     }
 
     companion object {

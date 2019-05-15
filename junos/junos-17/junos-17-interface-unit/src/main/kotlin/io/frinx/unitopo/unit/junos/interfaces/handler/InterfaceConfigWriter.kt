@@ -15,10 +15,7 @@
  */
 package io.frinx.unitopo.unit.junos.interfaces.handler
 
-import io.fd.honeycomb.translate.read.ReadFailedException
-import io.fd.honeycomb.translate.spi.write.WriterCustomizer
-import io.fd.honeycomb.translate.write.WriteContext
-import io.fd.honeycomb.translate.write.WriteFailedException
+import io.frinx.unitopo.ifc.base.handler.AbstractInterfaceConfigWriter
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.Interface
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces._interface.Config
@@ -34,79 +31,34 @@ import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configur
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.config.interfaces.InterfaceBuilder as JunosInterfaceBuilder
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.config.interfaces.InterfaceKey as JunosInterfaceKey
 
-class InterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCustomizer<Config> {
+class InterfaceConfigWriter(underlayAccess: UnderlayAccess) :
+    AbstractInterfaceConfigWriter<JunosInterface>(underlayAccess) {
 
-    override fun writeCurrentAttributes(
-        id: InstanceIdentifier<Config>,
-        dataAfter: Config,
-        writeContext: WriteContext
-    ) {
-        val (underlayId, underlayIfcCfg) = getData(id, dataAfter)
-
-        try {
-            underlayAccess.put(underlayId, underlayIfcCfg)
-        } catch (e: Exception) {
-            throw WriteFailedException(id, e)
+    override fun getData(data: Config): JunosInterface {
+        require(isIfaceNameAndTypeValid(data.name, data.type)) {
+            "Provided type: ${data.type} doesn't match interface name: ${data.name}"
         }
-    }
-
-    override fun deleteCurrentAttributes(
-        id: InstanceIdentifier<Config>,
-        dataBefore: Config,
-        writeContext: WriteContext
-    ) {
-        val (_, underlayId) = getUnderlayId(id)
-
-        try {
-            underlayAccess.delete(underlayId)
-        } catch (e: Exception) {
-            throw ReadFailedException(id, e)
-        }
-    }
-
-    override fun updateCurrentAttributes(
-        id: InstanceIdentifier<Config>,
-        dataBefore: Config,
-        dataAfter: Config,
-        writeContext: WriteContext
-    ) {
-        // same as write - preserve existing data and override changed.
-        writeCurrentAttributes(id, dataAfter, writeContext)
-    }
-
-    private fun getData(id: InstanceIdentifier<Config>, dataAfter: Config):
-            Pair<InstanceIdentifier<JunosInterface>, JunosInterface> {
-        checkPreconditions(dataAfter, id)
-        val (ifcName, underlayId) = getUnderlayId(id)
         val ifcBuilder = JunosInterfaceBuilder()
-        setJunosInterfaceBuilder(dataAfter, id, ifcBuilder)
-        return Pair(underlayId, ifcBuilder.build())
+        ifcBuilder.toUnderlay(data)
+        return ifcBuilder.build()
     }
 
-    private fun setJunosInterfaceBuilder(
-        dataAfter: Config,
-        id: InstanceIdentifier<Config>,
-        ifcBuilder: JunosInterfaceBuilder
-    ) {
-        val (ifcName, _) = getUnderlayId(id)
-        if (dataAfter.shutdown())
-            ifcBuilder.enableDisable = Case1Builder().setDisable(true).build()
-        else
-            ifcBuilder.enableDisable = Case1Builder().setDisable(null).build()
-        if (dataAfter.mtu != null)
-            ifcBuilder.mtu = InterfacesType.Mtu(dataAfter.mtu.toLong())
-        else
-            ifcBuilder.mtu = null
-        ifcBuilder.name = ifcName
-        ifcBuilder.description = dataAfter.description
+    override fun getIid(id: InstanceIdentifier<Config>): InstanceIdentifier<JunosInterface> {
+        val ifcName = id.firstKeyOf(Interface::class.java).name
+        return InterfaceReader.IFCS.child(JunosInterface::class.java, JunosInterfaceKey(ifcName))
     }
 
-    private fun checkPreconditions(dataAfter: Config, id: InstanceIdentifier<Config>) {
-        val (ifcName, underlayId) = getUnderlayId(id)
-        if (!isIfaceNameAndTypeValid(ifcName, dataAfter.type)) {
-            throw WriteFailedException(underlayId, String.format("Provided type: {} doesn't match interface name: {}",
-                    dataAfter.type, ifcName))
-        }
+    private fun JunosInterfaceBuilder.toUnderlay(data: Config) {
+        enableDisable = if (data.shutdown())
+            Case1Builder().setDisable(true).build()
+        else
+            Case1Builder().setDisable(null).build()
+        if (data.mtu != null)
+            mtu = InterfacesType.Mtu(data.mtu.toLong())
+        else
+            mtu = null
+        name = data.name
+        description = data.description
     }
 
     private fun isIfaceNameAndTypeValid(ifcName: String, type: Class<out InterfaceType>?): Boolean {
@@ -117,13 +69,6 @@ class InterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : Writer
             Other::class.java -> true
             else -> false
         }
-    }
-
-    private fun getUnderlayId(id: InstanceIdentifier<Config>): Pair<String, InstanceIdentifier<JunosInterface>> {
-        val ifcName = id.firstKeyOf(Interface::class.java).name
-        val underlayId = InterfaceReader.IFCS.child(JunosInterface::class.java, JunosInterfaceKey(ifcName))
-
-        return Pair(ifcName, underlayId)
     }
 
     private fun Config.shutdown() = isEnabled == null || !isEnabled

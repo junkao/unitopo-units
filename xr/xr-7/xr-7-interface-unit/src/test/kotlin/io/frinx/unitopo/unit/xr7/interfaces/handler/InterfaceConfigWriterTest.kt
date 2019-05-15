@@ -94,7 +94,7 @@ class InterfaceConfigWriterTest : AbstractNetconfHandlerTest() {
     fun setUp() {
         MockitoAnnotations.initMocks(this)
         underlayAccess = Mockito.spy(NetconfAccessHelper(NC_HELPER))
-        target = Mockito.spy(InterfaceConfigWriter(underlayAccess))
+        target = InterfaceConfigWriter(underlayAccess)
     }
 
     @Test
@@ -109,13 +109,14 @@ class InterfaceConfigWriterTest : AbstractNetconfHandlerTest() {
         val dataCap = ArgumentCaptor
                 .forClass(DataObject::class.java) as ArgumentCaptor<InterfaceConfiguration>
 
-        Mockito.doNothing().`when`(underlayAccess).put(Mockito.any(), Mockito.any())
+        Mockito.doNothing().`when`(underlayAccess).safePut(Mockito.any(), Mockito.any())
 
         // test
         target.writeCurrentAttributes(IID_CONFIG, config, writeContext)
 
         // capture
-        Mockito.verify(underlayAccess, Mockito.times(1)).put(idCap.capture(), dataCap.capture())
+        Mockito.verify(underlayAccess,
+            Mockito.times(1)).safePut(idCap.capture(), dataCap.capture())
 
         // verify capture-length
         Assert.assertThat(idCap.allValues.size, CoreMatchers.`is`(1))
@@ -174,13 +175,16 @@ class InterfaceConfigWriterTest : AbstractNetconfHandlerTest() {
         val dataCap = ArgumentCaptor
                 .forClass(DataObject::class.java) as ArgumentCaptor<InterfaceConfiguration>
 
-        Mockito.doNothing().`when`(underlayAccess).put(Mockito.any(), Mockito.any())
+        Mockito.doNothing().`when`(underlayAccess).safeMerge(Mockito.any(),
+            Mockito.any(), Mockito.any(), Mockito.any())
 
         // test
         target.updateCurrentAttributes(IID_CONFIG, configBefore, configAfter, writeContext)
 
         // capture
-        Mockito.verify(underlayAccess, Mockito.times(1)).put(idCap.capture(), dataCap.capture())
+        Mockito.verify(underlayAccess,
+            Mockito.times(1)).safeMerge(
+            Mockito.any(), Mockito.any(), idCap.capture(), dataCap.capture())
 
         // verify capture-length
         Assert.assertThat(idCap.allValues.size, CoreMatchers.`is`(1))

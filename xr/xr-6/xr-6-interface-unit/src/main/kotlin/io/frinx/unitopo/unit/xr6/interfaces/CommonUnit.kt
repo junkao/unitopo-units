@@ -36,7 +36,6 @@ import io.frinx.unitopo.unit.xr6.interfaces.handler.InterfaceReader
 import io.frinx.unitopo.unit.xr6.interfaces.handler.InterfaceStateReader
 import io.frinx.unitopo.unit.xr6.interfaces.handler.InterfaceStatisticsConfigReader
 import io.frinx.unitopo.unit.xr6.interfaces.handler.InterfaceStatisticsConfigWriter
-import io.frinx.unitopo.unit.xr6.interfaces.handler.InterfaceWriter
 import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.Ipv4AddressConfigReader
 import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.Ipv4AddressConfigWriter
 import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.Ipv4AddressReader
@@ -113,8 +112,7 @@ abstract class CommonUnit(private val registry: TranslationUnitCollector) : Unit
     }
 
     private fun provideWriters(wRegistry: CustomizerAwareWriteRegistryBuilder, underlayAccess: UnderlayAccess) {
-        // TODO extract noop writer and use that, then delete empty InterfaceWriter
-        wRegistry.add(GenericListWriter(IIDs.IN_INTERFACE, InterfaceWriter()))
+        wRegistry.addNoop(IIDs.IN_INTERFACE)
         wRegistry.add(GenericWriter(IIDs.IN_IN_CONFIG, InterfaceConfigWriter(underlayAccess)))
 
         // TODO extract noop writer and use that, then delete empty SubinterfaceWriter

@@ -16,9 +16,7 @@
 
 package io.frinx.unitopo.unit.xr7.interfaces.handler
 
-import io.fd.honeycomb.translate.spi.write.WriterCustomizer
-import io.fd.honeycomb.translate.write.WriteContext
-import io.fd.honeycomb.translate.write.WriteFailedException
+import io.frinx.unitopo.ifc.base.handler.AbstractInterfaceConfigWriter
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907.InterfaceActive
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907._interface.configurations.InterfaceConfiguration
@@ -34,85 +32,41 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.iana._if.type.re
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.iana._if.type.rev140508.Ieee8023adLag
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-open class InterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCustomizer<Config> {
+class InterfaceConfigWriter(underlayAccess: UnderlayAccess) :
+    AbstractInterfaceConfigWriter<InterfaceConfiguration>(underlayAccess) {
 
-    override fun writeCurrentAttributes(id: InstanceIdentifier<Config>, dataAfter: Config, writeContext: WriteContext) {
-        val (underlayId, underlayIfcCfg) = getData(id, dataAfter, null)
-        underlayAccess.put(underlayId, underlayIfcCfg)
+    override fun getData(data: Config): InterfaceConfiguration {
+        val ifcCfgBuilder = InterfaceConfigurationBuilder()
+        ifcCfgBuilder.toUnderlay(data)
+        return ifcCfgBuilder.build()
     }
 
-    override fun deleteCurrentAttributes(
-        id: InstanceIdentifier<Config>,
-        dataBefore: Config,
-        writeContext: WriteContext
-    ) {
-        val (_, _, underlayId) = getId(id)
-
-        underlayAccess.delete(underlayId)
-    }
-
-    override fun updateCurrentAttributes(
-        id: InstanceIdentifier<Config>,
-        dataBefore: Config,
-        dataAfter: Config,
-        writeContext: WriteContext
-    ) {
-        val (_, _, underlayId) = getId(id)
-        val before = underlayAccess.read(underlayId)
-            .checkedGet()
-            .orNull()
-
-        val (_, underlayIfcCfg) = getData(id, dataAfter, before)
-
-        underlayAccess.put(underlayId, underlayIfcCfg)
-    }
-
-    private fun getData(id: InstanceIdentifier<Config>, dataAfter: Config, underlayBefore: InterfaceConfiguration?):
-        Pair<InstanceIdentifier<InterfaceConfiguration>, InterfaceConfiguration> {
-        val (interfaceActive, ifcName, underlayId) = getId(id)
-
-        val ifcCfgBuilder =
-            if (underlayBefore != null) InterfaceConfigurationBuilder(underlayBefore) else
-                InterfaceConfigurationBuilder()
-
-        ifcCfgBuilder
-            .setInterfaceName(ifcName)
-            .setActive(interfaceActive)
-            .setDescription(dataAfter.description)
-        if (dataAfter.type == Ieee8023adLag::class.java) {
-            ifcCfgBuilder.setInterfaceVirtual(true)
-            if (dataAfter.mtu != null) {
-                val owner = CiscoIosXrString("etherbundle")
-                val mtu = MtuBuilder().setMtu(dataAfter.mtu.toLong())
-                    .setOwner(owner)
+    private fun InterfaceConfigurationBuilder.toUnderlay(data: Config) {
+        interfaceName = InterfaceName(data.name)
+        active = InterfaceActive("act")
+        description = data.description
+        if (data.type == Ieee8023adLag::class.java) {
+            isInterfaceVirtual = true
+            if (data.mtu != null) {
+                val mtu = MtuBuilder().setMtu(data.mtu.toLong())
+                    .setOwner(CiscoIosXrString("etherbundle"))
                     .build()
-                val mtus = MtusBuilder().setMtu(listOf(mtu)).build()
-                ifcCfgBuilder.setMtus(mtus).build()
+                mtus = MtusBuilder().setMtu(listOf(mtu)).build()
             }
-        } else if (dataAfter.type == EthernetCsmacd::class.java) {
-            ifcCfgBuilder.apply {
-                if (dataAfter.isEnabled) {
-                    isShutdown = null
-                } else {
-                    isShutdown = true
-                }
-            }
+        } else if (data.type == EthernetCsmacd::class.java) {
+            isShutdown = data.shutdown()
         } else {
-            throw WriteFailedException(id, "Interface type " +
-                    dataAfter.type.toString() + " is not supported")
+            throw IllegalArgumentException("Interface type " + data.type.toString() + " is not supported")
         }
-
-        val underlayIfcCfg = ifcCfgBuilder.build()
-        return Pair(underlayId, underlayIfcCfg)
     }
 
-    private fun getId(id: InstanceIdentifier<Config>):
-        Triple<InterfaceActive, InterfaceName, InstanceIdentifier<InterfaceConfiguration>> {
+    private fun Config.shutdown() = isEnabled == null || !isEnabled
+
+    override fun getIid(id: InstanceIdentifier<Config>): InstanceIdentifier<InterfaceConfiguration> {
         val interfaceActive = InterfaceActive("act")
         val ifcName = InterfaceName(id.firstKeyOf(Interface::class.java).name)
 
-        val underlayId = InterfaceReader.IFC_CFGS
+        return InterfaceReader.IFC_CFGS
             .child(InterfaceConfiguration::class.java, InterfaceConfigurationKey(interfaceActive, ifcName))
-        return Triple(interfaceActive, ifcName, underlayId)
     }
 }
