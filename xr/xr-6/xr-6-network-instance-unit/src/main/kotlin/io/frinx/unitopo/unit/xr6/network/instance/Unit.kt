@@ -113,11 +113,10 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
                 /*add after protocol writers*/
                 IIDs.NE_NE_PR_PR_CONFIG, IIDs.NE_NE_PR_PR_BG_GL_CONFIG, IIDs.NE_NE_PR_PR_OS_GL_CONFIG)
 
-        wRegistry.subtreeAddAfter(IIDs.NE_NE_CONFIG, NetworkInstanceConfigWriter(underlay),
-            setOf(
+        wRegistry.addAfter(IIDs.NE_NE_CONFIG, NetworkInstanceConfigWriter(underlay),
                 /*handle after ifc configuration*/ io.frinx.openconfig.openconfig.interfaces.IIDs.IN_IN_CONFIG,
                 /*also after subinterface*/
-                    io.frinx.openconfig.openconfig.vlan.IIDs.IN_IN_SU_SU_AUG_SUBINTERFACE1_VL_CONFIG))
+                    io.frinx.openconfig.openconfig.vlan.IIDs.IN_IN_SU_SU_AUG_SUBINTERFACE1_VL_CONFIG)
 
         wRegistry.subtreeAddAfter(IIDs.NE_NE_CONNECTIONPOINTS, ConnectionPointsWriter(underlay),
             setOf(
