@@ -80,7 +80,7 @@ class SubinterfaceConfigWriter(underlayAccess: UnderlayAccess) :
         val subIfcName = Util.getSubIfcName(ifcName, data.index)
         val ifcCfgBuilder = InterfaceConfigurationBuilder()
         return ifcCfgBuilder
-                .setInterfaceName(InterfaceName(subIfcName))
+                .setInterfaceName(InterfaceName(Util.getSubIfcName(ifcName, data.index)))
                 .setActive(InterfaceActive("act"))
                 .setInterfaceModeNonPhysical(InterfaceModeEnum.Default)
                 .setDescription(data.description)

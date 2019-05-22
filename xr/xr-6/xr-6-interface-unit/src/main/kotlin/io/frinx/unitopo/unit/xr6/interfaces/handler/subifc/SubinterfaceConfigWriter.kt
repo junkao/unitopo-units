@@ -76,7 +76,7 @@ class SubinterfaceConfigWriter(underlayAccess: UnderlayAccess) :
         if (data.shutdown()) {
             isShutdown = true
         }
-        interfaceName = InterfaceName(ifcName)
+        interfaceName = InterfaceName(getSubIfcName(ifcName, data.index))
         active = InterfaceActive("act")
         interfaceModeNonPhysical = InterfaceModeEnum.Default
         description = data.description
