@@ -15,8 +15,9 @@
  */
 package io.frinx.unitopo.unit.xr6.ospf.handler
 
-import io.fd.honeycomb.translate.spi.write.WriterCustomizer
 import io.fd.honeycomb.translate.write.WriteContext
+import io.frinx.translate.unit.commons.handler.spi.ChecksMap
+import io.frinx.translate.unit.commons.handler.spi.CompositeWriter
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev151109.Ospf
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev151109.ospf.Processes
@@ -29,30 +30,45 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.insta
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
-class OspfProtocolWriter(private val underlayAccess: UnderlayAccess) : WriterCustomizer<Config> {
+class OspfProtocolWriter(private val underlayAccess: UnderlayAccess) : CompositeWriter.Child<Config> {
 
-    override fun updateCurrentAttributes(
+    override fun updateCurrentAttributesWResult(
         iid: IID<Config>,
         dataBefore: Config,
         dataAfter: Config,
         writeContext: WriteContext
-    ) {
-        deleteCurrentAttributes(iid, dataBefore, writeContext)
-        writeCurrentAttributes(iid, dataAfter, writeContext)
+    ): Boolean {
+        if (!ChecksMap.PathCheck.Protocol.OSPF.canProcess(iid, writeContext, false)) {
+            return false
+        }
+
+        deleteCurrentAttributesWResult(iid, dataBefore, writeContext)
+        writeCurrentAttributesWResult(iid, dataAfter, writeContext)
+        return true
     }
 
-    override fun writeCurrentAttributes(id: IID<Config>, dataAfter: Config, wtx: WriteContext) {
+    override fun writeCurrentAttributesWResult(id: IID<Config>, dataAfter: Config, wtx: WriteContext): Boolean {
+        if (!ChecksMap.PathCheck.Protocol.OSPF.canProcess(id, wtx, false)) {
+            return false
+        }
+
         val (underlayId, underlayCfg) = getData(id)
-
         underlayAccess.merge(underlayId, underlayCfg)
+        return true
     }
 
-    override fun deleteCurrentAttributes(id: IID<Config>, dataBefore: Config, wtx: WriteContext) {
+    override fun deleteCurrentAttributesWResult(id: IID<Config>, dataBefore: Config, wtx: WriteContext): Boolean {
+        if (!ChecksMap.PathCheck.Protocol.OSPF.canProcess(id, wtx, false)) {
+            return false
+        }
+
         val processName = id.firstKeyOf(Protocol::class.java).name
         val processId = IID.create(Ospf::class.java).child(Processes::class.java).child(Process::class.java,
                 ProcessKey(CiscoIosXrString(processName)))
 
         underlayAccess.delete(processId)
+
+        return true
     }
 
     private fun getData(id: IID<Config>):
