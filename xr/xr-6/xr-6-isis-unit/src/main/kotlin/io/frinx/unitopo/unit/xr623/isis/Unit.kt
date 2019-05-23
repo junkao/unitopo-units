@@ -116,4 +116,8 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
     }
 
     override fun toString(): String = "XR 6 (2019-03-15) ISIS translate unit"
+
+    // This unit is also usable by XR 612, which requires auto-commit due to its NETCONF issues
+    // For XR 623 auto-commit will not be enabled, since auto-commit kicks in only if all the units set it to true
+    override fun useAutoCommit() = true
 }
