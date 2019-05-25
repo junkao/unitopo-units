@@ -21,7 +21,7 @@ import io.fd.honeycomb.translate.util.RWUtils
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.openconfig.network.instance.NetworInstance
 import io.frinx.openconfig.openconfig.network.instance.IIDs
-import io.frinx.translate.unit.commons.handler.spi.TypedWriter
+import io.frinx.translate.unit.commons.handler.spi.CompositeWriter
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr6.bgp.IID
 import io.frinx.unitopo.unit.xr6.bgp.handler.GlobalAfiSafiConfigWriter
@@ -44,13 +44,14 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.policy.types.
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.policy.types.rev160512.OSPF
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class BgpTableConnectionWriter(private val access: UnderlayAccess) : TypedWriter<Config> {
+class BgpTableConnectionWriter(private val access: UnderlayAccess) : CompositeWriter.Child<Config> {
 
-    override fun writeCurrentAttributesForType(
+    override fun writeCurrentAttributesWResult(
         instanceIdentifier: IID<Config>,
         config: Config,
         writeContext: WriteContext
-    ) {
+    ): Boolean {
+        var wasWriting = false
         if (config.dstProtocol == BGP::class.java) {
 
             val allProtocols = writeContext.readAfter(RWUtils.cutId(instanceIdentifier, IIDs.NE_NETWORKINSTANCE)
@@ -63,18 +64,21 @@ class BgpTableConnectionWriter(private val access: UnderlayAccess) : TypedWriter
 
             for (dstProtocol in dstProtocols) {
                 writeCurrentAttributesForBgp(instanceIdentifier, dstProtocol, config, allProtocols, true)
+                wasWriting = true
             }
         }
+        return wasWriting
     }
 
-    override fun updateCurrentAttributesForType(
+    override fun updateCurrentAttributesWResult(
         instanceIdentifier: IID<Config>,
         dataBefore: Config,
         dataAfter: Config,
         writeContext: WriteContext
-    ) {
-        deleteCurrentAttributesForType(instanceIdentifier, dataBefore, writeContext)
-        writeCurrentAttributesForType(instanceIdentifier, dataAfter, writeContext)
+    ): Boolean {
+        val wasDeleting = deleteCurrentAttributesWResult(instanceIdentifier, dataBefore, writeContext)
+        val wasWriting = writeCurrentAttributesWResult(instanceIdentifier, dataAfter, writeContext)
+        return wasDeleting || wasWriting
     }
 
     private fun writeCurrentAttributesForBgp(
@@ -113,11 +117,12 @@ class BgpTableConnectionWriter(private val access: UnderlayAccess) : TypedWriter
         }
     }
 
-    override fun deleteCurrentAttributesForType(
+    override fun deleteCurrentAttributesWResult(
         instanceIdentifier: InstanceIdentifier<Config>,
         config: Config,
         writeContext: WriteContext
-    ) {
+    ): Boolean {
+        var wasDeleting = false
         if (config.dstProtocol == BGP::class.java) {
 
             val allProtocols = writeContext.readAfter(RWUtils.cutId(instanceIdentifier, IIDs.NE_NETWORKINSTANCE)
@@ -130,8 +135,10 @@ class BgpTableConnectionWriter(private val access: UnderlayAccess) : TypedWriter
 
             for (dstProtocol in dstProtocols) {
                 writeCurrentAttributesForBgp(instanceIdentifier, dstProtocol, config, allProtocols, true)
+                wasDeleting = true
             }
         }
+        return wasDeleting
     }
 
     companion object {

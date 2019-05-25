@@ -20,7 +20,7 @@ import io.fd.honeycomb.translate.util.RWUtils
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.openconfig.network.instance.NetworInstance
 import io.frinx.openconfig.openconfig.network.instance.IIDs
-import io.frinx.translate.unit.commons.handler.spi.TypedWriter
+import io.frinx.translate.unit.commons.handler.spi.CompositeWriter
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.utils.As
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev151109.Ospf
@@ -55,23 +55,25 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.policy.types.
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.policy.types.rev160512.OSPF
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class OspfTableConnectionWriter(private val access: UnderlayAccess) : TypedWriter<Config> {
+class OspfTableConnectionWriter(private val access: UnderlayAccess) : CompositeWriter.Child<Config> {
 
-    override fun updateCurrentAttributesForType(
+    override fun updateCurrentAttributesWResult(
         id: InstanceIdentifier<Config>,
         dataBefore: Config,
         dataAfter: Config,
         writeContext: WriteContext
-    ) {
-        deleteCurrentAttributesForType(id, dataBefore, writeContext)
-        writeCurrentAttributesForType(id, dataAfter, writeContext)
+    ): Boolean {
+        val wasDeleting = deleteCurrentAttributesWResult(id, dataBefore, writeContext)
+        val wasWriting = writeCurrentAttributesWResult(id, dataAfter, writeContext)
+        return wasDeleting || wasWriting
     }
 
-    override fun deleteCurrentAttributesForType(
+    override fun deleteCurrentAttributesWResult(
         instanceIdentifier: InstanceIdentifier<Config>,
         config: Config,
         writeContext: WriteContext
-    ) {
+    ): Boolean {
+        var wasDeleting = false
         if (config.dstProtocol == OSPF::class.java) {
             val allProtocols = writeContext.readBefore(RWUtils.cutId(instanceIdentifier, IIDs.NE_NETWORKINSTANCE)
                 .child(Protocols::class.java))
@@ -80,17 +82,21 @@ class OspfTableConnectionWriter(private val access: UnderlayAccess) : TypedWrite
 
             allProtocols
                     .filter { it.identifier == OSPF::class.java }
-                    .forEach { writeCurrentAttributesForOspf(instanceIdentifier, config, it, allProtocols, false) }
+                    .forEach {
+                        writeCurrentAttributesForOspf(instanceIdentifier, config, it, allProtocols, false)
+                        wasDeleting = true
+                    }
         }
+        return wasDeleting
     }
 
-    override fun writeCurrentAttributesForType(
+    override fun writeCurrentAttributesWResult(
         instanceIdentifier: InstanceIdentifier<Config>,
         config: Config,
         writeContext: WriteContext
-    ) {
+    ): Boolean {
+        var wasWriting = false
         if (config.dstProtocol == OSPF::class.java) {
-
             val allProtocols = writeContext.readAfter(RWUtils.cutId(instanceIdentifier, IIDs.NE_NETWORKINSTANCE)
                 .child(Protocols::class.java))
                     .or(ProtocolsBuilder().setProtocol(emptyList()).build())
@@ -98,8 +104,12 @@ class OspfTableConnectionWriter(private val access: UnderlayAccess) : TypedWrite
 
             allProtocols
                     .filter { it.identifier == OSPF::class.java }
-                    .forEach { writeCurrentAttributesForOspf(instanceIdentifier, config, it, allProtocols, true) }
+                    .forEach {
+                        writeCurrentAttributesForOspf(instanceIdentifier, config, it, allProtocols, true)
+                        wasWriting = true
+                    }
         }
+        return wasWriting
     }
 
     private fun writeCurrentAttributesForOspf(

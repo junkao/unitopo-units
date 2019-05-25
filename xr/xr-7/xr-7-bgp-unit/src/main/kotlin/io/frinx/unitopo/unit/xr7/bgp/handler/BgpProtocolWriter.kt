@@ -17,29 +17,42 @@
 package io.frinx.unitopo.unit.xr7.bgp.handler
 
 import io.fd.honeycomb.translate.write.WriteContext
-import io.frinx.translate.unit.commons.handler.spi.TypedWriter
+import io.frinx.translate.unit.commons.handler.spi.ChecksMap
+import io.frinx.translate.unit.commons.handler.spi.CompositeWriter
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.protocol.Config
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
 // This Writer is necessary because an exception occurs
 // if there is no writer(child of CompositeWriter) that handles data of Bgp.
-class BgpProtocolWriter(private val underlayAccess: UnderlayAccess) : TypedWriter<Config> {
+class BgpProtocolWriter(private val underlayAccess: UnderlayAccess) : CompositeWriter.Child<Config> {
 
-    override fun updateCurrentAttributesForType(
+    override fun updateCurrentAttributesWResult(
         iid: IID<Config>,
         dataBefore: Config,
         dataAfter: Config,
         writeContext: WriteContext
-    ) {
+    ): Boolean {
+        if (!ChecksMap.PathCheck.Protocol.BGP.canProcess(iid, writeContext, false)) {
+            return false
+        }
         // NOOP
+        return true
     }
 
-    override fun writeCurrentAttributesForType(id: IID<Config>, dataAfter: Config, wtx: WriteContext) {
+    override fun writeCurrentAttributesWResult(id: IID<Config>, dataAfter: Config, wtx: WriteContext): Boolean {
+        if (!ChecksMap.PathCheck.Protocol.BGP.canProcess(id, wtx, false)) {
+            return false
+        }
         // NOOP
+        return true
     }
 
-    override fun deleteCurrentAttributesForType(id: IID<Config>, dataBefore: Config, wtx: WriteContext) {
+    override fun deleteCurrentAttributesWResult(id: IID<Config>, dataBefore: Config, wtx: WriteContext): Boolean {
+        if (!ChecksMap.PathCheck.Protocol.BGP.canProcess(id, wtx, true)) {
+            return false
+        }
         // NOOP
+        return true
     }
 }

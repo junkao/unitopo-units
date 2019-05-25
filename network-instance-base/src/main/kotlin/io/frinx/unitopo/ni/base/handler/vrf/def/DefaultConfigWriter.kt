@@ -18,45 +18,48 @@ package io.frinx.unitopo.ni.base.handler.vrf.def
 
 import io.fd.honeycomb.translate.write.WriteContext
 import io.fd.honeycomb.translate.write.WriteFailedException
-import io.frinx.translate.unit.commons.handler.spi.TypedWriter
+import io.frinx.translate.unit.commons.handler.spi.CompositeWriter
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.Config
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.types.rev170228.DEFAULTINSTANCE
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class DefaultConfigWriter : TypedWriter<Config> {
+class DefaultConfigWriter : CompositeWriter.Child<Config> {
 
     @Throws(WriteFailedException.CreateFailedException::class)
-    override fun writeCurrentAttributesForType(
+    override fun writeCurrentAttributesWResult(
         instanceIdentifier: InstanceIdentifier<Config>,
         config: Config,
         writeContext: WriteContext
-    ) {
+    ): Boolean {
         if (config.type == DEFAULTINSTANCE::class.java) {
             throw WriteFailedException.CreateFailedException(instanceIdentifier, config, EX)
         }
+        return false
     }
 
     @Throws(WriteFailedException.UpdateFailedException::class)
-    override fun updateCurrentAttributesForType(
+    override fun updateCurrentAttributesWResult(
         id: InstanceIdentifier<Config>,
         dataBefore: Config,
         dataAfter: Config,
         writeContext: WriteContext
-    ) {
+    ): Boolean {
         if (dataAfter.type == DEFAULTINSTANCE::class.java) {
             throw WriteFailedException.UpdateFailedException(id, dataBefore, dataAfter, EX)
         }
+        return false
     }
 
     @Throws(WriteFailedException.DeleteFailedException::class)
-    override fun deleteCurrentAttributesForType(
+    override fun deleteCurrentAttributesWResult(
         instanceIdentifier: InstanceIdentifier<Config>,
         config: Config,
         writeContext: WriteContext
-    ) {
+    ): Boolean {
         if (config.type == DEFAULTINSTANCE::class.java) {
             throw WriteFailedException.DeleteFailedException(instanceIdentifier, EX)
         }
+        return false
     }
 
     companion object {

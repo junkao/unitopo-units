@@ -16,8 +16,10 @@
 
 package io.frinx.unitopo.unit.xr6.network.instance.handler.vrf
 
+import io.fd.honeycomb.translate.spi.builder.BasicCheck
 import io.fd.honeycomb.translate.write.WriteContext
-import io.frinx.translate.unit.commons.handler.spi.TypedWriter
+import io.frinx.translate.unit.commons.handler.spi.ChecksMap
+import io.frinx.translate.unit.commons.handler.spi.CompositeWriter
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.infra.rsi.cfg.rev150730.VrfAddressFamily
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.infra.rsi.cfg.rev150730.VrfSubAddressFamily
@@ -35,19 +37,30 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.openconfig.ty
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.openconfig.types.rev170113.IPV6
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
-class L3VrfConfigWriter(private val underlayAccess: UnderlayAccess) : TypedWriter<Config> {
+class L3VrfConfigWriter(private val underlayAccess: UnderlayAccess) : CompositeWriter.Child<Config> {
 
-    override fun deleteCurrentAttributesForType(iid: IID<Config>, dataBefore: Config, wtc: WriteContext) {
+    override fun deleteCurrentAttributesWResult(iid: IID<Config>, dataBefore: Config, wtx: WriteContext): Boolean {
+        if (!BasicCheck.checkData(ChecksMap.DataCheck.NetworkInstanceConfig.IID_TRANSFORMATION,
+                ChecksMap.DataCheck.NetworkInstanceConfig.TYPE_L3VRF).canProcess(iid, wtx, true)) {
+            return false
+        }
+
         val vrfIid = getVrfIdentifier(dataBefore.name)
         underlayAccess.delete(vrfIid)
+        return true
     }
 
-    override fun updateCurrentAttributesForType(
+    override fun updateCurrentAttributesWResult(
         id: org.opendaylight.yangtools.yang.binding.InstanceIdentifier<Config>,
         dataBefore: Config,
         dataAfter: Config,
         writeContext: WriteContext
-    ) {
+    ): Boolean {
+        if (!BasicCheck.checkData(ChecksMap.DataCheck.NetworkInstanceConfig.IID_TRANSFORMATION,
+                ChecksMap.DataCheck.NetworkInstanceConfig.TYPE_L3VRF).canProcess(id, writeContext, false)) {
+            return false
+        }
+
         val vrfIid = getVrfIdentifier(dataAfter.name)
         val vrfBuilder = underlayAccess.read(vrfIid).checkedGet()
                 .or(EMPTY_VRF)
@@ -55,11 +68,18 @@ class L3VrfConfigWriter(private val underlayAccess: UnderlayAccess) : TypedWrite
 
         val (_, vrf) = getVrfData(dataAfter, vrfBuilder)
         underlayAccess.put(vrfIid, vrf)
+        return true
     }
 
-    override fun writeCurrentAttributesForType(iid: IID<Config>, dataAfter: Config, wtc: WriteContext) {
+    override fun writeCurrentAttributesWResult(iid: IID<Config>, dataAfter: Config, wtx: WriteContext): Boolean {
+        if (!BasicCheck.checkData(ChecksMap.DataCheck.NetworkInstanceConfig.IID_TRANSFORMATION,
+                ChecksMap.DataCheck.NetworkInstanceConfig.TYPE_L3VRF).canProcess(iid, wtx, false)) {
+            return false
+        }
+
         val (vrfIid, vrf) = getVrfData(dataAfter, VrfBuilder())
         underlayAccess.merge(vrfIid, vrf)
+        return true
     }
 
     private fun getVrfData(data: Config, vrfBuilder: VrfBuilder): Pair<IID<Vrf>, Vrf> {

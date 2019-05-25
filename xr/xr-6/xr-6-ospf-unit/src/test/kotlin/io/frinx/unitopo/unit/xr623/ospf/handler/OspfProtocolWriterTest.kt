@@ -96,7 +96,7 @@ class OspfProtocolWriterTest : AbstractNetconfHandlerTest() {
         Mockito.doNothing().`when`(underlayAccess).merge(Mockito.any(), Mockito.any())
 
         // test
-        target.writeCurrentAttributes(IID_CONFIG, config, writeContext)
+        target.writeCurrentAttributesWResult(IID_CONFIG, config, writeContext)
 
         // capture
         Mockito.verify(underlayAccess, Mockito.times(1)).merge(idCap.capture(), dataCap.capture())
@@ -123,7 +123,7 @@ class OspfProtocolWriterTest : AbstractNetconfHandlerTest() {
         Mockito.doNothing().`when`(underlayAccess).delete(Mockito.any())
 
         // test
-        target.deleteCurrentAttributes(IID_CONFIG, config, writeContext)
+        target.deleteCurrentAttributesWResult(IID_CONFIG, config, writeContext)
 
         // capture
         Mockito.verify(underlayAccess, Mockito.times(1)).delete(idCap.capture())
@@ -157,7 +157,7 @@ class OspfProtocolWriterTest : AbstractNetconfHandlerTest() {
         Mockito.doReturn(Optional.of(data)).`when`(checkedFuture).checkedGet()
         Mockito.doNothing().`when`(underlayAccess).put(Mockito.any(), Mockito.any())
         // test
-        target.updateCurrentAttributes(IID_CONFIG, configBefore, configAfter, writeContext)
+        target.updateCurrentAttributesWResult(IID_CONFIG, configBefore, configAfter, writeContext)
 
         // capture
         Mockito.verify(underlayAccess, Mockito.times(1)).put(idCap.capture(), dataCap.capture())

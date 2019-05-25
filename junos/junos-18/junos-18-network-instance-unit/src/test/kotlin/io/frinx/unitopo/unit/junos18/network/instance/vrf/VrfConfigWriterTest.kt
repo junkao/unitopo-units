@@ -74,7 +74,7 @@ class VrfConfigWriterTest {
         Mockito.doNothing().`when`(underlayAccess).merge(Mockito.any(), Mockito.any())
 
         // test
-        target.writeCurrentAttributes(id, config, writeContext)
+        target.writeCurrentAttributesWResult(id, config, writeContext)
 
         // capture
         Mockito.verify(underlayAccess, Mockito.times(1)).merge(idCap.capture(), dataCap.capture())
@@ -111,7 +111,7 @@ class VrfConfigWriterTest {
         Mockito.doNothing().`when`(underlayAccess).put(Mockito.any(), Mockito.any())
 
         // test
-        target.deleteCurrentAttributes(id, config, writeContext)
+        target.deleteCurrentAttributesWResult(id, config, writeContext)
 
         // capture
         Mockito.verify(underlayAccess, Mockito.times(1)).put(idCap.capture(), dataCap.capture())

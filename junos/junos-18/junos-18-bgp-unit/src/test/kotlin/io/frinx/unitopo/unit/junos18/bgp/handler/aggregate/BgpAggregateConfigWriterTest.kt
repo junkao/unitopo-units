@@ -87,7 +87,7 @@ class BgpAggregateConfigWriterTest {
 
         Mockito.doNothing().`when`(underlayAccess).put(Mockito.any(), Mockito.any())
 
-        target.writeCurrentAttributesForType(id, config, writeContext)
+        target.writeCurrentAttributesWResult(id, config, writeContext)
 
         // capture
         Mockito.verify(underlayAccess, Mockito.times(1)).put(idCap.capture(), dataCap.capture())
@@ -115,11 +115,11 @@ class BgpAggregateConfigWriterTest {
         val configAfter = ConfigBuilder(CONFIG)
                 .build()
 
-        Mockito.doNothing().`when`(target).writeCurrentAttributesForType(id, configAfter, writeContext)
+        Mockito.doNothing().`when`(target).writeCurrentAttributesWResult(id, configAfter, writeContext)
 
-        target.updateCurrentAttributesForType(id, configBefore, configAfter, writeContext)
+        target.updateCurrentAttributesWResult(id, configBefore, configAfter, writeContext)
 
-        Mockito.verify(target).writeCurrentAttributesForType(id, configAfter, writeContext)
+        Mockito.verify(target).writeCurrentAttributesWResult(id, configAfter, writeContext)
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -134,7 +134,7 @@ class BgpAggregateConfigWriterTest {
 
         Mockito.doNothing().`when`(underlayAccess).delete(Mockito.any())
 
-        target.deleteCurrentAttributesForType(id, config, writeContext)
+        target.deleteCurrentAttributesWResult(id, config, writeContext)
 
         // capture
         Mockito.verify(underlayAccess, Mockito.times(1)).delete(idCap.capture())

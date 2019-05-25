@@ -18,7 +18,6 @@ package io.frinx.unitopo.unit.junos17.network.instance
 import io.fd.honeycomb.translate.spi.builder.CustomizerAwareReadRegistryBuilder
 import io.fd.honeycomb.translate.spi.builder.CustomizerAwareWriteRegistryBuilder
 import io.frinx.openconfig.openconfig.network.instance.IIDs
-import io.frinx.translate.unit.commons.handler.spi.ChecksMap
 import io.frinx.unitopo.registry.api.TranslationUnitCollector
 import io.frinx.unitopo.registry.spi.TranslateUnit
 import io.frinx.unitopo.registry.spi.UnderlayAccess
@@ -52,10 +51,7 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
         wRegistry: CustomizerAwareWriteRegistryBuilder,
         underlayAccess: UnderlayAccess
     ) {
-        val checkRegistry = ChecksMap.getOpenconfigCheckRegistry()
-        rRegistry.setCheckRegistry(checkRegistry)
         provideReaders(rRegistry, underlayAccess)
-        wRegistry.setCheckRegistry(checkRegistry)
         provideWriters(wRegistry, underlayAccess)
     }
 

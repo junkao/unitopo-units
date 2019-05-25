@@ -18,32 +18,45 @@ package io.frinx.unitopo.unit.junos18.bgp.handler
 
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.openconfig.network.instance.NetworInstance
-import io.frinx.translate.unit.commons.handler.spi.TypedWriter
+import io.frinx.translate.unit.commons.handler.spi.ChecksMap
+import io.frinx.translate.unit.commons.handler.spi.CompositeWriter
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.protocol.Config
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
-class BgpProtocolConfigWriter(private val underlayAccess: UnderlayAccess) : TypedWriter<Config> {
+class BgpProtocolConfigWriter(private val underlayAccess: UnderlayAccess) : CompositeWriter.Child<Config> {
 
-    override fun updateCurrentAttributesForType(
+    override fun updateCurrentAttributesWResult(
         iid: IID<Config>,
         dataBefore: Config,
         dataAfter: Config,
         writeContext: WriteContext
-    ) {
+    ): Boolean {
+        if (!ChecksMap.PathCheck.Protocol.BGP.canProcess(iid, writeContext, false)) {
+            return false
+        }
         // NOP
+        return true
     }
 
-    override fun writeCurrentAttributesForType(id: IID<Config>, dataAfter: Config, wtx: WriteContext) {
+    override fun writeCurrentAttributesWResult(id: IID<Config>, dataAfter: Config, wtx: WriteContext): Boolean {
+        if (!ChecksMap.PathCheck.Protocol.BGP.canProcess(id, wtx, false)) {
+            return false
+        }
         val vrfKey = id.firstKeyOf(NetworkInstance::class.java)!!
         require(vrfKey != NetworInstance.DEFAULT_NETWORK) {
             "Cannot configure BGP protocol in default network instance. Vrf: ${vrfKey.name}"
         }
         // NOP
+        return true
     }
 
-    override fun deleteCurrentAttributesForType(id: IID<Config>, dataBefore: Config, wtx: WriteContext) {
+    override fun deleteCurrentAttributesWResult(id: IID<Config>, dataBefore: Config, wtx: WriteContext): Boolean {
+        if (!ChecksMap.PathCheck.Protocol.BGP.canProcess(id, wtx, true)) {
+            return false
+        }
         // NOP
+        return true
     }
 }

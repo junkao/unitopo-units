@@ -17,7 +17,8 @@ package io.frinx.unitopo.unit.xr623.isis.handler
 
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.openconfig.network.instance.NetworInstance
-import io.frinx.translate.unit.commons.handler.spi.TypedWriter
+import io.frinx.translate.unit.commons.handler.spi.ChecksMap
+import io.frinx.translate.unit.commons.handler.spi.CompositeWriter
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.clns.isis.cfg.rev151109.isis.instances.Instance
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.clns.isis.cfg.rev151109.isis.instances.InstanceBuilder
@@ -28,8 +29,12 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.insta
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.protocol.Config
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
-class IsisProtocolConfigWriter(private val underlayAccess: UnderlayAccess) : TypedWriter<Config> {
-    override fun writeCurrentAttributesForType(id: IID<Config>, dataAfter: Config, wtx: WriteContext) {
+class IsisProtocolConfigWriter(private val underlayAccess: UnderlayAccess) : CompositeWriter.Child<Config> {
+    override fun writeCurrentAttributesWResult(id: IID<Config>, dataAfter: Config, wtx: WriteContext): Boolean {
+        if (!ChecksMap.PathCheck.Protocol.ISIS.canProcess(id, wtx, false)) {
+            return false
+        }
+
         val vrfName = id.firstKeyOf(NetworkInstance::class.java).name
         val instanceName = id.firstKeyOf(Protocol::class.java).name
 
@@ -43,23 +48,33 @@ class IsisProtocolConfigWriter(private val underlayAccess: UnderlayAccess) : Typ
             .setRunning(true)
 
         underlayAccess.merge(underlayId, builder.build())
+        return true
     }
 
-    override fun updateCurrentAttributesForType(
+    override fun updateCurrentAttributesWResult(
         iid: IID<Config>,
         dataBefore: Config,
         dataAfter: Config,
         writeContext: WriteContext
-    ) {
+    ): Boolean {
+        if (!ChecksMap.PathCheck.Protocol.ISIS.canProcess(iid, writeContext, false)) {
+            return false
+        }
         // there is no modifiable attributes in this container.
         // identifier and name are key attribute in parent container and other attributes are not used by this handler.
+        return true
     }
 
-    override fun deleteCurrentAttributesForType(id: IID<Config>, dataBefore: Config, wtx: WriteContext) {
+    override fun deleteCurrentAttributesWResult(id: IID<Config>, dataBefore: Config, wtx: WriteContext): Boolean {
+        if (!ChecksMap.PathCheck.Protocol.ISIS.canProcess(id, wtx, true)) {
+            return false
+        }
+
         val instanceName = id.firstKeyOf(Protocol::class.java).name!!
         val id = getUnderlayId(instanceName)
 
         underlayAccess.delete(id)
+        return true
     }
 
     companion object {

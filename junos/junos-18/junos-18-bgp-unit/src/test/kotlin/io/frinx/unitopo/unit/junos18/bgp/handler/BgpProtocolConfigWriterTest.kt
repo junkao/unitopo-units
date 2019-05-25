@@ -43,7 +43,7 @@ class BgpProtocolConfigWriterTest {
                 .child(Config::class.java)
         val config = Mockito.mock(Config::class.java)
 
-        target.writeCurrentAttributesForType(id, config, writeContext)
+        target.writeCurrentAttributesWResult(id, config, writeContext)
     }
 
     @Test(expected = IllegalArgumentException::class)
@@ -55,6 +55,6 @@ class BgpProtocolConfigWriterTest {
                 .child(Config::class.java)
         val config = Mockito.mock(Config::class.java)
 
-        target.writeCurrentAttributesForType(id, config, writeContext)
+        target.writeCurrentAttributesWResult(id, config, writeContext)
     }
 }

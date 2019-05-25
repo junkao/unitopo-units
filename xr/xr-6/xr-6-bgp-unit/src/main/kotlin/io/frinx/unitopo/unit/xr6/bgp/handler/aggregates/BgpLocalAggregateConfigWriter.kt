@@ -19,7 +19,8 @@ package io.frinx.unitopo.unit.xr6.bgp.handler.aggregates
 import io.fd.honeycomb.translate.util.RWUtils
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.openconfig.network.instance.NetworInstance
-import io.frinx.translate.unit.commons.handler.spi.TypedWriter
+import io.frinx.translate.unit.commons.handler.spi.ChecksMap
+import io.frinx.translate.unit.commons.handler.spi.CompositeWriter
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr6.bgp.handler.GlobalAfiSafiConfigWriter
 import io.frinx.unitopo.unit.xr6.bgp.handler.getAfiSafis
@@ -41,13 +42,17 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.types.inet.re
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.IpAddress
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class BgpLocalAggregateConfigWriter(private val access: UnderlayAccess) : TypedWriter<Config> {
+class BgpLocalAggregateConfigWriter(private val access: UnderlayAccess) : CompositeWriter.Child<Config> {
 
-    override fun writeCurrentAttributesForType(
+    override fun writeCurrentAttributesWResult(
         instanceIdentifier: InstanceIdentifier<Config>,
         config: Config,
         writeContext: WriteContext
-    ) {
+    ): Boolean {
+        if (!ChecksMap.PathCheck.Protocol.LOCALAGGREGATE.canProcess(instanceIdentifier, writeContext, false)) {
+            return false
+        }
+
         val vrfKey = instanceIdentifier.firstKeyOf(NetworkInstance::class.java)
 
         val networkInstance = writeContext.readAfter(RWUtils.cutId(instanceIdentifier,
@@ -78,6 +83,7 @@ class BgpLocalAggregateConfigWriter(private val access: UnderlayAccess) : TypedW
                     .filterNotNull()
                     .forEach { writeVrfNetworkForAfi(it, vrfKey, asNumber, config.prefix) }
         }
+        return true
     }
 
     private fun writeGlobalNetworkForAfi(it: BgpAddressFamily, asNumber: AsNumber, prefix: IpPrefix) {
@@ -141,21 +147,30 @@ class BgpLocalAggregateConfigWriter(private val access: UnderlayAccess) : TypedW
         }
     }
 
-    override fun updateCurrentAttributesForType(
+    override fun updateCurrentAttributesWResult(
         id: InstanceIdentifier<Config>,
         dataBefore: Config,
         dataAfter: Config,
         writeContext: WriteContext
-    ) {
-        deleteCurrentAttributesForType(id, dataBefore, writeContext)
-        writeCurrentAttributesForType(id, dataAfter, writeContext)
+    ): Boolean {
+        if (!ChecksMap.PathCheck.Protocol.LOCALAGGREGATE.canProcess(id, writeContext, false)) {
+            return false
+        }
+
+        deleteCurrentAttributesWResult(id, dataBefore, writeContext)
+        writeCurrentAttributesWResult(id, dataAfter, writeContext)
+        return true
     }
 
-    override fun deleteCurrentAttributesForType(
+    override fun deleteCurrentAttributesWResult(
         instanceIdentifier: InstanceIdentifier<Config>,
         config: Config,
         writeContext: WriteContext
-    ) {
+    ): Boolean {
+        if (!ChecksMap.PathCheck.Protocol.LOCALAGGREGATE.canProcess(instanceIdentifier, writeContext, true)) {
+            return false
+        }
+
         val vrfKey = instanceIdentifier.firstKeyOf(NetworkInstance::class.java)
         val protocolsBefore = writeContext.readBefore(RWUtils.cutId(instanceIdentifier, NetworkInstance::class.java)
             .child(Protocols::class.java)).get()
@@ -184,6 +199,7 @@ class BgpLocalAggregateConfigWriter(private val access: UnderlayAccess) : TypedW
                     .filterNotNull()
                     .forEach { deleteVrfNetworkForAfi(it, vrfKey, asNumber, config.prefix) }
         }
+        return true
     }
 
     companion object {

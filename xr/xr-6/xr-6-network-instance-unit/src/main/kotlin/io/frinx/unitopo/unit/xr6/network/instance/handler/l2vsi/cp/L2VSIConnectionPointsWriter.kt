@@ -16,9 +16,11 @@
 
 package io.frinx.unitopo.unit.xr6.network.instance.handler.l2vsi.cp
 
+import io.fd.honeycomb.translate.spi.builder.BasicCheck
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.openconfig.openconfig.network.instance.IIDs
-import io.frinx.translate.unit.commons.handler.spi.TypedWriter
+import io.frinx.translate.unit.commons.handler.spi.ChecksMap
+import io.frinx.translate.unit.commons.handler.spi.CompositeWriter
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr6.network.instance.handler.l2vsi.L2VSIReader
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.l2vpn.cfg.rev151109.BgpRouteDistinguisher
@@ -54,13 +56,19 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.policy.types.
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.types.inet.rev170403.AsNumber
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class L2VSIConnectionPointsWriter(private val underlayAccess: UnderlayAccess) : TypedWriter<ConnectionPoints> {
+class L2VSIConnectionPointsWriter(private val underlayAccess: UnderlayAccess)
+    : CompositeWriter.Child<ConnectionPoints> {
 
-    override fun writeCurrentAttributesForType(
+    override fun writeCurrentAttributesWResult(
         id: InstanceIdentifier<ConnectionPoints>,
         o: ConnectionPoints,
         writeContext: WriteContext
-    ) {
+    ): Boolean {
+        if (!BasicCheck.checkData(ChecksMap.DataCheck.NetworkInstanceConfig.IID_TRANSFORMATION,
+                ChecksMap.DataCheck.NetworkInstanceConfig.TYPE_L2VSI).canProcess(id, writeContext, false)) {
+            return false
+        }
+
         val l2vsiName = id.firstKeyOf(NetworkInstance::class.java).name
 
         val protocols = writeContext.readAfter(IIDs.NETWORKINSTANCES.child(NetworkInstance::class.java,
@@ -77,27 +85,40 @@ class L2VSIConnectionPointsWriter(private val underlayAccess: UnderlayAccess) : 
         underlayAccess.merge(L2VSIReader.UNDERLAY_BD_ID
                 .child(BridgeDomain::class.java, BridgeDomainKey(CiscoIosXrString(l2vsiName))),
                 o.toUnderlay(l2vsiName, asNumber))
+        return true
     }
 
-    override fun updateCurrentAttributesForType(
+    override fun updateCurrentAttributesWResult(
         id: InstanceIdentifier<ConnectionPoints>,
         dataBefore: ConnectionPoints,
         dataAfter: ConnectionPoints,
         writeContext: WriteContext
-    ) {
-        deleteCurrentAttributes(id, dataBefore, writeContext)
-        writeCurrentAttributes(id, dataAfter, writeContext)
+    ): Boolean {
+        if (!BasicCheck.checkData(ChecksMap.DataCheck.NetworkInstanceConfig.IID_TRANSFORMATION,
+                ChecksMap.DataCheck.NetworkInstanceConfig.TYPE_L2VSI).canProcess(id, writeContext, false)) {
+            return false
+        }
+
+        deleteCurrentAttributesWResult(id, dataBefore, writeContext)
+        writeCurrentAttributesWResult(id, dataAfter, writeContext)
+        return true
     }
 
-    override fun deleteCurrentAttributesForType(
+    override fun deleteCurrentAttributesWResult(
         id: InstanceIdentifier<ConnectionPoints>,
         o: ConnectionPoints,
         writeContext: WriteContext
-    ) {
+    ): Boolean {
+        if (!BasicCheck.checkData(ChecksMap.DataCheck.NetworkInstanceConfig.IID_TRANSFORMATION,
+                ChecksMap.DataCheck.NetworkInstanceConfig.TYPE_L2VSI).canProcess(id, writeContext, true)) {
+            return false
+        }
+
         val l2vsiName = id.firstKeyOf(NetworkInstance::class.java).name
 
         underlayAccess.delete(L2VSIReader.UNDERLAY_BD_ID
                 .child(BridgeDomain::class.java, BridgeDomainKey(CiscoIosXrString(l2vsiName))))
+        return true
     }
 }
 

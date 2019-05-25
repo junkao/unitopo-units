@@ -19,7 +19,8 @@ package io.frinx.unitopo.unit.xr7.bgp.handler.aggregates
 import io.fd.honeycomb.translate.util.RWUtils
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.openconfig.network.instance.NetworInstance
-import io.frinx.translate.unit.commons.handler.spi.TypedWriter
+import io.frinx.translate.unit.commons.handler.spi.ChecksMap
+import io.frinx.translate.unit.commons.handler.spi.CompositeWriter
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.utils.As
 import io.frinx.unitopo.unit.xr7.bgp.handler.BgpProtocolReader
@@ -62,13 +63,17 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.types.inet.re
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.IpAddress
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
-open class BgpAggregateConfigWriter(private val access: UnderlayAccess) : TypedWriter<Config> {
+open class BgpAggregateConfigWriter(private val access: UnderlayAccess) : CompositeWriter.Child<Config> {
 
-    override fun writeCurrentAttributesForType(
+    override fun writeCurrentAttributesWResult(
         id: IID<Config>,
         config: Config,
         writeContext: WriteContext
-    ) {
+    ): Boolean {
+        if (!ChecksMap.PathCheck.Protocol.LOCALAGGREGATE.canProcess(id, writeContext, false)) {
+            return false
+        }
+
         val vrfKey = id.firstKeyOf(NetworkInstance::class.java)
         val protocolKey = id.firstKeyOf(Protocol::class.java)
         val aggrKey = id.firstKeyOf(Aggregate::class.java)
@@ -84,14 +89,19 @@ open class BgpAggregateConfigWriter(private val access: UnderlayAccess) : TypedW
                 aggregateBuilder(underlayId, aggrKey, config, false)
             access.merge(underlayId, builder.build())
         }
+        return true
     }
 
-    override fun updateCurrentAttributesForType(
+    override fun updateCurrentAttributesWResult(
         id: org.opendaylight.yangtools.yang.binding.InstanceIdentifier<Config>,
         dataBefore: Config,
         dataAfter: Config,
         writeContext: WriteContext
-    ) {
+    ): Boolean {
+        if (!ChecksMap.PathCheck.Protocol.LOCALAGGREGATE.canProcess(id, writeContext, false)) {
+            return false
+        }
+
         val vrfKey = id.firstKeyOf(NetworkInstance::class.java)
         val protocolKey = id.firstKeyOf(Protocol::class.java)
         val aggrKey = id.firstKeyOf(Aggregate::class.java)
@@ -106,13 +116,18 @@ open class BgpAggregateConfigWriter(private val access: UnderlayAccess) : TypedW
             val builder = aggregateBuilder(underlayId, aggrKey, dataAfter, true)
             access.put(underlayId, builder.build())
         }
+        return true
     }
 
-    override fun deleteCurrentAttributesForType(
+    override fun deleteCurrentAttributesWResult(
         id: IID<Config>,
         config: Config,
         writeContext: WriteContext
-    ) {
+    ): Boolean {
+        if (!ChecksMap.PathCheck.Protocol.LOCALAGGREGATE.canProcess(id, writeContext, true)) {
+            return false
+        }
+
         val vrfKey = id.firstKeyOf(NetworkInstance::class.java)
         val protocolKey = id.firstKeyOf(Protocol::class.java)
         val aggrKey = id.firstKeyOf(Aggregate::class.java)
@@ -126,6 +141,7 @@ open class BgpAggregateConfigWriter(private val access: UnderlayAccess) : TypedW
                 aggrKey.prefix.getNetAddress(), aggrKey.prefix.getNetMask())
             access.delete(underlayId)
         }
+        return true
     }
 
     private fun getUnderlayId(

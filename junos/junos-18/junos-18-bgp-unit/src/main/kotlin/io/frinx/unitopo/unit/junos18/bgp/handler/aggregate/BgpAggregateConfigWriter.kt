@@ -17,7 +17,8 @@
 package io.frinx.unitopo.unit.junos18.bgp.handler.aggregate
 
 import io.fd.honeycomb.translate.write.WriteContext
-import io.frinx.translate.unit.commons.handler.spi.TypedWriter
+import io.frinx.translate.unit.commons.handler.spi.ChecksMap
+import io.frinx.translate.unit.commons.handler.spi.CompositeWriter
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.extension.rev180323.NiProtAggAug
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.local.routing.rev170515.local.aggregate.top.local.aggregates.aggregate.Config
@@ -26,13 +27,17 @@ import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.routing.ins
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.common.types.rev180101.Ipprefix as JunodIpPrefix
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
-open class BgpAggregateConfigWriter(private val access: UnderlayAccess) : TypedWriter<Config> {
+open class BgpAggregateConfigWriter(private val access: UnderlayAccess) : CompositeWriter.Child<Config> {
 
-    override fun writeCurrentAttributesForType(
+    override fun writeCurrentAttributesWResult(
         instanceIdentifier: IID<Config>,
         config: Config,
         writeContext: WriteContext
-    ) {
+    ): Boolean {
+        if (!ChecksMap.PathCheck.Protocol.LOCALAGGREGATE.canProcess(instanceIdentifier, writeContext, false)) {
+            return false
+        }
+
         val (vrfKey, aggregateKey) = BgpAggregateConfigReader.extractKeys(instanceIdentifier)
         val underlayId = BgpAggregateConfigReader.getUnderlayId(
             vrfKey.name,
@@ -41,28 +46,34 @@ open class BgpAggregateConfigWriter(private val access: UnderlayAccess) : TypedW
 
         routeBuilder.fromOpenConfig(config)
         access.put(underlayId, routeBuilder.build())
+        return true
     }
 
-    override fun updateCurrentAttributesForType(
+    override fun updateCurrentAttributesWResult(
         id: IID<Config>,
         dataBefore: Config,
         dataAfter: Config,
         writeContext: WriteContext
-    ) {
-        writeCurrentAttributesForType(id, dataAfter, writeContext)
+    ): Boolean {
+        return writeCurrentAttributesWResult(id, dataAfter, writeContext)
     }
 
-    override fun deleteCurrentAttributesForType(
+    override fun deleteCurrentAttributesWResult(
         instanceIdentifier: IID<Config>,
         config: Config,
         writeContext: WriteContext
-    ) {
+    ): Boolean {
+        if (!ChecksMap.PathCheck.Protocol.LOCALAGGREGATE.canProcess(instanceIdentifier, writeContext, true)) {
+            return false
+        }
+
         val (vrfKey, aggregateKey) = BgpAggregateConfigReader.extractKeys(instanceIdentifier)
         val underlayId = BgpAggregateConfigReader.getUnderlayId(
             vrfKey.name,
             String(aggregateKey.prefix.value))
 
         access.delete(underlayId)
+        return true
     }
 
     companion object {

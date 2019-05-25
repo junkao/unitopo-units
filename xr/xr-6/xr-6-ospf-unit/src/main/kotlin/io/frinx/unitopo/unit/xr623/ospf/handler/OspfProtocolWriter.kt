@@ -17,9 +17,9 @@ package io.frinx.unitopo.unit.xr623.ospf.handler
 
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.openconfig.network.instance.NetworInstance
-import io.frinx.translate.unit.commons.handler.spi.TypedWriter
+import io.frinx.translate.unit.commons.handler.spi.ChecksMap
+import io.frinx.translate.unit.commons.handler.spi.CompositeWriter
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev170102.ospf.processes.process.vrfs.VrfKey
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev170102.Ospf
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev170102.ospf.Processes
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev170102.ospf.processes.Process
@@ -27,6 +27,7 @@ import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.osp
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev170102.ospf.processes.ProcessKey
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev170102.ospf.processes.process.VrfsBuilder
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev170102.ospf.processes.process.vrfs.VrfBuilder
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev170102.ospf.processes.process.vrfs.VrfKey
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.xr.types.rev150629.CiscoIosXrString
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.Protocol
@@ -35,14 +36,18 @@ import org.opendaylight.yangtools.yang.binding.DataObject
 import java.util.Collections
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
-open class OspfProtocolWriter(private val underlayAccess: UnderlayAccess) : TypedWriter<Config> {
+open class OspfProtocolWriter(private val underlayAccess: UnderlayAccess) : CompositeWriter.Child<Config> {
 
-    override fun updateCurrentAttributesForType(
+    override fun updateCurrentAttributesWResult(
         iid: IID<Config>,
         dataBefore: Config,
         dataAfter: Config,
         writeContext: WriteContext
-    ) {
+    ): Boolean {
+        if (!ChecksMap.PathCheck.Protocol.OSPF.canProcess(iid, writeContext, false)) {
+            return false
+        }
+
         val (identifier, _) = getIdentifiers(iid)
 
         val processBuilder = underlayAccess.read(identifier)
@@ -52,19 +57,29 @@ open class OspfProtocolWriter(private val underlayAccess: UnderlayAccess) : Type
 
         val (underlayId, underlayCfg) = getData(iid, processBuilder)
         underlayAccess.put(underlayId, underlayCfg)
+        return true
     }
 
-    override fun writeCurrentAttributesForType(id: IID<Config>, dataAfter: Config, wtx: WriteContext) {
+    override fun writeCurrentAttributesWResult(id: IID<Config>, dataAfter: Config, wtx: WriteContext): Boolean {
+        if (!ChecksMap.PathCheck.Protocol.OSPF.canProcess(id, wtx, false)) {
+            return false
+        }
+
         val (underlayId, underlayCfg) = getData(id, ProcessBuilder())
         underlayAccess.merge(underlayId, underlayCfg)
+        return true
     }
 
-    override fun deleteCurrentAttributesForType(id: IID<Config>, dataBefore: Config, wtx: WriteContext) {
+    override fun deleteCurrentAttributesWResult(id: IID<Config>, dataBefore: Config, wtx: WriteContext): Boolean {
+        if (!ChecksMap.PathCheck.Protocol.OSPF.canProcess(id, wtx, true)) {
+            return false
+        }
         val processName = id.firstKeyOf(Protocol::class.java).name
         val processId = IID.create(Ospf::class.java).child(Processes::class.java).child(Process::class.java,
             ProcessKey(CiscoIosXrString(processName)))
 
         underlayAccess.delete(processId)
+        return true
     }
 
     private fun getData(

@@ -17,9 +17,11 @@
 package io.frinx.unitopo.unit.xr6.network.instance.handler.l2p2p.cp
 
 import com.google.common.collect.Lists
+import io.fd.honeycomb.translate.spi.builder.BasicCheck
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.openconfig.openconfig.interfaces.IIDs
-import io.frinx.translate.unit.commons.handler.spi.TypedWriter
+import io.frinx.translate.unit.commons.handler.spi.ChecksMap
+import io.frinx.translate.unit.commons.handler.spi.CompositeWriter
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr6.interfaces.handler.InterfaceReader
 import io.frinx.unitopo.unit.xr6.interfaces.handler.subifc.SubinterfaceConfigWriter
@@ -81,13 +83,19 @@ import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.l2vpn.cf
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ip.rev161222.Subinterface1 as IpSubInterfaceAug
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.vlan.rev170714.vlan.logical.top.Vlan as OpenConfigVlan
 
-class L2P2PConnectionPointsWriter(private val underlayAccess: UnderlayAccess) : TypedWriter<ConnectionPoints> {
+class L2P2PConnectionPointsWriter(private val underlayAccess: UnderlayAccess)
+    : CompositeWriter.Child<ConnectionPoints> {
 
-    override fun writeCurrentAttributesForType(
+    override fun writeCurrentAttributesWResult(
         id: InstanceIdentifier<ConnectionPoints>,
         dataAfter: ConnectionPoints,
         writeContext: WriteContext
-    ) {
+    ): Boolean {
+        if (!BasicCheck.checkData(ChecksMap.DataCheck.NetworkInstanceConfig.IID_TRANSFORMATION,
+                ChecksMap.DataCheck.NetworkInstanceConfig.TYPE_L2P2P).canProcess(id, writeContext, false)) {
+            return false
+        }
+
         val connectionPointList = dataAfter.connectionPoint
                 ?: throw IllegalArgumentException("No connection points specified")
 
@@ -99,6 +107,7 @@ class L2P2PConnectionPointsWriter(private val underlayAccess: UnderlayAccess) : 
 
         configureEndpoint(writeContext, endpoint1, id)
         configureEndpoint(writeContext, entpoint2, id)
+        return true
     }
 
     private fun getEndPoints(config: ConnectionPoints): Pair<Endpoint, Endpoint> {
@@ -259,11 +268,16 @@ class L2P2PConnectionPointsWriter(private val underlayAccess: UnderlayAccess) : 
         underlayAccess.merge(underlayIfcId, underlaySubifcConfigurationAfter)
     }
 
-    override fun deleteCurrentAttributesForType(
+    override fun deleteCurrentAttributesWResult(
         id: InstanceIdentifier<ConnectionPoints>,
         dataBefore: ConnectionPoints,
         writeContext: WriteContext
-    ) {
+    ): Boolean {
+        if (!BasicCheck.checkData(ChecksMap.DataCheck.NetworkInstanceConfig.IID_TRANSFORMATION,
+                ChecksMap.DataCheck.NetworkInstanceConfig.TYPE_L2P2P).canProcess(id, writeContext, true)) {
+            return false
+        }
+
         val l2p2InstanceName = id.firstKeyOf(NetworkInstance::class.java).name
 
         val (endpoint1, endpoint2) = getEndPoints(dataBefore)
@@ -274,6 +288,7 @@ class L2P2PConnectionPointsWriter(private val underlayAccess: UnderlayAccess) : 
         val underlayP2PXconnectId = L2P2PReader.UNDERLAY_P2PXCONNECT_ID.child(P2pXconnect::class.java,
                 P2pXconnectKey(CiscoIosXrString(l2p2InstanceName)))
         underlayAccess.delete(underlayP2PXconnectId)
+        return true
     }
 
     private fun deleteEndpoint(endpoint: Endpoint) {
@@ -321,14 +336,20 @@ class L2P2PConnectionPointsWriter(private val underlayAccess: UnderlayAccess) : 
         underlayAccess.merge(underlayIfcId, underlaySubifcConfigBefore)
     }
 
-    override fun updateCurrentAttributesForType(
+    override fun updateCurrentAttributesWResult(
         id: InstanceIdentifier<ConnectionPoints>,
         dataBefore: ConnectionPoints,
         dataAfter: ConnectionPoints,
         writeContext: WriteContext
-    ) {
-        deleteCurrentAttributesForType(id, dataBefore, writeContext)
-        writeCurrentAttributesForType(id, dataAfter, writeContext)
+    ): Boolean {
+        if (!BasicCheck.checkData(ChecksMap.DataCheck.NetworkInstanceConfig.IID_TRANSFORMATION,
+                ChecksMap.DataCheck.NetworkInstanceConfig.TYPE_L2P2P).canProcess(id, writeContext, false)) {
+            return false
+        }
+
+        deleteCurrentAttributesWResult(id, dataBefore, writeContext)
+        writeCurrentAttributesWResult(id, dataAfter, writeContext)
+        return true
     }
 
     private fun deleteL2InterfaceConfiguration(underlayIfcName: String) {
