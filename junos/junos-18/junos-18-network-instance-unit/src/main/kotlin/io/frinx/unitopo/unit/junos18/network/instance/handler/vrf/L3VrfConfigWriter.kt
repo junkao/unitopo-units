@@ -16,12 +16,11 @@
 
 package io.frinx.unitopo.unit.junos18.network.instance.handler.vrf
 
-import io.fd.honeycomb.translate.spi.builder.BasicCheck
 import io.fd.honeycomb.translate.write.WriteContext
-import io.frinx.translate.unit.commons.handler.spi.ChecksMap
 import io.frinx.translate.unit.commons.handler.spi.CompositeWriter
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.Config
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.types.rev170228.L3VRF
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.routing.instances.rev180101.routing.instances.group.routing.instances.Instance
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.routing.instances.rev180101.routing.instances.group.routing.instances.InstanceBuilder
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.routing.instances.rev180101.routing.instances.group.routing.instances.InstanceKey
@@ -30,8 +29,7 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 class L3VrfConfigWriter(private val underlayAccess: UnderlayAccess) : CompositeWriter.Child<Config> {
 
     override fun deleteCurrentAttributesWResult(iid: IID<Config>, dataBefore: Config, wtc: WriteContext): Boolean {
-        if (!BasicCheck.checkData(ChecksMap.DataCheck.NetworkInstanceConfig.IID_TRANSFORMATION,
-                ChecksMap.DataCheck.NetworkInstanceConfig.TYPE_L3VRF).canProcess(iid, wtc, true)) {
+        if (dataBefore.type != L3VRF::class.java) {
             return false
         }
 
@@ -47,8 +45,7 @@ class L3VrfConfigWriter(private val underlayAccess: UnderlayAccess) : CompositeW
         dataAfter: Config,
         writeContext: WriteContext
     ): Boolean {
-        if (!BasicCheck.checkData(ChecksMap.DataCheck.NetworkInstanceConfig.IID_TRANSFORMATION,
-                ChecksMap.DataCheck.NetworkInstanceConfig.TYPE_L3VRF).canProcess(id, writeContext, false)) {
+        if (dataBefore.type != L3VRF::class.java) {
             return false
         }
         // There are no modifiable attributes.
@@ -56,8 +53,7 @@ class L3VrfConfigWriter(private val underlayAccess: UnderlayAccess) : CompositeW
     }
 
     override fun writeCurrentAttributesWResult(iid: IID<Config>, dataAfter: Config, wtc: WriteContext): Boolean {
-        if (!BasicCheck.checkData(ChecksMap.DataCheck.NetworkInstanceConfig.IID_TRANSFORMATION,
-                ChecksMap.DataCheck.NetworkInstanceConfig.TYPE_L3VRF).canProcess(iid, wtc, false)) {
+        if (dataAfter.type != L3VRF::class.java) {
             return false
         }
 

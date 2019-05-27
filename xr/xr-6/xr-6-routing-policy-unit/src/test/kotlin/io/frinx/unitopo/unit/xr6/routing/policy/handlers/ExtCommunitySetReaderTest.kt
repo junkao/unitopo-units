@@ -17,13 +17,14 @@
 package io.frinx.unitopo.unit.xr6.routing.policy.handlers
 
 import io.frinx.unitopo.unit.utils.AbstractNetconfHandlerTest
+import org.hamcrest.collection.IsIterableContainingInAnyOrder
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertThat
 import org.junit.Test
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.infra.rsi.cfg.rev150730.Vrfs
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.policy.rev170730.ExtCommunitySetConfig
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.policy.rev170730.ext.community.set.top.ext.community.sets.ExtCommunitySetBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.policy.rev170730.ext.community.set.top.ext.community.sets.ExtCommunitySetKey
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.policy.rev170730.ext.community.set.top.ext.community.sets.ext.community.set.ConfigBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.types.rev170202.BgpExtCommunityType
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.`$YangModuleInfoImpl` as UnderlayIpv4BgpConfigYangModule
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.infra.rsi.cfg.rev150730.`$YangModuleInfoImpl` as UnderlayInfraRsConfigYangModule
@@ -59,35 +60,26 @@ class ExtCommunitySetReaderTest : AbstractNetconfHandlerTest() {
 
         var builder = ExtCommunitySetBuilder()
         ExtCommunitySetReader.parseCurrentAttributes(vrfs, builder, "abcd-route-target-export-set")
-        assertEquals(
-                ExtCommunitySetBuilder()
-                        .setExtCommunitySetName("abcd-route-target-export-set")
-                        .setConfig(ConfigBuilder()
-                                .setExtCommunitySetName("abcd-route-target-export-set")
-                                .setExtCommunityMember(listOf("8585:4343", "1:1").map {
-                                    ExtCommunitySetConfig.ExtCommunityMember(BgpExtCommunityType(it)) })
-                                .build())
-                        .build(),
-                builder.build())
+        var actual = builder.build()
+        assertEquals("abcd-route-target-export-set", actual.extCommunitySetName)
+        assertEquals("abcd-route-target-export-set", actual.config.extCommunitySetName)
+        assertThat(actual.config.extCommunityMember,
+                IsIterableContainingInAnyOrder.containsInAnyOrder(
+                        ExtCommunitySetConfig.ExtCommunityMember(BgpExtCommunityType("8585:4343")),
+                        ExtCommunitySetConfig.ExtCommunityMember(BgpExtCommunityType("1:1"))))
 
         builder = ExtCommunitySetBuilder()
         ExtCommunitySetReader.parseCurrentAttributes(vrfs, builder, "abcd-route-target-import-set")
-        assertEquals(
-                ExtCommunitySetBuilder()
-                        .setExtCommunitySetName("abcd-route-target-import-set")
-                        .setConfig(ConfigBuilder()
-                                .setExtCommunitySetName("abcd-route-target-import-set")
-                                .setExtCommunityMember(listOf("6500:4", "5445444:1").map {
-                                    ExtCommunitySetConfig.ExtCommunityMember(BgpExtCommunityType(it)) })
-                                .build())
-                        .build(),
-                builder.build())
+        actual = builder.build()
+        assertEquals("abcd-route-target-import-set", actual.extCommunitySetName)
+        assertEquals("abcd-route-target-import-set", actual.config.extCommunitySetName)
+        assertThat(actual.config.extCommunityMember,
+                IsIterableContainingInAnyOrder.containsInAnyOrder(
+                        ExtCommunitySetConfig.ExtCommunityMember(BgpExtCommunityType("6500:4")),
+                        ExtCommunitySetConfig.ExtCommunityMember(BgpExtCommunityType("5445444:1"))))
 
-        val builder2 = ExtCommunitySetBuilder()
-        ExtCommunitySetReader.parseCurrentAttributes(vrfs, builder2, "NONEXISTING")
-
-        assertEquals(
-                ExtCommunitySetBuilder().build(),
-                builder2.build())
+        builder = ExtCommunitySetBuilder()
+        ExtCommunitySetReader.parseCurrentAttributes(vrfs, builder, "NONEXISTING")
+        assertEquals(ExtCommunitySetBuilder().build(), builder.build())
     }
 }

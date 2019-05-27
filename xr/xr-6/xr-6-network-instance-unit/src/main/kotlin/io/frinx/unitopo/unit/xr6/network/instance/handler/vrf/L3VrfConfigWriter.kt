@@ -16,9 +16,7 @@
 
 package io.frinx.unitopo.unit.xr6.network.instance.handler.vrf
 
-import io.fd.honeycomb.translate.spi.builder.BasicCheck
 import io.fd.honeycomb.translate.write.WriteContext
-import io.frinx.translate.unit.commons.handler.spi.ChecksMap
 import io.frinx.translate.unit.commons.handler.spi.CompositeWriter
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.infra.rsi.cfg.rev150730.VrfAddressFamily
@@ -32,6 +30,7 @@ import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.infra.rs
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.infra.rsi.cfg.rev150730.vrfs.VrfKey
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.xr.types.rev150629.CiscoIosXrString
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.Config
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.types.rev170228.L3VRF
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.openconfig.types.rev170113.ADDRESSFAMILY
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.openconfig.types.rev170113.IPV4
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.openconfig.types.rev170113.IPV6
@@ -40,8 +39,7 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 class L3VrfConfigWriter(private val underlayAccess: UnderlayAccess) : CompositeWriter.Child<Config> {
 
     override fun deleteCurrentAttributesWResult(iid: IID<Config>, dataBefore: Config, wtx: WriteContext): Boolean {
-        if (!BasicCheck.checkData(ChecksMap.DataCheck.NetworkInstanceConfig.IID_TRANSFORMATION,
-                ChecksMap.DataCheck.NetworkInstanceConfig.TYPE_L3VRF).canProcess(iid, wtx, true)) {
+        if (dataBefore.type != L3VRF::class.java) {
             return false
         }
 
@@ -56,8 +54,7 @@ class L3VrfConfigWriter(private val underlayAccess: UnderlayAccess) : CompositeW
         dataAfter: Config,
         writeContext: WriteContext
     ): Boolean {
-        if (!BasicCheck.checkData(ChecksMap.DataCheck.NetworkInstanceConfig.IID_TRANSFORMATION,
-                ChecksMap.DataCheck.NetworkInstanceConfig.TYPE_L3VRF).canProcess(id, writeContext, false)) {
+        if (dataBefore.type != L3VRF::class.java) {
             return false
         }
 
@@ -72,8 +69,7 @@ class L3VrfConfigWriter(private val underlayAccess: UnderlayAccess) : CompositeW
     }
 
     override fun writeCurrentAttributesWResult(iid: IID<Config>, dataAfter: Config, wtx: WriteContext): Boolean {
-        if (!BasicCheck.checkData(ChecksMap.DataCheck.NetworkInstanceConfig.IID_TRANSFORMATION,
-                ChecksMap.DataCheck.NetworkInstanceConfig.TYPE_L3VRF).canProcess(iid, wtx, false)) {
+        if (dataAfter.type != L3VRF::class.java) {
             return false
         }
 

@@ -26,7 +26,9 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.insta
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstanceKey
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.Protocols
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.Protocol
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.ProtocolKey
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.protocol.Config
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.policy.types.rev160512.BGP
 
 class BgpProtocolConfigWriterTest {
     private var writeContext = Mockito.mock(WriteContext::class.java)
@@ -39,7 +41,7 @@ class BgpProtocolConfigWriterTest {
         val id = IIDs.NETWORKINSTANCES
                 .child(NetworkInstance::class.java, NetworkInstanceKey(vrfName))
                 .child(Protocols::class.java)
-                .child(Protocol::class.java)
+                .child(Protocol::class.java, ProtocolKey(BGP::class.java, "foo"))
                 .child(Config::class.java)
         val config = Mockito.mock(Config::class.java)
 
@@ -51,7 +53,7 @@ class BgpProtocolConfigWriterTest {
         val id = IIDs.NETWORKINSTANCES
                 .child(NetworkInstance::class.java, NetworInstance.DEFAULT_NETWORK)
                 .child(Protocols::class.java)
-                .child(Protocol::class.java)
+                .child(Protocol::class.java, ProtocolKey(BGP::class.java, "foo"))
                 .child(Config::class.java)
         val config = Mockito.mock(Config::class.java)
 

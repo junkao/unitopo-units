@@ -42,7 +42,7 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.insta
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.Protocols
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.Protocol
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.ProtocolKey
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.policy.types.rev160512.BGP
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.policy.types.rev160512.LOCALAGGREGATE
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.types.inet.rev170403.IpPrefixBuilder
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.common.types.rev180101.PolicyAlgebra
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.routing.instances.rev180101.juniper.routing.instance.RoutingOptions
@@ -115,7 +115,7 @@ class BgpAggregateConfigWriterTest {
         val configAfter = ConfigBuilder(CONFIG)
                 .build()
 
-        Mockito.doNothing().`when`(target).writeCurrentAttributesWResult(id, configAfter, writeContext)
+        Mockito.doReturn(true).`when`(target).writeCurrentAttributesWResult(id, configAfter, writeContext)
 
         target.updateCurrentAttributesWResult(id, configBefore, configAfter, writeContext)
 
@@ -161,7 +161,7 @@ class BgpAggregateConfigWriterTest {
         private val IID_CONFIG = IIDs.NETWORKINSTANCES
                 .child(NetworkInstance::class.java, NetworkInstanceKey(VRF_NAME))
                 .child(Protocols::class.java)
-                .child(Protocol::class.java, ProtocolKey(BGP::class.java, "default"))
+                .child(Protocol::class.java, ProtocolKey(LOCALAGGREGATE::class.java, "default"))
                 .child(LocalAggregates::class.java)
                 .child(Aggregate::class.java, AggregateKey(IpPrefixBuilder.getDefaultInstance(PREFIX)))
                 .child(Config::class.java)
