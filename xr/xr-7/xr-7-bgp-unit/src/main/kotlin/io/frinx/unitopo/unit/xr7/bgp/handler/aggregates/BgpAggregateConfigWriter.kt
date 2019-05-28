@@ -70,7 +70,7 @@ open class BgpAggregateConfigWriter(private val access: UnderlayAccess) : Compos
         config: Config,
         writeContext: WriteContext
     ): Boolean {
-        if (!ChecksMap.PathCheck.Protocol.LOCALAGGREGATE.canProcess(id, writeContext, false)) {
+        if (!ChecksMap.PathCheck.Protocol.BGP.canProcess(id, writeContext, false)) {
             return false
         }
 
@@ -98,7 +98,7 @@ open class BgpAggregateConfigWriter(private val access: UnderlayAccess) : Compos
         dataAfter: Config,
         writeContext: WriteContext
     ): Boolean {
-        if (!ChecksMap.PathCheck.Protocol.LOCALAGGREGATE.canProcess(id, writeContext, false)) {
+        if (!ChecksMap.PathCheck.Protocol.BGP.canProcess(id, writeContext, false)) {
             return false
         }
 
@@ -124,7 +124,7 @@ open class BgpAggregateConfigWriter(private val access: UnderlayAccess) : Compos
         config: Config,
         writeContext: WriteContext
     ): Boolean {
-        if (!ChecksMap.PathCheck.Protocol.LOCALAGGREGATE.canProcess(id, writeContext, true)) {
+        if (!ChecksMap.PathCheck.Protocol.BGP.canProcess(id, writeContext, true)) {
             return false
         }
 
