@@ -106,13 +106,13 @@ class IsisInterfaceTimersConfigWriterTest {
         val config = ConfigBuilder(CONFIG)
                 .build()
 
-        Mockito.doNothing().`when`(underlayAccess).put(Mockito.any(), Mockito.any())
+        Mockito.doNothing().`when`(underlayAccess).safePut(Mockito.any(), Mockito.any())
 
         // test
         target.writeCurrentAttributes(IID_CONFIG, config, writeContext)
 
         // capture
-        Mockito.verify(underlayAccess, Mockito.times(1)).put(idCap.capture(), dataCap.capture())
+        Mockito.verify(underlayAccess, Mockito.times(1)).safePut(idCap.capture(), dataCap.capture())
 
         // verify capture-length
         Assert.assertThat(idCap.allValues.size, CoreMatchers.`is`(1))

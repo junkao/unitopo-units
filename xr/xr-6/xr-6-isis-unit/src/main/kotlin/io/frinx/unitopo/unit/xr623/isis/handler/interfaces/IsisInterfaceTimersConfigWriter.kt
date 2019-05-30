@@ -40,7 +40,7 @@ class IsisInterfaceTimersConfigWriter(private val underlayAccess: UnderlayAccess
         }
 
         val (underlayId, builder) = getData(id, dataAfter)
-        underlayAccess.put(underlayId, builder)
+        underlayAccess.safePut(underlayId, builder)
     }
 
     override fun updateCurrentAttributes(
@@ -65,13 +65,7 @@ class IsisInterfaceTimersConfigWriter(private val underlayAccess: UnderlayAccess
         val interfaceId = id.firstKeyOf(Interface::class.java)
         val underlayId = getUnderlayId(instanceName.name, interfaceId.interfaceId.value)
 
-        val ifc = underlayAccess.read(underlayId).checkedGet()
-        val builder = when (ifc.isPresent) {
-            false -> LspRetransmitIntervalBuilder()
-            true -> LspRetransmitIntervalBuilder(ifc.get())
-        }
-
-        builder
+        val builder = LspRetransmitIntervalBuilder()
                 .setLevel(IsisInternalLevel.NotSet)
                 .setInterval(dataAfter.getAugmentation(IsisIfTimersConfAug::class.java)?.retransmissionInterval)
 

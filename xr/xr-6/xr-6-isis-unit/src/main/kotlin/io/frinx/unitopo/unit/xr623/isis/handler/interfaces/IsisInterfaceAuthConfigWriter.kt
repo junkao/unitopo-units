@@ -49,7 +49,7 @@ class IsisInterfaceAuthConfigWriter(private val underlayAccess: UnderlayAccess) 
         }
 
         val (underlayId, builder) = getData(id, dataAfter)
-        underlayAccess.put(underlayId, builder)
+        underlayAccess.safePut(underlayId, builder)
     }
 
     override fun updateCurrentAttributes(
@@ -74,22 +74,11 @@ class IsisInterfaceAuthConfigWriter(private val underlayAccess: UnderlayAccess) 
         val interfaceId = id.firstKeyOf(Interface::class.java)
 
         val underlayId = getUnderlayId(instanceName.name, interfaceId.interfaceId.value)
-        val ifc = IsisInterfaceReader.getInterfaces(underlayAccess, instanceName)
-                ?.`interface`.orEmpty()
-                .find { it.interfaceName.value == interfaceId.interfaceId.value }
-                ?.let {
-                    it.helloPasswords?.helloPassword.orEmpty()
-                            .find { it.level == IsisInternalLevel.NotSet }
-                }
-        val builder = when (ifc) {
-            null -> HelloPasswordBuilder()
-            else -> HelloPasswordBuilder(ifc)
-        }
 
         val matcher = PASSWORD_ENCRYPTED_PATTERN.matcher(dataAfter.authPassword.encryptedString.value)
         Preconditions.checkState(matcher.matches())
 
-        builder
+        val builder = HelloPasswordBuilder()
             .setLevel(IsisInternalLevel.NotSet)
             .setAlgorithm(IsisAuthenticationAlgorithm.HmacMd5)
             .setFailureMode(IsisAuthenticationFailureMode.Drop)
