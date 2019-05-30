@@ -79,8 +79,8 @@ class InterfaceDampingConfigWriterTest : AbstractNetconfHandlerTest() {
         private val NATIVE_CONFIG = DampeningBuilder()
             .setHalfLife(IF_HALFLIFE)
             .setReuseThreshold(IF_REUSE)
-            .setSuppressTime(IF_SUPPRESS)
-            .setSuppressThreshold(IF_MAXSUPPRESS)
+            .setSuppressTime(IF_MAXSUPPRESS)
+            .setSuppressThreshold(IF_SUPPRESS)
             .setArgs(Dampening.Args.SpecifyAll)
             .build()
 
@@ -188,8 +188,8 @@ class InterfaceDampingConfigWriterTest : AbstractNetconfHandlerTest() {
             .setArgs(Dampening.Args.SpecifyAll)
             .setHalfLife(IF_HALFLIFE + 10L)
             .setReuseThreshold(IF_REUSE + 11L)
-            .setSuppressTime(IF_SUPPRESS + 12L)
-            .setSuppressThreshold(IF_MAXSUPPRESS + 13L)
+            .setSuppressThreshold(IF_SUPPRESS + 12L)
+            .setSuppressTime(IF_MAXSUPPRESS + 13L)
             .build()
 
         val idCap = ArgumentCaptor

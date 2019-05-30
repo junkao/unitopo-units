@@ -67,8 +67,8 @@ class InterfaceDampingConfigReader(private val underlayAccess: UnderlayAccess) :
         }
 
         private fun ConfigBuilder.fromUnderlay(dampening: Dampening) {
-            maxSuppress = dampening.suppressThreshold
-            suppress = dampening.suppressTime
+            maxSuppress = dampening.suppressTime
+            suppress = dampening.suppressThreshold
             reuse = dampening.reuseThreshold
             halfLife = dampening.halfLife
             isEnabled = true
