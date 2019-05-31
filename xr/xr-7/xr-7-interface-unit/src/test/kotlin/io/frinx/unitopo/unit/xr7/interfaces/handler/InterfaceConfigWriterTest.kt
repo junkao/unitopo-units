@@ -86,6 +86,7 @@ class InterfaceConfigWriterTest : AbstractNetconfHandlerTest() {
                 .setDescription(IF_DESCRIPTION)
                 .setInterfaceVirtual(true)
                 .setInterfaceName(NATIVE_IF_NAME)
+                .setShutdown(true)
                 .setInterfaceModeNonPhysical(NATIVE_IF_MODE_NON_PHYS)
                 .build()
     }

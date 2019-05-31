@@ -42,9 +42,18 @@ class InterfaceConfigWriter(underlayAccess: UnderlayAccess) :
     }
 
     private fun InterfaceConfigurationBuilder.toUnderlay(data: Config) {
+        if (data.type != EthernetCsmacd::class.java && data.type != Ieee8023adLag::class.java) {
+            throw IllegalArgumentException("Interface type " + data.type.toString() + " is not supported")
+        }
+
         interfaceName = InterfaceName(data.name)
         active = InterfaceActive("act")
         description = data.description
+        if (data.shutdown()) {
+            isShutdown = true
+        } else {
+            isShutdown = null
+        }
         if (data.type == Ieee8023adLag::class.java) {
             isInterfaceVirtual = true
             if (data.mtu != null) {
@@ -53,10 +62,6 @@ class InterfaceConfigWriter(underlayAccess: UnderlayAccess) :
                     .build()
                 mtus = MtusBuilder().setMtu(listOf(mtu)).build()
             }
-        } else if (data.type == EthernetCsmacd::class.java) {
-            isShutdown = data.shutdown()
-        } else {
-            throw IllegalArgumentException("Interface type " + data.type.toString() + " is not supported")
         }
     }
 
