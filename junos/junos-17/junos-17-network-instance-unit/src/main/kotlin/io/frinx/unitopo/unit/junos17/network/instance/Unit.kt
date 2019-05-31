@@ -19,6 +19,7 @@ import io.fd.honeycomb.translate.spi.builder.CustomizerAwareReadRegistryBuilder
 import io.fd.honeycomb.translate.spi.builder.CustomizerAwareWriteRegistryBuilder
 import io.frinx.openconfig.openconfig.network.instance.IIDs
 import io.frinx.translate.unit.commons.handler.spi.ChecksMap
+import io.frinx.unitopo.ni.base.handler.vrf.protocol.ProtocolConfigReader
 import io.frinx.unitopo.registry.api.TranslationUnitCollector
 import io.frinx.unitopo.registry.spi.TranslateUnit
 import io.frinx.unitopo.registry.spi.UnderlayAccess
@@ -77,6 +78,7 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
         rRegistry.add(IIDs.NE_NE_STATE, NetworkInstanceStateReader(underlayAccess))
 
         rRegistry.add(IIDs.NE_NE_PR_PROTOCOL, ProtocolReader(underlayAccess))
+        rRegistry.add(IIDs.NE_NE_PR_PR_CONFIG, ProtocolConfigReader())
     }
 
     override fun toString(): String = "Junos 17.3 network-instance translate unit"
