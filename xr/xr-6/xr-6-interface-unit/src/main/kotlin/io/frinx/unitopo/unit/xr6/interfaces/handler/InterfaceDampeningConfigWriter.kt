@@ -91,8 +91,8 @@ class InterfaceDampeningConfigWriter(private val underlayAccess: UnderlayAccess)
 
 private fun DampeningBuilder.formOpenConfig(data: Config): DampeningBuilder {
     halfLife = data.halfLife
-    suppressTime = data.suppress
-    suppressThreshold = data.maxSuppress
+    suppressTime = data.maxSuppress
+    suppressThreshold = data.suppress
     reuseThreshold = data.reuse
     args = when {
         halfLife == null -> Dampening.Args.DefaultValues

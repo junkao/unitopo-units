@@ -60,7 +60,7 @@ class InterfaceDampeningConfigWriterTest : AbstractNetconfHandlerTest() {
         private val IF_NAME = "GigabitEthernet0/0/0/0"
         private val IF_HALFLIFE = 10L
         private val IF_REUSE = 11L
-        private val IF_SUPPRESS = 12L
+        private val IF_SUPPRESS = 15000L
         private val IF_MAXSUPPRESS = 13L
 
         // netconf
@@ -79,8 +79,8 @@ class InterfaceDampeningConfigWriterTest : AbstractNetconfHandlerTest() {
         private val NATIVE_CONFIG = DampeningBuilder()
             .setHalfLife(IF_HALFLIFE)
             .setReuseThreshold(IF_REUSE)
-            .setSuppressTime(IF_SUPPRESS)
-            .setSuppressThreshold(IF_MAXSUPPRESS)
+            .setSuppressTime(IF_MAXSUPPRESS)
+            .setSuppressThreshold(IF_SUPPRESS)
             .setArgs(Dampening.Args.SpecifyAll)
             .build()
 
@@ -180,8 +180,8 @@ class InterfaceDampeningConfigWriterTest : AbstractNetconfHandlerTest() {
             .setArgs(Dampening.Args.SpecifyAll)
             .setHalfLife(IF_HALFLIFE + 10L)
             .setReuseThreshold(IF_REUSE + 11L)
-            .setSuppressTime(IF_SUPPRESS + 12L)
-            .setSuppressThreshold(IF_MAXSUPPRESS + 13L)
+            .setSuppressThreshold(IF_SUPPRESS + 12L)
+            .setSuppressTime(IF_MAXSUPPRESS + 13L)
             .build()
 
         val idCap = ArgumentCaptor

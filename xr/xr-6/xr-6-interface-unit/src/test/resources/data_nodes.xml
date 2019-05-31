@@ -420,7 +420,7 @@
                     <args>specify-all</args>
                     <half-life>10</half-life>
                     <reuse-threshold>11</reuse-threshold>
-                    <suppress-threshold>12</suppress-threshold>
+                    <suppress-threshold>15000</suppress-threshold>
                     <suppress-time>13</suppress-time>
                 </dampening>
                 <shutdown></shutdown>
@@ -469,7 +469,7 @@
                     <args>specify-all</args>
                     <half-life>10</half-life>
                     <reuse-threshold>11</reuse-threshold>
-                    <suppress-threshold>12</suppress-threshold>
+                    <suppress-threshold>15000</suppress-threshold>
                     <suppress-time>13</suppress-time>
                 </dampening>
                 <interface-virtual></interface-virtual>

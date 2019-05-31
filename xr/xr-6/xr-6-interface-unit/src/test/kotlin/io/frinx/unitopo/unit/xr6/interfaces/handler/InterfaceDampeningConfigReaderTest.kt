@@ -58,9 +58,9 @@ class InterfaceDampeningConfigReaderTest : AbstractNetconfHandlerTest() {
     fun testReadCurrentAttributesGigabitEthernet() {
         val ifName = "GigabitEthernet0/0/0/0"
         val halfLife = 10L
-        val maxsuppress = 12L
         val reuse = 11L
-        val suppress = 13L
+        val suppress = 15000L
+        val maxsuppress = 13L
         val configBuilder = ConfigBuilder()
         val id = InstanceIdentifier
             .create(Interfaces::class.java)
