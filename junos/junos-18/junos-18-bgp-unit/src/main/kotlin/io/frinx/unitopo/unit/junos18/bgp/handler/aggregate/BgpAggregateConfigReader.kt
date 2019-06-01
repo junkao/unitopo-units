@@ -17,7 +17,8 @@
 package io.frinx.unitopo.unit.junos18.bgp.handler.aggregate
 
 import io.fd.honeycomb.translate.read.ReadContext
-import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
+import io.fd.honeycomb.translate.spi.builder.Check
+import io.frinx.translate.unit.commons.handler.spi.ChecksMap
 import io.frinx.translate.unit.commons.handler.spi.CompositeReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.junos18.bgp.handler.BgpProtocolReader
@@ -39,8 +40,11 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.junos.conf.routing.instances.rev180101.juniper.routing.options.Aggregate as JunosAggregate
 
 class BgpAggregateConfigReader(private val underlayAccess: UnderlayAccess) :
-        ConfigReaderCustomizer<Config, ConfigBuilder>,
         CompositeReader.Child<Config, ConfigBuilder> {
+
+    override fun getCheck(): Check {
+        return ChecksMap.PathCheck.Protocol.BGP
+    }
 
     override fun getBuilder(id: InstanceIdentifier<Config>): ConfigBuilder {
         // NOOP

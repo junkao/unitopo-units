@@ -18,7 +18,8 @@ package io.frinx.unitopo.unit.xr6.network.instance.handler.l2vsi
 
 import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.read.ReadFailedException
-import io.fd.honeycomb.translate.spi.read.OperReaderCustomizer
+import io.fd.honeycomb.translate.spi.builder.BasicCheck
+import io.fd.honeycomb.translate.spi.builder.Check
 import io.frinx.translate.unit.commons.handler.spi.CompositeReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
@@ -28,8 +29,11 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.insta
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.types.rev170228.L2VSI
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class L2VSIStateReader(private val cli: UnderlayAccess) :
-    OperReaderCustomizer<State, StateBuilder>, CompositeReader.Child<State, StateBuilder> {
+class L2VSIStateReader(private val cli: UnderlayAccess) : CompositeReader.Child<State, StateBuilder> {
+
+    override fun getCheck(): Check {
+        return BasicCheck.emptyCheck()
+    }
 
     override fun getBuilder(p0: InstanceIdentifier<State>): StateBuilder {
         // NOOP

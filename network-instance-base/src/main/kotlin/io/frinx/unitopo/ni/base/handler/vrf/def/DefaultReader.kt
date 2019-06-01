@@ -17,7 +17,8 @@
 package io.frinx.unitopo.ni.base.handler.vrf.def
 
 import io.fd.honeycomb.translate.read.ReadContext
-import io.fd.honeycomb.translate.spi.read.ConfigListReaderCustomizer
+import io.fd.honeycomb.translate.spi.builder.BasicCheck
+import io.fd.honeycomb.translate.spi.builder.Check
 import io.frinx.openconfig.network.instance.NetworInstance.DEFAULT_NETWORK
 import io.frinx.translate.unit.commons.handler.spi.CompositeListReader
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
@@ -25,9 +26,11 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.insta
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstanceKey
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class DefaultReader :
-    ConfigListReaderCustomizer<NetworkInstance, NetworkInstanceKey, NetworkInstanceBuilder>,
-    CompositeListReader.Child<NetworkInstance, NetworkInstanceKey, NetworkInstanceBuilder> {
+class DefaultReader : CompositeListReader.Child<NetworkInstance, NetworkInstanceKey, NetworkInstanceBuilder> {
+
+    override fun getCheck(): Check {
+        return BasicCheck.emptyCheck()
+    }
 
     override fun getAllIds(
         instanceIdentifier: InstanceIdentifier<NetworkInstance>,

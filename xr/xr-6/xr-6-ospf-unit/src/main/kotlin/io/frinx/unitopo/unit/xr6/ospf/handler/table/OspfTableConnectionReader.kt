@@ -17,6 +17,8 @@
 package io.frinx.unitopo.unit.xr6.ospf.handler.table
 
 import io.fd.honeycomb.translate.read.ReadContext
+import io.fd.honeycomb.translate.spi.builder.BasicCheck
+import io.fd.honeycomb.translate.spi.builder.Check
 import io.fd.honeycomb.translate.spi.read.ConfigListReaderCustomizer
 import io.frinx.translate.unit.commons.handler.spi.CompositeListReader
 import io.frinx.openconfig.network.instance.NetworInstance
@@ -41,6 +43,10 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 class OspfTableConnectionReader(private val access: UnderlayAccess) :
     ConfigListReaderCustomizer<TableConnection, TableConnectionKey, TableConnectionBuilder>,
     CompositeListReader.Child<TableConnection, TableConnectionKey, TableConnectionBuilder> {
+
+    override fun getCheck(): Check {
+        return BasicCheck.emptyCheck()
+    }
 
     override fun readCurrentAttributes(
         id: InstanceIdentifier<TableConnection>,

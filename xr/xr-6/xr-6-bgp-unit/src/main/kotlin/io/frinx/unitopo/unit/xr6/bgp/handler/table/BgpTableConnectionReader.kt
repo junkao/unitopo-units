@@ -17,7 +17,8 @@
 package io.frinx.unitopo.unit.xr6.bgp.handler.table
 
 import io.fd.honeycomb.translate.read.ReadContext
-import io.fd.honeycomb.translate.spi.read.ConfigListReaderCustomizer
+import io.fd.honeycomb.translate.spi.builder.BasicCheck
+import io.fd.honeycomb.translate.spi.builder.Check
 import io.frinx.openconfig.network.instance.NetworInstance
 import io.frinx.translate.unit.commons.handler.spi.CompositeListReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
@@ -40,8 +41,11 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.policy.types.
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
 class BgpTableConnectionReader(private val access: UnderlayAccess) :
-    ConfigListReaderCustomizer<TableConnection, TableConnectionKey, TableConnectionBuilder>,
     CompositeListReader.Child<TableConnection, TableConnectionKey, TableConnectionBuilder> {
+
+    override fun getCheck(): Check {
+        return BasicCheck.emptyCheck()
+    }
 
     override fun readCurrentAttributes(
         id: InstanceIdentifier<TableConnection>,

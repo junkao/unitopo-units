@@ -20,6 +20,7 @@ import io.fd.honeycomb.translate.spi.builder.CustomizerAwareReadRegistryBuilder
 import io.fd.honeycomb.translate.spi.builder.CustomizerAwareWriteRegistryBuilder
 import io.frinx.openconfig.openconfig.interfaces.IIDs as InterfaceIIDs
 import io.frinx.openconfig.openconfig.network.instance.IIDs
+import io.frinx.translate.unit.commons.handler.spi.ChecksMap
 import io.frinx.unitopo.ni.base.handler.vrf.protocol.ProtocolConfigReader
 import io.frinx.unitopo.ni.base.handler.vrf.protocol.ProtocolStateReader
 import io.frinx.unitopo.registry.api.TranslationUnitCollector
@@ -79,6 +80,8 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
         wRegistry: CustomizerAwareWriteRegistryBuilder,
         underlayAccess: UnderlayAccess
     ) {
+        rRegistry.addCheckRegistry(ChecksMap.OPENCONFIG_REGISTRY)
+        wRegistry.addCheckRegistry(ChecksMap.OPENCONFIG_REGISTRY)
         provideReaders(rRegistry, underlayAccess)
         provideWriters(wRegistry, underlayAccess)
     }

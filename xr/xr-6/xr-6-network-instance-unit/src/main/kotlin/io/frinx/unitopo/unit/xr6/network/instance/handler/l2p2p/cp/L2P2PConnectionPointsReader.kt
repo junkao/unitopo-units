@@ -19,7 +19,9 @@ package io.frinx.unitopo.unit.xr6.network.instance.handler.l2p2p.cp
 import com.google.common.collect.Lists
 import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.read.Reader
-import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
+import io.fd.honeycomb.translate.spi.builder.BasicCheck
+import io.fd.honeycomb.translate.spi.builder.Check
+import io.frinx.translate.unit.commons.handler.spi.ChecksMap
 import io.frinx.translate.unit.commons.handler.spi.CompositeReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr6.interfaces.Util
@@ -53,8 +55,12 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.insta
 
 // TODO read also operational data
 class L2P2PConnectionPointsReader(private val underlayAccess: UnderlayAccess) :
-    ConfigReaderCustomizer<ConnectionPoints, ConnectionPointsBuilder>,
     CompositeReader.Child<ConnectionPoints, ConnectionPointsBuilder> {
+
+    override fun getCheck(): Check {
+        return BasicCheck.checkData(ChecksMap.DataCheck.NetworkInstanceConfig.IID_TRANSFORMATION,
+            ChecksMap.DataCheck.NetworkInstanceConfig.TYPE_L2P2P)
+    }
 
     override fun getBuilder(p0: InstanceIdentifier<ConnectionPoints>): ConnectionPointsBuilder {
         // NOOP

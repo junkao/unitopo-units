@@ -17,6 +17,8 @@
 package io.frinx.unitopo.ni.base.handler.vrf.def
 
 import io.fd.honeycomb.translate.read.ReadContext
+import io.fd.honeycomb.translate.spi.builder.BasicCheck
+import io.fd.honeycomb.translate.spi.builder.Check
 import io.fd.honeycomb.translate.spi.read.OperReaderCustomizer
 import io.frinx.translate.unit.commons.handler.spi.CompositeReader
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
@@ -27,6 +29,10 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.insta
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
 class DefaultStateReader : OperReaderCustomizer<State, StateBuilder>, CompositeReader.Child<State, StateBuilder> {
+
+    override fun getCheck(): Check {
+        return BasicCheck.emptyCheck()
+    }
 
     override fun readCurrentAttributes(
         instanceIdentifier: InstanceIdentifier<State>,

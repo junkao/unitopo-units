@@ -18,7 +18,9 @@ package io.frinx.unitopo.unit.xr6.network.instance.handler.l2vsi.cp
 
 import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.read.Reader
-import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
+import io.fd.honeycomb.translate.spi.builder.BasicCheck
+import io.fd.honeycomb.translate.spi.builder.Check
+import io.frinx.translate.unit.commons.handler.spi.ChecksMap
 import io.frinx.translate.unit.commons.handler.spi.CompositeReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr6.network.instance.handler.l2vsi.L2VSIReader
@@ -46,8 +48,12 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.insta
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.connection.points.connection.point.endpoints.endpoint.remote.ConfigBuilder as RemoteConfigBuilder
 
 class L2VSIConnectionPointsReader(private val underlayAccess: UnderlayAccess) :
-    ConfigReaderCustomizer<ConnectionPoints, ConnectionPointsBuilder>,
     CompositeReader.Child<ConnectionPoints, ConnectionPointsBuilder> {
+
+    override fun getCheck(): Check {
+        return BasicCheck.checkData(ChecksMap.DataCheck.NetworkInstanceConfig.IID_TRANSFORMATION,
+            ChecksMap.DataCheck.NetworkInstanceConfig.TYPE_L2VSI)
+    }
 
     override fun getBuilder(p0: InstanceIdentifier<ConnectionPoints>): ConnectionPointsBuilder {
         // NOOP

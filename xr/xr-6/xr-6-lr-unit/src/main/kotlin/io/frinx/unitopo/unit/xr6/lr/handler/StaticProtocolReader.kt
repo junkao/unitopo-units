@@ -17,8 +17,10 @@ package io.frinx.unitopo.unit.xr6.lr.handler
 
 import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.read.ReadFailedException
+import io.fd.honeycomb.translate.spi.builder.Check
 import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
 import io.frinx.openconfig.network.instance.NetworInstance
+import io.frinx.translate.unit.commons.handler.spi.ChecksMap
 import io.frinx.translate.unit.commons.handler.spi.CompositeListReader
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.Protocol
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.ProtocolBuilder
@@ -28,6 +30,10 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
 class StaticProtocolReader : ConfigReaderCustomizer<Protocol, ProtocolBuilder>,
         CompositeListReader.Child<Protocol, ProtocolKey, ProtocolBuilder> {
+
+    override fun getCheck(): Check {
+        return ChecksMap.PathCheck.Protocol.STATIC_ROUTING
+    }
 
     override fun getBuilder(p0: org.opendaylight.yangtools.yang.binding.InstanceIdentifier<Protocol>): ProtocolBuilder {
         // NOOP

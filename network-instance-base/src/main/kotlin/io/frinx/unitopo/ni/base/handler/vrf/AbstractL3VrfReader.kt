@@ -17,7 +17,8 @@
 package io.frinx.unitopo.ni.base.handler.vrf
 
 import io.fd.honeycomb.translate.read.ReadContext
-import io.fd.honeycomb.translate.spi.read.ConfigListReaderCustomizer
+import io.fd.honeycomb.translate.spi.builder.BasicCheck
+import io.fd.honeycomb.translate.spi.builder.Check
 import io.frinx.openconfig.network.instance.NetworInstance
 import io.frinx.translate.unit.commons.handler.spi.CompositeListReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
@@ -28,8 +29,11 @@ import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
 abstract class AbstractL3VrfReader<T : DataObject> (protected val underlayAccess: UnderlayAccess) :
-    ConfigListReaderCustomizer<NetworkInstance, NetworkInstanceKey, NetworkInstanceBuilder>,
     CompositeListReader.Child<NetworkInstance, NetworkInstanceKey, NetworkInstanceBuilder> {
+
+    override fun getCheck(): Check {
+        return BasicCheck.emptyCheck()
+    }
 
     override fun readCurrentAttributes(
         id: InstanceIdentifier<NetworkInstance>,

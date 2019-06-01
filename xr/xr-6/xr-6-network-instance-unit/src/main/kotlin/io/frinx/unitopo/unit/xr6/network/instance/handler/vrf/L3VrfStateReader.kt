@@ -18,6 +18,8 @@ package io.frinx.unitopo.unit.xr6.network.instance.handler.vrf
 
 import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.read.ReadFailedException
+import io.fd.honeycomb.translate.spi.builder.BasicCheck
+import io.fd.honeycomb.translate.spi.builder.Check
 import io.fd.honeycomb.translate.spi.read.OperReaderCustomizer
 import io.frinx.translate.unit.commons.handler.spi.CompositeReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
@@ -29,6 +31,10 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
 class L3VrfStateReader(underlayAccess: UnderlayAccess) : OperReaderCustomizer<State, StateBuilder>,
         CompositeReader.Child<State, StateBuilder> {
+
+    override fun getCheck(): Check {
+        return BasicCheck.emptyCheck()
+    }
 
     private val parentReader = L3VrfReader(underlayAccess)
 

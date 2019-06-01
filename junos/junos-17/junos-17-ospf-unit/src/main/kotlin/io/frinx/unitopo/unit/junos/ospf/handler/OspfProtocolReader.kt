@@ -16,6 +16,8 @@
 package io.frinx.unitopo.unit.junos.ospf.handler
 
 import io.fd.honeycomb.translate.read.ReadContext
+import io.fd.honeycomb.translate.spi.builder.Check
+import io.frinx.translate.unit.commons.handler.spi.ChecksMap
 import io.frinx.translate.unit.commons.handler.spi.CompositeListReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.Protocol
@@ -35,6 +37,10 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
 class OspfProtocolReader(private val underlayAccess: UnderlayAccess) :
     CompositeListReader.Child<Protocol, ProtocolKey, ProtocolBuilder> {
+
+    override fun getCheck(): Check {
+        return ChecksMap.PathCheck.Protocol.OSPF
+    }
 
     override fun readCurrentAttributes(id: IID<Protocol>, proto: ProtocolBuilder, readContext: ReadContext) {
         proto.key = ProtocolKey(OSPF::class.java, OSPF_INSTANCE_DEFAULT)

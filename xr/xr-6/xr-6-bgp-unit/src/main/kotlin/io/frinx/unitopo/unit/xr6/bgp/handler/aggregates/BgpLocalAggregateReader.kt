@@ -17,8 +17,10 @@
 package io.frinx.unitopo.unit.xr6.bgp.handler.aggregates
 
 import io.fd.honeycomb.translate.read.ReadContext
-import io.fd.honeycomb.translate.spi.read.ConfigListReaderCustomizer
+import io.fd.honeycomb.translate.spi.builder.Check
 import io.frinx.openconfig.network.instance.NetworInstance
+import io.frinx.translate.unit.commons.handler.spi.ChecksMap
+import io.frinx.translate.unit.commons.handler.spi.CompositeListReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr6.bgp.IID
 import io.frinx.unitopo.unit.xr6.bgp.handler.BgpProtocolReader
@@ -40,7 +42,11 @@ import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 
 class BgpLocalAggregateReader(private val access: UnderlayAccess) :
-    ConfigListReaderCustomizer<Aggregate, AggregateKey, AggregateBuilder> {
+    CompositeListReader.Child<Aggregate, AggregateKey, AggregateBuilder> {
+
+    override fun getCheck(): Check {
+        return ChecksMap.PathCheck.Protocol.BGP
+    }
 
     override fun getBuilder(id: IID<Aggregate>) = AggregateBuilder()
 

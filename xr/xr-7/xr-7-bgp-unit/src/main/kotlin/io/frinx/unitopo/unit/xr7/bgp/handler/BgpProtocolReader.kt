@@ -16,7 +16,8 @@
 package io.frinx.unitopo.unit.xr7.bgp.handler
 
 import io.fd.honeycomb.translate.read.ReadContext
-import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
+import io.fd.honeycomb.translate.spi.builder.Check
+import io.frinx.translate.unit.commons.handler.spi.ChecksMap
 import io.frinx.translate.unit.commons.handler.spi.CompositeListReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr7.bgp.IID
@@ -31,8 +32,11 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.insta
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.policy.types.rev160512.BGP
 
 open class BgpProtocolReader(private val access: UnderlayAccess) :
-    ConfigReaderCustomizer<Protocol, ProtocolBuilder>,
     CompositeListReader.Child<Protocol, ProtocolKey, ProtocolBuilder> {
+
+    override fun getCheck(): Check {
+        return ChecksMap.PathCheck.Protocol.BGP
+    }
 
     override fun getBuilder(p0: IID<Protocol>) = ProtocolBuilder()
 
