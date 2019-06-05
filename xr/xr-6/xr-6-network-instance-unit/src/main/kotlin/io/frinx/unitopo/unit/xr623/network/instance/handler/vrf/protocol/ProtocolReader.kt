@@ -19,6 +19,7 @@ package io.frinx.unitopo.unit.xr623.network.instance.handler.vrf.protocol
 import io.fd.honeycomb.translate.spi.read.ConfigListReaderCustomizer
 import io.frinx.translate.unit.commons.handler.spi.CompositeListReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
+import io.frinx.unitopo.unit.xr6.lr.handler.StaticProtocolReader
 import io.frinx.unitopo.unit.xr623.isis.handler.IsisProtocolReader
 import io.frinx.unitopo.unit.xr623.ospf.handler.OspfProtocolReader
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.Protocol
@@ -28,6 +29,7 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.insta
 class ProtocolReader(access: UnderlayAccess) : CompositeListReader<Protocol, ProtocolKey, ProtocolBuilder>(
     listOf(
         OspfProtocolReader(access),
-        IsisProtocolReader(access)
+        IsisProtocolReader(access),
+        StaticProtocolReader()
     )
 ), ConfigListReaderCustomizer<Protocol, ProtocolKey, ProtocolBuilder>
