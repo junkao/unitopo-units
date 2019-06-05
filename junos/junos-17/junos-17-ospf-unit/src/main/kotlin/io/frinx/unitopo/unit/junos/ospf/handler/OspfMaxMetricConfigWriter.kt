@@ -33,19 +33,8 @@ class OspfMaxMetricConfigWriter(private val underlayAccess: UnderlayAccess) : Wr
     }
 
     override fun deleteCurrentAttributes(id: IID<Config>, dataBefore: Config, writeContext: WriteContext) {
-        val ospfOld = underlayAccess.read(OspfProtocolReader.getOspfId()).checkedGet().get()
-
-        val ospfNew = OspfBuilder(ospfOld)
-                .setOverload(OverloadBuilder(ospfOld?.overload)
-                        .setTimeout(null)
-                        .build())
-                .build()
-
-        try {
-            underlayAccess.put(OspfProtocolReader.getOspfId(), ospfNew)
-        } catch (e: Exception) {
-            throw WriteFailedException(id, e)
-        }
+        val data = getData(dataBefore)
+        underlayAccess.safeDelete(data.first, data.second)
     }
 
     override fun updateCurrentAttributes(
@@ -69,9 +58,9 @@ class OspfMaxMetricConfigWriter(private val underlayAccess: UnderlayAccess) : Wr
 
     private fun getData(dataAfter: Config): Pair<IID<Ospf>, Ospf> {
         val ospf = OspfBuilder()
-                .setOverload(OverloadBuilder().setTimeout(Overload.Timeout(dataAfter.timeout.toLong()))
+            .setOverload(OverloadBuilder().setTimeout(Overload.Timeout(dataAfter.timeout.toLong()))
                 .build())
-                .build()
+            .build()
         return Pair(OspfProtocolReader.getOspfId(), ospf)
     }
 }
