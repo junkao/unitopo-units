@@ -25,18 +25,18 @@
         <relativePath>../../../kotlin-unit-parent</relativePath>
     </parent>
 
-    <artifactId>xr-7-configuration-metadata-unit</artifactId>
+    <artifactId>xr-6.6-configuration-metadata-unit</artifactId>
     <packaging>bundle</packaging>
 
     <dependencies>
         <dependency>
             <groupId>io.frinx.unitopo</groupId>
-            <artifactId>xr-7-models</artifactId>
+            <artifactId>xr-6.6-models</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>io.frinx.unitopo</groupId>
-            <artifactId>xr-7-init-unit</artifactId>
+            <artifactId>xr-6.6-init-unit</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -133,7 +133,7 @@
                 <configuration>
                     <instructions>
                         <Import-Package>
-                            org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.*;device=xr7,
+                            org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.*;device=xr66,
                             *,
                         </Import-Package>
                     </instructions>

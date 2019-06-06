@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.frinx.unitopo.unit.xr7.ospf.handler
+package io.frinx.unitopo.unit.xr66.ospf.handler
 
 import io.fd.honeycomb.translate.read.ReadContext
 import io.frinx.unitopo.registry.spi.UnderlayAccess

@@ -28,7 +28,7 @@
         <relativePath>../../../kotlin-unit-parent</relativePath>
     </parent>
 
-    <artifactId>xr-7-network-instance-unit</artifactId>
+    <artifactId>xr-6.6-network-instance-unit</artifactId>
     <packaging>bundle</packaging>
     <description>
         Unified topology unit for XR network instance.
@@ -40,7 +40,7 @@
     <dependencies>
         <dependency>
             <groupId>io.frinx.unitopo</groupId>
-            <artifactId>xr-7-models</artifactId>
+            <artifactId>xr-6.6-models</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -50,17 +50,17 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>xr-7-interface-unit</artifactId>
+            <artifactId>xr-6.6-interface-unit</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>xr-7-bgp-unit</artifactId>
+            <artifactId>xr-6.6-bgp-unit</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>xr-7-ospf-unit</artifactId>
+            <artifactId>xr-6.6-ospf-unit</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -149,7 +149,7 @@
                 <configuration>
                     <instructions>
                         <Import-Package>
-                            org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.*;device=xr7,
+                            org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.*;device=xr66,
                             *,
                         </Import-Package>
                     </instructions>

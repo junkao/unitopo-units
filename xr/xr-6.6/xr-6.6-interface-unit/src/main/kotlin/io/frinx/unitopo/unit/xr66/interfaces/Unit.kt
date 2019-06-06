@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.frinx.unitopo.unit.xr7.interfaces
+package io.frinx.unitopo.unit.xr66.interfaces
 
 import io.fd.honeycomb.rpc.RpcService
 import io.fd.honeycomb.translate.impl.read.GenericConfigListReader
@@ -29,32 +29,32 @@ import io.frinx.unitopo.registry.api.TranslationUnitCollector
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.utils.NoopListWriter
 import io.frinx.unitopo.unit.utils.NoopWriter
-import io.frinx.unitopo.unit.xr7.init.Unit
-import io.frinx.unitopo.unit.xr7.interfaces.handler.InterfaceConfigReader
-import io.frinx.unitopo.unit.xr7.interfaces.handler.InterfaceConfigWriter
-import io.frinx.unitopo.unit.xr7.interfaces.handler.InterfaceDampingConfigReader
-import io.frinx.unitopo.unit.xr7.interfaces.handler.InterfaceDampingConfigWriter
-import io.frinx.unitopo.unit.xr7.interfaces.handler.InterfaceReader
-import io.frinx.unitopo.unit.xr7.interfaces.handler.InterfaceStatisticsConfigReader
-import io.frinx.unitopo.unit.xr7.interfaces.handler.InterfaceStatisticsConfigWriter
-import io.frinx.unitopo.unit.xr7.interfaces.handler.aggregate.AggregateConfigReader
-import io.frinx.unitopo.unit.xr7.interfaces.handler.aggregate.AggregateConfigWriter
-import io.frinx.unitopo.unit.xr7.interfaces.handler.ethernet.EthernetConfigReader
-import io.frinx.unitopo.unit.xr7.interfaces.handler.ethernet.EthernetConfigWriter
-import io.frinx.unitopo.unit.xr7.interfaces.handler.subifc.Ipv4AddressReader
-import io.frinx.unitopo.unit.xr7.interfaces.handler.subifc.Ipv4ConfigReader
-import io.frinx.unitopo.unit.xr7.interfaces.handler.subifc.Ipv4ConfigWriter
-import io.frinx.unitopo.unit.xr7.interfaces.handler.subifc.SubinterfaceConfigReader
-import io.frinx.unitopo.unit.xr7.interfaces.handler.subifc.SubinterfaceConfigWriter
-import io.frinx.unitopo.unit.xr7.interfaces.handler.subifc.SubinterfaceReader
-import io.frinx.unitopo.unit.xr7.interfaces.handler.subifc.SubinterfaceStatisticsConfigReader
-import io.frinx.unitopo.unit.xr7.interfaces.handler.subifc.SubinterfaceStatisticsConfigWriter
-import io.frinx.unitopo.unit.xr7.interfaces.handler.subifc.holdtime.HoldTimeConfigReader
-import io.frinx.unitopo.unit.xr7.interfaces.handler.subifc.holdtime.HoldTimeConfigWriter
-import io.frinx.unitopo.unit.xr7.interfaces.handler.subifc.ipv4.Ipv4MtuConfigReader
-import io.frinx.unitopo.unit.xr7.interfaces.handler.subifc.ipv4.Ipv4MtuConfigWriter
-import io.frinx.unitopo.unit.xr7.interfaces.handler.subifc.vlan.SubinterfaceVlanConfigReader
-import io.frinx.unitopo.unit.xr7.interfaces.handler.subifc.vlan.SubinterfaceVlanConfigWriter
+import io.frinx.unitopo.unit.xr66.init.Unit
+import io.frinx.unitopo.unit.xr66.interfaces.handler.InterfaceConfigReader
+import io.frinx.unitopo.unit.xr66.interfaces.handler.InterfaceConfigWriter
+import io.frinx.unitopo.unit.xr66.interfaces.handler.InterfaceDampingConfigReader
+import io.frinx.unitopo.unit.xr66.interfaces.handler.InterfaceDampingConfigWriter
+import io.frinx.unitopo.unit.xr66.interfaces.handler.InterfaceReader
+import io.frinx.unitopo.unit.xr66.interfaces.handler.InterfaceStatisticsConfigReader
+import io.frinx.unitopo.unit.xr66.interfaces.handler.InterfaceStatisticsConfigWriter
+import io.frinx.unitopo.unit.xr66.interfaces.handler.aggregate.AggregateConfigReader
+import io.frinx.unitopo.unit.xr66.interfaces.handler.aggregate.AggregateConfigWriter
+import io.frinx.unitopo.unit.xr66.interfaces.handler.ethernet.EthernetConfigReader
+import io.frinx.unitopo.unit.xr66.interfaces.handler.ethernet.EthernetConfigWriter
+import io.frinx.unitopo.unit.xr66.interfaces.handler.subifc.Ipv4AddressReader
+import io.frinx.unitopo.unit.xr66.interfaces.handler.subifc.Ipv4ConfigReader
+import io.frinx.unitopo.unit.xr66.interfaces.handler.subifc.Ipv4ConfigWriter
+import io.frinx.unitopo.unit.xr66.interfaces.handler.subifc.SubinterfaceConfigReader
+import io.frinx.unitopo.unit.xr66.interfaces.handler.subifc.SubinterfaceConfigWriter
+import io.frinx.unitopo.unit.xr66.interfaces.handler.subifc.SubinterfaceReader
+import io.frinx.unitopo.unit.xr66.interfaces.handler.subifc.SubinterfaceStatisticsConfigReader
+import io.frinx.unitopo.unit.xr66.interfaces.handler.subifc.SubinterfaceStatisticsConfigWriter
+import io.frinx.unitopo.unit.xr66.interfaces.handler.subifc.holdtime.HoldTimeConfigReader
+import io.frinx.unitopo.unit.xr66.interfaces.handler.subifc.holdtime.HoldTimeConfigWriter
+import io.frinx.unitopo.unit.xr66.interfaces.handler.subifc.ipv4.Ipv4MtuConfigReader
+import io.frinx.unitopo.unit.xr66.interfaces.handler.subifc.ipv4.Ipv4MtuConfigWriter
+import io.frinx.unitopo.unit.xr66.interfaces.handler.subifc.vlan.SubinterfaceVlanConfigReader
+import io.frinx.unitopo.unit.xr66.interfaces.handler.subifc.vlan.SubinterfaceVlanConfigWriter
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.damping.rev171024.IfDampAugBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.damping.rev171024.damping.top.DampingBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.aggregate.rev161222.aggregation.logical.top.AggregationBuilder

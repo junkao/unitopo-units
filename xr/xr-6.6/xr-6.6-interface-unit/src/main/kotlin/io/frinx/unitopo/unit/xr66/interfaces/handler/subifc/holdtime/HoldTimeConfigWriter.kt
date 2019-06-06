@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package io.frinx.unitopo.unit.xr7.interfaces.handler.subifc.holdtime
+package io.frinx.unitopo.unit.xr66.interfaces.handler.subifc.holdtime
 
 import io.fd.honeycomb.translate.spi.write.WriterCustomizer
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.xr7.interfaces.handler.InterfaceReader
-import io.frinx.unitopo.unit.xr7.interfaces.handler.Util
+import io.frinx.unitopo.unit.xr66.interfaces.handler.InterfaceReader
+import io.frinx.unitopo.unit.xr66.interfaces.handler.Util
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907.InterfaceActive
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907._interface.configurations.InterfaceConfiguration

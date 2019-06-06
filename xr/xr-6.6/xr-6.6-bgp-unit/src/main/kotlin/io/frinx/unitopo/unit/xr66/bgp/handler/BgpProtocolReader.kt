@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.frinx.unitopo.unit.xr7.bgp.handler
+package io.frinx.unitopo.unit.xr66.bgp.handler
 
 import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.spi.builder.Check
 import io.frinx.translate.unit.commons.handler.spi.ChecksMap
 import io.frinx.translate.unit.commons.handler.spi.CompositeListReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.xr7.bgp.IID
+import io.frinx.unitopo.unit.xr66.bgp.IID
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev180615.Bgp
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev180615.bgp.Instance

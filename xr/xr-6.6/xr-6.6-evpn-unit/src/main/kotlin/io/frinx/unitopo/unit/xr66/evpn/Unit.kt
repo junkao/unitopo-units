@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.frinx.unitopo.unit.xr7.evpn
+package io.frinx.unitopo.unit.xr66.evpn
 
 import com.google.common.collect.Sets
 import io.fd.honeycomb.rpc.RpcService
@@ -29,17 +29,17 @@ import io.frinx.openconfig.openconfig.evpn.IIDs
 import io.frinx.unitopo.registry.api.TranslationUnitCollector
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.utils.NoopListWriter
-import io.frinx.unitopo.unit.xr7.evpn.handler.group.EvpnGroupListWriter
-import io.frinx.unitopo.unit.xr7.evpn.handler.group.coreifc.EvpnGroupCoreInterfaceConfigWriter
-import io.frinx.unitopo.unit.xr7.evpn.handler.ifc.EvpnInterfaceListWriter
-import io.frinx.unitopo.unit.xr7.evpn.handler.ifc.core.isolation.group.EvpnCoreIsolationGroupConfigReader
-import io.frinx.unitopo.unit.xr7.evpn.handler.ifc.core.isolation.group.EvpnCoreIsolationGroupConfigWriter
-import io.frinx.unitopo.unit.xr7.evpn.handler.ifc.es.EvpnEthernetSegmentConfigReader
-import io.frinx.unitopo.unit.xr7.evpn.handler.ifc.es.EvpnEthernetSegmentConfigWriter
-import io.frinx.unitopo.unit.xr7.evpn.handler.group.coreifc.EvpnGroupCoreInterfaceListReader
-import io.frinx.unitopo.unit.xr7.evpn.handler.group.EvpnGroupListReader
-import io.frinx.unitopo.unit.xr7.evpn.handler.ifc.EvpnInterfaceListReader
-import io.frinx.unitopo.unit.xr7.init.Unit
+import io.frinx.unitopo.unit.xr66.evpn.handler.group.EvpnGroupListWriter
+import io.frinx.unitopo.unit.xr66.evpn.handler.group.coreifc.EvpnGroupCoreInterfaceConfigWriter
+import io.frinx.unitopo.unit.xr66.evpn.handler.ifc.EvpnInterfaceListWriter
+import io.frinx.unitopo.unit.xr66.evpn.handler.ifc.core.isolation.group.EvpnCoreIsolationGroupConfigReader
+import io.frinx.unitopo.unit.xr66.evpn.handler.ifc.core.isolation.group.EvpnCoreIsolationGroupConfigWriter
+import io.frinx.unitopo.unit.xr66.evpn.handler.ifc.es.EvpnEthernetSegmentConfigReader
+import io.frinx.unitopo.unit.xr66.evpn.handler.ifc.es.EvpnEthernetSegmentConfigWriter
+import io.frinx.unitopo.unit.xr66.evpn.handler.group.coreifc.EvpnGroupCoreInterfaceListReader
+import io.frinx.unitopo.unit.xr66.evpn.handler.group.EvpnGroupListReader
+import io.frinx.unitopo.unit.xr66.evpn.handler.ifc.EvpnInterfaceListReader
+import io.frinx.unitopo.unit.xr66.init.Unit
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.evpn.rev181112.evpn.groups.GroupsBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.evpn.rev181112.evpn.groups.groups.Group
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.evpn.rev181112.evpn.groups.groups.group.CoreInterfacesBuilder

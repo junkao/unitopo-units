@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.frinx.unitopo.unit.xr7.network.instance.handler.pf
+package io.frinx.unitopo.unit.xr66.network.instance.handler.pf
 
 import io.frinx.unitopo.ni.base.handler.pf.AbstractPolicyForwardingInterfaceConfigReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess

@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package io.frinx.unitopo.unit.xr7.ospf.handler
+package io.frinx.unitopo.unit.xr66.ospf.handler
 
 import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.xr7.ospf.handler.AreaInterfaceReader.Companion.findAreaNameScopes
+import io.frinx.unitopo.unit.xr66.ospf.handler.AreaInterfaceReader.Companion.findAreaNameScopes
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.Protocol
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.ospf.types.rev170228.OspfMetric

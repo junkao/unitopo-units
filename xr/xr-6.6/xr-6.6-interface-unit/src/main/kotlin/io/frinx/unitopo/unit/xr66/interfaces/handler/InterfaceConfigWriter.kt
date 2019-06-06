@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.frinx.unitopo.unit.xr7.interfaces.handler
+package io.frinx.unitopo.unit.xr66.interfaces.handler
 
 import io.frinx.unitopo.ifc.base.handler.AbstractInterfaceConfigWriter
 import io.frinx.unitopo.registry.spi.UnderlayAccess

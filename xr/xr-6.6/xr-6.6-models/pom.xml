@@ -29,7 +29,7 @@
     </parent>
 
     <groupId>io.frinx.unitopo</groupId>
-    <artifactId>xr-7-models</artifactId>
+    <artifactId>xr-6.6-models</artifactId>
     <version>3.1.8.rc14-frinx-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <build>
@@ -43,7 +43,7 @@
                         <_invalidfilenames></_invalidfilenames>
                         <Export-Package>
                             <!-- Export generated APIs with device label -->
-                            org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.*;device=xr7
+                            org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.*;device=xr66
                         </Export-Package>
                         <Import-Package>
                             <!--

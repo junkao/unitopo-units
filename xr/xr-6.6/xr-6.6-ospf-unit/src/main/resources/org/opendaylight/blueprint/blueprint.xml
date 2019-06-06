@@ -25,8 +25,8 @@
   <reference id="unifiedTranslationRegistry"
     interface="io.frinx.unitopo.registry.api.TranslationUnitCollector"/>
 
-  <bean id="xr7OspfUnit"
-    class="io.frinx.unitopo.unit.xr7.ospf.Unit"
+  <bean id="xr66OspfUnit"
+    class="io.frinx.unitopo.unit.xr66.ospf.Unit"
     init-method="init" destroy-method="close">
     <argument ref="unifiedTranslationRegistry" />
   </bean>

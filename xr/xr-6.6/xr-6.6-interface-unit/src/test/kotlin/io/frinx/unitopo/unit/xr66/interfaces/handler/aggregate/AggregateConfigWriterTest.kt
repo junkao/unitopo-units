@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package io.frinx.unitopo.unit.xr7.interfaces.handler.aggregate
+package io.frinx.unitopo.unit.xr66.interfaces.handler.aggregate
 
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.openconfig.openconfig.interfaces.IIDs
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.utils.NetconfAccessHelper
-import io.frinx.unitopo.unit.xr7.interfaces.handler.InterfaceReader
+import io.frinx.unitopo.unit.xr66.interfaces.handler.InterfaceReader
 import org.hamcrest.CoreMatchers
 import org.hamcrest.Matcher
 import org.junit.Assert

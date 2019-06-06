@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.frinx.unitopo.unit.xr7.interfaces.handler.subifc.holdtime
+package io.frinx.unitopo.unit.xr66.interfaces.handler.subifc.holdtime
 
 import io.fd.honeycomb.translate.read.ReadContext
 import io.frinx.openconfig.openconfig.interfaces.IIDs

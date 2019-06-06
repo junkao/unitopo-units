@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.frinx.unitopo.unit.xr7.bgp
+package io.frinx.unitopo.unit.xr66.bgp
 
 import io.fd.honeycomb.rpc.RpcService
 import io.fd.honeycomb.translate.spi.builder.CustomizerAwareReadRegistryBuilder
@@ -23,18 +23,18 @@ import io.fd.honeycomb.translate.util.RWUtils
 import io.frinx.openconfig.openconfig.network.instance.IIDs
 import io.frinx.unitopo.registry.api.TranslationUnitCollector
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.xr7.bgp.handler.GlobalAfiSafiConfigReader
-import io.frinx.unitopo.unit.xr7.bgp.handler.GlobalAfiSafiConfigWriter
-import io.frinx.unitopo.unit.xr7.bgp.handler.GlobalAfiSafiReader
-import io.frinx.unitopo.unit.xr7.bgp.handler.GlobalConfigReader
-import io.frinx.unitopo.unit.xr7.bgp.handler.GlobalConfigWriter
-import io.frinx.unitopo.unit.xr7.bgp.handler.neighbor.NeighborAfiSafiConfigReader
-import io.frinx.unitopo.unit.xr7.bgp.handler.neighbor.NeighborAfiSafiReader
-import io.frinx.unitopo.unit.xr7.bgp.handler.neighbor.NeighborConfigReader
-import io.frinx.unitopo.unit.xr7.bgp.handler.neighbor.NeighborReader
-import io.frinx.unitopo.unit.xr7.bgp.handler.neighbor.NeighborTransportConfigReader
-import io.frinx.unitopo.unit.xr7.bgp.handler.neighbor.NeighborWriter
-import io.frinx.unitopo.unit.xr7.init.Unit
+import io.frinx.unitopo.unit.xr66.bgp.handler.GlobalAfiSafiConfigReader
+import io.frinx.unitopo.unit.xr66.bgp.handler.GlobalAfiSafiConfigWriter
+import io.frinx.unitopo.unit.xr66.bgp.handler.GlobalAfiSafiReader
+import io.frinx.unitopo.unit.xr66.bgp.handler.GlobalConfigReader
+import io.frinx.unitopo.unit.xr66.bgp.handler.GlobalConfigWriter
+import io.frinx.unitopo.unit.xr66.bgp.handler.neighbor.NeighborAfiSafiConfigReader
+import io.frinx.unitopo.unit.xr66.bgp.handler.neighbor.NeighborAfiSafiReader
+import io.frinx.unitopo.unit.xr66.bgp.handler.neighbor.NeighborConfigReader
+import io.frinx.unitopo.unit.xr66.bgp.handler.neighbor.NeighborReader
+import io.frinx.unitopo.unit.xr66.bgp.handler.neighbor.NeighborTransportConfigReader
+import io.frinx.unitopo.unit.xr66.bgp.handler.neighbor.NeighborWriter
+import io.frinx.unitopo.unit.xr66.init.Unit
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.neighbor.afi.safi.list.AfiSafi
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.neighbor.afi.safi.list.afi.safi.Config
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.neighbor.list.Neighbor

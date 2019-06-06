@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package io.frinx.unitopo.unit.xr7.network.instance
+package io.frinx.unitopo.unit.xr66.network.instance
 
 import io.fd.honeycomb.translate.spi.read.ConfigListReaderCustomizer
 import io.frinx.translate.unit.commons.handler.spi.CompositeListReader
 import io.frinx.unitopo.ni.base.handler.vrf.def.DefaultReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.xr7.network.instance.handler.vrf.L3VrfReader
+import io.frinx.unitopo.unit.xr66.network.instance.handler.vrf.L3VrfReader
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstanceBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstanceKey

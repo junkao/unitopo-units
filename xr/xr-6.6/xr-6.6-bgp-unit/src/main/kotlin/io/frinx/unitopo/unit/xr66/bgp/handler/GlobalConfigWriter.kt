@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package io.frinx.unitopo.unit.xr7.bgp.handler
+package io.frinx.unitopo.unit.xr66.bgp.handler
 
 import io.fd.honeycomb.translate.spi.write.WriterCustomizer
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.utils.As
-import io.frinx.unitopo.unit.xr7.bgp.IID
-import io.frinx.unitopo.unit.xr7.bgp.UnderlayBgp
-import io.frinx.unitopo.unit.xr7.bgp.UnderlayBgpBuilder
+import io.frinx.unitopo.unit.xr66.bgp.IID
+import io.frinx.unitopo.unit.xr66.bgp.UnderlayBgp
+import io.frinx.unitopo.unit.xr66.bgp.UnderlayBgpBuilder
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev180615.bgp.InstanceBuilder
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev180615.bgp.instance.InstanceAsBuilder
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev180615.bgp.instance.instance.`as`.FourByteAsBuilder

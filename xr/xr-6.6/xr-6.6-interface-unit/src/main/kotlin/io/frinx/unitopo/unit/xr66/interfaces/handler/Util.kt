@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.frinx.unitopo.unit.xr7.interfaces.handler
+package io.frinx.unitopo.unit.xr66.interfaces.handler
 
 import com.google.common.base.Preconditions
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907.InterfaceConfigurations
