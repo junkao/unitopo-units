@@ -29,6 +29,7 @@ import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configur
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.config.Protocols
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.protocols.Ospf
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.protocols.ospf.AreaKey
+import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.protocols.ospf.Overload
 import java.util.Collections
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.protocols.ospf.Area as JunosArea
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.protocols.ospf.area.Interface as JunosInterface
@@ -55,22 +56,19 @@ class OspfProtocolReader(private val underlayAccess: UnderlayAccess) :
     }
 
     companion object {
-        fun getOspfId(): IID<Ospf> {
-            return IID.create(Configuration::class.java)
-                    .child(Protocols::class.java)
-                    .child(Ospf::class.java)
-        }
+        private const val OSPF_INSTANCE_DEFAULT = "default"
 
-        fun getAreaId(area: String): IID<JunosArea> {
-            return getOspfId()
-                    .child(JunosArea::class.java, AreaKey(Areaid(area)))
-        }
+        fun getOspfId(): IID<Ospf> = IID.create(Configuration::class.java)
+            .child(Protocols::class.java)
+            .child(Ospf::class.java)
 
-        fun getInterfaceId(area: String, iface: String): IID<JunosInterface> {
-            return getAreaId(area)
-                    .child(JunosInterface::class.java, JunosInterfaceKey(JunosInterface.Name(iface)))
-        }
+        fun getOspfOverloadId(): IID<Overload> = getOspfId()
+            .child(Overload::class.java)
 
-        private val OSPF_INSTANCE_DEFAULT = "default"
+        fun getAreaId(area: String): IID<JunosArea> = getOspfId()
+            .child(JunosArea::class.java, AreaKey(Areaid(area)))
+
+        fun getInterfaceId(area: String, iface: String): IID<JunosInterface> = getAreaId(area)
+            .child(JunosInterface::class.java, JunosInterfaceKey(JunosInterface.Name(iface)))
     }
 }

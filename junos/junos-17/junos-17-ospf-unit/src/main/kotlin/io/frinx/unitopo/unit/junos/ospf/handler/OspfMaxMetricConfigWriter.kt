@@ -20,8 +20,6 @@ import io.fd.honeycomb.translate.write.WriteContext
 import io.fd.honeycomb.translate.write.WriteFailedException
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.ospfv2.rev170228.ospfv2.global.structural.global.timers.max.metric.Config
-import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.protocols.Ospf
-import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.protocols.OspfBuilder
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.protocols.ospf.Overload
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.protocols.ospf.OverloadBuilder
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
@@ -33,7 +31,7 @@ class OspfMaxMetricConfigWriter(private val underlayAccess: UnderlayAccess) : Wr
     }
 
     override fun deleteCurrentAttributes(id: IID<Config>, dataBefore: Config, writeContext: WriteContext) {
-        val data = getData(dataBefore)
+        val data = getOverloadData(dataBefore)
         underlayAccess.safeDelete(data.first, data.second)
     }
 
@@ -47,7 +45,7 @@ class OspfMaxMetricConfigWriter(private val underlayAccess: UnderlayAccess) : Wr
     }
 
     private fun writeData(id: IID<Config>, data: Config) {
-        val (underlayId, underlayIfcCfg) = getData(data)
+        val (underlayId, underlayIfcCfg) = getOverloadData(data)
 
         try {
             underlayAccess.merge(underlayId, underlayIfcCfg)
@@ -56,11 +54,12 @@ class OspfMaxMetricConfigWriter(private val underlayAccess: UnderlayAccess) : Wr
         }
     }
 
-    private fun getData(dataAfter: Config): Pair<IID<Ospf>, Ospf> {
-        val ospf = OspfBuilder()
-            .setOverload(OverloadBuilder().setTimeout(Overload.Timeout(dataAfter.timeout.toLong()))
-                .build())
-            .build()
-        return Pair(OspfProtocolReader.getOspfId(), ospf)
+    companion object {
+        private fun getOverloadData(data: Config): Pair<IID<Overload>, Overload> {
+            val ospf = OverloadBuilder()
+                .setTimeout(Overload.Timeout(data.timeout.toLong()))
+                .build()
+            return Pair(OspfProtocolReader.getOspfOverloadId(), ospf)
+        }
     }
 }
