@@ -17,14 +17,13 @@ package io.frinx.unitopo.unit.junos.ospf.handler
 
 import io.fd.honeycomb.translate.spi.write.WriterCustomizer
 import io.fd.honeycomb.translate.write.WriteContext
-import io.fd.honeycomb.translate.write.WriteFailedException
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.ospfv2.rev170228.ospfv2.area.interfaces.structure.interfaces.Interface
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.ospfv2.rev170228.ospfv2.area.interfaces.structure.interfaces._interface.Config
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.ospfv2.rev170228.ospfv2.top.ospfv2.areas.Area
+import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.protocols.ospf.area.InterfaceKey
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.protocols.ospf.area.Interface as JunosInterface
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.protocols.ospf.area.InterfaceBuilder as JunosInterfaceBuilder
-import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.protocols.ospf.area.InterfaceKey
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
 
 class OspfAreaInterfaceConfigWriter(private val underlayAccess: UnderlayAccess) : WriterCustomizer<Config> {
@@ -40,21 +39,14 @@ class OspfAreaInterfaceConfigWriter(private val underlayAccess: UnderlayAccess) 
 
     override fun writeCurrentAttributes(id: IID<Config>, dataAfter: Config, writeContext: WriteContext) {
         val (underlayId, underlayIfcCfg) = getData(id, dataAfter)
-        try {
-            underlayAccess.put(underlayId, underlayIfcCfg)
-        } catch (e: Exception) {
-            throw WriteFailedException(id, e)
-        }
+        underlayAccess.put(underlayId, underlayIfcCfg)
     }
 
     override fun deleteCurrentAttributes(id: IID<Config>, dataBefore: Config, writeContext: WriteContext) {
-        val (ifaceIid, iface) = getInterfaceBuilder(id)
-        iface.metric = null
-        try {
-            underlayAccess.put(ifaceIid, iface.build())
-        } catch (e: Exception) {
-            throw WriteFailedException.DeleteFailedException(id, e)
-        }
+        val areaId = String(id.firstKeyOf(Area::class.java).identifier.value)
+        val ifaceId = id.firstKeyOf(Interface::class.java).id
+        val ifaceIid = OspfProtocolReader.getInterfaceId(areaId, ifaceId)
+        underlayAccess.delete(ifaceIid)
     }
 
     private fun getData(id: IID<Config>, dataAfter: Config): Pair<IID<JunosInterface>, JunosInterface> {
