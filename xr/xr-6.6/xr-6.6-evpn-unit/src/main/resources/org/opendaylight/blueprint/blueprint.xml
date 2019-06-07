@@ -24,8 +24,8 @@
     <reference id="unifiedTranslationRegistry"
                interface="io.frinx.unitopo.registry.api.TranslationUnitCollector"/>
 
-    <bean id="xr7EvpnUnit"
-          class="io.frinx.unitopo.unit.xr7.evpn.Unit"
+    <bean id="xr66EvpnUnit"
+          class="io.frinx.unitopo.unit.xr66.evpn.Unit"
           init-method="init" destroy-method="close">
         <argument ref="unifiedTranslationRegistry"/>
     </bean>

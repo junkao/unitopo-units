@@ -27,20 +27,20 @@
     </parent>
 
     <groupId>io.frinx.unitopo</groupId>
-    <artifactId>unitopo-units-xr-7</artifactId>
+    <artifactId>unitopo-units-xr-6.6</artifactId>
     <version>3.1.8.rc14-frinx-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
-	<module>xr-7-bgp-unit</module>
-        <module>xr-7-configuration-metadata-unit</module>
-        <module>xr-7-evpn-unit</module>
-        <module>xr-7-init-unit</module>
-        <module>xr-7-interface-unit</module>
-        <module>xr-7-logging-unit</module>
-        <module>xr-7-models</module>
-        <module>xr-7-ospf-unit</module>
-        <module>xr-7-network-instance-unit</module>
+	    <module>xr-6.6-bgp-unit</module>
+        <module>xr-6.6-configuration-metadata-unit</module>
+        <module>xr-6.6-evpn-unit</module>
+        <module>xr-6.6-init-unit</module>
+        <module>xr-6.6-interface-unit</module>
+        <module>xr-6.6-logging-unit</module>
+        <module>xr-6.6-models</module>
+        <module>xr-6.6-ospf-unit</module>
+        <module>xr-6.6-network-instance-unit</module>
     </modules>
 
     <build>

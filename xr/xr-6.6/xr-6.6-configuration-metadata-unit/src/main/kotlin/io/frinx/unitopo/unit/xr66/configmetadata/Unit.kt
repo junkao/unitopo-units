@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.frinx.unitopo.unit.xr7.configmetadata
+package io.frinx.unitopo.unit.xr66.configmetadata
 
 import io.fd.honeycomb.rpc.RpcService
 import io.fd.honeycomb.translate.impl.read.GenericOperReader
@@ -23,7 +23,7 @@ import io.fd.honeycomb.translate.spi.builder.CustomizerAwareWriteRegistryBuilder
 import io.frinx.openconfig.openconfig.configuration.metadata.IIDs
 import io.frinx.unitopo.registry.api.TranslationUnitCollector
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.xr7.init.Unit
+import io.frinx.unitopo.unit.xr66.init.Unit
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.config.cfgmgr.exec.oper.rev170907.`$YangModuleInfoImpl` as CiscoCfgmgrExecOperYangInfo
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.xr.types.rev180629.`$YangModuleInfoImpl` as CiscoTypesYangInfo
@@ -64,5 +64,5 @@ class Unit(private val registry: TranslationUnitCollector) : Unit() {
         rRegistry.add(GenericOperReader(IIDs.CONFIGURATIONMETADATA, ConfigMetadataReader(underlayAccess)))
     }
 
-    override fun toString() = "XR 7 (2018-11-01) Configuration metadata translation unit"
+    override fun toString() = "XR 6.6 (2018-11-01) Configuration metadata translation unit"
 }

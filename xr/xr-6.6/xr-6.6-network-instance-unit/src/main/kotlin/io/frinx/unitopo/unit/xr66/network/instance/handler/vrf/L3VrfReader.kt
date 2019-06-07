@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package io.frinx.unitopo.unit.xr7.network.instance.handler.vrf
+package io.frinx.unitopo.unit.xr66.network.instance.handler.vrf
 
 import io.frinx.unitopo.ni.base.handler.vrf.AbstractL3VrfReader
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.xr7.bgp.handler.BgpProtocolReader
-import io.frinx.unitopo.unit.xr7.interfaces.handler.InterfaceReader
-import io.frinx.unitopo.unit.xr7.interfaces.handler.Util
-import io.frinx.unitopo.unit.xr7.ospf.handler.OspfProtocolReader
+import io.frinx.unitopo.unit.xr66.bgp.handler.BgpProtocolReader
+import io.frinx.unitopo.unit.xr66.interfaces.handler.InterfaceReader
+import io.frinx.unitopo.unit.xr66.interfaces.handler.Util
+import io.frinx.unitopo.unit.xr66.ospf.handler.OspfProtocolReader
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.infra.rsi.cfg.rev180615.InterfaceConfiguration1
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.infra.rsi.cfg.rev180615.vrfs.Vrf
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstanceKey

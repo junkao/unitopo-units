@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package io.frinx.unitopo.unit.xr7.bgp.handler.neighbor
+package io.frinx.unitopo.unit.xr66.bgp.handler.neighbor
 
 import io.fd.honeycomb.translate.read.ReadContext
 import io.frinx.openconfig.network.instance.NetworInstance
 import io.frinx.openconfig.openconfig.network.instance.IIDs
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.utils.NetconfAccessHelper
-import io.frinx.unitopo.unit.xr7.bgp.handler.toOpenconfig
+import io.frinx.unitopo.unit.xr66.bgp.handler.toOpenconfig
 import org.hamcrest.CoreMatchers
 import org.junit.Assert
 import org.junit.Before

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.frinx.unitopo.unit.xr7.ospf
+package io.frinx.unitopo.unit.xr66.ospf
 
 import io.fd.honeycomb.rpc.RpcService
 import io.fd.honeycomb.translate.spi.builder.CustomizerAwareReadRegistryBuilder
@@ -21,15 +21,15 @@ import io.fd.honeycomb.translate.spi.builder.CustomizerAwareWriteRegistryBuilder
 import io.frinx.openconfig.openconfig.network.instance.IIDs
 import io.frinx.unitopo.registry.api.TranslationUnitCollector
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import io.frinx.unitopo.unit.xr7.init.Unit
-import io.frinx.unitopo.unit.xr7.ospf.handler.AreaConfigReader
-import io.frinx.unitopo.unit.xr7.ospf.handler.AreaConfigWriter
-import io.frinx.unitopo.unit.xr7.ospf.handler.AreaInterfaceConfigReader
-import io.frinx.unitopo.unit.xr7.ospf.handler.AreaInterfaceConfigWriter
-import io.frinx.unitopo.unit.xr7.ospf.handler.AreaInterfaceReader
-import io.frinx.unitopo.unit.xr7.ospf.handler.GlobalConfigReader
-import io.frinx.unitopo.unit.xr7.ospf.handler.GlobalConfigWriter
-import io.frinx.unitopo.unit.xr7.ospf.handler.OspfAreaReader
+import io.frinx.unitopo.unit.xr66.init.Unit
+import io.frinx.unitopo.unit.xr66.ospf.handler.AreaConfigReader
+import io.frinx.unitopo.unit.xr66.ospf.handler.AreaConfigWriter
+import io.frinx.unitopo.unit.xr66.ospf.handler.AreaInterfaceConfigReader
+import io.frinx.unitopo.unit.xr66.ospf.handler.AreaInterfaceConfigWriter
+import io.frinx.unitopo.unit.xr66.ospf.handler.AreaInterfaceReader
+import io.frinx.unitopo.unit.xr66.ospf.handler.GlobalConfigReader
+import io.frinx.unitopo.unit.xr66.ospf.handler.GlobalConfigWriter
+import io.frinx.unitopo.unit.xr66.ospf.handler.OspfAreaReader
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.ospf.cfg.rev180514.`$YangModuleInfoImpl` as UnderlayOspfConfigYangModule
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.ospf.cisco.rev171124.`$YangModuleInfoImpl` as OpenconfigCiscoOspfExtensionModule
@@ -91,5 +91,5 @@ class Unit(private val registry: TranslationUnitCollector) : Unit() {
         rRegistry.add(IIDs.NE_NE_PR_PR_OS_AR_AR_IN_IN_CONFIG, AreaInterfaceConfigReader(access))
     }
 
-    override fun toString(): String = "XR 7 (2015-07-30) OSPF translate unit"
+    override fun toString(): String = "XR 6.6 (2015-07-30) OSPF translate unit"
 }

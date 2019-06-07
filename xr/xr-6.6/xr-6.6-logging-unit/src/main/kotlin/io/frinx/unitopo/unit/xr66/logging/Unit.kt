@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.frinx.unitopo.unit.xr7.logging
+package io.frinx.unitopo.unit.xr66.logging
 
 import io.fd.honeycomb.rpc.RpcService
 import io.fd.honeycomb.translate.impl.read.GenericConfigReader
@@ -26,9 +26,9 @@ import io.fd.honeycomb.translate.spi.builder.CustomizerAwareWriteRegistryBuilder
 import io.frinx.unitopo.registry.api.TranslationUnitCollector
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.utils.NoopListWriter
-import io.frinx.unitopo.unit.xr7.init.Unit
-import io.frinx.unitopo.unit.xr7.logging.handler.LoggingInterfacesConfigWriter
-import io.frinx.unitopo.unit.xr7.logging.handler.LoggingInterfacesReader
+import io.frinx.unitopo.unit.xr66.init.Unit
+import io.frinx.unitopo.unit.xr66.logging.handler.LoggingInterfacesConfigWriter
+import io.frinx.unitopo.unit.xr66.logging.handler.LoggingInterfacesReader
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.logging.rev171024.logging.top.LoggingBuilder
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 import io.frinx.openconfig.openconfig.interfaces.IIDs as IN_IIDs

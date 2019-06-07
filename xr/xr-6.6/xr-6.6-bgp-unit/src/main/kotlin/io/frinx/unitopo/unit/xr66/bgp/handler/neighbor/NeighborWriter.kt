@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.frinx.unitopo.unit.xr7.bgp.handler.neighbor
+package io.frinx.unitopo.unit.xr66.bgp.handler.neighbor
 
 import io.fd.honeycomb.translate.spi.write.ListWriterCustomizer
 import io.fd.honeycomb.translate.util.RWUtils
@@ -22,14 +22,14 @@ import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.openconfig.network.instance.NetworInstance
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.utils.As
-import io.frinx.unitopo.unit.xr7.bgp.UnderlayNeighbor
-import io.frinx.unitopo.unit.xr7.bgp.UnderlayNeighborBuilder
-import io.frinx.unitopo.unit.xr7.bgp.UnderlayNeighborKey
-import io.frinx.unitopo.unit.xr7.bgp.UnderlayVrfNeighborBuilder
-import io.frinx.unitopo.unit.xr7.bgp.UnderlayVrfNeighborKey
-import io.frinx.unitopo.unit.xr7.bgp.handler.GlobalConfigWriter
-import io.frinx.unitopo.unit.xr7.bgp.handler.GlobalConfigWriter.Companion.XR_BGP_INSTANCE_NAME
-import io.frinx.unitopo.unit.xr7.bgp.handler.toUnderlay
+import io.frinx.unitopo.unit.xr66.bgp.UnderlayNeighbor
+import io.frinx.unitopo.unit.xr66.bgp.UnderlayNeighborBuilder
+import io.frinx.unitopo.unit.xr66.bgp.UnderlayNeighborKey
+import io.frinx.unitopo.unit.xr66.bgp.UnderlayVrfNeighborBuilder
+import io.frinx.unitopo.unit.xr66.bgp.UnderlayVrfNeighborKey
+import io.frinx.unitopo.unit.xr66.bgp.handler.GlobalConfigWriter
+import io.frinx.unitopo.unit.xr66.bgp.handler.GlobalConfigWriter.Companion.XR_BGP_INSTANCE_NAME
+import io.frinx.unitopo.unit.xr66.bgp.handler.toUnderlay
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev180615.bgp.Instance
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev180615.bgp.InstanceKey
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev180615.bgp.instance.InstanceAs

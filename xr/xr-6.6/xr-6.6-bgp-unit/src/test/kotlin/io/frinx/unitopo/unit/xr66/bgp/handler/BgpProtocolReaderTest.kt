@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.frinx.unitopo.unit.xr7.bgp.handler
+package io.frinx.unitopo.unit.xr66.bgp.handler
 
 import com.google.common.base.Optional
 import com.google.common.util.concurrent.CheckedFuture

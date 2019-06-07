@@ -211,47 +211,47 @@
     </dependency>
     <dependency>
       <groupId>io.frinx.unitopo</groupId>
-      <artifactId>xr-7-models</artifactId>
+      <artifactId>xr-6.6-models</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>io.frinx.unitopo</groupId>
-      <artifactId>xr-7-init-unit</artifactId>
+      <artifactId>xr-6.6-init-unit</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>io.frinx.unitopo</groupId>
-      <artifactId>xr-7-interface-unit</artifactId>
+      <artifactId>xr-6.6-interface-unit</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>io.frinx.unitopo</groupId>
-      <artifactId>xr-7-ospf-unit</artifactId>
+      <artifactId>xr-6.6-ospf-unit</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>io.frinx.unitopo</groupId>
-      <artifactId>xr-7-bgp-unit</artifactId>
+      <artifactId>xr-6.6-bgp-unit</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>io.frinx.unitopo</groupId>
-      <artifactId>xr-7-network-instance-unit</artifactId>
+      <artifactId>xr-6.6-network-instance-unit</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>io.frinx.unitopo</groupId>
-      <artifactId>xr-7-configuration-metadata-unit</artifactId>
+      <artifactId>xr-6.6-configuration-metadata-unit</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>io.frinx.unitopo</groupId>
-      <artifactId>xr-7-evpn-unit</artifactId>
+      <artifactId>xr-6.6-evpn-unit</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>io.frinx.unitopo</groupId>
-      <artifactId>xr-7-logging-unit</artifactId>
+      <artifactId>xr-6.6-logging-unit</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

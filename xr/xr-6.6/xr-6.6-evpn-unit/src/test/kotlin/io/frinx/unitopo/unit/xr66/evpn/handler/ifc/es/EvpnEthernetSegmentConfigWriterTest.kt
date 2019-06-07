@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.frinx.unitopo.unit.xr7.evpn.handler.ifc.es
+package io.frinx.unitopo.unit.xr66.evpn.handler.ifc.es
 
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.openconfig.openconfig.evpn.IIDs

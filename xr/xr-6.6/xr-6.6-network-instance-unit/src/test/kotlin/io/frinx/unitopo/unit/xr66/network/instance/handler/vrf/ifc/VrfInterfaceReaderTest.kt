@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.frinx.unitopo.unit.xr7.network.instance.handler.vrf.ifc
+package io.frinx.unitopo.unit.xr66.network.instance.handler.vrf.ifc
 
 import io.fd.honeycomb.translate.read.ReadContext
 import io.frinx.unitopo.registry.spi.UnderlayAccess
@@ -35,7 +35,7 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.insta
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.interfaces.InterfaceBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.interfaces.InterfaceKey
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
-import io.frinx.unitopo.unit.xr7.network.instance.handler.vrf.L3VrfReaderTest as BaseTest
+import io.frinx.unitopo.unit.xr66.network.instance.handler.vrf.L3VrfReaderTest as BaseTest
 
 class VrfInterfaceReaderTest : AbstractNetconfHandlerTest() {
     @Mock

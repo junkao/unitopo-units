@@ -33,7 +33,7 @@
 
     <modules>
         <module>xr-6</module>
-        <module>xr-7</module>
+        <module>xr-6.6</module>
     </modules>
 
     <build>

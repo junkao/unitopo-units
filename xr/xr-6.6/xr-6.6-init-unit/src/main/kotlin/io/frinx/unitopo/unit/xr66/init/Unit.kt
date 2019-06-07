@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package io.frinx.unitopo.unit.xr7.init
+package io.frinx.unitopo.unit.xr66.init
 
 import io.frinx.unitopo.registry.spi.TranslateUnit
 
 /**
- * This unit is a holder of generic settings for XR7 netconf session. No handlers defined here.
+ * This unit is a holder of generic settings for XR6.6 netconf session. No handlers defined here.
  */
 abstract class Unit : TranslateUnit {
 
-    override fun toString(): String = "XR 7 init unit"
+    override fun toString(): String = "XR 6.6 init unit"
 }
