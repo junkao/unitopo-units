@@ -23,18 +23,18 @@ import io.frinx.openconfig.openconfig.network.instance.IIDs
 import io.frinx.unitopo.registry.api.TranslationUnitCollector
 import io.frinx.unitopo.registry.spi.TranslateUnit
 import io.frinx.unitopo.registry.spi.UnderlayAccess
+import io.frinx.unitopo.unit.junos.ospf.handler.OspfAreaConfigReader
 import io.frinx.unitopo.unit.junos.ospf.handler.OspfAreaConfigWriter
 import io.frinx.unitopo.unit.junos.ospf.handler.OspfAreaInterfaceConfigReader
 import io.frinx.unitopo.unit.junos.ospf.handler.OspfAreaInterfaceConfigWriter
 import io.frinx.unitopo.unit.junos.ospf.handler.OspfAreaInterfaceReader
-import io.frinx.unitopo.unit.junos.ospf.handler.OspfAreaInterfaceWriter
 import io.frinx.unitopo.unit.junos.ospf.handler.OspfAreaReader
 import io.frinx.unitopo.unit.junos.ospf.handler.OspfMaxMetricConfigReader
 import io.frinx.unitopo.unit.junos.ospf.handler.OspfMaxMetricConfigWriter
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.ospfv2.rev170228.`$YangModuleInfoImpl` as OspfYangInfo
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.ospf.types.rev170228.`$YangModuleInfoImpl` as OspfTypesYangInfo
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.yang.types.rev130715.`$YangModuleInfoImpl` as IetfYangInfo
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.ospfv2.rev170228.`$YangModuleInfoImpl` as OspfYangInfo
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.`$YangModuleInfoImpl` as UnderlayInterfacesYangInfo
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.yang.types.rev130715.`$YangModuleInfoImpl` as IetfYangInfo
 
 class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
     private var reg: TranslationUnitCollector.Registration? = null
@@ -48,12 +48,12 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
     }
 
     override fun getYangSchemas() = setOf(
-            OspfYangInfo.getInstance(),
-            IetfYangInfo.getInstance(),
-            OspfTypesYangInfo.getInstance())
+        OspfYangInfo.getInstance(),
+        IetfYangInfo.getInstance(),
+        OspfTypesYangInfo.getInstance())
 
     override fun getUnderlayYangSchemas() = setOf(
-            UnderlayInterfacesYangInfo.getInstance())
+        UnderlayInterfacesYangInfo.getInstance())
 
     override fun getRpcs(underlayAccess: UnderlayAccess) = emptySet<RpcService<*, *>>()
 
@@ -76,13 +76,15 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
         wRegistry.addNoop(IIDs.NE_NE_PR_PR_OS_AR_AREA)
         wRegistry.add(IIDs.NE_NE_PR_PR_OS_AR_AR_CONFIG, OspfAreaConfigWriter(underlayAccess))
         wRegistry.addNoop(IIDs.NE_NE_PR_PR_OS_AR_AR_INTERFACES)
-        wRegistry.add(IIDs.NE_NE_PR_PR_OS_AR_AR_IN_INTERFACE, OspfAreaInterfaceWriter(underlayAccess))
-        wRegistry.add(IIDs.NE_NE_PR_PR_OS_AR_AR_IN_IN_CONFIG, OspfAreaInterfaceConfigWriter(underlayAccess))
+        wRegistry.addNoop(IIDs.NE_NE_PR_PR_OS_AR_AR_IN_INTERFACE)
+        wRegistry.addAfter(IIDs.NE_NE_PR_PR_OS_AR_AR_IN_IN_CONFIG, OspfAreaInterfaceConfigWriter(underlayAccess),
+            IIDs.NE_NE_PR_PR_OS_AR_AR_CONFIG)
     }
 
     private fun provideReaders(rRegistry: CustomizerAwareReadRegistryBuilder, underlayAccess: UnderlayAccess) {
         rRegistry.add(IIDs.NE_NE_PR_PR_OS_GL_TI_MA_CONFIG, OspfMaxMetricConfigReader(underlayAccess))
         rRegistry.add(IIDs.NE_NE_PR_PR_OS_AR_AREA, OspfAreaReader(underlayAccess))
+        rRegistry.add(IIDs.NE_NE_PR_PR_OS_AR_AR_CONFIG, OspfAreaConfigReader())
         rRegistry.add(IIDs.NE_NE_PR_PR_OS_AR_AR_IN_INTERFACE, OspfAreaInterfaceReader(underlayAccess))
         rRegistry.add(IIDs.NE_NE_PR_PR_OS_AR_AR_IN_IN_CONFIG, OspfAreaInterfaceConfigReader(underlayAccess))
     }

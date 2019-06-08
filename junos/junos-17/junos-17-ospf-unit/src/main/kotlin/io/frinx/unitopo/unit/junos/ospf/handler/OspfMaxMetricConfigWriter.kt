@@ -17,7 +17,6 @@ package io.frinx.unitopo.unit.junos.ospf.handler
 
 import io.fd.honeycomb.translate.spi.write.WriterCustomizer
 import io.fd.honeycomb.translate.write.WriteContext
-import io.fd.honeycomb.translate.write.WriteFailedException
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.ospfv2.rev170228.ospfv2.global.structural.global.timers.max.metric.Config
 import org.opendaylight.yang.gen.v1.http.yang.juniper.net.yang._1._1.jc.configuration.junos._17._3r1._10.rev170101.juniper.protocols.ospf.Overload
@@ -46,12 +45,7 @@ class OspfMaxMetricConfigWriter(private val underlayAccess: UnderlayAccess) : Wr
 
     private fun writeData(id: IID<Config>, data: Config) {
         val (underlayId, underlayIfcCfg) = getOverloadData(data)
-
-        try {
-            underlayAccess.merge(underlayId, underlayIfcCfg)
-        } catch (e: Exception) {
-            throw WriteFailedException(id, e)
-        }
+        underlayAccess.merge(underlayId, underlayIfcCfg)
     }
 
     companion object {
