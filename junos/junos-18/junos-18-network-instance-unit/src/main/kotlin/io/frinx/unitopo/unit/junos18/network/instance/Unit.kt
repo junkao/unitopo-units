@@ -98,8 +98,10 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
         wRegistry.add(IIDs.NE_NE_PR_PR_CONFIG, ProtocolConfigWriter(underlay))
 
         wRegistry.addNoop(IIDs.NE_NE_PR_PR_LO_AGGREGATE)
-        wRegistry.subtreeAdd(IIDs.NE_NE_PR_PR_LO_AG_CONFIG, LocalAggregateConfigWriter(underlay),
-            NE_NE_PR_PR_LO_AG_CONFIG_SUBTREE)
+        wRegistry.subtreeAddAfter(IIDs.NE_NE_PR_PR_LO_AG_CONFIG, LocalAggregateConfigWriter(underlay),
+            NE_NE_PR_PR_LO_AG_CONFIG_SUBTREE,
+            IIDs.NE_NE_CONFIG, IIDs.NE_NE_PR_PR_BG_GL_CONFIG, IIDs.NE_NE_PR_PR_OS_GL_CONFIG,
+            IIDs.NE_NE_PR_PR_BG_GL_AF_AF_CONFIG, IIDs.NE_NE_PR_PR_BG_NE_NE_AF_AF_CONFIG)
     }
 
     private fun provideReaders(rRegistry: CustomizerAwareReadRegistryBuilder, underlay: UnderlayAccess) {
