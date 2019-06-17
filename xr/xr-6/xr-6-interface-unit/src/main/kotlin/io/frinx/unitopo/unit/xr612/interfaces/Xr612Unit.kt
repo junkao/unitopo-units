@@ -23,6 +23,7 @@ import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr6.interfaces.CommonUnit
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.bundlemgr.cfg.rev160512.`$YangModuleInfoImpl` as UnderlayBundleMgrYangInfo
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.l2.eth.infra.cfg.rev151109.`$YangModuleInfoImpl` as UnderlayL2EthYangInfo
 
 class Xr612Unit(private val registry: TranslationUnitCollector) : CommonUnit(registry) {
     override fun provideSpecificWriters(
@@ -38,7 +39,8 @@ class Xr612Unit(private val registry: TranslationUnitCollector) : CommonUnit(reg
 
     override fun getSpecificYangSchemas() = emptySet<YangModuleInfo>()
 
-    override fun getSpecificUnderlayYangSchemas() = setOf(UnderlayBundleMgrYangInfo.getInstance())
+    override fun getSpecificUnderlayYangSchemas() = setOf(UnderlayBundleMgrYangInfo.getInstance(),
+        UnderlayL2EthYangInfo.getInstance())
 
     override fun toString(): String = "XR 6 (2015-07-30) interface translate unit"
 }

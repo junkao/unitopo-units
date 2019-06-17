@@ -37,6 +37,7 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.ag
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 import io.frinx.openconfig.openconfig.lacp.IIDs as LacpIIDs
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.bundlemgr.cfg.rev161216.`$YangModuleInfoImpl` as UnderlayBundleMgrYangInfo
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.l2.eth.infra.cfg.rev151109.`$YangModuleInfoImpl` as UnderlayL2EthYangInfo
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.bfd.rev171024.`$YangModuleInfoImpl` as BfdYangInfo
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.lacp.lag.member.rev171109.`$YangModuleInfoImpl` as LacpLagMemberYangInfo
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.lacp.rev170505.`$YangModuleInfoImpl` as LacpYangInfo
@@ -99,7 +100,8 @@ class Xr623Unit(private val registry: TranslationUnitCollector) : CommonUnit(reg
 
     companion object {
         private val UNDERLAY_SCHEMAS = setOf(
-            UnderlayBundleMgrYangInfo.getInstance()
+            UnderlayBundleMgrYangInfo.getInstance(),
+            UnderlayL2EthYangInfo.getInstance()
         )
         private val IID_FOR_CUT_AGGREGATION = InstanceIdentifier.create(Aggregation::class.java)
         private val IID_SUB_TREE_BFD = setOf(
