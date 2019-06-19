@@ -159,6 +159,7 @@ class SubinterfaceVlanConfigWriterTest {
         val config = ConfigBuilder(CONFIG_VLANID)
             .build()
         val expectedConfig = JunosInterfaceUnitBuilder()
+            .setKey(JunosInterfaceUnitKey(id.firstKeyOf(Subinterface::class.java).index.toString()))
             .setVlanChoice(VLAN_CHOICE_NULL)
             .build()
 
