@@ -18,11 +18,13 @@ package io.frinx.unitopo.unit.xr6.network.instance.handler.vrf.protocol
 
 import io.frinx.translate.unit.commons.handler.spi.CompositeWriter
 import io.frinx.unitopo.registry.spi.UnderlayAccess
+import io.frinx.unitopo.unit.xr6.lr.handler.StaticProtocolWriter
 import io.frinx.unitopo.unit.xr6.ospf.handler.OspfProtocolWriter
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.protocol.Config
 
 class ProtocolConfigWriter(access: UnderlayAccess) : CompositeWriter<Config>(
     listOf(
-        OspfProtocolWriter(access)
+        OspfProtocolWriter(access),
+        StaticProtocolWriter()
     )
 )
