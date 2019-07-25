@@ -93,6 +93,7 @@ class AggregateWriterTest {
                         config = ConfigBuilder().apply {
                             destinationAddress = Ipv4Address("10.2.2.1")
                             minInterval = 1000L
+                            multiplier = 3
                         }.build()
                     }.build()
                     bfdIpv6 = BfdIpv6Builder().apply {
@@ -131,6 +132,7 @@ class AggregateWriterTest {
         val ipv4 = (dataCap.allValues[0] as Bfd).addressFamily.ipv4
         val ipv6 = (dataCap.allValues[0] as Bfd).addressFamily.ipv6
         Assert.assertEquals("10.2.2.1", ipv4.destinationAddress.value)
+        Assert.assertEquals(3L, ipv4.detectionMultiplier)
         Assert.assertEquals(1000L, ipv4.interval)
         Assert.assertEquals("2001::2", ipv6.ipv6DestinationAddress)
         Assert.assertEquals(900L, ipv6.ipv6Interval)
@@ -173,6 +175,7 @@ class AggregateWriterTest {
                     bfd = BfdBuilder().apply {
                         config = ConfigBuilder().apply {
                             destinationAddress = Ipv4Address("10.1.1.1")
+                            multiplier = 4
                             minInterval = 800L
                         }.build()
                     }.build()
@@ -212,6 +215,7 @@ class AggregateWriterTest {
         val ipv4 = (dataCap.allValues[0] as Bfd).addressFamily.ipv4
         val ipv6 = (dataCap.allValues[0] as Bfd).addressFamily.ipv6
         Assert.assertEquals("10.1.1.1", ipv4.destinationAddress.value)
+        Assert.assertEquals(4L, ipv4.detectionMultiplier)
         Assert.assertEquals(800L, ipv4.interval)
         Assert.assertEquals("2001::1", ipv6.ipv6DestinationAddress)
         Assert.assertEquals(600L, ipv6.ipv6Interval)

@@ -39,5 +39,6 @@ class BfdConfigReader(private val underlayAccess: UnderlayAccess) :
 private fun ConfigBuilder.fromUnderlay(underlay: InterfaceConfiguration) {
     val ipv4 = underlay.getAugmentation(InterfaceConfiguration1::class.java)?.bfd?.addressFamily?.ipv4
     destinationAddress = ipv4?.destinationAddress
+    multiplier = ipv4?.detectionMultiplier
     minInterval = ipv4?.interval
 }

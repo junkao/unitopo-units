@@ -124,14 +124,17 @@ class AggregateWriter(private val underlayAccess: UnderlayAccess) : WriterCustom
 }
 
 fun Ipv4Builder.fromOpenConfig(data: Config): Ipv4 {
-    destinationAddress = Ipv4AddressNoZone(data.destinationAddress.value)
+    data.destinationAddress?.let {
+        destinationAddress = Ipv4AddressNoZone(data.destinationAddress.value)
+    }
     isFastDetect = true
     interval = data.minInterval
+    detectionMultiplier = data.multiplier
     return build()
 }
 
 fun Ipv6Builder.fromOpenConfig(data: Ipv6Config): Ipv6 {
-    ipv6DestinationAddress = data.destinationAddress.value
+    ipv6DestinationAddress = data.destinationAddress?.value
     isIpv6FastDetect = true
     ipv6Interval = data.minInterval
     return build()

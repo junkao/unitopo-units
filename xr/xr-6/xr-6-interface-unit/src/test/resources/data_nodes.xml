@@ -498,6 +498,7 @@
                             <destination-address>10.1.12.72</destination-address>
                             <fast-detect></fast-detect>
                             <interval>1000</interval>
+                            <detection-multiplier>3</detection-multiplier>
                         </ipv4>
                         <ipv6>
                             <ipv6-destination-address>2001::</ipv6-destination-address>

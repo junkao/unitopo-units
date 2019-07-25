@@ -60,5 +60,6 @@ class BfdConfigReaderTest {
         target.readCurrentAttributes(id, builder, readContext)
         Assert.assertEquals("10.1.12.72", builder.destinationAddress.value)
         Assert.assertEquals(1000L, builder.minInterval)
+        Assert.assertEquals(3L, builder.multiplier)
     }
 }
