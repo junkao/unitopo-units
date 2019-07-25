@@ -51,6 +51,7 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.types.rev170202.AFISAFITYPE
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.types.rev170202.L2VPNEVPN
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.types.rev170202.IPV4UNICAST
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.types.rev170202.L3VPNIPV4UNICAST
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstanceKey
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.types.inet.rev170403.AsNumber
@@ -142,9 +143,10 @@ open class GlobalAfiSafiConfigWriter(private val underlayAccess: UnderlayAccess)
 }
 
 fun Class<out AFISAFITYPE>.toUnderlay(): BgpAddressFamily? {
-    when (this) {
+    return when (this) {
         L2VPNEVPN::class.java -> return BgpAddressFamily.L2vpnEvpn
         IPV4UNICAST::class.java -> return BgpAddressFamily.Ipv4Unicast
+        L3VPNIPV4UNICAST::class.java -> return BgpAddressFamily.Vpnv4Unicast
+        else -> null
     }
-    return null
 }

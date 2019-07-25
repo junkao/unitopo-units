@@ -34,6 +34,12 @@ import io.frinx.unitopo.unit.xr66.bgp.handler.neighbor.NeighborConfigReader
 import io.frinx.unitopo.unit.xr66.bgp.handler.neighbor.NeighborReader
 import io.frinx.unitopo.unit.xr66.bgp.handler.neighbor.NeighborTransportConfigReader
 import io.frinx.unitopo.unit.xr66.bgp.handler.neighbor.NeighborWriter
+import io.frinx.unitopo.unit.xr66.bgp.handler.peergroup.PeerGroupAfiSafiApplyPolicyConfigReader
+import io.frinx.unitopo.unit.xr66.bgp.handler.peergroup.PeerGroupListReader
+import io.frinx.unitopo.unit.xr66.bgp.handler.peergroup.PeerGroupAfiSafiListReader
+import io.frinx.unitopo.unit.xr66.bgp.handler.peergroup.PeerGroupConfigWriter
+import io.frinx.unitopo.unit.xr66.bgp.handler.peergroup.PeerGroupAfiSafiConfigWriter
+import io.frinx.unitopo.unit.xr66.bgp.handler.peergroup.PeerGroupAfiSafiApplyPolicyConfigWriter
 import io.frinx.unitopo.unit.xr66.init.Unit
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.neighbor.afi.safi.list.AfiSafi
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.neighbor.afi.safi.list.afi.safi.Config
@@ -98,6 +104,20 @@ class Unit(private val registry: TranslationUnitCollector) : Unit() {
                 RWUtils.cutIdFromStart(IIDs.NE_NE_PR_PR_BG_NE_NE_AF_AFISAFI, IID_NEIGHBOR),
                 RWUtils.cutIdFromStart(IIDs.NE_NE_PR_PR_BG_NE_NE_AF_AF_CONFIG, IID_NEIGHBOR)),
             IIDs.NE_NE_CONFIG, IIDs.NE_NE_PR_PR_BG_GL_AF_AF_CONFIG)
+
+        // peer group
+        wRegistry.addNoop(IIDs.NE_NE_PR_PR_BG_PE_PEERGROUP)
+        wRegistry.addAfter(IIDs.NE_NE_PR_PR_BG_PE_PE_CONFIG, PeerGroupConfigWriter(access),
+            IIDs.NE_NE_PR_PR_BG_GL_CONFIG)
+        // peer group afisafi
+        wRegistry.addNoop(IIDs.NE_NE_PR_PR_BG_PE_PE_AF_AFISAFI)
+        wRegistry.addAfter(IIDs.NE_NE_PR_PR_BG_PE_PE_AF_AF_CONFIG, PeerGroupAfiSafiConfigWriter(access),
+            IIDs.NE_NE_PR_PR_BG_GL_CONFIG,
+            IIDs.NE_NE_PR_PR_BG_PE_PE_CONFIG)
+        wRegistry.addAfter(IIDs.NE_NE_PR_PR_BG_PE_PE_AF_AF_AP_CONFIG, PeerGroupAfiSafiApplyPolicyConfigWriter(access),
+            IIDs.NE_NE_PR_PR_BG_GL_CONFIG,
+            IIDs.NE_NE_PR_PR_BG_PE_PE_CONFIG,
+            IIDs.NE_NE_PR_PR_BG_PE_PE_AF_AF_CONFIG)
     }
 
     private fun provideReaders(rRegistry: CustomizerAwareReadRegistryBuilder, access: UnderlayAccess) {
@@ -110,6 +130,16 @@ class Unit(private val registry: TranslationUnitCollector) : Unit() {
         rRegistry.subtreeAdd(IIDs.NE_NE_PR_PR_BG_NE_NE_AF_AFISAFI, NeighborAfiSafiReader(access),
             setOf(IID_AFISAFI_CONFIG))
         rRegistry.add(IIDs.NE_NE_PR_PR_BG_NE_NE_TR_CONFIG, NeighborTransportConfigReader(access))
+
+        // peer-group
+        rRegistry.subtreeAddAfter(IIDs.NE_NE_PR_PR_BG_PE_PEERGROUP, PeerGroupListReader(access),
+            setOf(IIDs.NE_NE_PR_PR_BG_PE_PE_CONFIG),
+            IIDs.NE_NE_PR_PR_BG_GL_CONFIG)
+        rRegistry.subtreeAddAfter(IIDs.NE_NE_PR_PR_BG_PE_PE_AF_AFISAFI, PeerGroupAfiSafiListReader(access),
+            setOf(IIDs.NE_NE_PR_PR_BG_PE_PE_AF_AF_CONFIG),
+            IIDs.NE_NE_PR_PR_BG_PE_PE_CONFIG)
+        rRegistry.addAfter(IIDs.NE_NE_PR_PR_BG_PE_PE_AF_AF_AP_CONFIG, PeerGroupAfiSafiApplyPolicyConfigReader(access),
+            IIDs.NE_NE_PR_PR_BG_PE_PE_AF_AF_CONFIG)
     }
 
     companion object {
@@ -155,3 +185,7 @@ typealias UnderlayNeighborKey = org.opendaylight.yang.gen.v1.http.cisco.com.ns.y
 
 typealias UnderlayVrfGlobal = org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang
 .cisco.ios.xr.ipv4.bgp.cfg.rev180615.bgp.instance.instance.`as`.four._byte.`as`.vrfs.vrf.VrfGlobal
+
+typealias UnderlayNeighborGroup = org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang
+.cisco.ios.xr.ipv4.bgp.cfg.rev180615.bgp.instance.instance
+.`as`.four._byte.`as`._default.vrf.bgp.entity.neighbor.groups.NeighborGroup
