@@ -38,6 +38,8 @@ import io.frinx.unitopo.unit.xr66.network.instance.handler.vrf.protocol.aggregat
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo
 import io.frinx.openconfig.openconfig.interfaces.IIDs as interfaces_IIDs
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907.`$YangModuleInfoImpl` as UnderlayInterfacesYangInfo
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.clns.isis.cfg.rev181123.`$YangModuleInfoImpl` as UnderlayIsisYangInfo
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.clns.isis.datatypes.rev170501.`$YangModuleInfoImpl` as UnderlayIsisTypesYangInfo
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.infra.rsi.cfg.rev180615.`$YangModuleInfoImpl` as UnderlayVRFYangInto
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.qos.ma.cfg.rev180227.`$YangModuleInfoImpl` as UnderlayQosMaCfgYangInfo
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.extension.rev180323.`$YangModuleInfoImpl` as BgpExtensionYangModuleInfo
@@ -71,7 +73,9 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
     override fun getUnderlayYangSchemas(): Set<YangModuleInfo> = setOf(
         UnderlayInterfacesYangInfo.getInstance(),
         UnderlayQosMaCfgYangInfo.getInstance(),
-        UnderlayVRFYangInto.getInstance()
+        UnderlayVRFYangInto.getInstance(),
+        UnderlayIsisYangInfo.getInstance(),
+        UnderlayIsisTypesYangInfo.getInstance()
     )
 
     override fun provideHandlers(

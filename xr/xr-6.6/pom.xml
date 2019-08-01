@@ -40,6 +40,7 @@
         <module>xr-6.6-logging-unit</module>
         <module>xr-6.6-models</module>
         <module>xr-6.6-ospf-unit</module>
+        <module>xr-6.6-isis-unit</module>
         <module>xr-6.6-network-instance-unit</module>
     </modules>
 
