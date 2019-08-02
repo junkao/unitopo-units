@@ -22,6 +22,38 @@
                 <instance>
                     <instance-name>ISIS-001</instance-name>
                     <running></running>
+                    <max-link-metrics>
+                        <max-link-metric>
+                            <level>level1</level>
+                        </max-link-metric>
+                        <max-link-metric>
+                            <level>level2</level>
+                        </max-link-metric>
+                        <max-link-metric>
+                            <level>not-set</level>
+                        </max-link-metric>
+                    </max-link-metrics>
+                    <afs>
+                        <af>
+                            <af-name>ipv4</af-name>
+                            <saf-name>unicast</saf-name>
+                            <af-data/>
+                        </af>
+                        <af>
+                            <af-name>ipv6</af-name>
+                            <saf-name>unicast</saf-name>
+                            <af-data>
+                                <redistributions>
+                                    <redistribution>
+                                        <protocol-name>isis</protocol-name>
+                                        <ospf-or-ospfv3-or-isis-or-application>
+                                            <instance-name>400</instance-name>
+                                        </ospf-or-ospfv3-or-isis-or-application>
+                                    </redistribution>
+                                </redistributions>
+                            </af-data>
+                        </af>
+                    </afs>
                 </instance>
                 <instance>
                     <instance-name>ISIS-002</instance-name>
