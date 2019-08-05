@@ -19,12 +19,14 @@ package io.frinx.unitopo.unit.xr66.network.instance.handler.vrf.protocol
 import io.frinx.translate.unit.commons.handler.spi.CompositeWriter
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr66.bgp.handler.BgpProtocolWriter
+import io.frinx.unitopo.unit.xr66.isis.handler.IsisProtocolConfigWriter
 import io.frinx.unitopo.unit.xr66.ospf.handler.OspfProtocolWriter
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.protocol.Config
 
 class ProtocolConfigWriter(access: UnderlayAccess) : CompositeWriter<Config>(
     listOf(
         OspfProtocolWriter(access),
-        BgpProtocolWriter(access)
+        BgpProtocolWriter(access),
+        IsisProtocolConfigWriter(access)
     )
 )
