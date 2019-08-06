@@ -1366,7 +1366,9 @@ module Cisco-IOS-XR-ipv4-bgp-cfg {
       vrf-neighbor-af, af-group-af";
     leaf as-override {
       type boolean;
+/*Comment out this because this will leading a unnecessary update to divice
       default "true";
+*/
       description
         "TRUE to override matching AS-number while
         sending update. FALSE to prevent as-override
@@ -1675,7 +1677,9 @@ module Cisco-IOS-XR-ipv4-bgp-cfg {
       type uint32 {
         range "1..10";
       }
+/*Comment out this because this will leading a unnecessary update to divice
       default "3";
+*/
       description "Allow as-path with my AS present in it";
     }
   }
@@ -3274,7 +3278,9 @@ module Cisco-IOS-XR-ipv4-bgp-cfg {
       vrf-neighbor-af, af-group-af";
     leaf advertise-orf {
       type Bgp-orf;
+/*Comment out this because this will leading a unnecessary update to divice.
       default "none";
+*/
       description "Advertise ORF capability to the peer";
     }
   }
