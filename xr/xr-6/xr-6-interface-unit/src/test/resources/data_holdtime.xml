@@ -1,0 +1,74 @@
+<!--
+  ~ Copyright © 2019 Frinx and others.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<rpc-reply xmlns="urn:ietf:params:xml:ns:netconf:base:1.0" message-id="m-1">
+    <data>
+        <interface-properties xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-oper">
+            <data-nodes>
+                <data-node>
+                    <data-node-name>0/0/CPU0</data-node-name>
+                    <locationviews>
+                        <locationview>
+                            <locationview-name>0/0/CPU0</locationview-name>
+                            <interfaces>
+                                <interface>
+                                    <interface-name>GigabitEthernet0/0/0/0</interface-name>
+                                    <interface>GigabitEthernet0/0/0/0</interface>
+                                    <type>IFT_GETHERNET</type>
+                                </interface>
+                                <interface>
+                                    <interface-name>GigabitEthernet0/0/0/1</interface-name>
+                                    <interface>GigabitEthernet0/0/0/1</interface>
+                                    <type>IFT_GETHERNET</type>
+                                </interface>
+                            </interfaces>
+                        </locationview>
+                    </locationviews>
+                    <system-view>
+                        <interfaces>
+                            <interface>
+                                <interface-name>GigabitEthernet0/0/0/0</interface-name>
+                                <interface>GigabitEthernet0/0/0/0</interface>
+                                <type>IFT_GETHERNET</type>
+                            </interface>
+                            <interface>
+                                <interface-name>GigabitEthernet0/0/0/1</interface-name>
+                                <interface>GigabitEthernet0/0/0/1</interface>
+                                <type>IFT_GETHERNET</type>
+                            </interface>
+                        </interfaces>
+                    </system-view>
+                </data-node>
+            </data-nodes>
+        </interface-properties>
+        <interface-configurations xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg">
+            <interface-configuration>
+                <active>act</active>
+                <interface-name>GigabitEthernet0/0/0/0</interface-name>
+                <ethernet xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-drivers-media-eth-cfg">
+                    <carrier-delay>
+                        <carrier-delay-up>120000</carrier-delay-up>
+                        <carrier-delay-down>0</carrier-delay-down>
+                    </carrier-delay>
+                </ethernet>
+            </interface-configuration>
+            <interface-configuration>
+                <active>act</active>
+                <interface-name>GigabitEthernet0/0/0/1</interface-name>
+            </interface-configuration>
+        </interface-configurations>
+    </data>
+</rpc-reply>
