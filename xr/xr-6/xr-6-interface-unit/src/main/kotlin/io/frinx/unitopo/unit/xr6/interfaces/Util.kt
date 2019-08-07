@@ -44,6 +44,8 @@ class Util {
                 name.startsWith("MgmtEth") -> EthernetCsmacd::class.java
                 name.startsWith("FastEther") -> EthernetCsmacd::class.java
                 name.startsWith("GigabitEthernet") -> EthernetCsmacd::class.java
+                name.startsWith("hundredGigE") -> EthernetCsmacd::class.java
+                name.startsWith("tenGigE") -> EthernetCsmacd::class.java
                 name.startsWith("Loopback") -> SoftwareLoopback::class.java
                 name.startsWith("Bundle") -> Ieee8023adLag::class.java
                 else -> Other::class.java

@@ -32,6 +32,8 @@ import io.frinx.unitopo.unit.xr623.interfaces.handler.aggregate.bfd.BfdConfigRea
 import io.frinx.unitopo.unit.xr623.interfaces.handler.aggregate.bfd.BfdIpv6ConfigReader
 import io.frinx.unitopo.unit.xr623.interfaces.handler.ethernet.EthernetConfigReader
 import io.frinx.unitopo.unit.xr623.interfaces.handler.ethernet.EthernetConfigWriter
+import io.frinx.unitopo.unit.xr623.interfaces.handler.holdtime.HoldTimeConfigReader
+import io.frinx.unitopo.unit.xr623.interfaces.handler.holdtime.HoldTimeConfigWriter
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.aggregate.rev161222.aggregation.logical.top.Aggregation
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.aggregate.rev161222.aggregation.logical.top.aggregation.Config
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
@@ -41,6 +43,7 @@ import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.l2.eth.i
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.bfd.rev171024.`$YangModuleInfoImpl` as BfdYangInfo
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.lacp.lag.member.rev171109.`$YangModuleInfoImpl` as LacpLagMemberYangInfo
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.lacp.rev170505.`$YangModuleInfoImpl` as LacpYangInfo
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.drivers.media.eth.cfg.rev150730.`$YangModuleInfoImpl` as UnderlayDriversMediaYangInfo
 
 class Xr623Unit(private val registry: TranslationUnitCollector) : CommonUnit(registry) {
 
@@ -68,6 +71,11 @@ class Xr623Unit(private val registry: TranslationUnitCollector) : CommonUnit(reg
             GenericWriter(IIDs.IN_IN_AUG_INTERFACE1_AGGREGATION, AggregateWriter(underlayAccess)),
             setOf(IIDs.IN_IN_CONFIG,
                 IIDs.IN_IN_AUG_INTERFACE1))
+
+        // hold-time(interface)
+        wRegistry.addNoop(IIDs.IN_IN_HOLDTIME)
+        wRegistry.addAfter(GenericWriter(IIDs.IN_IN_HO_CONFIG, HoldTimeConfigWriter(underlayAccess)),
+                IIDs.IN_IN_CONFIG)
     }
 
     override fun provideSpecificReaders(rRegistry: CustomizerAwareReadRegistryBuilder, underlayAccess: UnderlayAccess) {
@@ -87,6 +95,9 @@ class Xr623Unit(private val registry: TranslationUnitCollector) : CommonUnit(reg
             GenericConfigReader(IIDs.IN_IN_AG_AUG_AGGREGATION1_BF_CONFIG, BfdConfigReader(underlayAccess)))
         rRegistry.add(
             GenericConfigReader(IIDs.INT_INT_AGG_AUG_AGGREGATION1_BFD_CONFIG, BfdIpv6ConfigReader(underlayAccess)))
+
+        // hold-time(interface)
+        rRegistry.add(GenericConfigReader(IIDs.IN_IN_HO_CONFIG, HoldTimeConfigReader(underlayAccess)))
     }
 
     override fun getSpecificYangSchemas() = setOf(
@@ -101,7 +112,8 @@ class Xr623Unit(private val registry: TranslationUnitCollector) : CommonUnit(reg
     companion object {
         private val UNDERLAY_SCHEMAS = setOf(
             UnderlayBundleMgrYangInfo.getInstance(),
-            UnderlayL2EthYangInfo.getInstance()
+            UnderlayL2EthYangInfo.getInstance(),
+            UnderlayDriversMediaYangInfo.getInstance()
         )
         private val IID_FOR_CUT_AGGREGATION = InstanceIdentifier.create(Aggregation::class.java)
         private val IID_SUB_TREE_BFD = setOf(
