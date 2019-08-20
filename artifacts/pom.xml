@@ -247,6 +247,11 @@
                 <artifactId>xr-6.6-logging-unit</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>io.frinx.unitopo</groupId>
+                <artifactId>xr-6.6-routing-policy-unit</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 
             <!-- bases -->
             <dependency>

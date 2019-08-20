@@ -60,6 +60,7 @@
         <bundle>mvn:io.frinx.unitopo/xr-6.6-configuration-metadata-unit/{{VERSION}}</bundle>
         <bundle>mvn:io.frinx.unitopo/xr-6.6-evpn-unit/{{VERSION}}</bundle>
         <bundle>mvn:io.frinx.unitopo/xr-6.6-logging-unit/{{VERSION}}</bundle>
+        <bundle>mvn:io.frinx.unitopo/xr-6.6-routing-policy-unit/{{VERSION}}</bundle>
     </feature>
 
     <feature name='unified-topology-unit-xr-6' version='${project.version}'>
