@@ -22,23 +22,23 @@
                 <route-policy>
                     <route-policy-name>ALL-PERMIT</route-policy-name>
                     <rpl-route-policy>route-policy ALL-PERMIT
-    pass
+  pass
 end-policy</rpl-route-policy>
                 </route-policy>
                 <route-policy>
                     <route-policy-name>BGP-PIC</route-policy-name>
                     <rpl-route-policy>route-policy BGP-PIC
-    set path-selection backup 1 install
+  set path-selection backup 1 install
 end-policy</rpl-route-policy>
                 </route-policy>
                 <route-policy>
                     <route-policy-name>CONNECTED-TO-BGP</route-policy-name>
                     <rpl-route-policy>route-policy CONNECTED-TO-BGP
-    if destination in LOOPBACK-ALL then
-        set community (17676:4100)
-    else
-        set community (17676:4160)
-    endif
+  if destination in LOOPBACK-ALL then
+    set community (17676:4100)
+  else
+    set community (17676:4160)
+  endif
 end-policy</rpl-route-policy>
                 </route-policy>
                 <route-policy>

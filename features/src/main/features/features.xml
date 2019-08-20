@@ -50,6 +50,7 @@
         <feature version='${project.version}'>unified-topology-unit-base</feature>
         <feature version='${netconf.version}'>odl-netconf-topology</feature>
         <bundle>mvn:commons-net/commons-net/{{VERSION}}</bundle>
+        <bundle>mvn:io.frinx.translate.unit.commons/ios-xr-route-policy-util/{{VERSION}}</bundle>
         <bundle>mvn:io.frinx.unitopo/xr-6.6-models/{{VERSION}}</bundle>
         <bundle>mvn:io.frinx.unitopo/xr-6.6-init-unit/{{VERSION}}</bundle>
         <bundle>mvn:io.frinx.unitopo/xr-6.6-interface-unit/{{VERSION}}</bundle>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright © 2019 Frinx and others.
+  ~ Copyright © 2018 Frinx and others.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -34,11 +34,21 @@
             <artifactId>xr-6.6-models</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>io.frinx.translate.unit.commons</groupId>
+            <artifactId>ios-xr-route-policy-util</artifactId>
+            <version>${translate.unit.commons.version}</version>
+        </dependency>
 
         <!-- Openconfig models -->
         <dependency>
             <groupId>io.frinx.openconfig</groupId>
             <artifactId>openconfig-policy</artifactId>
+            <version>${openconfig.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.frinx.openconfig</groupId>
+            <artifactId>openconfig-bgp</artifactId>
             <version>${openconfig.version}</version>
         </dependency>
 
