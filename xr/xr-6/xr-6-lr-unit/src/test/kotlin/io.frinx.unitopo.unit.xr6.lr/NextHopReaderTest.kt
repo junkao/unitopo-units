@@ -42,10 +42,10 @@ class NextHopReaderTest : AbstractNetconfHandlerTest() {
         val builder = NextHopBuilder()
 
         NextHopReader.parseNextHopContent(NextHopKey("10.1.1.2"), builder, table)
-        Assert.assertEquals("10.1.1.2", builder.config.nextHop.ipAddress.ipv4Address.value)
+        Assert.assertEquals("10.1.1.2", builder.config.nextHop.ipv4Address.value)
 
         NextHopReader.parseNextHopContent(NextHopKey("10.1.1.1 GigabitEthernet0/0/0/1"), builder, table)
-        Assert.assertEquals("10.1.1.1", builder.config.nextHop.ipAddress.ipv4Address.value)
+        Assert.assertEquals("10.1.1.1", builder.config.nextHop.ipv4Address.value)
         Assert.assertEquals(2, builder.config.metric)
     }
 }

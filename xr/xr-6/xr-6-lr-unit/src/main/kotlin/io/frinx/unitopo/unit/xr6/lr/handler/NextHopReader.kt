@@ -42,7 +42,6 @@ import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 import java.util.ArrayList
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.local.routing.rev170515.LocalStaticNexthopConfig.NextHop as BASE_NEXTHOP_CONFIG
 
 class NextHopReader(private val access: UnderlayAccess) :
     ConfigListReaderCustomizer<NextHop, NextHopKey, NextHopBuilder> {
@@ -140,8 +139,8 @@ class NextHopReader(private val access: UnderlayAccess) :
             // only next hop
             table.vrfNextHopNextHopAddress.orEmpty()
                     .firstOrNull { it.nextHopAddress.createComplexKey(null) == key }?.let {
-                cBuilder.nextHop = BASE_NEXTHOP_CONFIG(ipFromIpAddressNoZone(it.nextHopAddress))
-                sBuilder.nextHop = BASE_NEXTHOP_CONFIG(ipFromIpAddressNoZone(it.nextHopAddress))
+                cBuilder.nextHop = ipFromIpAddressNoZone(it.nextHopAddress)
+                sBuilder.nextHop = ipFromIpAddressNoZone(it.nextHopAddress)
                 setMetric(cBuilder, sBuilder, it)
             }
 
@@ -154,8 +153,8 @@ class NextHopReader(private val access: UnderlayAccess) :
             // interface + nexthop
             table.vrfNextHopInterfaceNameNextHopAddress.orEmpty()
                     .firstOrNull { it.nextHopAddress.createComplexKey(it.interfaceName.value) == key }?.let {
-                cBuilder.nextHop = BASE_NEXTHOP_CONFIG(ipFromIpAddressNoZone(it.nextHopAddress))
-                sBuilder.nextHop = BASE_NEXTHOP_CONFIG(ipFromIpAddressNoZone(it.nextHopAddress))
+                cBuilder.nextHop = ipFromIpAddressNoZone(it.nextHopAddress)
+                sBuilder.nextHop = ipFromIpAddressNoZone(it.nextHopAddress)
                 setMetric(cBuilder, sBuilder, it)
             }
             cBuilder.index = key.index
