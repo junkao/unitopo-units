@@ -22,6 +22,8 @@ import io.frinx.openconfig.openconfig.network.instance.IIDs
 import io.frinx.unitopo.registry.api.TranslationUnitCollector
 import io.frinx.unitopo.registry.spi.TranslateUnit
 import io.frinx.unitopo.registry.spi.UnderlayAccess
+import io.frinx.unitopo.unit.junos17.bgp.handler.BgpPeerGroupConfigWriter
+import io.frinx.unitopo.unit.junos17.bgp.handler.BgpPeerGroupConfigReader
 import io.frinx.unitopo.unit.junos17.bgp.handler.BgpGlobalConfigReader
 import io.frinx.unitopo.unit.junos17.bgp.handler.BgpGlobalConfigWriter
 import io.frinx.unitopo.unit.junos17.bgp.handler.BgpNeighborConfigReader
@@ -68,7 +70,12 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
         wRegistry.addNoop(IIDs.NE_NE_PR_PR_BG_GLOBAL)
         wRegistry.addAfter(IIDs.NE_NE_PR_PR_BG_GL_CONFIG, BgpGlobalConfigWriter(underlayAccess),
             IIDs.NE_NE_PR_PR_BG_GLOBAL)
+        // peergroups
+        wRegistry.addNoop(IIDs.NE_NE_PR_PR_BG_PEERGROUPS)
+        wRegistry.addNoop(IIDs.NE_NE_PR_PR_BG_PE_PEERGROUP)
+        wRegistry.add(IIDs.NE_NE_PR_PR_BG_PE_PE_CONFIG, BgpPeerGroupConfigWriter(underlayAccess))
 
+        // neighbors
         wRegistry.addNoop(IIDs.NE_NE_PR_PR_BG_NEIGHBORS)
         wRegistry.addNoop(IIDs.NE_NE_PR_PR_BG_NE_NEIGHBOR)
         wRegistry.add(IIDs.NE_NE_PR_PR_BG_NE_NE_CONFIG, BgpNeighborConfigWriter(underlayAccess))
@@ -77,6 +84,10 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
     private fun provideReaders(rRegistry: CustomizerAwareReadRegistryBuilder, underlayAccess: UnderlayAccess) {
         rRegistry.add(IIDs.NE_NE_PR_PR_BG_GL_CONFIG, BgpGlobalConfigReader(underlayAccess))
 
+        // peergroups
+        rRegistry.add(IIDs.NE_NE_PR_PR_BG_PE_PE_CONFIG, BgpPeerGroupConfigReader(underlayAccess))
+
+        // neighbors
         rRegistry.add(IIDs.NE_NE_PR_PR_BG_NE_NEIGHBOR, BgpNeighborListReader(underlayAccess))
         rRegistry.add(IIDs.NE_NE_PR_PR_BG_NE_NE_CONFIG, BgpNeighborConfigReader(underlayAccess))
     }
