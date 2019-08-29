@@ -48,6 +48,13 @@
                                         <protocol-name>isis</protocol-name>
                                         <ospf-or-ospfv3-or-isis-or-application>
                                             <instance-name>400</instance-name>
+                                            <levels>level1-and2</levels>
+                                            <route-policy-name>ISIS-REDISTRIBUTE-001</route-policy-name>
+                                        </ospf-or-ospfv3-or-isis-or-application>
+                                        <ospf-or-ospfv3-or-isis-or-application>
+                                            <instance-name>600</instance-name>
+                                            <levels>level1</levels>
+                                            <route-policy-name>ISIS-REDISTRIBUTE-002</route-policy-name>
                                         </ospf-or-ospfv3-or-isis-or-application>
                                     </redistribution>
                                 </redistributions>
