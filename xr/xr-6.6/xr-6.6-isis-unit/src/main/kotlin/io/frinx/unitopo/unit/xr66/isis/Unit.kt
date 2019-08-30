@@ -22,6 +22,8 @@ import io.frinx.openconfig.openconfig.network.instance.IIDs
 import io.frinx.unitopo.registry.api.TranslationUnitCollector
 import io.frinx.unitopo.registry.spi.TranslateUnit
 import io.frinx.unitopo.registry.spi.UnderlayAccess
+import io.frinx.unitopo.unit.xr66.isis.handler.global.IsisGlobalConfigReader
+import io.frinx.unitopo.unit.xr66.isis.handler.global.IsisGlobalConfigWriter
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.clns.isis.cfg.rev181123.`$YangModuleInfoImpl` as UnderlayIsisConfigYangModule
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.clns.isis.datatypes.rev170501.`$YangModuleInfoImpl` as UnderlayIsisTypesYangModule
@@ -60,9 +62,14 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
 
     private fun provideWriters(wRegistry: CustomizerAwareWriteRegistryBuilder, access: UnderlayAccess) {
         wRegistry.addNoop(IIDs.NE_NE_PR_PR_ISIS)
+        wRegistry.addNoop(IIDs.NE_NE_PR_PR_IS_GLOBAL)
+        wRegistry.subtreeAdd(IIDs.NE_NE_PR_PR_IS_GL_CONFIG,
+            IsisGlobalConfigWriter(access),
+            setOf(IIDs.NE_NE_PR_PR_IS_GL_CO_AUG_ISISGLOBALCONFAUG))
     }
 
     private fun provideReaders(rRegistry: CustomizerAwareReadRegistryBuilder, access: UnderlayAccess) {
+        rRegistry.add(IIDs.NE_NE_PR_PR_IS_GL_CONFIG, IsisGlobalConfigReader(access))
     }
 
     override fun toString(): String = "translator for Cisco-IOS-XR-clns-isis-cfg@2018-11-23"
