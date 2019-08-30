@@ -197,6 +197,12 @@ class NeighborWriter(private val access: UnderlayAccess) : ListWriterCustomizer<
                     .setNeighborAf(underlayNeighborAfiList)
                     .build()
             builder.setKey(NativeNeighborKey(data.neighborAddress.toNoZone()))
+
+            if (data.config.isEnabled == null || !data.config.isEnabled) {
+                builder.setShutdown(true)
+            } else {
+                builder.setShutdown(null)
+            }
         }
 
         fun getGlobalNeighborIdentifier(bgpProcess: AsNumber, neighbor: IpAddressNoZone):
@@ -249,6 +255,11 @@ class NeighborWriter(private val access: UnderlayAccess) : ListWriterCustomizer<
             builder.vrfNeighborAfs = VrfNeighborAfsBuilder()
                 .setVrfNeighborAf(underlayNeighborAfiList)
                 .build()
+            if (data.config.isEnabled == null || !data.config.isEnabled) {
+                builder.setShutdown(true)
+            } else {
+                builder.setShutdown(null)
+            }
         }
     }
 }

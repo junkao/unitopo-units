@@ -36,6 +36,8 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.insta
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.Protocol
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.ProtocolKey
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.types.inet.rev170403.IpAddress
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.types.inet.rev170403.Ipv4Address
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.types.inet.rev170403.Ipv6Address
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.IpAddressNoZone
 import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
@@ -109,7 +111,9 @@ open class NeighborReader(private val access: UnderlayAccess) :
 }
 
 fun IpAddressNoZone.toIp(): IpAddress? {
-    return (ipv4AddressNoZone?.value)?.let {
-        return IpAddress(it.toCharArray())
+    if (ipv4AddressNoZone != null) {
+        return IpAddress(Ipv4Address(ipv4AddressNoZone.value))
+    } else {
+        return IpAddress(Ipv6Address(ipv6AddressNoZone.value))
     }
 }

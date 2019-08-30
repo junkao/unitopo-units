@@ -145,5 +145,9 @@ private fun getEncryptedPassword(password: String): EncryptedPassword {
 }
 
 fun IpAddress.toNoZone(): IpAddressNoZone {
-    return IpAddressNoZone(ipv4Address.value.toCharArray())
+    if (ipv4Address != null) {
+        return IpAddressNoZone(ipv4Address.value.toCharArray())
+    } else {
+        return IpAddressNoZone(ipv6Address.value.toCharArray())
+    }
 }
