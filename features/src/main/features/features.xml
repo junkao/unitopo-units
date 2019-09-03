@@ -37,7 +37,7 @@
         <bundle>mvn:org.jgrapht/jgrapht-core/{{VERSION}}</bundle>
         <bundle>mvn:org.jgrapht/jgrapht-ext/{{VERSION}}</bundle>
         <bundle>mvn:io.frinx.cli/honeycomb-rpcs/{{VERSION}}</bundle>
-
+        <bundle>wrap:mvn:com.x5dev/chunk-templates/{{VERSION}}</bundle>
         <bundle>mvn:io.frinx.translate.unit.commons/utils/{{VERSION}}</bundle>
         <bundle>mvn:io.frinx.translate.unit.commons/handlers/{{VERSION}}</bundle>
         <bundle>wrap:mvn:io.fd.honeycomb/translate-utils/${hc.version}</bundle>
