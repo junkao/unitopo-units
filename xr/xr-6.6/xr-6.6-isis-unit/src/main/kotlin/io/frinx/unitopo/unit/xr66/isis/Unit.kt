@@ -22,8 +22,13 @@ import io.frinx.openconfig.openconfig.network.instance.IIDs
 import io.frinx.unitopo.registry.api.TranslationUnitCollector
 import io.frinx.unitopo.registry.spi.TranslateUnit
 import io.frinx.unitopo.registry.spi.UnderlayAccess
+import io.frinx.unitopo.unit.xr66.isis.handler.global.IsisGlobalAfListReader
+import io.frinx.unitopo.unit.xr66.isis.handler.global.IsisGlobalAfListWriter
 import io.frinx.unitopo.unit.xr66.isis.handler.global.IsisGlobalConfigReader
 import io.frinx.unitopo.unit.xr66.isis.handler.global.IsisGlobalConfigWriter
+import io.frinx.unitopo.unit.xr66.isis.handler.global.IsisRedistributionConfigReader
+import io.frinx.unitopo.unit.xr66.isis.handler.global.IsisRedistributionListReader
+import io.frinx.unitopo.unit.xr66.isis.handler.global.IsisRedistributionListWriter
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.clns.isis.cfg.rev181123.`$YangModuleInfoImpl` as UnderlayIsisConfigYangModule
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.clns.isis.datatypes.rev170501.`$YangModuleInfoImpl` as UnderlayIsisTypesYangModule
@@ -66,10 +71,26 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
         wRegistry.subtreeAdd(IIDs.NE_NE_PR_PR_IS_GL_CONFIG,
             IsisGlobalConfigWriter(access),
             setOf(IIDs.NE_NE_PR_PR_IS_GL_CO_AUG_ISISGLOBALCONFAUG))
+        wRegistry.addNoop(IIDs.NE_NE_PR_PR_IS_GL_AFISAFI)
+        wRegistry.subtreeAdd(IIDs.NE_NE_PR_PR_IS_GL_AF_AF,
+            IsisGlobalAfListWriter(access),
+            setOf(IIDs.NE_NE_PR_PR_IS_GL_AF_AF_CONFIG)
+        )
+        wRegistry.addNoop(IIDs.NE_NE_PR_PR_IS_GL_AF_AF_AUG_ISISGLOBALAFISAFICONFAUG)
+        wRegistry.addNoop(IIDs.NE_NE_PR_PR_IS_GL_AF_AF_AUG_ISISGLOBALAFISAFICONFAUG_REDISTRIBUTIONS)
+        wRegistry.subtreeAdd(IIDs.NE_NE_PR_PR_IS_GL_AF_AF_AUG_ISISGLOBALAFISAFICONFAUG_RE_REDISTRIBUTION,
+            IsisRedistributionListWriter(access),
+            setOf(IIDs.NE_NE_PR_PR_IS_GL_AF_AF_AUG_ISISGLOBALAFISAFICONFAUG_RE_RE_CONFIG)
+        )
     }
 
     private fun provideReaders(rRegistry: CustomizerAwareReadRegistryBuilder, access: UnderlayAccess) {
         rRegistry.add(IIDs.NE_NE_PR_PR_IS_GL_CONFIG, IsisGlobalConfigReader(access))
+        rRegistry.add(IIDs.NE_NE_PR_PR_IS_GL_AF_AF, IsisGlobalAfListReader(access))
+        rRegistry.add(IIDs.NE_NE_PR_PR_IS_GL_AF_AF_AUG_ISISGLOBALAFISAFICONFAUG_RE_REDISTRIBUTION,
+            IsisRedistributionListReader(access))
+        rRegistry.add(IIDs.NE_NE_PR_PR_IS_GL_AF_AF_AUG_ISISGLOBALAFISAFICONFAUG_RE_RE_CONFIG,
+            IsisRedistributionConfigReader(access))
     }
 
     override fun toString(): String = "translator for Cisco-IOS-XR-clns-isis-cfg@2018-11-23"
