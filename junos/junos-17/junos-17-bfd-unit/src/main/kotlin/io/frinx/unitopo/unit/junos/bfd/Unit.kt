@@ -70,8 +70,8 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
         wRegistry: CustomizerAwareWriteRegistryBuilder,
         underlayAccess: UnderlayAccess
     ) {
-        provideReaders(rRegistry, underlayAccess)
-        provideWriters(wRegistry, underlayAccess)
+        // provideReaders(rRegistry, underlayAccess)
+        // provideWriters(wRegistry, underlayAccess)
     }
 
     private fun provideWriters(wRegistry: CustomizerAwareWriteRegistryBuilder, underlayAccess: UnderlayAccess) {
