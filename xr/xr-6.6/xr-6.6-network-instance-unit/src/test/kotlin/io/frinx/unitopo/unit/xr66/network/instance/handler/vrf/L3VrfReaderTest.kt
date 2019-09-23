@@ -44,12 +44,11 @@ class L3VrfReaderTest : AbstractNetconfHandlerTest() {
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
-        underlayAccess = Mockito.spy(NetconfAccessHelper(NC_HELPER))
-        target = L3VrfReader(underlayAccess)
     }
 
     companion object {
         val NC_HELPER = NetconfAccessHelper("/data_nodes.xml")
+        val NC_HELPER_NO_DEF_BGP = NetconfAccessHelper("/data_nodes_no_default_bgp.xml")
         val BUN_ETH_301_1 = "Bundle-Ether301.1"
         val BUN_ETH_301_2 = "Bundle-Ether301.2"
         val VRF_IM1 = "imm"
@@ -61,6 +60,8 @@ class L3VrfReaderTest : AbstractNetconfHandlerTest() {
 
     @Test
     fun testReadCurrentAttributes() {
+        underlayAccess = Mockito.spy(NetconfAccessHelper(NC_HELPER))
+        target = L3VrfReader(underlayAccess)
         val builder = NetworkInstanceBuilder()
         target.readCurrentAttributes(IID_NETWORK_INSTANCE, builder, readContext)
         Assert.assertEquals(VRF_IM1, builder.build().name)
@@ -68,6 +69,8 @@ class L3VrfReaderTest : AbstractNetconfHandlerTest() {
 
     @Test
     fun testGetAllIds() {
+        underlayAccess = Mockito.spy(NetconfAccessHelper(NC_HELPER))
+        target = L3VrfReader(underlayAccess)
         val list = target.getAllIds(IID_NETWORK_INSTANCE, readContext)
         // the list should contains iids from interface,bgp and ospf block
         Assert.assertThat(
@@ -78,6 +81,23 @@ class L3VrfReaderTest : AbstractNetconfHandlerTest() {
                 VRF_IM2,
                 "THU"
             )
+        )
+    }
+
+    @Test
+    fun testGetAllIds_noDefaultBgp() {
+        underlayAccess = Mockito.spy(NetconfAccessHelper(NC_HELPER_NO_DEF_BGP))
+        target = L3VrfReader(underlayAccess)
+        val list = target.getAllIds(IID_NETWORK_INSTANCE, readContext)
+        // the list should contains iids from interface,bgp and ospf block
+        Assert.assertThat(
+                list.map { it.name },
+                Matchers.containsInAnyOrder(
+                        "default",
+                        VRF_IM1,
+                        VRF_IM2,
+                        "THUospf"
+                )
         )
     }
 }

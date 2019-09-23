@@ -43,20 +43,20 @@ class L3VrfReader(underlayAccess: UnderlayAccess) : AbstractL3VrfReader<Vrf>(und
 
         // add vrf names defined in bgp
         underlayAccess.read(BgpProtocolReader.UNDERLAY_BGP).checkedGet().orNull()
-            ?.let {
-                bgp -> bgp.instance?.filter {
-                    it.instanceName.value == "default"
-                }?.get(0)?.let { instance ->
-                    // there is only 1 "default" instance
-                    instance.instanceAs?.map { instanceAs ->
-                        instanceAs?.fourByteAs?.map { fourByteAs ->
-                            fourByteAs?.vrfs?.vrf?.map {
-                                list.add(it.vrfName.value)
+                ?.let { bgp ->
+                    bgp.instance?.filter {
+                        it.instanceName.value == "default"
+                    }?.forEach { instance ->
+                        // there is only 1 "default" instance
+                        instance.instanceAs?.map { instanceAs ->
+                            instanceAs?.fourByteAs?.map { fourByteAs ->
+                                fourByteAs?.vrfs?.vrf?.map {
+                                    list.add(it.vrfName.value)
+                                }
                             }
                         }
                     }
                 }
-            }
 
         // add vrf names defined in ospf
         underlayAccess.read(OspfProtocolReader.UNDERLAY_OSPF).checkedGet().orNull()
