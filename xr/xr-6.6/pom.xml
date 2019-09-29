@@ -28,7 +28,7 @@
 
     <groupId>io.frinx.unitopo</groupId>
     <artifactId>unitopo-units-xr-6.6</artifactId>
-    <version>3.1.10.rc3-frinx</version>
+    <version>3.1.10.rc4-frinx-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
