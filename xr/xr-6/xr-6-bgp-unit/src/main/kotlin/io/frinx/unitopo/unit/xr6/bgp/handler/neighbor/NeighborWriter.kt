@@ -256,9 +256,6 @@ class NeighborWriter(private val access: UnderlayAccess) : ListWriterCustomizer<
                     .build()
         }
 
-        /**
-         * Get neighbor specific afiSafi list or if empty, use BGP instance specific afi safi list
-         */
         private fun getAfiSafisForNeighbor(bgpGlobal: Global, neighbor: Neighbor): List<Class<out AFISAFITYPE>> {
             return if (neighbor.afiSafis?.afiSafi.orEmpty().isNotEmpty()) {
                 neighbor.afiSafis?.afiSafi.orEmpty()
