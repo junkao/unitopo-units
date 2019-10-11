@@ -34,7 +34,12 @@ class SubinterfaceConfigReader(underlayAccess: UnderlayAccess) :
         ifcName: String,
         subIfcIndex: Long
     ) {
+        // subinterface enabled is the same as parent interface enabled
         Util.filterInterface(data, ifcName).let {
+            configBuilder.parseEnabled(it ?: Util.getDefaultIfcCfg(ifcName))
+        }
+
+        Util.filterInterface(data, Util.getSubIfcName(ifcName, subIfcIndex)).let {
             configBuilder.fromUnderlay(it ?: Util.getDefaultIfcCfg(ifcName), subIfcIndex)
         }
     }
@@ -45,7 +50,10 @@ class SubinterfaceConfigReader(underlayAccess: UnderlayAccess) :
     private fun ConfigBuilder.fromUnderlay(underlay: InterfaceConfiguration, idx: Long) {
         name = underlay.interfaceName.value
         description = underlay.description
-        isEnabled = underlay.isShutdown == null
         index = idx
+    }
+
+    private fun ConfigBuilder.parseEnabled(underlay: InterfaceConfiguration) {
+        isEnabled = underlay.isShutdown == null
     }
 }
