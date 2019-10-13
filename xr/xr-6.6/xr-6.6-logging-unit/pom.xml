@@ -24,12 +24,12 @@
     <parent>
         <groupId>io.frinx.unitopo</groupId>
         <artifactId>kotlin-unit-parent</artifactId>
-        <version>3.1.10.rc7-frinx-SNAPSHOT</version>
+        <version>3.1.10.rc7-frinx</version>
         <relativePath>../../../kotlin-unit-parent</relativePath>
     </parent>
 
     <artifactId>xr-6.6-logging-unit</artifactId>
-    <version>3.1.10.rc7-frinx-SNAPSHOT</version>
+    <version>3.1.10.rc7-frinx</version>
     <packaging>bundle</packaging>
     <description>
         Unified topology unit for XR interfaces.
