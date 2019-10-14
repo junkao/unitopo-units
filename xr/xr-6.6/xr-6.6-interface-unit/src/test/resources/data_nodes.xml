@@ -49,7 +49,7 @@
             <interface-configuration>
                 <active>act</active>
                 <interface-name>GigabitEthernet0/0/0/0.1</interface-name>
-                <description>IF_DESCRIPTION-001</description>
+                <description>IF_DESCRIPTION-001-subifc</description>
                 <shutdown></shutdown>
                 <vlan-sub-configuration xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-l2-eth-infra-cfg">
                     <vlan-identifier>

@@ -16,55 +16,29 @@
 
 package io.frinx.unitopo.unit.xr66.interfaces.handler.subifc
 
-import io.fd.honeycomb.translate.read.ReadContext
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.utils.AbstractNetconfHandlerTest
-import io.frinx.unitopo.unit.utils.NetconfAccessHelper
+import io.frinx.unitopo.unit.xr66.interfaces.handler.InterfaceReader
 import org.junit.Assert
-import org.junit.Before
 import org.junit.Test
-import org.mockito.Mock
 import org.mockito.Mockito
-import org.mockito.MockitoAnnotations
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.Interfaces
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.Interface
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces.InterfaceKey
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.Subinterfaces
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.subinterfaces.Subinterface
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.subinterfaces.SubinterfaceKey
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.subinterfaces.subinterface.Config
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev170907.InterfaceConfigurations
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.subinterfaces.top.subinterfaces.subinterface.ConfigBuilder
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
 class SubinterfaceConfigReaderTest : AbstractNetconfHandlerTest() {
-    @Mock
-    private lateinit var readContext: ReadContext
 
-    private lateinit var underlayAccess: UnderlayAccess
+    private var data: InterfaceConfigurations = parseGetCfgResponse(getResourceAsString("/data_nodes.xml"),
+        InterfaceReader.IFC_CFGS)
 
-    private lateinit var target: SubinterfaceConfigReader
-
-    @Before
-    fun setUp() {
-        MockitoAnnotations.initMocks(this)
-        underlayAccess = Mockito.spy(NetconfAccessHelper(NC_HELPER))
-        target = SubinterfaceConfigReader(underlayAccess)
-    }
-
-    companion object {
-        private val NC_HELPER = NetconfAccessHelper("/data_nodes.xml")
-        private val IID_SUB_INTERFACE_CONFIG = InstanceIdentifier
-                .create(Interfaces::class.java)
-                .child(Interface::class.java, InterfaceKey("Bundle-Ether301"))
-                .child(Subinterfaces::class.java)
-                .child(Subinterface::class.java, SubinterfaceKey(1))
-                .child(Config::class.java)
-    }
+    private var reader: SubinterfaceConfigReader = SubinterfaceConfigReader(Mockito.mock(UnderlayAccess::class.java))
 
     @Test
     fun testReadCurrentAttributes() {
-        val builder = ConfigBuilder()
-        target.readCurrentAttributes(IID_SUB_INTERFACE_CONFIG, builder, readContext)
-        Assert.assertEquals(1L, builder.build().index)
+        val configBuilder = ConfigBuilder()
+        reader.readData(data, configBuilder, "GigabitEthernet0/0/0/0", 1)
+        Assert.assertEquals("IF_DESCRIPTION-001-subifc", configBuilder.description)
+        Assert.assertEquals("GigabitEthernet0/0/0/0.1", configBuilder.name)
+        Assert.assertEquals(1, configBuilder.index)
+        Assert.assertFalse(configBuilder.isEnabled)
     }
 }
