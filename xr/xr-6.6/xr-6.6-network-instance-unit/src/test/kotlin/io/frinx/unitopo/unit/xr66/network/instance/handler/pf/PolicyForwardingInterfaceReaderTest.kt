@@ -75,7 +75,8 @@ class PolicyForwardingInterfaceReaderTest : AbstractNetconfHandlerTest() {
             },
             Matchers.containsInAnyOrder(
                 "Bundle-Ether65533",
-                "TenGigE0/0/0/8"
+                "TenGigE0/0/0/8",
+                "Loopback0"
             )
         )
     }

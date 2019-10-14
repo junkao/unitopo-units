@@ -92,7 +92,7 @@ class InterfaceDampingConfigWriterTest : AbstractNetconfHandlerTest() {
             this.maxSuppress = IF_MAXSUPPRESS
         }.build()
 
-        private val ILLEGAL_IF_NAME = "Loopback0"
+        private val ILLEGAL_IF_NAME = "Invalid0"
         private val ILLEGAL_IID_CONFIG = InstanceIdentifier
             .create(Interfaces::class.java)
             .child(Interface::class.java, InterfaceKey(ILLEGAL_IF_NAME)).augmentation(Interface1::class.java)

@@ -30,6 +30,7 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.re
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.interfaces.top.interfaces._interface.Config
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.iana._if.type.rev140508.EthernetCsmacd
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.iana._if.type.rev140508.Ieee8023adLag
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.iana._if.type.rev140508.SoftwareLoopback
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
 class InterfaceConfigWriter(underlayAccess: UnderlayAccess) :
@@ -42,7 +43,8 @@ class InterfaceConfigWriter(underlayAccess: UnderlayAccess) :
     }
 
     private fun InterfaceConfigurationBuilder.toUnderlay(data: Config) {
-        if (data.type != EthernetCsmacd::class.java && data.type != Ieee8023adLag::class.java) {
+        if (data.type != EthernetCsmacd::class.java && data.type != Ieee8023adLag::class.java &&
+            data.type != SoftwareLoopback::class.java) {
             throw IllegalArgumentException("Interface type " + data.type.toString() + " is not supported")
         }
 
