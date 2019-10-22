@@ -25,6 +25,6 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.local.routing
 
 class LocalAggregateConfigReader(access: UnderlayAccess) : CompositeReader<Config, ConfigBuilder>(
     listOf(
-        BgpLocalAggregateConfigReader()
+        BgpLocalAggregateConfigReader(access)
     )
 ), ConfigReaderCustomizer<Config, ConfigBuilder>

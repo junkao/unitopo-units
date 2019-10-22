@@ -23,7 +23,6 @@ import io.frinx.unitopo.unit.xr6.bgp.UnderlayOperNeighbor
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.oper.rev150827.BgpAfi
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.neighbor.afi.safi.list.AfiSafi
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.neighbor.afi.safi.list.AfiSafiKey
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.neighbor.afi.safi.list.afi.safi.StateBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.neighbor.afi.safi.state.Prefixes
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.neighbor.afi.safi.state.PrefixesBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.neighbor.list.Neighbor
@@ -35,17 +34,9 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.types.rev
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.Protocol
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.ProtocolKey
-import org.opendaylight.yangtools.concepts.Builder
-import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
 class PrefixesReader(private val access: UnderlayAccess) : OperReaderCustomizer<Prefixes, PrefixesBuilder> {
-
-    override fun merge(parentBuilder: Builder<out DataObject>, state: Prefixes) {
-        (parentBuilder as StateBuilder).prefixes = state
-    }
-
-    override fun getBuilder(p0: InstanceIdentifier<Prefixes>) = PrefixesBuilder()
 
     override fun readCurrentAttributes(
         id: InstanceIdentifier<Prefixes>,

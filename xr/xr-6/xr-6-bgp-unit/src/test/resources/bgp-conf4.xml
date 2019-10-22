@@ -1,0 +1,99 @@
+<?xml version="1.0"?>
+<!--
+~ Copyright © 2019 Frinx and others.
+~
+~ Licensed under the Apache License, Version 2.0 (the "License");
+~ you may not use this file except in compliance with the License.
+~ You may obtain a copy of the License at
+~
+~ http://www.apache.org/licenses/LICENSE-2.0
+~
+~ Unless required by applicable law or agreed to in writing, software
+~ distributed under the License is distributed on an "AS IS" BASIS,
+~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~ See the License for the specific language governing permissions and
+~ limitations under the License.
+-->
+
+<rpc-reply message-id="urn:uuid:28bb4810"
+        xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+    <data>
+        <bgp xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-ipv4-bgp-cfg">
+            <instance>
+                <instance-name>default</instance-name>
+                <instance-as>
+                    <as>0</as>
+                    <four-byte-as>
+                        <as>666</as>
+                        <bgp-running></bgp-running>
+                        <default-vrf>
+                            <global>
+                                <global-afs>
+                                    <global-af>
+                                        <af-name>ipv6-unicast</af-name>
+                                        <enable></enable>
+                                        <sourced-networks>
+                                            <sourced-network>
+                                                <network-addr>2010:ab8:2::</network-addr>
+                                                <network-prefix>48</network-prefix>
+                                                <route-policy-name>policy2</route-policy-name>
+                                            </sourced-network>
+                                        </sourced-networks>
+                                    </global-af>
+                                </global-afs>
+                            </global>
+                            <bgp-entity>
+                                <neighbors>
+                                    <neighbor>
+                                        <neighbor-address>99.0.0.99</neighbor-address>
+                                        <remote-as>
+                                            <as-xx>0</as-xx>
+                                            <as-yy>1</as-yy>
+                                        </remote-as>
+                                        <ebgp-multihop>
+                                            <max-hop-count>1</max-hop-count>
+                                            <mpls-deactivation>true</mpls-deactivation>
+                                        </ebgp-multihop>
+                                        <password>
+                                            <password-disable>false</password-disable>
+                                            <password>023D277B580009244F4C591C</password>
+                                        </password>
+                                        <description>frinxx neighbor</description>
+                                        <update-source-interface>Loopback97</update-source-interface>
+                                        <neighbor-afs>
+                                            <neighbor-af>
+                                                <af-name>ipv6-unicast</af-name>
+                                                <activate></activate>
+                                                <send-community-ebgp>true</send-community-ebgp>
+                                                <route-policy-in>policy2</route-policy-in>
+                                                <maximum-prefixes>
+                                                    <prefix-limit>25</prefix-limit>
+                                                    <warning-percentage>75</warning-percentage>
+                                                    <warning-only>false</warning-only>
+                                                    <restart-time>0</restart-time>
+                                                    <discard-extra-paths>false</discard-extra-paths>
+                                                </maximum-prefixes>
+                                                <route-policy-out>nexthopself</route-policy-out>
+                                                <default-originate>
+                                                    <enable>true</enable>
+                                                </default-originate>
+                                                <remove-private-as-entire-as-path>
+                                                    <enable>true</enable>
+                                                    <entire>true</entire>
+                                                </remove-private-as-entire-as-path>
+                                                <soft-reconfiguration>
+                                                    <inbound-soft>true</inbound-soft>
+                                                    <soft-always>true</soft-always>
+                                                </soft-reconfiguration>
+                                            </neighbor-af>
+                                        </neighbor-afs>
+                                    </neighbor>
+                                </neighbors>
+                            </bgp-entity>
+                        </default-vrf>
+                    </four-byte-as>
+                </instance-as>
+            </instance>
+        </bgp>
+    </data>
+</rpc-reply>

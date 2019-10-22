@@ -30,6 +30,7 @@ import io.frinx.unitopo.unit.xr6.bgp.UnderlayVrfNeighborKey
 import io.frinx.unitopo.unit.xr6.bgp.handler.GlobalConfigWriter
 import io.frinx.unitopo.unit.xr6.bgp.handler.GlobalConfigWriter.Companion.XR_BGP_INSTANCE_NAME
 import io.frinx.unitopo.unit.xr6.bgp.handler.toUnderlay
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827._default.originate.DefaultOriginateBuilder
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.Instance
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.InstanceKey
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.instance.InstanceAs
@@ -41,23 +42,40 @@ import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.instance.instance.`as`.four._byte.`as`._default.vrf.BgpEntity
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.instance.instance.`as`.four._byte.`as`._default.vrf.bgp.entity.Neighbors
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.instance.instance.`as`.four._byte.`as`._default.vrf.bgp.entity.neighbors.neighbor.NeighborAfsBuilder
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.instance.instance.`as`.four._byte.`as`._default.vrf.bgp.entity.neighbors.neighbor.neighbor.afs.NeighborAf
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.instance.instance.`as`.four._byte.`as`._default.vrf.bgp.entity.neighbors.neighbor.neighbor.afs.NeighborAfBuilder
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.instance.instance.`as`.four._byte.`as`.vrfs.Vrf
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.instance.instance.`as`.four._byte.`as`.vrfs.VrfKey
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.instance.instance.`as`.four._byte.`as`.vrfs.vrf.VrfNeighbors
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.instance.instance.`as`.four._byte.`as`.vrfs.vrf.vrf.neighbors.VrfNeighbor
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.instance.instance.`as`.four._byte.`as`.vrfs.vrf.vrf.neighbors.vrf.neighbor.VrfNeighborAfsBuilder
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.instance.instance.`as`.four._byte.`as`.vrfs.vrf.vrf.neighbors.vrf.neighbor.vrf.neighbor.afs.VrfNeighborAf
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.instance.instance.`as`.four._byte.`as`.vrfs.vrf.vrf.neighbors.vrf.neighbor.vrf.neighbor.afs.VrfNeighborAfBuilder
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.ebgp.multihop.EbgpMultihopBuilder
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.maximum.prefixes.MaximumPrefixesBuilder
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.password.PasswordBuilder
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.remote.`as`.RemoteAsBuilder
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.remove._private.`as`.entire.`as`.path.RemovePrivateAsEntireAsPath
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.remove._private.`as`.entire.`as`.path.RemovePrivateAsEntireAsPathBuilder
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.soft.reconfiguration.SoftReconfigurationBuilder
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.datatypes.rev150827.BgpAsRange
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.xr.types.rev150629.CiscoIosXrString
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.xr.types.rev150629.InterfaceName
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.xr.types.rev150629.ProprietaryPassword
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.extension.rev180323.BgpNeAfAug
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.BgpCommonNeighborGroupTransportConfig
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.neighbor.afi.safi.list.AfiSafi
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.neighbor.afi.safi.list.AfiSafiKey
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.neighbor.list.Neighbor
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.neighbor.list.NeighborKey
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.top.Bgp
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.top.bgp.Global
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.types.rev170202.AFISAFITYPE
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.types.rev170202.PRIVATEASREMOVEALL
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.types.rev170202.PRIVATEASREPLACEALL
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.types.rev170202.REMOVEPRIVATEASOPTION
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.types.rev170202.IPV6UNICAST
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.types.rev170202.IPV4UNICAST
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstanceKey
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.types.inet.rev170403.AsNumber
@@ -178,8 +196,23 @@ class NeighborWriter(private val access: UnderlayAccess) : ListWriterCustomizer<
                             .setAsYy(BgpAsRange(asYY))
                             .build()
 
+            data.ebgpMultihop?.config?.let { builder.setEbgpMultihop(EbgpMultihopBuilder()
+                .setMplsDeactivation(it.isEnabled)
+                .setMaxHopCount(it.multihopTtl.toLong()).build()) }
+
             // overwrite null if new data contains transport
             builder.updateSourceInterface = data.transport?.config?.localAddress?.toIfcName()
+
+            if (data.config.authPassword == null) {
+                builder.password = null
+            } else {
+                builder.password = PasswordBuilder().apply {
+                    password = ProprietaryPassword("!" + data.config.authPassword.value)
+                    isPasswordDisable = false
+                }.build()
+            }
+
+            data.config?.description?.let { builder.setDescription(it) }
 
             // Get current Afs to map
             val currentAfs = builder
@@ -195,9 +228,10 @@ class NeighborWriter(private val access: UnderlayAccess) : ListWriterCustomizer<
                     .map { it to currentAfs[it] }
                     .map { it.second ?: NeighborAfBuilder().setAfName(it.first).build() }
                     .map {
-                        Pair(it.afName, NeighborAfBuilder(it)
-                                .setRoutePolicyIn(data.applyPolicy?.config?.importPolicy.orEmpty().firstOrNull())
-                                .setRoutePolicyOut(data.applyPolicy?.config?.exportPolicy.orEmpty().firstOrNull())
+                        val afiSafi = data.afiSafis?.afiSafi
+                                ?.find { afiSafi -> transformAfiToString(afiSafi.key) == it.afName.getName() }
+                        val neighborAfBuilder = parseNeighborAfBuilder(data, afiSafi, it)
+                        Pair(it.afName, neighborAfBuilder
                                 .setActivate(true)
                                 .build())
                     }.forEach { currentAfs[it.first] = it.second }
@@ -235,6 +269,21 @@ class NeighborWriter(private val access: UnderlayAccess) : ListWriterCustomizer<
                             .setAsYy(BgpAsRange(asYY))
                             .build()
 
+            data.ebgpMultihop?.config?.let { builder.setEbgpMultihop(EbgpMultihopBuilder()
+                .setMplsDeactivation(it.isEnabled)
+                .setMaxHopCount(it.multihopTtl.toLong()).build()) }
+
+            if (data.config.authPassword == null) {
+                builder.password = null
+            } else {
+                builder.password = PasswordBuilder().apply {
+                    password = ProprietaryPassword("!" + data.config.authPassword.value)
+                    isPasswordDisable = false
+                }.build()
+            }
+
+            data.config?.description?.let { builder.setDescription(it) }
+
             // Get current Afs to map
             val currentAfs = builder
                     .vrfNeighborAfs
@@ -250,16 +299,25 @@ class NeighborWriter(private val access: UnderlayAccess) : ListWriterCustomizer<
                             .setAfName(it)
                             .build() }) }
                     .map {
-                        Pair(it.afName, VrfNeighborAfBuilder(it)
-                                .setRoutePolicyIn(data.applyPolicy?.config?.importPolicy.orEmpty().firstOrNull())
-                                .setRoutePolicyOut(data.applyPolicy?.config?.exportPolicy.orEmpty().firstOrNull())
-                                .setActivate(true)
-                                .build())
+                        val afiSafi = data.afiSafis?.afiSafi
+                                ?.find { afiSafi -> transformAfiToString(afiSafi.key) == it.afName.getName() }
+                        val vrfNeighborAfBuilder = parseVrfNeighborAfBuilder(data, afiSafi, it)
+                        Pair(it.afName, vrfNeighborAfBuilder
+                                .setActivate(true).build())
                     }.forEach { currentAfs[it.first] = it.second }
 
             builder.vrfNeighborAfs = VrfNeighborAfsBuilder()
                     .setVrfNeighborAf(currentAfs.values.toList())
                     .build()
+        }
+
+        fun transformAfiToString(afiSafiKey: AfiSafiKey): String {
+            // FIXME: add more if necessary
+            when (afiSafiKey.afiSafiName) {
+                IPV4UNICAST::class.java -> return "ipv4-unicast"
+                IPV6UNICAST::class.java -> return "ipv6-unicast"
+                else -> throw IllegalArgumentException("Unknown AFI/SAFI type ${afiSafiKey.afiSafiName}")
+            }
         }
 
         private fun getAfiSafisForNeighbor(bgpGlobal: Global, neighbor: Neighbor): List<Class<out AFISAFITYPE>> {
@@ -280,4 +338,90 @@ private fun BgpCommonNeighborGroupTransportConfig.LocalAddress?.toIfcName(): Int
     return this?.string?.let {
         InterfaceName(it)
     }
+}
+
+private fun parseNeighborAfBuilder(
+    data: Neighbor,
+    afiSafi: AfiSafi?,
+    it: NeighborAf?
+): NeighborAfBuilder {
+    val removePrivateAs = data.config?.removePrivateAs
+    val applyPolicyConfig = afiSafi?.applyPolicy?.config
+    val maxPrefixes = afiSafi?.ipv6Unicast?.prefixLimit?.config?.maxPrefixes
+    val defaultOriginate = afiSafi?.ipv6Unicast?.config?.isSendDefaultRoute
+    val softReconfiguration = afiSafi?.config?.getAugmentation(BgpNeAfAug::class.java)?.softReconfiguration
+            ?.isAlways
+    val neighborAfBuilder = NeighborAfBuilder(it)
+    applyPolicyConfig?.importPolicy.orEmpty().firstOrNull()?.let { neighborAfBuilder.setRoutePolicyIn(it) }
+    applyPolicyConfig?.exportPolicy.orEmpty().firstOrNull()?.let { neighborAfBuilder.setRoutePolicyOut(it) }
+    maxPrefixes?.let {
+        neighborAfBuilder.setMaximumPrefixes(MaximumPrefixesBuilder().setPrefixLimit(maxPrefixes).build())
+    }
+    data.config?.sendCommunity?.intValue?.let {
+        neighborAfBuilder.setSendCommunityEbgp(transferCommunityType(it))
+    }
+    softReconfiguration?.let {
+        neighborAfBuilder.setSoftReconfiguration(SoftReconfigurationBuilder()
+                .setSoftAlways(softReconfiguration)
+                .setInboundSoft(softReconfiguration).build())
+    }
+    defaultOriginate?.let {
+        neighborAfBuilder.setDefaultOriginate(DefaultOriginateBuilder().setEnable(defaultOriginate).build())
+    }
+    removePrivateAs?.let {
+        neighborAfBuilder.setRemovePrivateAsEntireAsPath(transferRemovePrivateAs(data))
+    }
+    return neighborAfBuilder
+}
+
+private fun parseVrfNeighborAfBuilder(
+    data: Neighbor,
+    afiSafi: AfiSafi?,
+    it: VrfNeighborAf?
+): VrfNeighborAfBuilder {
+    val removePrivateAs = data.config?.removePrivateAs
+    val applyPolicyConfig = afiSafi?.applyPolicy?.config
+    val maxPrefixes = afiSafi?.ipv6Unicast?.prefixLimit?.config?.maxPrefixes
+    val defaultOriginate = afiSafi?.ipv6Unicast?.config?.isSendDefaultRoute
+    val softReconfiguration = afiSafi?.config?.getAugmentation(BgpNeAfAug::class.java)?.softReconfiguration
+            ?.isAlways
+
+    val vrfNeighborAfBuilder = VrfNeighborAfBuilder(it)
+    applyPolicyConfig?.importPolicy.orEmpty().firstOrNull()?.let { vrfNeighborAfBuilder.setRoutePolicyIn(it) }
+    applyPolicyConfig?.exportPolicy.orEmpty().firstOrNull()?.let { vrfNeighborAfBuilder.setRoutePolicyOut(it) }
+    maxPrefixes?.let {
+        vrfNeighborAfBuilder.setMaximumPrefixes(MaximumPrefixesBuilder().setPrefixLimit(maxPrefixes).build())
+    }
+    data.config?.sendCommunity?.intValue?.let {
+        vrfNeighborAfBuilder.setSendCommunityEbgp(transferCommunityType(it))
+    }
+    softReconfiguration?.let {
+        vrfNeighborAfBuilder.setSoftReconfiguration(SoftReconfigurationBuilder()
+                .setSoftAlways(softReconfiguration)
+                .setInboundSoft(softReconfiguration).build())
+    }
+    defaultOriginate?.let {
+        vrfNeighborAfBuilder.setDefaultOriginate(DefaultOriginateBuilder().setEnable(defaultOriginate).build())
+    }
+    removePrivateAs?.let {
+        vrfNeighborAfBuilder.setRemovePrivateAsEntireAsPath(transferRemovePrivateAs(data))
+    }
+    return vrfNeighborAfBuilder
+}
+
+private fun transferRemovePrivateAs(data: Neighbor): RemovePrivateAsEntireAsPath {
+    val removePrivateAsEntireAsPathBuilder = RemovePrivateAsEntireAsPathBuilder()
+    when (data.config.removePrivateAs) {
+        REMOVEPRIVATEASOPTION::class.java -> removePrivateAsEntireAsPathBuilder.setEnable(true).setEntire(false)
+        PRIVATEASREMOVEALL::class.java -> removePrivateAsEntireAsPathBuilder.setEnable(true).setEntire(true)
+        PRIVATEASREPLACEALL::class.java -> removePrivateAsEntireAsPathBuilder.setEnable(false).setEntire(false)
+        else -> throw IllegalArgumentException("Unknown removePrivateAs type ${data.config.removePrivateAs}")
+    }
+    return removePrivateAsEntireAsPathBuilder.build()
+}
+
+private fun transferCommunityType(communityType: Int): Boolean {
+    if (communityType in 0..3)
+        return true
+    return false
 }

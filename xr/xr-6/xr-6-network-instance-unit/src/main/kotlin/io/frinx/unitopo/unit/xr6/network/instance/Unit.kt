@@ -42,7 +42,6 @@ import io.frinx.unitopo.unit.xr6.network.instance.handler.vrf.protocol.ProtocolC
 import io.frinx.unitopo.unit.xr6.network.instance.handler.vrf.protocol.ProtocolReader
 import io.frinx.unitopo.unit.xr6.network.instance.handler.vrf.table.TableConnectionConfigWriter
 import io.frinx.unitopo.unit.xr6.network.instance.handler.vrf.table.TableConnectionReader
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.`$YangModuleInfoImpl`
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.ConnectionPoints
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.table.connections.TableConnection
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
@@ -69,9 +68,8 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
             UnderlayVRFYangInto.getInstance()
     )
 
-    override fun getYangSchemas(): Set<YangModuleInfo> = setOf(
-        `$YangModuleInfoImpl`.getInstance()
-    )
+    override fun getYangSchemas(): Set<YangModuleInfo> = setOf(IIDs.FRINX_OPENCONFIG_NETWORK_INSTANCE,
+            IIDs.FRINX_BGP_EXTENSION)
 
     override fun provideHandlers(
         rRegistry: CustomizerAwareReadRegistryBuilder,
@@ -97,9 +95,10 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
 
         // Local aggregates
         wRegistry.addNoop(IIDs.NE_NE_PR_PR_LO_AGGREGATE)
-        wRegistry.addAfter(IIDs.NE_NE_PR_PR_LO_AG_CONFIG, LocalAggregateConfigWriter(underlay),
-                IIDs.NE_NE_CONFIG, IIDs.NE_NE_PR_PR_BG_GL_CONFIG, IIDs.NE_NE_PR_PR_OS_GL_CONFIG,
-                IIDs.NE_NE_PR_PR_BG_GL_AF_AF_CONFIG, IIDs.NE_NE_PR_PR_BG_NE_NE_AF_AF_CONFIG)
+        wRegistry.subtreeAddAfter(IIDs.NE_NE_PR_PR_LO_AG_CONFIG, LocalAggregateConfigWriter(underlay),
+            setOf(RWUtils.cutIdFromStart(IIDs.NE_NE_PR_PR_LO_AG_CO_AUG_NIPROTAGGAUG, IIDs.NE_NE_PR_PR_LO_AG_CONFIG)),
+            IIDs.NE_NE_CONFIG, IIDs.NE_NE_PR_PR_BG_GL_CONFIG, IIDs.NE_NE_PR_PR_OS_GL_CONFIG,
+            IIDs.NE_NE_PR_PR_BG_GL_AF_AF_CONFIG, IIDs.NE_NE_PR_PR_BG_NE_NE_AF_AF_CONFIG)
 
         wRegistry.addNoop(IIDs.NE_NE_IN_INTERFACE)
         wRegistry.addAfter(IIDs.NE_NE_IN_IN_CONFIG, VrfInterfaceConfigWriter(underlay),
@@ -146,7 +145,9 @@ class Unit(private val registry: TranslationUnitCollector) : TranslateUnit {
 
         // Local aggregates
         rRegistry.add(IIDs.NE_NE_PR_PR_LO_AGGREGATE, LocalAggregateReader(underlay))
-        rRegistry.add(IIDs.NE_NE_PR_PR_LO_AG_CONFIG, LocalAggregateConfigReader(underlay))
+        rRegistry.subtreeAdd(IIDs.NE_NE_PR_PR_LO_AG_CONFIG, LocalAggregateConfigReader(underlay),
+            setOf(RWUtils.cutIdFromStart(
+                IIDs.NE_NE_PR_PR_LO_AG_CO_AUG_NIPROTAGGAUG, IIDs.NE_NE_PR_PR_LO_AG_CONFIG)))
 
         // Table connections for VRF
         rRegistry.subtreeAdd(IIDs.NE_NE_TA_TABLECONNECTION, TableConnectionReader(underlay),

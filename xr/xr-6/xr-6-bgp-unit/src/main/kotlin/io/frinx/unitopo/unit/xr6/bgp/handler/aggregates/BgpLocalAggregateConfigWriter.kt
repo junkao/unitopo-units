@@ -30,7 +30,9 @@ import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.sourced.network.table.sourced.networks.SourcedNetworkBuilder
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.sourced.network.table.sourced.networks.SourcedNetworkKey
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.datatypes.rev150827.BgpAddressFamily
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.extension.rev180323.NiProtAggAug
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.top.Bgp
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.local.routing.rev170515.local.aggregate.top.LocalAggregates
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.local.routing.rev170515.local.aggregate.top.local.aggregates.aggregate.Config
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstanceKey
@@ -70,23 +72,32 @@ class BgpLocalAggregateConfigWriter(private val access: UnderlayAccess) : Compos
         require(afiSafis.isNotEmpty(),
                 { "BGP does not contain any AFI SAFI for VRF: ${vrfKey.name}. Cannot configure networks" })
 
+        val localaggregate = getLocalAggregate(networkInstance)
+        val applyPolicyName = localaggregate?.aggregate.orEmpty().firstOrNull()?.config
+            ?.getAugmentation(NiProtAggAug::class.java)?.applyPolicy.orEmpty().firstOrNull()
+
         if (vrfKey == NetworInstance.DEFAULT_NETWORK) {
             afiSafis
                     .map { it.afiSafiName }
                     .map { it.toUnderlay() }
                     .filterNotNull()
-                    .forEach { writeGlobalNetworkForAfi(it, asNumber, config.prefix) }
+                    .forEach { writeGlobalNetworkForAfi(it, asNumber, applyPolicyName, config.prefix) }
         } else {
             afiSafis
                     .map { it.afiSafiName }
                     .map { it.toUnderlay() }
                     .filterNotNull()
-                    .forEach { writeVrfNetworkForAfi(it, vrfKey, asNumber, config.prefix) }
+                    .forEach { writeVrfNetworkForAfi(it, vrfKey, asNumber, applyPolicyName, config.prefix) }
         }
         return true
     }
 
-    private fun writeGlobalNetworkForAfi(it: BgpAddressFamily, asNumber: AsNumber, prefix: IpPrefix) {
+    private fun writeGlobalNetworkForAfi(
+        it: BgpAddressFamily,
+        asNumber: AsNumber,
+        applyPolicyName: String?,
+        prefix: IpPrefix
+    ) {
         val ipPrefix = prefix.getNetAddress()
 
         // Check that network and address family are IP version compatible
@@ -96,7 +107,7 @@ class BgpLocalAggregateConfigWriter(private val access: UnderlayAccess) : Compos
             access.merge(GlobalAfiSafiConfigWriter.getGlobalId(asNumber, it)
                     .child(SourcedNetworks::class.java)
                     .child(SourcedNetwork::class.java, SourcedNetworkKey(ipPrefix, prefix.getNetMask())),
-                    prefix.toSourcedNetwork())
+                    prefix.toSourcedNetwork(applyPolicyName))
         }
     }
 
@@ -115,6 +126,7 @@ class BgpLocalAggregateConfigWriter(private val access: UnderlayAccess) : Compos
         it: BgpAddressFamily,
         vrfKey: NetworkInstanceKey,
         asNumber: AsNumber,
+        applyPolicyName: String?,
         prefix: IpPrefix
     ) {
         val ipPrefix = prefix.getNetAddress()
@@ -126,7 +138,7 @@ class BgpLocalAggregateConfigWriter(private val access: UnderlayAccess) : Compos
             access.merge(GlobalAfiSafiConfigWriter.getVrfId(vrfKey, asNumber, it)
                     .child(SourcedNetworks::class.java)
                     .child(SourcedNetwork::class.java, SourcedNetworkKey(ipPrefix, prefix.getNetMask())),
-                    prefix.toSourcedNetwork())
+                    prefix.toSourcedNetwork(applyPolicyName))
         }
     }
 
@@ -210,6 +222,12 @@ class BgpLocalAggregateConfigWriter(private val access: UnderlayAccess) : Compos
                     .find { protocol -> protocol.identifier == BGP::class.java }
                     ?.bgp
         }
+
+        private fun getLocalAggregate(protocolsContainer: Protocols): LocalAggregates? {
+            return protocolsContainer
+                .protocol.orEmpty()
+                .find { protocol -> protocol.identifier == BGP::class.java }?.localAggregates
+        }
     }
 }
 
@@ -223,8 +241,10 @@ private fun IpPrefix.getNetMask(): Int {
     return prefixString.substringAfter('/').toInt()
 }
 
-private fun IpPrefix.toSourcedNetwork(): SourcedNetwork {
-    return SourcedNetworkBuilder()
+private fun IpPrefix.toSourcedNetwork(applyPolicyName: String?): SourcedNetwork {
+    val sourcedNetworkBuilder = SourcedNetworkBuilder()
+    applyPolicyName?.let { sourcedNetworkBuilder.setRoutePolicyName(it) }
+    return sourcedNetworkBuilder
             .setNetworkAddr(getNetAddress())
             .setNetworkPrefix(getNetMask())
             .build()

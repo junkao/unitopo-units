@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 Frinx and others.
+ * Copyright © 2019 Frinx and others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,25 +18,20 @@ package io.frinx.unitopo.unit.xr6.bgp.handler.neighbor
 
 import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.spi.read.ConfigReaderCustomizer
-import io.frinx.openconfig.network.instance.NetworInstance
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import io.frinx.unitopo.unit.xr6.bgp.handler.BgpProtocolReader
-import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.UPDATESOURCEINTERFACE
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.Instance
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.InstanceKey
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.xr.types.rev150629.CiscoIosXrString
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.BgpCommonNeighborGroupTransportConfig
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.neighbor.base.transport.Config
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.neighbor.base.transport.ConfigBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.neighbor.list.Neighbor
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.neighbor.list.NeighborKey
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstanceKey
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.Protocol
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.ProtocolKey
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.common.structure.neighbor.group.ebgp.multihop.ebgp.multihop.ConfigBuilder
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.common.structure.neighbor.group.ebgp.multihop.ebgp.multihop.Config
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
-class NeighborTransportConfigReader(private val access: UnderlayAccess) :
+class NeighborEbgpMultihopConfigReader(private val access: UnderlayAccess) :
     ConfigReaderCustomizer<Config, ConfigBuilder> {
 
     override fun readCurrentAttributes(
@@ -46,37 +41,25 @@ class NeighborTransportConfigReader(private val access: UnderlayAccess) :
     ) {
         val neighborKey = id.firstKeyOf(Neighbor::class.java)
         val protKey = id.firstKeyOf<Protocol, ProtocolKey>(Protocol::class.java)
-        val vrfKey = id.firstKeyOf(NetworkInstance::class.java)
-
         val data = access.read(BgpProtocolReader.UNDERLAY_BGP.child(Instance::class.java,
-            InstanceKey(CiscoIosXrString(protKey.name))))
+                InstanceKey(CiscoIosXrString(protKey.name))))
                 .checkedGet()
                 .orNull()
 
-        parseNeighbor(data, vrfKey, neighborKey, builder)
+        parseEbgpMultihop(data, neighborKey, builder)
     }
 
     companion object {
-        fun parseNeighbor(
+        fun parseEbgpMultihop(
             underlayInstance: Instance?,
-            vrfKey: NetworkInstanceKey,
             neighborKey: NeighborKey,
             builder: ConfigBuilder
         ) {
-            val fourByteAs = BgpProtocolReader.getFirst4ByteAs(underlayInstance)
-            if (vrfKey == NetworInstance.DEFAULT_NETWORK) {
-                NeighborConfigReader.getNeighbor(fourByteAs, neighborKey)
-                        ?.let { builder.fromUnderlay(it) }
-            } else {
-                NeighborConfigReader.getVrfNeighbor(fourByteAs, vrfKey, neighborKey)
-                        ?.let { builder.fromUnderlay(it) }
-            }
-        }
-    }
-}
+            val first4ByteAs = BgpProtocolReader.getFirst4ByteAs(underlayInstance)
+            val ebgpMultihop = NeighborConfigReader.getNeighbor(first4ByteAs, neighborKey)?.ebgpMultihop
 
-private fun ConfigBuilder.fromUnderlay(neighbor: UPDATESOURCEINTERFACE?) {
-    neighbor?.updateSourceInterface?.value?.let {
-        localAddress = BgpCommonNeighborGroupTransportConfig.LocalAddress(it)
+            ebgpMultihop?.isMplsDeactivation?.let { builder.setEnabled(it) }
+            ebgpMultihop?.maxHopCount?.let { builder.setMultihopTtl(it.toShort()) }
+        }
     }
 }

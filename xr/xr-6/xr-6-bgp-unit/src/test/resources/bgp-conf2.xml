@@ -50,6 +50,7 @@
                                             <sourced-network>
                                                 <network-addr>42.41.43.0</network-addr>
                                                 <network-prefix>24</network-prefix>
+                                                <route-policy-name>policy2</route-policy-name>
                                             </sourced-network>
                                         </sourced-networks>
                                     </global-af>

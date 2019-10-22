@@ -30,15 +30,12 @@ import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.xr.types.rev150
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.neighbor.list.Neighbor
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.neighbor.list.NeighborBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.neighbor.list.NeighborKey
-import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.bgp.rev170202.bgp.top.bgp.NeighborsBuilder
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstance
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.NetworkInstanceKey
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.Protocol
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.network.instance.rev170228.network.instance.top.network.instances.network.instance.protocols.ProtocolKey
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.types.inet.rev170403.IpAddress
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev130715.IpAddressNoZone
-import org.opendaylight.yangtools.concepts.Builder
-import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 
 class NeighborReader(private val access: UnderlayAccess) :
@@ -56,10 +53,6 @@ class NeighborReader(private val access: UnderlayAccess) :
         return parseNeighbors(data, vrfKey)
     }
 
-    override fun merge(builder: Builder<out DataObject>, list: List<Neighbor>) {
-        (builder as NeighborsBuilder).neighbor = list
-    }
-
     override fun readCurrentAttributes(
         id: InstanceIdentifier<Neighbor>,
         neighborBuilder: NeighborBuilder,
@@ -67,8 +60,6 @@ class NeighborReader(private val access: UnderlayAccess) :
     ) {
         neighborBuilder.neighborAddress = id.firstKeyOf(Neighbor::class.java).neighborAddress
     }
-
-    override fun getBuilder(instanceIdentifier: InstanceIdentifier<Neighbor>) = NeighborBuilder()
 
     companion object {
         fun parseNeighbors(data: Instance?, vrfKey: NetworkInstanceKey): List<NeighborKey> {
