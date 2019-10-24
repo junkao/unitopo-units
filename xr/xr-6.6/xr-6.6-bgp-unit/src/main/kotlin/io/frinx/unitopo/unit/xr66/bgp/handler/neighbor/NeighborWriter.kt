@@ -104,24 +104,14 @@ class NeighborWriter(private val access: UnderlayAccess) : ListWriterCustomizer<
 
         if (vrfKey == NetworInstance.DEFAULT_NETWORK) {
             val id = getGlobalNeighborIdentifier(bgpAs, dataAfter.neighborAddress.toNoZone())
-            val builder = access.read(id)
-                .checkedGet()
-                .or(UnderlayNeighborBuilder().build())
-                .let {
-                    UnderlayNeighborBuilder(it)
-                }
+            val builder = UnderlayNeighborBuilder()
             renderGlobalNeighbor(builder, dataAfter)
-            access.put(id, builder.build())
+            access.safePut(id, builder.build())
         } else {
             val id = getVrfNeighborIdentifier(bgpAs, vrfKey, dataAfter.neighborAddress.toNoZone())
-            val builder = access.read(id)
-                .checkedGet()
-                .or(UnderlayVrfNeighborBuilder().build())
-                .let {
-                    UnderlayVrfNeighborBuilder(it)
-                }
+            val builder = UnderlayVrfNeighborBuilder()
             renderVrfNeighbor(builder, dataAfter)
-            access.put(id, builder.build())
+            access.safePut(id, builder.build())
         }
     }
 
@@ -162,15 +152,19 @@ class NeighborWriter(private val access: UnderlayAccess) : ListWriterCustomizer<
             builder: UnderlayNeighborBuilder,
             data: Neighbor
         ) {
+            // set update source to null
             data.config.peerAs?.let {
                 val (asXX, asYY) = As.asToDotNotation(it)
                 builder.setNeighborAddress(data.neighborAddress.toNoZone())
-                        .setUpdateSourceInterface(data.transport?.config?.localAddress?.toIfcName()).remoteAs =
+                        .setUpdateSourceInterface(null).remoteAs =
                         RemoteAsBuilder()
                                 .setAsXx(BgpAsRange(asXX))
                                 .setAsYy(BgpAsRange(asYY))
                                 .build()
             }
+
+            // overwrite null if new data contains transport
+            builder.updateSourceInterface = data.transport?.config?.localAddress?.toIfcName()
 
             if (data.config.authPassword == null) {
                 builder.password = null
