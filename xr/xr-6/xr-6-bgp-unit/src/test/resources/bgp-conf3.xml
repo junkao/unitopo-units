@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<!--
+~ Copyright © 2019 Frinx and others.
+~
+~ Licensed under the Apache License, Version 2.0 (the "License");
+~ you may not use this file except in compliance with the License.
+~ You may obtain a copy of the License at
+~
+~ http://www.apache.org/licenses/LICENSE-2.0
+~
+~ Unless required by applicable law or agreed to in writing, software
+~ distributed under the License is distributed on an "AS IS" BASIS,
+~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~ See the License for the specific language governing permissions and
+~ limitations under the License.
+-->
+
+<rpc-reply message-id="urn:uuid:28bb4810-a25a-4ba7-9ede-5909b9ef3686"
+           xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+    <data>
+        <bgp xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-ipv4-bgp-cfg">
+            <instance>
+                <instance-name>default</instance-name>
+                <instance-as>
+                    <as>0</as>
+                    <four-byte-as>
+                        <as>19999</as>
+                        <bgp-running></bgp-running>
+                        <default-vrf>
+                            <global>
+                            </global>
+                            <bgp-entity>
+                                <neighbor-groups>
+                                    <neighbor-group>
+                                        <neighbor-group-name>PEERGR01</neighbor-group-name>
+                                        <create></create>
+                                        <neighbor-group-afs>
+                                            <neighbor-group-af>
+                                                <af-name>ipv4-unicast</af-name>
+                                            </neighbor-group-af>
+                                            <neighbor-group-af>
+                                                <af-name>vp-nv4-unicast</af-name>
+                                                <route-policy-in>POLICY-PEER-GROUP-IN</route-policy-in>
+                                                <route-policy-out>POLICY-PEER-GROUP-OUT</route-policy-out>
+                                            </neighbor-group-af>
+                                        </neighbor-group-afs>
+                                    </neighbor-group>
+                                    <neighbor-group>
+                                        <neighbor-group-name>PEERGR02</neighbor-group-name>
+                                    </neighbor-group>
+                                </neighbor-groups>
+                            </bgp-entity>
+                        </default-vrf>
+                    </four-byte-as>
+                </instance-as>
+            </instance>
+        </bgp>
+    </data>
+</rpc-reply>

@@ -101,6 +101,7 @@ class NeighborConfigReader(private val access: UnderlayAccess) : ConfigReaderCus
 private fun ConfigBuilder.fromUnderlay(neighbor: UnderlayNeighbor?) {
     neighbor?.let {
         neighborAddress = neighbor.neighborAddress.toIp()
+        neighbor.neighborGroupAddMember?.let { peerGroup = neighbor.neighborGroupAddMember }
         fromCommonUnderlay(neighbor)
     }
 }
@@ -122,6 +123,7 @@ private fun <T> ConfigBuilder.fromCommonUnderlay(neighbor: T?)
 private fun ConfigBuilder.fromUnderlay(neighbor: UnderlayVrfNeighbor?) {
     neighbor?.let {
         neighborAddress = neighbor.neighborAddress.toIp()
+        neighbor.neighborGroupAddMember?.let { peerGroup = neighbor.neighborGroupAddMember }
         fromCommonUnderlay(neighbor)
     }
 }
