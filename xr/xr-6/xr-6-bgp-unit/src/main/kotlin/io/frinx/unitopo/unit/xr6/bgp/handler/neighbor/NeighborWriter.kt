@@ -108,23 +108,25 @@ class NeighborWriter(private val access: UnderlayAccess) : ListWriterCustomizer<
         if (vrfKey == NetworInstance.DEFAULT_NETWORK) {
             val globalNeighborIdentifier = getGlobalNeighborIdentifier(bgpAs, dataAfter.neighborAddress.toNoZone())
 
-            val neighborBuilder = access.read(globalNeighborIdentifier)
-                    .checkedGet()
-                    .or(UnderlayNeighborBuilder().build())
-                    .let { UnderlayNeighborBuilder(it) }
+            val neighborBuilderBefore = UnderlayNeighborBuilder()
+            val neighborBuilderAfter = UnderlayNeighborBuilder()
 
-            renderGlobalNeighbor(neighborBuilder, dataAfter, neighAfiSafi)
-            access.merge(globalNeighborIdentifier, neighborBuilder.build())
+            renderGlobalNeighbor(neighborBuilderBefore, dataBefore, neighAfiSafi)
+            renderGlobalNeighbor(neighborBuilderAfter, dataAfter, neighAfiSafi)
+
+            access.safeMerge(globalNeighborIdentifier, neighborBuilderBefore.build(),
+                globalNeighborIdentifier, neighborBuilderAfter.build())
         } else {
             val vrfNeighborIdentifier = getVrfNeighborIdentifier(bgpAs, vrfKey, dataAfter.neighborAddress.toNoZone())
 
-            val neighborBuilder = access.read(vrfNeighborIdentifier)
-                    .checkedGet()
-                    .or(UnderlayVrfNeighborBuilder().build())
-                    .let { UnderlayVrfNeighborBuilder(it) }
+            val neighborBuilderBefore = UnderlayVrfNeighborBuilder()
+            val neighborBuilderAfter = UnderlayVrfNeighborBuilder()
 
-            renderVrfNeighbor(neighborBuilder, dataAfter, neighAfiSafi)
-            access.merge(vrfNeighborIdentifier, neighborBuilder.build())
+            renderVrfNeighbor(neighborBuilderBefore, dataBefore, neighAfiSafi)
+            renderVrfNeighbor(neighborBuilderAfter, dataAfter, neighAfiSafi)
+
+            access.safeMerge(vrfNeighborIdentifier, neighborBuilderBefore.build(),
+                vrfNeighborIdentifier, neighborBuilderAfter.build())
         }
     }
 
@@ -168,12 +170,16 @@ class NeighborWriter(private val access: UnderlayAccess) : ListWriterCustomizer<
         ) {
             val (asXX, asYY) = As.asToDotNotation(data.config.peerAs)
 
+            // set update source to null
             builder.setNeighborAddress(data.neighborAddress.toNoZone())
-                    .setUpdateSourceInterface(data.transport?.config?.localAddress?.toIfcName()).remoteAs =
-                    RemoteAsBuilder()
+                .setUpdateSourceInterface(null)
+                .remoteAs = RemoteAsBuilder()
                             .setAsXx(BgpAsRange(asXX))
                             .setAsYy(BgpAsRange(asYY))
                             .build()
+
+            // overwrite null if new data contains transport
+            builder.updateSourceInterface = data.transport?.config?.localAddress?.toIfcName()
 
             // Get current Afs to map
             val currentAfs = builder
