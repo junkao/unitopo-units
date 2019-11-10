@@ -37,12 +37,12 @@
 
         <cli.version>3.1.11.rc4-frinx-SNAPSHOT</cli.version>
         <openconfig.version>3.1.11.rc4-frinx-SNAPSHOT</openconfig.version>
-        <hc.version>1.17.10-Carbon-SR1.3_1_11_rc4-frinxodl-SNAPSHOT</hc.version>
+        <hc.version>1.17.10-Carbon-SR1.3_1_11_rc4-frinxodl</hc.version>
         <kotlin.version>1.2.41</kotlin.version>
-        <netconf.version>1.2.1-Carbon-SR1.3_1_11_rc4-frinxodl-SNAPSHOT</netconf.version>
-        <mdsal-old.version>1.5.1-Carbon-SR1.3_1_11_rc4-frinxodl-SNAPSHOT</mdsal-old.version>
-        <controller.version>1.5.1-Carbon-SR1.3_1_11_rc4-frinxodl-SNAPSHOT</controller.version>
-        <config.version>0.6.1-Carbon-SR1.3_1_11_rc4-frinxodl-SNAPSHOT</config.version>
+        <netconf.version>1.2.1-Carbon-SR1.3_1_11_rc4-frinxodl</netconf.version>
+        <mdsal-old.version>1.5.1-Carbon-SR1.3_1_11_rc4-frinxodl</mdsal-old.version>
+        <controller.version>1.5.1-Carbon-SR1.3_1_11_rc4-frinxodl</controller.version>
+        <config.version>0.6.1-Carbon-SR1.3_1_11_rc4-frinxodl</config.version>
         <translate.unit.commons.version>3.1.11.rc4-frinx-SNAPSHOT</translate.unit.commons.version>
     </properties>
 
