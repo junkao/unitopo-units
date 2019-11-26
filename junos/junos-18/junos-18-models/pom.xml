@@ -30,7 +30,7 @@
 
     <groupId>io.frinx.unitopo</groupId>
     <artifactId>junos-18-models</artifactId>
-    <version>3.1.11.rc7-frinx-SNAPSHOT</version>
+    <version>3.1.11.rc7-frinx</version>
     <packaging>bundle</packaging>
     <build>
         <plugins>
