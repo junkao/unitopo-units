@@ -20,13 +20,13 @@
     <parent>
         <groupId>io.frinx.unitopo</groupId>
         <artifactId>kotlin-unit-parent</artifactId>
-        <version>3.1.11.rc8-frinx-SNAPSHOT</version>
+        <version>3.1.11.rc8-frinx</version>
         <relativePath>../../kotlin-unit-parent</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>xr-6.6-bgp-unit</artifactId>
-    <version>3.1.11.rc8-frinx-SNAPSHOT</version>
+    <version>3.1.11.rc8-frinx</version>
     <packaging>bundle</packaging>
 
     <dependencies>
