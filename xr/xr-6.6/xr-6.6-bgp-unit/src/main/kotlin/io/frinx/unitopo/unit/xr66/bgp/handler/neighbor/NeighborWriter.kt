@@ -104,14 +104,18 @@ class NeighborWriter(private val access: UnderlayAccess) : ListWriterCustomizer<
 
         if (vrfKey == NetworInstance.DEFAULT_NETWORK) {
             val id = getGlobalNeighborIdentifier(bgpAs, dataAfter.neighborAddress.toNoZone())
-            val builder = UnderlayNeighborBuilder()
-            renderGlobalNeighbor(builder, dataAfter)
-            access.safePut(id, builder.build())
+            val builderAfter = UnderlayNeighborBuilder()
+            val builderBefore = UnderlayNeighborBuilder()
+            renderGlobalNeighbor(builderAfter, dataAfter)
+            renderGlobalNeighbor(builderBefore, dataBefore)
+            access.safeMerge(id, builderBefore.build(), id, builderAfter.build())
         } else {
             val id = getVrfNeighborIdentifier(bgpAs, vrfKey, dataAfter.neighborAddress.toNoZone())
-            val builder = UnderlayVrfNeighborBuilder()
-            renderVrfNeighbor(builder, dataAfter)
-            access.safePut(id, builder.build())
+            val builderAfter = UnderlayVrfNeighborBuilder()
+            val builderBefore = UnderlayVrfNeighborBuilder()
+            renderVrfNeighbor(builderAfter, dataAfter)
+            renderVrfNeighbor(builderBefore, dataBefore)
+            access.safeMerge(id, builderBefore.build(), id, builderAfter.build())
         }
     }
 
