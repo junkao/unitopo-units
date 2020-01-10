@@ -74,14 +74,22 @@ class ApplyPolicyConfigReader(private val access: UnderlayAccess) :
                         ?.neighborAf
                         ?.find { it.key.afName.getName() == NeighborWriter.transformAfiToString(afKey) }
                 neighborAf?.routePolicyIn?.let { builder.importPolicy = listOf(it) }
-                neighborAf?.routePolicyOut?.let { builder.exportPolicy = listOf(it) }
+                if (neighborAf?.isNextHopSelf ?: false) {
+                    builder.exportPolicy = listOf(NeighborWriter.NEXTHOPSELF_POLICY_NAME)
+                } else {
+                    neighborAf?.routePolicyOut?.let { builder.exportPolicy = listOf(it) }
+                }
             } else {
                 val vrfNeighborAf = NeighborConfigReader.getVrfNeighbor(fourByteAs, vrfKey, neighborKey)
                         ?.vrfNeighborAfs
                         ?.vrfNeighborAf
                         ?.find { it.key.afName.getName() == NeighborWriter.transformAfiToString(afKey) }
                 vrfNeighborAf?.routePolicyIn?.let { builder.importPolicy = listOf(it) }
-                vrfNeighborAf?.routePolicyOut?.let { builder.exportPolicy = listOf(it) }
+                if (vrfNeighborAf?.isNextHopSelf ?: false) {
+                    builder.exportPolicy = listOf(NeighborWriter.NEXTHOPSELF_POLICY_NAME)
+                } else {
+                    vrfNeighborAf?.routePolicyOut?.let { builder.exportPolicy = listOf(it) }
+                }
             }
         }
     }

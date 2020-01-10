@@ -29,6 +29,7 @@ import io.frinx.unitopo.unit.xr6.bgp.UnderlayVrfNeighborBuilder
 import io.frinx.unitopo.unit.xr6.bgp.UnderlayVrfNeighborKey
 import io.frinx.unitopo.unit.xr6.bgp.handler.GlobalConfigWriter
 import io.frinx.unitopo.unit.xr6.bgp.handler.GlobalConfigWriter.Companion.XR_BGP_INSTANCE_NAME
+import io.frinx.unitopo.unit.xr6.bgp.handler.neighbor.NeighborWriter.Companion.NEXTHOPSELF_POLICY_NAME
 import io.frinx.unitopo.unit.xr6.bgp.handler.toUnderlay
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827._default.originate.DefaultOriginateBuilder
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ipv4.bgp.cfg.rev150827.bgp.Instance
@@ -166,7 +167,7 @@ class NeighborWriter(private val access: UnderlayAccess) : ListWriterCustomizer<
     }
 
     companion object {
-
+        const val NEXTHOPSELF_POLICY_NAME: String = "nexthopself"
         fun getVrfNeighborIdentifier(bgpProcess: AsNumber, vrfName: NetworkInstanceKey, neighbor: IpAddressNoZone):
             InstanceIdentifier<VrfNeighbor> {
             val (asXX, asYY) = As.asToDotNotation(bgpProcess)
@@ -212,6 +213,7 @@ class NeighborWriter(private val access: UnderlayAccess) : ListWriterCustomizer<
                 }.build()
             }
 
+            builder.setShutdown(true)
             data.config?.description?.let { builder.setDescription(it) }
 
             // Get current Afs to map
@@ -282,6 +284,7 @@ class NeighborWriter(private val access: UnderlayAccess) : ListWriterCustomizer<
                 }.build()
             }
 
+            builder.setShutdown(true)
             data.config?.description?.let { builder.setDescription(it) }
 
             // Get current Afs to map
@@ -353,7 +356,11 @@ private fun parseNeighborAfBuilder(
             ?.isAlways
     val neighborAfBuilder = NeighborAfBuilder(it)
     applyPolicyConfig?.importPolicy.orEmpty().firstOrNull()?.let { neighborAfBuilder.setRoutePolicyIn(it) }
-    applyPolicyConfig?.exportPolicy.orEmpty().firstOrNull()?.let { neighborAfBuilder.setRoutePolicyOut(it) }
+    if (applyPolicyConfig?.exportPolicy.orEmpty().firstOrNull().equals(NEXTHOPSELF_POLICY_NAME)) {
+        neighborAfBuilder.setNextHopSelf(true)
+    } else {
+        applyPolicyConfig?.exportPolicy.orEmpty().firstOrNull()?.let { neighborAfBuilder.setRoutePolicyOut(it) }
+    }
     maxPrefixes?.let {
         neighborAfBuilder.setMaximumPrefixes(MaximumPrefixesBuilder().setPrefixLimit(maxPrefixes).build())
     }
@@ -388,7 +395,12 @@ private fun parseVrfNeighborAfBuilder(
 
     val vrfNeighborAfBuilder = VrfNeighborAfBuilder(it)
     applyPolicyConfig?.importPolicy.orEmpty().firstOrNull()?.let { vrfNeighborAfBuilder.setRoutePolicyIn(it) }
-    applyPolicyConfig?.exportPolicy.orEmpty().firstOrNull()?.let { vrfNeighborAfBuilder.setRoutePolicyOut(it) }
+
+    if (applyPolicyConfig?.exportPolicy.orEmpty().firstOrNull().equals(NEXTHOPSELF_POLICY_NAME)) {
+        vrfNeighborAfBuilder.setNextHopSelf(true)
+    } else {
+        applyPolicyConfig?.exportPolicy.orEmpty().firstOrNull()?.let { vrfNeighborAfBuilder.setRoutePolicyOut(it) }
+    }
     maxPrefixes?.let {
         vrfNeighborAfBuilder.setMaximumPrefixes(MaximumPrefixesBuilder().setPrefixLimit(maxPrefixes).build())
     }
@@ -412,8 +424,8 @@ private fun parseVrfNeighborAfBuilder(
 private fun transferRemovePrivateAs(data: Neighbor): RemovePrivateAsEntireAsPath {
     val removePrivateAsEntireAsPathBuilder = RemovePrivateAsEntireAsPathBuilder()
     when (data.config.removePrivateAs) {
-        REMOVEPRIVATEASOPTION::class.java -> removePrivateAsEntireAsPathBuilder.setEnable(true).setEntire(false)
-        PRIVATEASREMOVEALL::class.java -> removePrivateAsEntireAsPathBuilder.setEnable(true).setEntire(true)
+        REMOVEPRIVATEASOPTION::class.java -> removePrivateAsEntireAsPathBuilder.setEnable(true).setEntire(true)
+        PRIVATEASREMOVEALL::class.java -> removePrivateAsEntireAsPathBuilder.setEnable(true).setEntire(false)
         PRIVATEASREPLACEALL::class.java -> removePrivateAsEntireAsPathBuilder.setEnable(false).setEntire(false)
         else -> throw IllegalArgumentException("Unknown removePrivateAs type ${data.config.removePrivateAs}")
     }

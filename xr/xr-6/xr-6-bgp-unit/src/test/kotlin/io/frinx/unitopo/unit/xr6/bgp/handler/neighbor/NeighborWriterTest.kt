@@ -179,6 +179,6 @@ class NeighborWriterTest {
         val neighborAfter = dataCap.allValues[1].neighborAfs.neighborAf?.get(0)
         Assert.assertNotNull(neighborAfter)
         Assert.assertEquals("policy2", neighborAfter?.routePolicyIn)
-        Assert.assertEquals("nexthopself", neighborAfter?.routePolicyOut)
+        Assert.assertEquals(true, neighborAfter?.isNextHopSelf)
     }
 }

@@ -120,9 +120,9 @@ private fun ConfigBuilder.transformRemovePrivateAs(removePrivateAs: RemovePrivat
     val RPasIsEnable = removePrivateAs.isEnable
     val RPasIsEntire = removePrivateAs.isEntire
 
-    if (RPasIsEnable && RPasIsEntire) {
+    if (RPasIsEnable && !RPasIsEntire) {
         setRemovePrivateAs(PRIVATEASREMOVEALL::class.java)
-    } else if (RPasIsEnable && !RPasIsEntire) {
+    } else if (RPasIsEnable && RPasIsEntire) {
         setRemovePrivateAs(REMOVEPRIVATEASOPTION::class.java)
     } else if (!RPasIsEnable && !RPasIsEntire) {
         setRemovePrivateAs(PRIVATEASREPLACEALL::class.java)
