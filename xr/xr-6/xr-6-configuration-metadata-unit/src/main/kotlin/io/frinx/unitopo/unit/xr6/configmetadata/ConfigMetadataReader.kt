@@ -17,10 +17,12 @@
 package io.frinx.unitopo.unit.xr6.configmetadata
 
 import com.google.common.annotations.VisibleForTesting
+import com.google.common.base.Optional
 import io.fd.honeycomb.translate.read.ReadContext
 import io.fd.honeycomb.translate.spi.read.OperReaderCustomizer
 import io.frinx.unitopo.registry.spi.UnderlayAccess
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType
+import org.opendaylight.controller.md.sal.common.api.data.ReadFailedException
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.config.cfgmgr.exec.oper.rev151109.CfgHistGl
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.config.cfgmgr.exec.oper.rev151109.cfg.hist.gl.RecordType
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.config.cfgmgr.exec.oper.rev151109.cfg.hist.gl.RecordTypeBuilder
@@ -31,6 +33,7 @@ import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.configuration
 import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
+import org.slf4j.LoggerFactory
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 
@@ -45,14 +48,22 @@ class ConfigMetadataReader(private val access: UnderlayAccess) :
         configmetadata: ConfigurationMetadataBuilder,
         ctx: ReadContext
     ) {
+        val commitHistoryOpt = getCommitHistory(0)
+        configmetadata.lastConfigurationFingerprint = parseTimestamp(commitHistoryOpt.or(RecordTypeBuilder().build()))
+    }
 
-        val recordType = access.read(InstanceIdentifier.create(CfgHistGl::class.java)
-            .child(RecordType::class.java, RecordTypeKey(CiscoIosXrString(RECORD_TYPE_COMMIT))),
-            LogicalDatastoreType.OPERATIONAL)
-            .checkedGet()
-            .or(RecordTypeBuilder().build())
-
-        configmetadata.lastConfigurationFingerprint = parseTimestamp(recordType)
+    private fun getCommitHistory(attempts: Int): Optional<RecordType> {
+        val future = access.read(COMMIT_HISTORY_IID, LogicalDatastoreType.OPERATIONAL)
+        return try {
+            future.checkedGet()
+        } catch (e: ReadFailedException) {
+            val updatedAttempts = attempts + 1
+            if (updatedAttempts >= MAX_READ_METADATA_ATTEMPTS) {
+                throw e
+            }
+            LOG.warn("Cannot read configuration records from device (attempt {}), trying again.", updatedAttempts, e)
+            getCommitHistory(updatedAttempts)
+        }
     }
 
     override fun merge(
@@ -65,6 +76,10 @@ class ConfigMetadataReader(private val access: UnderlayAccess) :
 
     companion object {
         const val RECORD_TYPE_COMMIT = "commit"
+        private const val MAX_READ_METADATA_ATTEMPTS = 4
+        private val LOG = LoggerFactory.getLogger(ConfigMetadataReader::class.java)
+        private val COMMIT_HISTORY_IID = InstanceIdentifier.create(CfgHistGl::class.java)
+            .child(RecordType::class.java, RecordTypeKey(CiscoIosXrString(RECORD_TYPE_COMMIT)))
 
         @VisibleForTesting
         fun parseTimestamp(data: RecordType): String {
