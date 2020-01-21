@@ -346,7 +346,7 @@ private fun parseNeighborAfBuilder(
     it: NeighborAf?
 ): NeighborAfBuilder {
     val removePrivateAs = data.config?.removePrivateAs
-    val applyPolicyConfig = afiSafi?.applyPolicy?.config
+    val applyPolicyConfig = data.applyPolicy?.config
     val maxPrefixes = afiSafi?.ipv6Unicast?.prefixLimit?.config?.maxPrefixes
     val defaultOriginate = afiSafi?.ipv6Unicast?.config?.isSendDefaultRoute
     val softReconfiguration = afiSafi?.config?.getAugmentation(BgpNeAfAug::class.java)?.softReconfiguration
@@ -380,7 +380,7 @@ private fun parseVrfNeighborAfBuilder(
     it: VrfNeighborAf?
 ): VrfNeighborAfBuilder {
     val removePrivateAs = data.config?.removePrivateAs
-    val applyPolicyConfig = afiSafi?.applyPolicy?.config
+    val applyPolicyConfig = data.applyPolicy?.config
     val maxPrefixes = afiSafi?.ipv6Unicast?.prefixLimit?.config?.maxPrefixes
     val defaultOriginate = afiSafi?.ipv6Unicast?.config?.isSendDefaultRoute
     val softReconfiguration = afiSafi?.config?.getAugmentation(BgpNeAfAug::class.java)?.softReconfiguration
