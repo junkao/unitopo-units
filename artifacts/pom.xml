@@ -253,6 +253,13 @@
                 <version>${project.version}</version>
             </dependency>
 
+            <!-- Cisco XR-7 -->
+            <dependency>
+                <groupId>io.frinx.unitopo</groupId>
+                <artifactId>xr-7-init-unit</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
             <!-- bases -->
             <dependency>
                 <groupId>io.frinx.unitopo</groupId>

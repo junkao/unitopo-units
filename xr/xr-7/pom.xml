@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
-  ~ Copyright © 2018 Frinx and others.
+  ~ Copyright © 2020 Frinx and others.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -27,14 +27,12 @@
     </parent>
 
     <groupId>io.frinx.unitopo</groupId>
-    <artifactId>unitopo-units-xr</artifactId>
+    <artifactId>unitopo-units-xr-7</artifactId>
     <version>3.1.13.rc6-frinx-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
-        <module>xr-6</module>
-        <module>xr-6.6</module>
-        <module>xr-7</module>
+        <module>xr-7-init-unit</module>
     </modules>
 
     <build>
