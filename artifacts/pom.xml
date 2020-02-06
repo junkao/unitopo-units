@@ -274,6 +274,11 @@
                 <artifactId>xr-7-interface-unit</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>io.frinx.unitopo</groupId>
+                <artifactId>xr-7-bgp-unit</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 
             <!-- bases -->
             <dependency>

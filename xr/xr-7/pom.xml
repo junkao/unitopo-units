@@ -36,6 +36,7 @@
         <module>xr-7-models</module>
         <module>xr-7-configuration-metadata-unit</module>
         <module>xr-7-interface-unit</module>
+        <module>xr-7-bgp-unit</module>
     </modules>
 
     <build>
