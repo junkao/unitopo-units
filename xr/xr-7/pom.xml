@@ -33,6 +33,7 @@
 
     <modules>
         <module>xr-7-init-unit</module>
+        <module>xr-7-models</module>
     </modules>
 
     <build>

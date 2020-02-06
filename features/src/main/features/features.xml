@@ -52,6 +52,7 @@
         <bundle>mvn:commons-net/commons-net/{{VERSION}}</bundle>
         <bundle>mvn:io.frinx.translate.unit.commons/ios-xr-route-policy-util/{{VERSION}}</bundle>
         <bundle>mvn:io.frinx.unitopo/xr-7-init-unit/{{VERSION}}</bundle>
+        <bundle>mvn:io.frinx.unitopo/xr-7-models/{{VERSION}}</bundle>
     </feature>
 
     <feature name='unified-topology-unit-xr-6-6' version='${project.version}'>

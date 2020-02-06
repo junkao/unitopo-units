@@ -11,11 +11,11 @@ module Cisco-IOS-XR-ipv4-ospf-cfg {
 
   import ietf-inet-types { prefix "inet"; }
 
-  import Cisco-IOS-XR-types { prefix "xr"; }
+  import Cisco-IOS-XR-types { prefix "xr"; revision-date 2019-04-05; }
 
-  import cisco-semver { prefix "semver"; }
+  import cisco-semver { prefix "semver"; revision-date 2019-03-13; }
 
-  import Cisco-IOS-XR-snmp-agent-cfg { prefix "a1"; }
+  import Cisco-IOS-XR-snmp-agent-cfg { prefix "a1"; revision-date 2019-10-31; }
 
   /*** META INFORMATION ***/
 

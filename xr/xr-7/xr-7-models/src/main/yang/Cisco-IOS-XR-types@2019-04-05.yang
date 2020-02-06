@@ -3,7 +3,7 @@ module Cisco-IOS-XR-types {
   namespace "http://cisco.com/ns/yang/cisco-xr-types";
   prefix "xr";
 
-  import cisco-semver { prefix "semver"; }
+  import cisco-semver { prefix "semver"; revision-date 2019-03-13; }
   
   import ietf-inet-types { prefix "inet"; }
 

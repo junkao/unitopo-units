@@ -11,13 +11,13 @@ module Cisco-IOS-XR-clns-isis-cfg {
 
   import ietf-inet-types { prefix "inet"; }
 
-  import Cisco-IOS-XR-types { prefix "xr"; }
+  import Cisco-IOS-XR-types { prefix "xr"; revision-date 2019-04-05; }
 
-  import cisco-semver { prefix "semver"; }
+  import cisco-semver { prefix "semver"; revision-date 2019-03-13; }
 
-  import Cisco-IOS-XR-clns-isis-datatypes { prefix "dt1"; }
+  import Cisco-IOS-XR-clns-isis-datatypes { prefix "dt1"; revision-date 2019-04-05; }
 
-  import Cisco-IOS-XR-snmp-agent-cfg { prefix "a1"; }
+  import Cisco-IOS-XR-snmp-agent-cfg { prefix "a1"; revision-date 2019-10-31; }
 
   /*** META INFORMATION ***/
 
@@ -1049,6 +1049,7 @@ module Cisco-IOS-XR-clns-isis-cfg {
           description "Level to which configuration applies";
         }
         leaf metric {
+/* Modified "type" because yang2source can't convert union/enum correctly
           type union {
             type enumeration {
               enum maximum {
@@ -1061,6 +1062,10 @@ module Cisco-IOS-XR-clns-isis-cfg {
             type uint32 {
               range "1..16777215";
             }
+          }
+*/
+          type uint32 {
+              range "1..16777215";
           }
           mandatory true;
           description
@@ -3787,7 +3792,9 @@ module Cisco-IOS-XR-clns-isis-cfg {
             }
             leaf circuit-type {
               type Isis-configurable-levels;
+/* Comment out because this will cause a addtional update to device
               default "level1-and2";
+*/
               description "Configure circuit type for interface";
             }
             leaf point-to-point {

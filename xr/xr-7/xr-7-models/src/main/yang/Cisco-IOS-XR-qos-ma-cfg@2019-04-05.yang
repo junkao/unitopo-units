@@ -8,13 +8,13 @@ module Cisco-IOS-XR-qos-ma-cfg {
 
   /*** LINKAGE (IMPORTS / INCLUDES) ***/
 
-  import cisco-semver { prefix "semver"; }
+  import cisco-semver { prefix "semver"; revision-date 2019-03-13; }
 
-  import Cisco-IOS-XR-types { prefix "xr"; }
+  import Cisco-IOS-XR-types { prefix "xr"; revision-date 2019-04-05; }
 
-  import Cisco-IOS-XR-ifmgr-cfg { prefix "a1"; }
+  import Cisco-IOS-XR-ifmgr-cfg { prefix "a1"; revision-date 2019-04-05; }
 
-  import Cisco-IOS-XR-l2vpn-cfg { prefix "a2"; }
+  import Cisco-IOS-XR-l2vpn-cfg { prefix "a2"; revision-date 2019-04-05; }
 
   /*** META INFORMATION ***/
 

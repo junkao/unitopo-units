@@ -9,9 +9,9 @@ module Cisco-IOS-XR-infra-statsd-cfg {
 
   /*** LINKAGE (IMPORTS / INCLUDES) ***/
 
-  import cisco-semver { prefix "semver"; }
+  import cisco-semver { prefix "semver"; revision-date 2019-03-13; }
 
-  import Cisco-IOS-XR-ifmgr-cfg { prefix "a1"; }
+  import Cisco-IOS-XR-ifmgr-cfg { prefix "a1"; revision-date 2019-04-05; }
 
   /*** META INFORMATION ***/
 

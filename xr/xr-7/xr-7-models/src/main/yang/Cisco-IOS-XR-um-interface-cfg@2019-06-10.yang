@@ -8,12 +8,12 @@ module Cisco-IOS-XR-um-interface-cfg {
 
   /*** LINKAGE (IMPORTS / INCLUDES) ***/
 
-  import cisco-semver { prefix "semver"; }
+  import cisco-semver { prefix "semver"; revision-date 2019-03-13; }
   
-  import Cisco-IOS-XR-types { prefix "xr"; }
+  import Cisco-IOS-XR-types { prefix "xr"; revision-date 2019-04-05; }
 
-
-  import tailf-common { prefix "tailf"; }
+  // This is only used in condition, comment out this to avoid add "tailxxxx" yang file.
+  // import tailf-common { prefix "tailf"; }
 
   /*** META INFORMATION ***/
 
@@ -89,7 +89,8 @@ module Cisco-IOS-XR-um-interface-cfg {
       " and ../interface-name[not(starts-with(text(),'interflexleft'))]" +
       " and ../interface-name[not(starts-with(text(),'interflexright'))]" +
       " and ../interface-name[not(starts-with(text(),'cem'))]" {
-        tailf:dependency '../interface-name';
+        // This is only used in condition, comment out this to avoid add "tailxxxx" yang file.
+        // tailf:dependency '../interface-name';
       }
       presence "Indicates a dampening node is configured.";
       description "configure state dampening on the given interface";
@@ -165,7 +166,8 @@ module Cisco-IOS-XR-um-interface-cfg {
       when "../interface-name[starts-with(text(),'pos')] or " +
            "../interface-name[starts-with(text(),'serial')] or " +
            "../interface-name[starts-with(text(),'multilink')]" {
-        tailf:dependency '../interface-name';
+        // This is only used in condition, comment out this to avoid add "tailxxxx" yang file.
+        // tailf:dependency '../interface-name';
       }
       description "Set the encapsulation on an interface";
       container ppp {
@@ -178,14 +180,16 @@ module Cisco-IOS-XR-um-interface-cfg {
       }
       container mfr {
         when "../../interface-name[starts-with(text(),'serial')]" {
-          tailf:dependency '../../interface-name';
+          // This is only used in condition, comment out this to avoid add "tailxxxx" yang file.
+          // tailf:dependency '../../interface-name';
         }
         presence "Indicates a mfr node is configured.";
         description "Multilink Frame Relay Member Link";
       }
       container frame-relay {
         when "../../interface-name[not(contains(text(),'.'))]" {
-          tailf:dependency '../../interface-name';
+          // This is only used in condition, comment out this to avoid add "tailxxxx" yang file.
+          // tailf:dependency '../../interface-name';
         }
         presence "Indicates a frame-relay node is configured.";
         description "Frame Relay networks";
@@ -210,7 +214,8 @@ module Cisco-IOS-XR-um-interface-cfg {
       " and ../interface-name[not(starts-with(text(),'interflexleft'))]" +
       " and ../interface-name[not(starts-with(text(),'interflexright'))]" +
       " and ../interface-name[not(starts-with(text(),'cem'))]" {
-        tailf:dependency '../interface-name';
+        // This is only used in condition, comment out this to avoid add "tailxxxx" yang file.
+        // tailf:dependency '../interface-name';
       }
       type uint32 {
         range "64..65535" {
@@ -241,7 +246,8 @@ module Cisco-IOS-XR-um-interface-cfg {
            "../interface-name[starts-with(text(),'nve')] or " +
            "../interface-name[starts-with(text(),'csi')] or " +
            "../interface-name[contains(text(),'.')]" {
-        tailf:dependency '../interface-name';
+        // This is only used in condition, comment out this to avoid add "tailxxxx" yang file.
+        // tailf:dependency '../interface-name';
       }
       description "Per-interface logging configuration";
       container events {
@@ -262,7 +268,8 @@ module Cisco-IOS-XR-um-interface-cfg {
       " and ../interface-name[not(starts-with(text(),'interflexleft'))]" +
       " and ../interface-name[not(starts-with(text(),'interflexright'))]" +
       " and ../interface-name[not(starts-with(text(),'cem'))]" {
-        tailf:dependency '../interface-name';
+        // This is only used in condition, comment out this to avoid add "tailxxxx" yang file.
+        // tailf:dependency '../interface-name';
       }
       type uint32 {
         range "0..4294967295" {

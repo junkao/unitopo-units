@@ -6,7 +6,7 @@ submodule Cisco-IOS-XR-config-cfgmgr-exec-oper-sub1 {
 
   /*** LINKAGE (IMPORTS / INCLUDES) ***/
 
-  import cisco-semver { prefix "semver"; }
+  import cisco-semver { prefix "semver"; revision-date 2019-03-13; }
 
   /*** META INFORMATION ***/
 
