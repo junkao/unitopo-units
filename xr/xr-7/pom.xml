@@ -34,6 +34,7 @@
     <modules>
         <module>xr-7-init-unit</module>
         <module>xr-7-models</module>
+        <module>xr-7-configuration-metadata-unit</module>
     </modules>
 
     <build>
