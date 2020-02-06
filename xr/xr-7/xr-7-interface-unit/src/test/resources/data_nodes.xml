@@ -1,0 +1,130 @@
+<!--
+  ~ Copyright © 2020 Frinx and others.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<rpc-reply xmlns="urn:ietf:params:xml:ns:netconf:base:1.0" message-id="m-1">
+    <data>
+        <interface-configurations xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg">
+            <interface-configuration>
+                <active>act</active>
+                <interface-name>TenGigE0/0/0/2</interface-name>
+                <shutdown></shutdown>
+                <bundle-member xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-bundlemgr-cfg">
+                    <id>
+                        <bundle-id>65535</bundle-id>
+                        <port-activity>passive</port-activity>
+                    </id>
+                </bundle-member>
+                <lacp xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-bundlemgr-cfg">
+                    <period-short>true</period-short>
+                </lacp>
+            </interface-configuration>
+            <interface-configuration>
+                <active>act</active>
+                <interface-name>GigabitEthernet0/0/0/0</interface-name>
+                <description>IF_DESCRIPTION-001</description>
+                <shutdown></shutdown>
+                <ipv4-network xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-ipv4-io-cfg">
+                    <addresses>
+                        <primary>
+                            <address>10.1.5.28</address>
+                            <netmask>255.255.0.0</netmask>
+                        </primary>
+                    </addresses>
+                    <mtu>65535</mtu>
+                </ipv4-network>
+            </interface-configuration>
+            <interface-configuration>
+                <active>act</active>
+                <interface-name>GigabitEthernet0/0/0/0.1</interface-name>
+                <description>IF_DESCRIPTION-001-subifc</description>
+                <shutdown></shutdown>
+                <vlan-sub-configuration xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-l2-eth-infra-cfg">
+                    <vlan-identifier>
+                        <vlan-type>vlan-type-dot1q</vlan-type>
+                        <first-tag>22</first-tag>
+                    </vlan-identifier>
+                </vlan-sub-configuration>
+            </interface-configuration>
+            <interface-configuration>
+                <active>act</active>
+                <interface-name>Bundle-Ether302</interface-name>
+                <interface-virtual></interface-virtual>
+                <description>ST004-002MG-01[BE200]</description>
+                <mtus>
+                    <mtu>
+                        <owner>etherbundle</owner>
+                        <mtu>9114</mtu>
+                    </mtu>
+                </mtus>
+            </interface-configuration>
+            <interface-configuration>
+                <active>act</active>
+                <interface-name>Bundle-Ether300</interface-name>
+            </interface-configuration>
+            <interface-configuration>
+                <active>act</active>
+                <interface-name>Bundle-Ether301</interface-name>
+                <interface-mode-non-physical>default</interface-mode-non-physical>
+                <statistics xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-statsd-cfg">
+                    <load-interval>30</load-interval>
+                </statistics>
+            </interface-configuration>
+            <interface-configuration>
+                <active>act</active>
+                <interface-name>Bundle-Ether301.1</interface-name>
+                <interface-mode-non-physical>default</interface-mode-non-physical>
+                <vlan-sub-configuration xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-l2-eth-infra-cfg">
+                    <vlan-identifier>
+                        <vlan-type>vlan-type-dot1q</vlan-type>
+                        <first-tag>22</first-tag>
+                    </vlan-identifier>
+                </vlan-sub-configuration>
+                <statistics xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-statsd-cfg">
+                    <load-interval>60</load-interval>
+                </statistics>
+            </interface-configuration>
+            <interface-configuration>
+                <active>act</active>
+                <interface-name>Bundle-Ether3000</interface-name>
+                <interface-mode-non-physical>default</interface-mode-non-physical>
+                <lacp xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-bundlemgr-cfg">
+                    <system-mac>00:00:00:00:08:00</system-mac>
+                </lacp>
+                <mac-addr xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-mdrv-lib-cfg">02:8a:96:00:00:00</mac-addr>
+            </interface-configuration>
+            <interface-configuration>
+                <active>act</active>
+                <interface-name>Bundle-Ether4001</interface-name>
+                <interface-virtual></interface-virtual>
+            </interface-configuration>
+            <interface-configuration>
+                <active>act</active>
+                <interface-name>Bundle-Ether4001.10</interface-name>
+                <interface-mode-non-physical>default</interface-mode-non-physical>
+                <carrier-delay xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-l2-eth-infra-cfg">
+                    <carrier-delay-up>100</carrier-delay-up>
+                    <carrier-delay-down>0</carrier-delay-down>
+                </carrier-delay>
+            </interface-configuration>
+            <interface-configuration>
+                <active>act</active>
+                <interface-name>Bundle-Ether4001.20</interface-name>
+                <interface-mode-non-physical>default</interface-mode-non-physical>
+            </interface-configuration>
+
+        </interface-configurations>
+    </data>
+</rpc-reply>
