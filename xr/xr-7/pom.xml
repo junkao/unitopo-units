@@ -38,6 +38,7 @@
         <module>xr-7-interface-unit</module>
         <module>xr-7-bgp-unit</module>
         <module>xr-7-ospf-unit</module>
+        <module>xr-7-isis-unit</module>
     </modules>
 
     <build>

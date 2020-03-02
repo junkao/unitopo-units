@@ -57,6 +57,7 @@
         <bundle>mvn:io.frinx.unitopo/xr-7-interface-unit/{{VERSION}}</bundle>
         <bundle>mvn:io.frinx.unitopo/xr-7-bgp-unit/{{VERSION}}</bundle>
         <bundle>mvn:io.frinx.unitopo/xr-7-ospf-unit/{{VERSION}}</bundle>
+        <bundle>mvn:io.frinx.unitopo/xr-7-isis-unit/{{VERSION}}</bundle>
     </feature>
 
     <feature name='unified-topology-unit-xr-6-6' version='${project.version}'>

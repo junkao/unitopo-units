@@ -1,0 +1,74 @@
+<!--
+  ~ Copyright © 2020 Frinx and others.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<rpc-reply message-id="urn:uuid:7899fcba-cf71-46c1-b156-80e19690edbb" xmlns:nc="urn:ietf:params:xml:ns:netconf:base:1.0"
+           xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+    <data>
+        <isis xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-clns-isis-cfg">
+            <instances>
+                <instance>
+                    <instance-name>ISIS-001</instance-name>
+                    <running></running>
+                    <max-link-metrics>
+                        <max-link-metric>
+                            <level>level1</level>
+                        </max-link-metric>
+                        <max-link-metric>
+                            <level>level2</level>
+                        </max-link-metric>
+                        <max-link-metric>
+                            <level>not-set</level>
+                        </max-link-metric>
+                    </max-link-metrics>
+                    <afs>
+                        <af>
+                            <af-name>ipv4</af-name>
+                            <saf-name>unicast</saf-name>
+                            <af-data/>
+                        </af>
+                        <af>
+                            <af-name>ipv6</af-name>
+                            <saf-name>unicast</saf-name>
+                            <af-data>
+                                <redistributions>
+                                    <redistribution>
+                                        <protocol-name>isis</protocol-name>
+                                        <ospf-or-ospfv3-or-isis-or-application>
+                                            <instance-name>400</instance-name>
+                                            <levels>level1-and2</levels>
+                                            <route-policy-name>ISIS-REDISTRIBUTE-001</route-policy-name>
+                                        </ospf-or-ospfv3-or-isis-or-application>
+                                        <ospf-or-ospfv3-or-isis-or-application>
+                                            <instance-name>600</instance-name>
+                                            <levels>level1</levels>
+                                            <route-policy-name>ISIS-REDISTRIBUTE-002</route-policy-name>
+                                        </ospf-or-ospfv3-or-isis-or-application>
+                                    </redistribution>
+                                </redistributions>
+                            </af-data>
+                        </af>
+                    </afs>
+                </instance>
+                <instance>
+                    <instance-name>ISIS-002</instance-name>
+                </instance>
+                <instance>
+                    <instance-name>ISIS-003</instance-name>
+                </instance>
+            </instances>
+        </isis>
+    </data>
+</rpc-reply>
