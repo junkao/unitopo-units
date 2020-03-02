@@ -1,0 +1,174 @@
+<!--
+  ~ Copyright © 2020 Frinx and others.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<rpc-reply xmlns="urn:ietf:params:xml:ns:netconf:base:1.0" message-id="m-1">
+    <data>
+        <interface-configurations xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg">
+            <interface-configuration>
+                <active>act</active>
+                <interface-name>TenGigE0/0/0/7</interface-name>
+                <shutdown></shutdown>
+            </interface-configuration>
+            <interface-configuration>
+                <active>act</active>
+                <interface-name>TenGigE0/0/0/8</interface-name>
+                <shutdown></shutdown>
+                <qos xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-qos-ma-cfg">
+                    <input>
+                        <service-policy>
+                            <service-policy-name>input_test1</service-policy-name>
+                        </service-policy>
+                    </input>
+                    <output>
+                        <service-policy>
+                            <service-policy-name>output_test1</service-policy-name>
+                        </service-policy>
+                    </output>
+                </qos>
+            </interface-configuration>
+            <interface-configuration>
+                <active>act</active>
+                <interface-name>Bundle-Ether65533</interface-name>
+                <interface-virtual></interface-virtual>
+                <qos xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-qos-ma-cfg">
+                    <input>
+                        <service-policy>
+                            <service-policy-name>input_test2</service-policy-name>
+                        </service-policy>
+                    </input>
+                    <output>
+                        <service-policy>
+                            <service-policy-name>output_test2</service-policy-name>
+                        </service-policy>
+                    </output>
+                </qos>
+            </interface-configuration>
+            <interface-configuration>
+                <active>act</active>
+                <interface-name>Loopback0</interface-name>
+                <interface-virtual></interface-virtual>
+                <qos xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-qos-ma-cfg">
+                    <input>
+                        <service-policy>
+                            <service-policy-name>input_test3</service-policy-name>
+                        </service-policy>
+                    </input>
+                    <output>
+                        <service-policy>
+                            <service-policy-name>output_test4</service-policy-name>
+                        </service-policy>
+                    </output>
+                </qos>
+            </interface-configuration>
+            <interface-configuration>
+                <active>act</active>
+                <interface-name>Bundle-Ether301</interface-name>
+                <interface-virtual></interface-virtual>
+                <mtus>
+                    <mtu>
+                        <owner>etherbundle</owner>
+                        <mtu>4119</mtu>
+                    </mtu>
+                </mtus>
+            </interface-configuration>
+            <interface-configuration>
+                <active>act</active>
+                <interface-name>Bundle-Ether301</interface-name>
+                <interface-virtual></interface-virtual>
+                <mtus>
+                    <mtu>
+                        <owner>etherbundle</owner>
+                        <mtu>9114</mtu>
+                    </mtu>
+                </mtus>
+                <statistics xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-statsd-cfg">
+                    <load-interval>30</load-interval>
+                </statistics>
+                <link-status></link-status>
+            </interface-configuration>
+            <interface-configuration>
+                <active>act</active>
+                <interface-name>Bundle-Ether301.1</interface-name>
+                <interface-mode-non-physical>default</interface-mode-non-physical>
+                <vrf xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rsi-cfg">imm</vrf>
+            </interface-configuration>
+            <interface-configuration>
+                <active>act</active>
+                <interface-name>Bundle-Ether301.2</interface-name>
+                <interface-mode-non-physical>default</interface-mode-non-physical>
+                <vrf xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-rsi-cfg">mmi</vrf>
+            </interface-configuration>
+        </interface-configurations>
+        <bgp xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-ipv4-bgp-cfg">
+            <instance>
+                <instance-name>aaa</instance-name>
+                <instance-as>
+                    <as>0</as>
+                    <four-byte-as>
+                        <as>17676</as>
+                        <bgp-running></bgp-running>
+                        <default-vrf>
+                            <global>
+                                <global-afs>
+                                    <global-af>
+                                        <af-name>vpnv4-unicast</af-name>
+                                        <enable></enable>
+                                    </global-af>
+                                </global-afs>
+                            </global>
+                        </default-vrf>
+                        <vrfs>
+                            <vrf>
+                                <vrf-name>THU</vrf-name>
+                                <vrf-global>
+                                    <exists></exists>
+                                    <route-distinguisher>
+                                        <type>as</type>
+                                        <as-xx>0</as-xx>
+                                        <as>17676</as>
+                                        <as-index>4100</as-index>
+                                    </route-distinguisher>
+                                </vrf-global>
+                            </vrf>
+                        </vrfs>
+                    </four-byte-as>
+                </instance-as>
+            </instance>
+        </bgp>
+        <ospf xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-ipv4-ospf-cfg">
+            <processes>
+                <process>
+                    <process-name>400</process-name>
+                    <vrfs>
+                        <vrf>
+                            <vrf-name>THUospf</vrf-name>
+                            <area-addresses>
+                                <area-address>
+                                    <address>10.1.1.1</address>
+                                    <name-scopes>
+                                        <name-scope>
+                                            <interface-name>GigabitEthernet1/1/1/1.1</interface-name>
+                                        </name-scope>
+                                    </name-scopes>
+                                </area-address>
+                            </area-addresses>
+                        </vrf>
+                    </vrfs>
+                </process>
+            </processes>
+        </ospf>
+    </data>
+</rpc-reply>
