@@ -41,6 +41,7 @@
         <module>xr-7-isis-unit</module>
         <module>xr-7-network-instance-unit</module>
         <module>xr-7-routing-policy-unit</module>
+        <module>xr-7-evpn-unit</module>
     </modules>
 
     <build>

@@ -299,6 +299,11 @@
                 <artifactId>xr-7-routing-policy-unit</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>io.frinx.unitopo</groupId>
+                <artifactId>xr-7-evpn-unit</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 
             <!-- bases -->
             <dependency>
