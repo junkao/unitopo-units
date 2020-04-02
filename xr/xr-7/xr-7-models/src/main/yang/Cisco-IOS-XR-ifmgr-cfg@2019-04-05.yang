@@ -273,7 +273,7 @@ module Cisco-IOS-XR-ifmgr-cfg {
       }
       leaf interface-mode-non-physical {
         type Interface-mode-enum;
-        default "default";
+        // default "default";
         description
           "The mode in which an interface is running. The
           existence of this object causes the creation of

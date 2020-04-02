@@ -19,14 +19,14 @@ package io.frinx.unitopo.unit.xr7.logging.handler
 import io.fd.honeycomb.translate.spi.write.WriterCustomizer
 import io.fd.honeycomb.translate.write.WriteContext
 import io.frinx.unitopo.registry.spi.UnderlayAccess
-import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.um._interface.cfg.rev190610.Interfaces as UmInterfaces
-import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.um._interface.cfg.rev190610.interfaces.Interface as UmInterface
-import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.um._interface.cfg.rev190610.interfaces.InterfaceKey as UmInterfaceKey
-import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.um._interface.cfg.rev190610.interfaces.InterfaceBuilder as UmInterfaceBuilder
-import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.um._interface.cfg.rev190610.group.body.LoggingBuilder
-import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.um._interface.cfg.rev190610.group.body.logging.EventsBuilder
-import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.um._interface.cfg.rev190610.group.body.logging.events.LinkStatusBuilder
+import io.frinx.unitopo.unit.xr7.interfaces.handler.Util
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev190405.InterfaceActive
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev190405.InterfaceModeEnum
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev190405._interface.configurations.InterfaceConfiguration
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev190405._interface.configurations.InterfaceConfigurationBuilder
+import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev190405._interface.configurations.InterfaceConfigurationKey
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.xr.types.rev190405.InterfaceName
+import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.event.types.rev171024.LINKUPDOWN
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.logging.rev171024.logging.interfaces.structural.interfaces.Interface
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.logging.rev171024.logging.interfaces.structural.interfaces._interface.Config
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier as IID
@@ -35,32 +35,15 @@ class LoggingInterfacesConfigWriter(private val underlayAccess: UnderlayAccess) 
     WriterCustomizer<Config> {
 
     override fun writeCurrentAttributes(
-        id: IID<Config>,
+        instanceIdentifier: IID<Config>,
         dataAfter: Config,
         writeContext: WriteContext
     ) {
         require(dataAfter.interfaceId.value.startsWith("Bundle-Ether")) {
             "${dataAfter.interfaceId.value} Physical interface is not supported"
         }
-        val underlayId = getId(id)
-        val underlayBefore = underlayAccess.read(underlayId)
-            .checkedGet()
-            .get()
-
-        val ifcBuilder = when (underlayBefore) {
-            null -> UmInterfaceBuilder(underlayBefore)
-            else -> UmInterfaceBuilder()
-        }.apply {
-            key = UmInterfaceKey(InterfaceName(dataAfter.interfaceId.value))
-            interfaceName = InterfaceName(dataAfter.interfaceId.value)
-            logging = LoggingBuilder().apply {
-                events = EventsBuilder().apply {
-                    linkStatus = LinkStatusBuilder().build()
-                }.build()
-            }.build()
-        }
-
-        underlayAccess.safePut(underlayId, ifcBuilder.build())
+        val (underlayId, underlayIfcCfg) = getData(instanceIdentifier, dataAfter)
+        underlayAccess.put(underlayId, underlayIfcCfg)
     }
 
     override fun updateCurrentAttributes(
@@ -81,15 +64,60 @@ class LoggingInterfacesConfigWriter(private val underlayAccess: UnderlayAccess) 
         val before = underlayAccess.read(underlayId)
             .checkedGet()
             .get()
-        val builder = UmInterfaceBuilder(before).apply {
-            logging = null
-        }
-        underlayAccess.put(underlayId, builder.build())
+        val underlayConfig = InterfaceConfigurationBuilder(before)
+            .setLinkStatus(null)
+            .build()
+        underlayAccess.put(underlayId, underlayConfig)
     }
 
-    private fun getId(id: IID<Config>): IID<UmInterface> {
+    private fun getData(id: IID<Config>, data: Config):
+        Pair<IID<InterfaceConfiguration>, InterfaceConfiguration> {
+        val underlayId = getId(id)
+        val underlayBefore = underlayAccess.read(underlayId)
+            .checkedGet()
+            .orNull()
+        val ifcCfgBuilder =
+            if (underlayBefore != null) InterfaceConfigurationBuilder(underlayBefore) else
+                createNewBuilder(data.interfaceId.value)
+
+        ifcCfgBuilder.setLinkStatus(data.getLinkStatus())
+        return Pair(underlayId, ifcCfgBuilder.build())
+    }
+
+    private fun getId(id: IID<Config>): IID<InterfaceConfiguration> {
+        val interfaceActive = InterfaceActive("act")
         val ifcName = InterfaceName(id.firstKeyOf(Interface::class.java).interfaceId.value)
-        val ifcCfg = org.opendaylight.yangtools.yang.binding.InstanceIdentifier.create(UmInterfaces::class.java)!!
-        return ifcCfg.child(UmInterface::class.java, UmInterfaceKey(ifcName))
+
+        return LoggingInterfacesReader.IFC_CFGS.child(InterfaceConfiguration::class.java,
+            InterfaceConfigurationKey(interfaceActive, ifcName))
+    }
+
+    companion object {
+        private fun Config.hasLinkUpDownEvent(): Boolean {
+            return enabledLoggingForEvent.orEmpty()
+                .map { it.eventName }
+                .contains(LINKUPDOWN::class.java)
+        }
+
+        private fun Config.getLinkStatus(): Boolean? {
+            if (hasLinkUpDownEvent()) {
+                return true
+            }
+            return null
+        }
+
+        private fun createNewBuilder(name: String): InterfaceConfigurationBuilder {
+            val ifcCfgBuilder = InterfaceConfigurationBuilder()
+                .setActive(InterfaceActive("act"))
+                .setInterfaceName(InterfaceName(name))
+
+            if (Util.isSubinterface(name)) {
+                ifcCfgBuilder.setInterfaceModeNonPhysical(InterfaceModeEnum.Default)
+            } else {
+                ifcCfgBuilder.setInterfaceVirtual(true)
+            }
+
+            return ifcCfgBuilder
+        }
     }
 }

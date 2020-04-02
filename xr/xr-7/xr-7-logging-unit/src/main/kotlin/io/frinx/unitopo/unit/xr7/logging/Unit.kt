@@ -30,7 +30,6 @@ import io.frinx.openconfig.openconfig.interfaces.IIDs as IN_IIDs
 import io.frinx.openconfig.openconfig.logging.IIDs as LG_IIDS
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.ifmgr.cfg.rev190405.`$YangModuleInfoImpl` as UnderlayInterfacesYangInfo
 import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.l2.eth.infra.datatypes.rev190405.`$YangModuleInfoImpl` as Underlayinfradatatypes
-import org.opendaylight.yang.gen.v1.http.cisco.com.ns.yang.cisco.ios.xr.um._interface.cfg.rev190610.`$YangModuleInfoImpl` as UnderlayUmInterfaceYangInfo
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.event.types.rev171024.`$YangModuleInfoImpl` as EventTypeYangInfo
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.interfaces.rev161222.`$YangModuleInfoImpl` as InterfaceYangInfo
 import org.opendaylight.yang.gen.v1.http.frinx.openconfig.net.yang.logging.rev171024.`$YangModuleInfoImpl` as LoggingYangInfo
@@ -78,13 +77,12 @@ class Unit(private val registry: TranslationUnitCollector) : Unit() {
             GenericConfigReader(LG_IIDS.LO_INTERFACES, LoggingInterfacesReader(underlayAccess)))
     }
 
-    override fun toString(): String = "Translate unit for Cisco-IOS-XR-um-interface-cfg@2019-06-10:logging"
+    override fun toString(): String = "Translate unit for Cisco-IOS-XR-ifmgr-cfg@2019-04-05:logging"
 
     companion object {
         private val UNDERLAY_SCHEMAS = setOf(
             UnderlayInterfacesYangInfo.getInstance(),
-            Underlayinfradatatypes.getInstance(),
-            UnderlayUmInterfaceYangInfo.getInstance()
+            Underlayinfradatatypes.getInstance()
         )
     }
 }
