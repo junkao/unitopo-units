@@ -348,37 +348,73 @@ private fun parseNeighborAfBuilder(
     afiSafi: AfiSafi?,
     it: NeighborAf?
 ): NeighborAfBuilder {
+    val neighborAfBuilder = NeighborAfBuilder(it)
+    setUnicast(it, afiSafi, neighborAfBuilder)
+    setPolicy(data, neighborAfBuilder)
+    setSoftReconfiguration(afiSafi, neighborAfBuilder)
+    setRemovePrivateAs(data, neighborAfBuilder)
+    setSendCommunity(data, neighborAfBuilder)
+    return neighborAfBuilder
+}
+
+private fun setSendCommunity(data: Neighbor, neighborAfBuilder: NeighborAfBuilder) {
+    data.config?.sendCommunity?.intValue?.let {
+        neighborAfBuilder.setSendCommunityEbgp(transferCommunityType(it))
+    }
+}
+
+private fun setRemovePrivateAs(data: Neighbor, neighborAfBuilder: NeighborAfBuilder) {
     val removePrivateAs = data.config?.removePrivateAs
-    val applyPolicyConfig = data.applyPolicy?.config
-    val maxPrefixes = afiSafi?.ipv6Unicast?.prefixLimit?.config?.maxPrefixes
-    val defaultOriginate = afiSafi?.ipv6Unicast?.config?.isSendDefaultRoute
+    removePrivateAs?.let {
+        neighborAfBuilder.setRemovePrivateAsEntireAsPath(transferRemovePrivateAs(data))
+    }
+}
+
+private fun setSoftReconfiguration(afiSafi: AfiSafi?, neighborAfBuilder: NeighborAfBuilder) {
     val softReconfiguration = afiSafi?.config?.getAugmentation(BgpNeAfAug::class.java)?.softReconfiguration
             ?.isAlways
-    val neighborAfBuilder = NeighborAfBuilder(it)
+    softReconfiguration?.let {
+        neighborAfBuilder.setSoftReconfiguration(SoftReconfigurationBuilder()
+                .setSoftAlways(softReconfiguration)
+                .setInboundSoft(softReconfiguration).build())
+    }
+}
+
+private fun setPolicy(data: Neighbor, neighborAfBuilder: NeighborAfBuilder) {
+    val applyPolicyConfig = data.applyPolicy?.config
     applyPolicyConfig?.importPolicy.orEmpty().firstOrNull()?.let { neighborAfBuilder.setRoutePolicyIn(it) }
     if (applyPolicyConfig?.exportPolicy.orEmpty().firstOrNull().equals(NEXTHOPSELF_POLICY_NAME)) {
         neighborAfBuilder.setNextHopSelf(true)
     } else {
         applyPolicyConfig?.exportPolicy.orEmpty().firstOrNull()?.let { neighborAfBuilder.setRoutePolicyOut(it) }
     }
-    maxPrefixes?.let {
-        neighborAfBuilder.setMaximumPrefixes(MaximumPrefixesBuilder().setPrefixLimit(maxPrefixes).build())
+}
+
+private fun setUnicast(it: NeighborAf?, afiSafi: AfiSafi?, neighborAfBuilder: NeighborAfBuilder) {
+    var maxPrefixes: Long? = null
+    var shutdownThresholdPct: Long? = null
+    var defaultOriginate: Boolean? = null
+
+    if (it?.afName?.getName().equals("ipv4-unicast")) {
+        maxPrefixes = afiSafi?.ipv4Unicast?.prefixLimit?.config?.maxPrefixes
+        shutdownThresholdPct = afiSafi?.ipv4Unicast?.prefixLimit?.config?.shutdownThresholdPct?.value?.toLong()
+        defaultOriginate = afiSafi?.ipv4Unicast?.config?.isSendDefaultRoute
+    } else if (it?.afName?.getName().equals("ipv6-unicast")) {
+        maxPrefixes = afiSafi?.ipv6Unicast?.prefixLimit?.config?.maxPrefixes
+        shutdownThresholdPct = afiSafi?.ipv6Unicast?.prefixLimit?.config?.shutdownThresholdPct?.value?.toLong()
+        defaultOriginate = afiSafi?.ipv6Unicast?.config?.isSendDefaultRoute
     }
-    data.config?.sendCommunity?.intValue?.let {
-        neighborAfBuilder.setSendCommunityEbgp(transferCommunityType(it))
-    }
-    softReconfiguration?.let {
-        neighborAfBuilder.setSoftReconfiguration(SoftReconfigurationBuilder()
-                .setSoftAlways(softReconfiguration)
-                .setInboundSoft(softReconfiguration).build())
+    maxPrefixes?.let { maxPrefix ->
+        val maximumPrefixesBuilder = MaximumPrefixesBuilder()
+        maximumPrefixesBuilder.setPrefixLimit(maxPrefix)
+        shutdownThresholdPct?.let { shutdownThresholdPct ->
+            maximumPrefixesBuilder.setWarningPercentage(shutdownThresholdPct)
+        }
+        neighborAfBuilder.setMaximumPrefixes(maximumPrefixesBuilder.build())
     }
     defaultOriginate?.let {
         neighborAfBuilder.setDefaultOriginate(DefaultOriginateBuilder().setEnable(defaultOriginate).build())
     }
-    removePrivateAs?.let {
-        neighborAfBuilder.setRemovePrivateAsEntireAsPath(transferRemovePrivateAs(data))
-    }
-    return neighborAfBuilder
 }
 
 private fun parseVrfNeighborAfBuilder(
@@ -386,39 +422,73 @@ private fun parseVrfNeighborAfBuilder(
     afiSafi: AfiSafi?,
     it: VrfNeighborAf?
 ): VrfNeighborAfBuilder {
-    val removePrivateAs = data.config?.removePrivateAs
-    val applyPolicyConfig = data.applyPolicy?.config
-    val maxPrefixes = afiSafi?.ipv6Unicast?.prefixLimit?.config?.maxPrefixes
-    val defaultOriginate = afiSafi?.ipv6Unicast?.config?.isSendDefaultRoute
-    val softReconfiguration = afiSafi?.config?.getAugmentation(BgpNeAfAug::class.java)?.softReconfiguration
-            ?.isAlways
-
     val vrfNeighborAfBuilder = VrfNeighborAfBuilder(it)
-    applyPolicyConfig?.importPolicy.orEmpty().firstOrNull()?.let { vrfNeighborAfBuilder.setRoutePolicyIn(it) }
+    setVrfUnicast(it, afiSafi, vrfNeighborAfBuilder)
+    setVrfPolicy(data, vrfNeighborAfBuilder)
+    setVrfSoftReconfiguration(afiSafi, vrfNeighborAfBuilder)
+    setVrfRemovePrivateAs(data, vrfNeighborAfBuilder)
+    setSendCommunity(data, vrfNeighborAfBuilder)
+    return vrfNeighborAfBuilder
+}
 
-    if (applyPolicyConfig?.exportPolicy.orEmpty().firstOrNull().equals(NEXTHOPSELF_POLICY_NAME)) {
-        vrfNeighborAfBuilder.setNextHopSelf(true)
-    } else {
-        applyPolicyConfig?.exportPolicy.orEmpty().firstOrNull()?.let { vrfNeighborAfBuilder.setRoutePolicyOut(it) }
-    }
-    maxPrefixes?.let {
-        vrfNeighborAfBuilder.setMaximumPrefixes(MaximumPrefixesBuilder().setPrefixLimit(maxPrefixes).build())
-    }
+private fun setSendCommunity(data: Neighbor, vrfNeighborAfBuilder: VrfNeighborAfBuilder) {
     data.config?.sendCommunity?.intValue?.let {
         vrfNeighborAfBuilder.setSendCommunityEbgp(transferCommunityType(it))
     }
+}
+
+fun setVrfRemovePrivateAs(data: Neighbor, vrfNeighborAfBuilder: VrfNeighborAfBuilder) {
+    val removePrivateAs = data.config?.removePrivateAs
+    removePrivateAs?.let {
+        vrfNeighborAfBuilder.setRemovePrivateAsEntireAsPath(transferRemovePrivateAs(data))
+    }
+}
+
+fun setVrfSoftReconfiguration(afiSafi: AfiSafi?, vrfNeighborAfBuilder: VrfNeighborAfBuilder) {
+    val softReconfiguration = afiSafi?.config?.getAugmentation(BgpNeAfAug::class.java)?.softReconfiguration
+            ?.isAlways
     softReconfiguration?.let {
         vrfNeighborAfBuilder.setSoftReconfiguration(SoftReconfigurationBuilder()
                 .setSoftAlways(softReconfiguration)
                 .setInboundSoft(softReconfiguration).build())
     }
+}
+
+fun setVrfPolicy(data: Neighbor, vrfNeighborAfBuilder: VrfNeighborAfBuilder) {
+    val applyPolicyConfig = data.applyPolicy?.config
+    applyPolicyConfig?.importPolicy.orEmpty().firstOrNull()?.let { vrfNeighborAfBuilder.setRoutePolicyIn(it) }
+    if (applyPolicyConfig?.exportPolicy.orEmpty().firstOrNull().equals(NEXTHOPSELF_POLICY_NAME)) {
+        vrfNeighborAfBuilder.setNextHopSelf(true)
+    } else {
+        applyPolicyConfig?.exportPolicy.orEmpty().firstOrNull()?.let { vrfNeighborAfBuilder.setRoutePolicyOut(it) }
+    }
+}
+
+fun setVrfUnicast(it: VrfNeighborAf?, afiSafi: AfiSafi?, vrfNeighborAfBuilder: VrfNeighborAfBuilder) {
+    var maxPrefixes: Long? = null
+    var shutdownThresholdPct: Long? = null
+    var defaultOriginate: Boolean? = null
+
+    if (it?.afName?.getName().equals("ipv4-unicast")) {
+        maxPrefixes = afiSafi?.ipv4Unicast?.prefixLimit?.config?.maxPrefixes
+        shutdownThresholdPct = afiSafi?.ipv4Unicast?.prefixLimit?.config?.shutdownThresholdPct?.value?.toLong()
+        defaultOriginate = afiSafi?.ipv4Unicast?.config?.isSendDefaultRoute
+    } else if (it?.afName?.getName().equals("ipv6-unicast")) {
+        maxPrefixes = afiSafi?.ipv6Unicast?.prefixLimit?.config?.maxPrefixes
+        shutdownThresholdPct = afiSafi?.ipv6Unicast?.prefixLimit?.config?.shutdownThresholdPct?.value?.toLong()
+        defaultOriginate = afiSafi?.ipv6Unicast?.config?.isSendDefaultRoute
+    }
+    maxPrefixes?.let { maxPrefix ->
+        val maximumPrefixesBuilder = MaximumPrefixesBuilder()
+        maximumPrefixesBuilder.setPrefixLimit(maxPrefix)
+        shutdownThresholdPct?.let { shutdownThresholdPct ->
+            maximumPrefixesBuilder.setWarningPercentage(shutdownThresholdPct)
+        }
+        vrfNeighborAfBuilder.setMaximumPrefixes(maximumPrefixesBuilder.build())
+    }
     defaultOriginate?.let {
         vrfNeighborAfBuilder.setDefaultOriginate(DefaultOriginateBuilder().setEnable(defaultOriginate).build())
     }
-    removePrivateAs?.let {
-        vrfNeighborAfBuilder.setRemovePrivateAsEntireAsPath(transferRemovePrivateAs(data))
-    }
-    return vrfNeighborAfBuilder
 }
 
 private fun transferRemovePrivateAs(data: Neighbor): RemovePrivateAsEntireAsPath {

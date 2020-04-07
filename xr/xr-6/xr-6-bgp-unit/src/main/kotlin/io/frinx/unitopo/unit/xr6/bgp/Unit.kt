@@ -104,6 +104,8 @@ class Unit(private val registry: TranslationUnitCollector) : Unit() {
                         IIDs.NE_NE_PR_PR_BG_NE_NE_EB_CONFIG,
                         IIDs.NET_NET_PRO_PRO_BGP_NEI_NEI_AFI_AFI_IPV_CONFIG,
                         IIDs.NETWO_NETWO_PROTO_PROTO_BGP_NEIGH_NEIGH_AFISA_AFISA_IPV6U_PREFI_CONFIG,
+                        IIDs.NE_NE_PR_PR_BG_NE_NE_AF_AF_IP_CONFIG,
+                        IIDs.NET_NET_PRO_PRO_BGP_NEI_NEI_AFI_AFI_IPV_PRE_CONFIG,
                         IIDs.NE_NE_PR_PR_BG_NE_NE_AF_AF_CO_AUG_BGPNEAFAUG,
                         IIDs.NE_NE_PR_PR_BG_NE_NE_AF_AF_CO_AUG_BGPNEAFAUG_SOFTRECONFIGURATION),
                 IIDs.NE_NE_CONFIG, IIDs.NE_NE_PR_PR_BG_GL_AF_AF_CONFIG)
