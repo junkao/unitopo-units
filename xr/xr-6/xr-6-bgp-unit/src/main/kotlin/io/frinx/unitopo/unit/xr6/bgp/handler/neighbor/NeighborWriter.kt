@@ -198,7 +198,7 @@ class NeighborWriter(private val access: UnderlayAccess) : ListWriterCustomizer<
                             .build()
 
             data.ebgpMultihop?.config?.let { builder.setEbgpMultihop(EbgpMultihopBuilder()
-                .setMplsDeactivation(it.isEnabled)
+                .setMplsDeactivation(false)
                 .setMaxHopCount(it.multihopTtl.toLong()).build()) }
 
             // overwrite null if new data contains transport
@@ -213,8 +213,9 @@ class NeighborWriter(private val access: UnderlayAccess) : ListWriterCustomizer<
                 }.build()
             }
 
-            builder.setShutdown(true)
             data.config?.description?.let { builder.setDescription(it) }
+            data.config.isEnabled?.let { if (!it) { builder.setShutdown(true) } }
+            data.config?.peerGroup?.let { builder.setNeighborGroupAddMember(it) }
 
             // Get current Afs to map
             val currentAfs = builder
@@ -272,7 +273,7 @@ class NeighborWriter(private val access: UnderlayAccess) : ListWriterCustomizer<
                             .build()
 
             data.ebgpMultihop?.config?.let { builder.setEbgpMultihop(EbgpMultihopBuilder()
-                .setMplsDeactivation(it.isEnabled)
+                .setMplsDeactivation(false)
                 .setMaxHopCount(it.multihopTtl.toLong()).build()) }
 
             if (data.config.authPassword == null) {
@@ -284,8 +285,9 @@ class NeighborWriter(private val access: UnderlayAccess) : ListWriterCustomizer<
                 }.build()
             }
 
-            builder.setShutdown(true)
             data.config?.description?.let { builder.setDescription(it) }
+            data.config.isEnabled?.let { if (!it) { builder.setShutdown(true) } }
+            data.config?.peerGroup?.let { builder.setNeighborGroupAddMember(it) }
 
             // Get current Afs to map
             val currentAfs = builder
@@ -374,9 +376,15 @@ private fun setSoftReconfiguration(afiSafi: AfiSafi?, neighborAfBuilder: Neighbo
     val softReconfiguration = afiSafi?.config?.getAugmentation(BgpNeAfAug::class.java)?.softReconfiguration
             ?.isAlways
     softReconfiguration?.let {
-        neighborAfBuilder.setSoftReconfiguration(SoftReconfigurationBuilder()
-                .setSoftAlways(softReconfiguration)
-                .setInboundSoft(softReconfiguration).build())
+        if (it) {
+            neighborAfBuilder.setSoftReconfiguration(SoftReconfigurationBuilder()
+                    .setInboundSoft(true)
+                    .setSoftAlways(true).build())
+        } else {
+            neighborAfBuilder.setSoftReconfiguration(SoftReconfigurationBuilder()
+                    .setSoftAlways(true)
+                    .setInboundSoft(false).build())
+        }
     }
 }
 
@@ -413,7 +421,9 @@ private fun setUnicast(it: NeighborAf?, afiSafi: AfiSafi?, neighborAfBuilder: Ne
         neighborAfBuilder.setMaximumPrefixes(maximumPrefixesBuilder.build())
     }
     defaultOriginate?.let {
-        neighborAfBuilder.setDefaultOriginate(DefaultOriginateBuilder().setEnable(defaultOriginate).build())
+        if (it) {
+            neighborAfBuilder.setDefaultOriginate(DefaultOriginateBuilder().setEnable(it).build())
+        }
     }
 }
 
@@ -423,6 +433,7 @@ private fun parseVrfNeighborAfBuilder(
     it: VrfNeighborAf?
 ): VrfNeighborAfBuilder {
     val vrfNeighborAfBuilder = VrfNeighborAfBuilder(it)
+
     setVrfUnicast(it, afiSafi, vrfNeighborAfBuilder)
     setVrfPolicy(data, vrfNeighborAfBuilder)
     setVrfSoftReconfiguration(afiSafi, vrfNeighborAfBuilder)
@@ -448,9 +459,15 @@ fun setVrfSoftReconfiguration(afiSafi: AfiSafi?, vrfNeighborAfBuilder: VrfNeighb
     val softReconfiguration = afiSafi?.config?.getAugmentation(BgpNeAfAug::class.java)?.softReconfiguration
             ?.isAlways
     softReconfiguration?.let {
-        vrfNeighborAfBuilder.setSoftReconfiguration(SoftReconfigurationBuilder()
-                .setSoftAlways(softReconfiguration)
-                .setInboundSoft(softReconfiguration).build())
+        if (it) {
+            vrfNeighborAfBuilder.setSoftReconfiguration(SoftReconfigurationBuilder()
+                    .setInboundSoft(true)
+                    .setSoftAlways(true).build())
+        } else {
+            vrfNeighborAfBuilder.setSoftReconfiguration(SoftReconfigurationBuilder()
+                    .setSoftAlways(true)
+                    .setInboundSoft(false).build())
+        }
     }
 }
 
@@ -487,7 +504,9 @@ fun setVrfUnicast(it: VrfNeighborAf?, afiSafi: AfiSafi?, vrfNeighborAfBuilder: V
         vrfNeighborAfBuilder.setMaximumPrefixes(maximumPrefixesBuilder.build())
     }
     defaultOriginate?.let {
-        vrfNeighborAfBuilder.setDefaultOriginate(DefaultOriginateBuilder().setEnable(defaultOriginate).build())
+        if (it) {
+            vrfNeighborAfBuilder.setDefaultOriginate(DefaultOriginateBuilder().setEnable(it).build())
+        }
     }
 }
 
